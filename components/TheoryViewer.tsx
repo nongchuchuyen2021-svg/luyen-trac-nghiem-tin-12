@@ -272,6 +272,39 @@ function Block({ block }: { block: TheoryBlock }) {
         </div>
       );
 
+    case "update":
+      return (
+        <div className="rounded-2xl border-2 border-dashed border-ink/25 bg-ink/[0.04] p-4 sm:p-5">
+          <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
+            <span className="rounded-full bg-ink px-2.5 py-1 font-mono text-[11px] font-semibold text-white">
+              🆕 Cập nhật 2026
+            </span>
+            <span className="font-mono text-[11px] text-ink-soft/70">
+              ngoài SGK · đề thi không hỏi phần này
+            </span>
+          </div>
+          <p className="mt-2.5 font-display text-[15px] font-semibold text-ink">{block.title}</p>
+          <p className="mt-1 text-[15px] leading-[1.7] text-ink-soft">
+            <Rich text={block.text} />
+          </p>
+          {block.items && (
+            <ul className="mt-3 space-y-2.5">
+              {block.items.map((it, i) => (
+                <li key={i} className="flex gap-2.5 rounded-xl bg-white/70 p-3">
+                  <span className="shrink-0 text-xl">{it.emoji}</span>
+                  <span className="min-w-0">
+                    <span className="block font-display text-sm font-semibold text-ink">{it.title}</span>
+                    <span className="mt-0.5 block text-sm leading-relaxed text-ink-soft">
+                      <Rich text={it.text} />
+                    </span>
+                  </span>
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
+      );
+
     case "check":
       return (
         <QuickCheck q={block.q} options={block.options} answer={block.answer} explain={block.explain} />

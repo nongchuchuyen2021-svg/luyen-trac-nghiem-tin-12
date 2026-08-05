@@ -75,6 +75,11 @@ export type TheoryBlock =
   | { kind: "example"; title: string; text: string }
   // Hộp ghi nhớ, nền vàng — lấy đúng kết luận đóng khung trong SGK
   | { kind: "note"; text: string }
+  // Hộp "Cập nhật 2026": chỗ SGK đã lạc hậu so với thực tế, hoặc kiến thức
+  // mới xuất hiện sau khi sách in. CỐ Ý để màu và viền khác hẳn mọi hộp
+  // khác, kèm nhãn "đề thi không hỏi phần này" — đề thi tốt nghiệp bám SGK,
+  // học sinh phải phân biệt được đâu là phần thi, đâu là phần biết thêm.
+  | { kind: "update"; title: string; text: string; items?: TheoryCard[] }
   // Câu hỏi kiểm tra nhanh xen giữa bài, trả lời xong hiện giải thích ngay
   | {
       kind: "check";

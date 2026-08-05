@@ -190,6 +190,11 @@ const theory: LessonTheory = {
           text: "**Trí tuệ nhân tạo tổng quát** (hay Trí tuệ nhân tạo mạnh) có khả năng tự học, tự thích nghi và thực hiện được nhiều công việc giống như con người. Đây đang là **mục tiêu dài hạn** của các nghiên cứu về AI, **trong thực tế hiện vẫn chưa đạt được**.",
         },
         {
+          kind: "update",
+          title: "Ranh giới giữa hai loại đang mờ dần",
+          text: "Kết luận của SGK **vẫn đúng**: đến nay vẫn chưa đạt được Trí tuệ nhân tạo tổng quát. Nhưng mô tả kinh điển “AI chỉ giỏi đúng một việc” thì đã lỏng đi nhiều — các mô hình ngôn ngữ lớn ngày nay dùng **cùng một mô hình** để dịch thuật, viết văn bản, lập trình, đọc hiểu hình ảnh… Khoảng cách giữa hai loại hẹp hơn hẳn so với lúc sách được viết, dù mục tiêu **tự học và tự thích nghi ở mọi lĩnh vực như con người** thì vẫn chưa tới.",
+        },
+        {
           kind: "check",
           q: "Một chương trình máy tính chơi cờ rất giỏi, thắng cả kì thủ vô địch, nhưng không làm được việc gì khác. Đó là loại AI nào?",
           options: [
@@ -253,6 +258,23 @@ const theory: LessonTheory = {
         {
           kind: "note",
           text: "Ngày nay AI đã phổ biến trong nhiều lĩnh vực khác nhau. Những ví dụ tiêu biểu: **điều khiển robot, chẩn đoán bệnh, dịch tự động, nhận dạng khuôn mặt, trợ lí ảo**,…",
+        },
+        {
+          kind: "update",
+          title: "Hai ví dụ trong sách nay đã thành chuyện lịch sử",
+          text: "SGK viết xong trước năm 2023 nên có hai chi tiết đã thay đổi. **Khi làm bài thi em vẫn kể theo sách** — phần dưới đây chỉ để em biết chuyện thực tế.",
+          items: [
+            {
+              emoji: "🤖",
+              title: "Asimo đã nghỉ hưu năm 2022",
+              text: "Honda cho Asimo dừng biểu diễn sau 22 năm, chuyển sang những ứng dụng thực tế hơn của công nghệ robot. Asimo vẫn là **ví dụ kinh điển** về robot tích hợp nhiều đặc trưng AI — chỉ là nó không còn hoạt động nữa.",
+            },
+            {
+              emoji: "🗣️",
+              title: "Cortana đã bị khai tử",
+              text: "Microsoft ngừng ứng dụng Cortana độc lập trên Windows từ mùa xuân 2023, thay bằng trợ lí **Copilot**. Siri, Google Assistant và Bixby thì vẫn đang hoạt động.",
+            },
+          ],
         },
       ],
     },

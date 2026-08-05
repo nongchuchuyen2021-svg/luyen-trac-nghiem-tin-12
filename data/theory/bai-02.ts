@@ -155,6 +155,23 @@ const theory: LessonTheory = {
           text: "Nhiều chuyên gia coi ChatGPT là **bước đột phá trong lĩnh vực AI của năm 2022**, có thể dẫn tới những thay đổi lớn về cách làm việc, cách suy nghĩ, cách dạy và học trong nhà trường.",
         },
         {
+          kind: "update",
+          title: "Từ trợ lí trả lời câu hỏi sang AI tác nhân (agentic AI)",
+          text: "SGK mô tả ChatGPT ở vai trò **hỏi – đáp**: em hỏi, nó trả lời bằng văn bản. Từ khoảng năm 2025–2026 xuất hiện một lớp ứng dụng khác hẳn: người dùng **giao một mục tiêu** thay vì đặt câu hỏi, AI tự làm **chuỗi nhiều bước** — mở tệp, dùng các ứng dụng và công cụ được cho phép — rồi trả về một **sản phẩm hoàn chỉnh** để người xem lại. Lớp ứng dụng này gọi là **AI tác nhân (agentic AI)**. Hãng lớn nào cũng có sản phẩm đi theo hướng đó.",
+          items: [
+            {
+              emoji: "💻",
+              title: "Claude Code — tác nhân lập trình",
+              text: "Đọc được cả một dự án mã nguồn, tự sửa nhiều tệp cùng lúc, chạy thử rồi sửa tiếp lỗi phát sinh. *Chính công cụ này đang được dùng để xây trang web em đang học đây.*",
+            },
+            {
+              emoji: "🗂️",
+              title: "Claude Cowork — tác nhân cho công việc văn phòng",
+              text: "Anthropic ra bản xem trước tháng 1/2026, hướng tới **người làm văn phòng chứ không phải lập trình viên**. Tháng 7/2026 mở rộng lên web và di động: công việc vẫn chạy tiếp ngay cả khi người dùng đã gập máy tính lại.",
+            },
+          ],
+        },
+        {
           kind: "check",
           q: "Vì sao nói ChatGPT thể hiện “khả năng học” của AI?",
           options: [
@@ -212,6 +229,23 @@ const theory: LessonTheory = {
         {
           kind: "note",
           text: "Cần có giải pháp đảm bảo an toàn và **giám sát chặt chẽ quá trình phát triển AI**, sao cho AI chỉ mang lại cơ hội tiến bộ, nâng cao chất lượng cuộc sống, phục vụ lợi ích cộng đồng, **không gây hậu quả xấu cho xã hội**.",
+        },
+        {
+          kind: "update",
+          title: "Hai nguy cơ nữa nổi lên sau khi sách in",
+          text: "Bốn cảnh báo của SGK ở trên **vẫn đúng nguyên và vẫn là phần phải học**. Sau khi sách in, AI tạo sinh phát triển mạnh làm nổi lên thêm hai vấn đề nữa mà em gặp thường xuyên trên mạng.",
+          items: [
+            {
+              emoji: "🎭",
+              title: "Deepfake",
+              text: "AI tạo sinh làm được ảnh, video và **giọng nói giả gần như thật**. Kẻ xấu dùng để lừa đảo (giả giọng người thân gọi điện xin tiền), bôi nhọ danh dự, hoặc tung tin sai lệch. Gặp một video gây sốc, việc đầu tiên nên làm là **kiểm chứng nguồn**.",
+            },
+            {
+              emoji: "©️",
+              title: "Bản quyền dữ liệu huấn luyện",
+              text: "Mô hình học từ sách, bài báo, tranh ảnh, mã nguồn có sẵn trên Internet. Câu hỏi **tác giả của những tác phẩm đó có được hỏi ý kiến và trả công hay không** đang là tranh cãi pháp lí lớn ở nhiều nước.",
+            },
+          ],
         },
         {
           kind: "check",
