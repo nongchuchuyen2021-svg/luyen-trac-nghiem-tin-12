@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { CURRICULUM } from "@/data/curriculum";
 import { getQuestions } from "@/lib/questions";
+import { hasTheory } from "@/lib/theory";
 import { getProgress } from "@/lib/progress";
 import type { ProgressMap } from "@/lib/types";
 
@@ -105,6 +106,14 @@ export default function HomeClient() {
                             </p>
                           </div>
                           <div className="flex shrink-0 items-center gap-2">
+                            {hasTheory(lesson.id) && (
+                              <span
+                                title="Bài này đã có phần lý thuyết tự học"
+                                className="rounded-full bg-sea/10 px-2.5 py-1 font-mono text-xs font-medium text-sea-deep"
+                              >
+                                📖 lý thuyết
+                              </span>
+                            )}
                             {loaded && p && <ScoreBadge best={p.best} />}
                             <span className="text-ink-soft/40 transition group-hover:translate-x-0.5 group-hover:text-sea">
                               →

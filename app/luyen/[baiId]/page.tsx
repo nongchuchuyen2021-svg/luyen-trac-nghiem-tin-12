@@ -2,6 +2,7 @@ import { notFound } from "next/navigation";
 import { findLesson, CURRICULUM } from "@/data/curriculum";
 import { getQuestions } from "@/lib/questions";
 import { getTF, getEssay } from "@/lib/extras";
+import { getTheory } from "@/lib/theory";
 import LessonClient from "@/components/LessonClient";
 
 export function generateStaticParams() {
@@ -21,6 +22,7 @@ export default function LuyenPage({ params }: { params: { baiId: string } }) {
       lessonId={found.lesson.id}
       lessonTitle={found.lesson.title}
       topicName={found.topic.name}
+      theory={getTheory(params.baiId)}
       mcq={questions}
       tf={getTF(params.baiId)}
       essay={getEssay(params.baiId)}
