@@ -9,28 +9,24 @@ const extra: LessonExtra = {
         "Khi phân tích cấu trúc chung của một trang web điển hình trên Internet, chúng ta thường thấy sự lặp lại của một số thành phần cơ bản nhằm giúp người dùng dễ dàng định vị thông tin.",
       statements: [
         {
-          text:
-            "Một trang web đầy đủ luôn được cấu trúc gồm ba phần cơ bản: phần đầu trang, phần thân trang và phần chân trang.",
+          text: "Một trang web đầy đủ thường có ba phần: đầu trang, thân trang và chân trang.",
           answer: true,
           explain:
             "Đúng. Dễ nhận thấy mỗi trang web đầy đủ nhất đều có cấu trúc 3 phần chính này.",
         },
         {
-          text:
-            "Phần chân trang (footer) thường là nơi chứa các công cụ tìm kiếm và thanh điều hướng chính của toàn bộ trang web.",
+          text: "Công cụ tìm kiếm và thanh điều hướng chính của trang web thường đặt ở phần chân trang (footer).",
           answer: false,
           explain:
             "Sai. Công cụ tìm kiếm và thanh điều hướng (bảng chọn) thường được đặt ở phần đầu trang (header). Chân trang thường chứa thông tin bản quyền, liên hệ.",
         },
         {
-          text:
-            "Favicon là một biểu tượng nhỏ xuất hiện trên tab của trình duyệt web, đóng vai trò đại diện cho tất cả các trang web thuộc cùng một website.",
+          text: "Favicon là biểu tượng nhỏ xuất hiện trên tab trình duyệt, đại diện cho cả website.",
           answer: true,
           explain: "Đúng. Favicon là biểu tượng đại diện trên tab trình duyệt.",
         },
         {
-          text:
-            "Phần thân trang (body) chỉ được phép chứa dữ liệu dưới dạng văn bản (text) và không hỗ trợ hiển thị hình ảnh hay video.",
+          text: "Phần thân trang (body) chỉ chứa được văn bản, không hiển thị được hình ảnh hay video.",
           answer: false,
           explain:
             "Sai. Phần thân trang có thể chứa thông tin đa dạng: văn bản, hình ảnh, âm thanh, biểu mẫu, ứng dụng nhúng...",
@@ -43,29 +39,25 @@ const extra: LessonExtra = {
         "Trước khi bắt tay vào việc tạo các trang con và đưa nội dung lên mạng, người quản trị cần thực hiện các bước chuẩn bị kĩ lưỡng để đảm bảo dự án web thành công.",
       statements: [
         {
-          text:
-            "Bước đầu tiên trong quy trình là 'Định hình ý tưởng', bao gồm việc xác định rõ mục đích của trang web và đối tượng người dùng mà nó phục vụ.",
+          text: "Bước đầu tiên là 'Định hình ý tưởng': xác định mục đích trang web và đối tượng người dùng.",
           answer: true,
           explain:
             "Đúng. Việc xây dựng cần bắt đầu với phân tích mục đích và đối tượng phục vụ để từ đó đáp ứng đúng nhu cầu.",
         },
         {
-          text:
-            "Khi thiết kế mĩ thuật, luôn phải ưu tiên sử dụng phông chữ có chân (Serif) cho mọi nội dung vì chúng dễ đọc trên màn hình điện thoại di động.",
+          text: "Khi thiết kế mĩ thuật, nên ưu tiên phông chữ có chân (Serif) vì dễ đọc trên màn hình điện thoại.",
           answer: false,
           explain:
             "Sai. Phông chữ không chân (Sans Serif) mới là loại được khuyên dùng trên màn hình vì dễ đọc hơn phông chữ có chân (Serif).",
         },
         {
-          text:
-            "Một bảng màu hài hoà cho trang web nên kết hợp khoảng 5 màu pha trộn giữa các gam ấm, lạnh và trung tính, tránh sử dụng các màu quá gắt.",
+          text: "Bảng màu hài hoà cho trang web nên có khoảng 5 màu, pha trộn gam ấm, lạnh và trung tính.",
           answer: true,
           explain:
             "Đúng. Bảng màu thường có khoảng 5 màu pha trộn hài hoà, tránh màu sắc tương phản quá gắt gây phản cảm.",
         },
         {
-          text:
-            "Google Sites là một phần mềm xây dựng trang web tính phí, yêu cầu người dùng phải trả tiền theo tháng để duy trì tên miền.",
+          text: "Google Sites là phần mềm xây web tính phí, phải trả tiền theo tháng để duy trì tên miền.",
           answer: false,
           explain:
             "Sai. Google Sites là ứng dụng được Google cung cấp miễn phí trong hệ sinh thái của mình.",
@@ -75,7 +67,7 @@ const extra: LessonExtra = {
     {
       id: "b23-tf3",
       context:
-        "Nhóm bạn Mai chuẩn bị làm trang web giới thiệu chợ phiên Na Rì. Cả nhóm ngồi bàn với nhau: trang này dành cho khách du lịch từ phương xa tới, nên phần đầu trang sẽ đặt logo và thanh điều hướng, còn phần chân trang ghi địa chỉ liên hệ và thông tin bản quyền. Mai đề nghị dùng ngay Google Sites cho nhanh vì cả nhóm đều đã có tài khoản Google. Bạn Súa thì bảo phần nội dung chính nên chọn phông chữ có chân cho đẹp mắt, còn bảng màu thì cứ dùng thật nhiều màu vào cho bắt mắt người xem.",
+        "Nhóm bạn Mai làm trang web giới thiệu chợ phiên Na Rì, dành cho khách du lịch từ xa nên đầu trang đặt logo và thanh điều hướng, chân trang ghi địa chỉ liên hệ và bản quyền. Mai đề nghị dùng Google Sites vì cả nhóm đã có tài khoản Google. Bạn Súa thì bảo nội dung chính nên chọn phông chữ có chân cho đẹp, còn bảng màu cứ dùng thật nhiều màu cho bắt mắt.",
       statements: [
         {
           text: "Việc nhóm xác định trang web dành cho khách du lịch phương xa thuộc bước định hình ý tưởng.",
@@ -90,7 +82,7 @@ const extra: LessonExtra = {
             "Google Sites cho phép tự xây dựng website đa dạng mà không nhất thiết phải biết HTML và CSS; yêu cầu tiên quyết chỉ là người dùng có một tài khoản Google.",
         },
         {
-          text: "Góp ý của Súa là đúng: phần nội dung chính trên màn hình nên dùng phông chữ có chân (Serif) cho dễ đọc.",
+          text: "Góp ý của Súa là đúng: nên dùng phông có chân (Serif) cho nội dung chính trên màn hình.",
           answer: false,
           explain:
             "Ngược lại. Trên màn hình nên dùng phông không chân (Sans Serif) như Arial, Tahoma, Calibri vì nét đều, dễ đọc và đỡ mỏi mắt. Phông có chân (Serif) đẹp trên bản in giấy nhưng khó nhận diện hơn trên màn hình.",

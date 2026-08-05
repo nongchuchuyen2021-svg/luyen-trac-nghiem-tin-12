@@ -28,7 +28,7 @@ const extra: LessonExtra = {
             "Href bắt đầu bằng \"#\" là liên kết tới vị trí trong cùng trang web hiện tại, không phải trang khác. Cụ thể \"#gioi-thieu\" trỏ tới phần tử có id=\"gioi-thieu\" trong trang index.html.",
         },
         {
-          text: "Nhận xét của Dín là sai: chỉ liên kết đầu tiên là đường dẫn tuyệt đối, hai liên kết còn lại là đường dẫn tương đối.",
+          text: "Nhận xét của Dín là sai: chỉ liên kết đầu là tuyệt đối, hai liên kết còn lại là tương đối.",
           answer: true,
           explain:
             "Đường dẫn tuyệt đối phải có giao thức và tên miền. Liên kết 2 (\"san-pham/ao-dai.html\") và liên kết 3 (\"#gioi-thieu\") đều không có giao thức hay tên miền — đây là đường dẫn tương đối.",
@@ -48,7 +48,7 @@ const extra: LessonExtra = {
             "\"../\" có nghĩa là lùi lên thư mục cha, không phải thư mục hiện tại. Tệp bai_tap_on_tap.html nằm trong on_tap/ (con của web/), nên \"../\" đưa về web/ và \"../CLB.html\" trỏ tới tệp CLB.html nằm trong web/.",
         },
         {
-          text: "Thuộc tính id=\"lich-clb\" trong thẻ <h2> đặt đúng vị trí, có thể dùng href=\"#lich-clb\" để tạo liên kết tới đây trong cùng trang.",
+          text: "Thuộc tính id=\"lich-clb\" trong thẻ <h2> đặt đúng vị trí để liên kết tới đây bằng href=\"#lich-clb\".",
           answer: true,
           explain:
             "Để tạo liên kết tới vị trí trong cùng trang: Bước 1 — tạo phần tử có thuộc tính id tại vị trí đích. Bước 2 — dùng href=\"#id\" trong thẻ <a>. Đoạn mã đã làm đúng Bước 1; nếu muốn liên kết tới đây chỉ cần viết <a href=\"#lich-clb\">...</a>.",
@@ -60,7 +60,7 @@ const extra: LessonExtra = {
             "Thuộc tính href chỉ hoạt động với thẻ <a>, không hoạt động với <td> hay các thẻ khác. Để tạo liên kết trong ô bảng, phải đặt thẻ <a href=\"...\">...</a> bên trong cặp thẻ <td>...</td>.",
         },
         {
-          text: "Nếu muốn nhấn vào tên 'Sình' trong ô <td> để chuyển sang trang CLB.html, cần đặt <a href=\"../CLB.html\">Sình</a> bên trong thẻ <td>.",
+          text: "Muốn nhấn vào tên 'Sình' để mở trang CLB.html, cần đặt thẻ <a href=\"../CLB.html\"> bên trong <td>.",
           answer: true,
           explain:
             "Để tạo liên kết trong bất kỳ vị trí nào của trang — kể cả trong ô bảng <td> — đều phải dùng cặp thẻ <a href=\"...\">nội dung</a>. Thẻ <a> có thể đặt lồng bên trong <td>.",

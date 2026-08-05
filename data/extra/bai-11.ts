@@ -22,7 +22,7 @@ const extra: LessonExtra = {
             "<img> là thẻ đơn, không có và không cần thẻ kết thúc. Toàn bộ thông tin về ảnh được đặt trong các thuộc tính của chính thẻ đó: src (bắt buộc), alt, width, height.",
         },
         {
-          text: "Nhận xét của Páo không hoàn toàn chính xác: dù trang vẫn chạy được khi bỏ alt, nhưng alt nên được dùng để hỗ trợ hiển thị khi ảnh bị lỗi.",
+          text: "Nhận xét của Páo không hoàn toàn đúng: bỏ alt trang vẫn chạy, nhưng alt nên có để hỗ trợ khi ảnh lỗi.",
           answer: true,
           explain:
             "Thuộc tính alt cung cấp văn bản thay thế khi việc hiển thị ảnh bị lỗi, giúp người đọc hình dung nội dung bức ảnh. Dù không bắt buộc, SGK khuyến nghị nên sử dụng alt.",
@@ -42,13 +42,13 @@ const extra: LessonExtra = {
       code: '<video src="videos/bieu_dien.mp4"\n       width="640" height="360"\n       controls poster="images/biaalbum.jpg">\n</video>\n<audio src="audio/bai_hat.mp3" controls autoplay></audio>',
       statements: [
         {
-          text: "Thuộc tính controls trong cả <video> và <audio> đúng vai trò: hiển thị các nút điều khiển phát/tạm dừng, âm lượng,...",
+          text: "Thuộc tính controls trong cả <video> và <audio> đúng vai trò: hiện các nút phát/tạm dừng, âm lượng.",
           answer: true,
           explain:
             "Thuộc tính controls là thuộc tính boolean, dùng để trình duyệt hiển thị các thành phần điều khiển như nút phát/tạm dừng, điều khiển âm lượng,... Nên dùng để người xem có thể điều khiển trong quá trình phát.",
         },
         {
-          text: "Thuộc tính poster=\"images/biaalbum.jpg\" trong thẻ <video> dùng để hiển thị ảnh khi video chưa phát — cách dùng đúng.",
+          text: "Thuộc tính poster=\"images/biaalbum.jpg\" trong thẻ <video> hiện ảnh khi video chưa phát — dùng đúng.",
           answer: true,
           explain:
             "Thuộc tính poster cung cấp đường dẫn đến tệp ảnh dùng để hiển thị khi chưa chạy video — giống ảnh thumbnail/bìa video. Cách dùng của Mai là đúng.",
@@ -80,7 +80,7 @@ const extra: LessonExtra = {
             "Thẻ <iframe src=\"the_thao.html\"> tạo khung nội tuyến và hiển thị tài nguyên web chỉ định trong src — ở đây là trang the_thao.html.",
         },
         {
-          text: "Thuộc tính target=\"khung\" trong thẻ <a> dùng để chỉ định nơi mở tài liệu liên kết — tức là mở vào iframe có id=\"khung\".",
+          text: "Thuộc tính target=\"khung\" trong thẻ <a> dùng để mở tài liệu liên kết vào iframe có id=\"khung\".",
           answer: true,
           explain:
             "Thuộc tính target của thẻ <a> dùng để chỉ định nơi mở tài liệu được liên kết. Khi đặt target bằng id của iframe, nhấn liên kết sẽ mở nội dung vào trong khung nội tuyến đó.",

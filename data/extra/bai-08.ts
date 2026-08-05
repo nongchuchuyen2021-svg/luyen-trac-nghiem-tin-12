@@ -48,7 +48,7 @@ const extra: LessonExtra = {
             "Thẻ <sup> dùng để viết chỉ số trên (superscript), tức là số mũ. Nội dung bên trong <sup> sẽ được hiển thị nhỏ hơn và nằm cao hơn so với dòng chữ chính — đúng với yêu cầu viết số mũ 2.",
         },
         {
-          text: "Đề xuất của Páo dùng thẻ <strong> để viết số mũ là sai vì <strong> chỉ in đậm, không đưa chữ lên vị trí chỉ số trên.",
+          text: "Đề xuất dùng thẻ <strong> để viết số mũ của Páo là sai, vì <strong> chỉ in đậm.",
           answer: true,
           explain:
             "Thẻ <strong> chỉ làm chữ đậm hơn, không có tác dụng tạo chỉ số trên. Để viết số mũ đúng cách phải dùng thẻ <sup>; còn nếu cần chỉ số dưới thì dùng thẻ <sub>.",
@@ -74,7 +74,7 @@ const extra: LessonExtra = {
       code: '<h2>Rau cải Na Rì hữu cơ</h2>\n<p style="font-family:Arial;font-size:14px">Rau sạch, trồng không thuốc trừ sâu, thu hoạch mỗi sáng sớm.</p>\n<p>Giá niêm yết: <del>35.000đ</del>/kg &nbsp; Giá hôm nay: <strong>28.000đ</strong>/kg</p>',
       statements: [
         {
-          text: "Thẻ <h2> được dùng đúng chỗ: đây là tiêu đề cấp 2, phù hợp cho tên sản phẩm trong một trang đã có tiêu đề cấp 1 ở trên.",
+          text: "Thẻ <h2> dùng đúng chỗ: tên sản phẩm nên là tiêu đề cấp 2 trong trang đã có tiêu đề cấp 1.",
           answer: true,
           explain:
             "Sách hướng dẫn dùng <h1> cho tiêu đề chung của cả văn bản; các tiêu đề ở mức thấp hơn dùng <h2> và tiếp tục với các mức tiếp theo. Dùng <h2> cho tên sản phẩm trong một trang đã có <h1> là hợp lí về cấu trúc.",
@@ -86,13 +86,13 @@ const extra: LessonExtra = {
             "Thẻ tạo nét gạch giữa chữ để đánh dấu nội dung đã bị xoá là <del> — đúng thẻ đã dùng trong đoạn mã. Còn <u> là gạch chân (gạch phía dưới chữ); hơn nữa HTML5 không còn hỗ trợ <u>, muốn gạch chân thì dùng text-decoration trong thuộc tính style.",
         },
         {
-          text: "Đề xuất của Súa là đúng: thêm thuộc tính color=\"green\" trực tiếp vào thẻ <p> sẽ đổi màu chữ thành xanh lá cây.",
+          text: "Đề xuất của Súa là đúng: thêm color=\"green\" vào thẻ <p> sẽ đổi màu chữ thành xanh lá.",
           answer: false,
           explain:
             "Trong HTML5, cách đúng để đặt màu chữ là dùng thuộc tính style với cú pháp style=\"color:green\". Cú pháp color=\"green\" là của HTML4 cũ, không được khuyến khích và không hoạt động đúng trong HTML5.",
         },
         {
-          text: "Phần style trong thẻ <p> đầu tiên đặt đúng phông chữ Arial và cỡ chữ 14px, các cặp định dạng ngăn cách nhau bởi dấu chấm phẩy.",
+          text: "Phần style trong thẻ <p> đầu tiên đặt đúng phông Arial và cỡ chữ 14px, ngăn cách nhau bởi dấu chấm phẩy.",
           answer: true,
           explain:
             "Đoạn mã dùng style=\"font-family:Arial;font-size:14px\" — đây là cú pháp đúng: đặt nhiều định dạng phông đồng thời bằng cách ngăn cách các cặp tên:giá_trị bằng dấu chấm phẩy.",

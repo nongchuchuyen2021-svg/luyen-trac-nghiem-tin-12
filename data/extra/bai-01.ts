@@ -6,7 +6,7 @@ const extra: LessonExtra = {
     {
       id: "b1-tf1",
       context:
-        "Trong giờ Tin học, cô giáo cho lớp 12A kể ra những thiết bị \"tự động\" mà các em gặp hằng ngày. Bạn Sùng kể chiếc ấm điện ở nhà tự ngắt khi nước sôi. Bạn Dín kể cửa kính siêu thị dưới thị trấn tự mở khi có người tới gần. Bạn Mai kể guồng nước ở khe suối quê mình, nhờ dòng chảy tự nhiên mà quay và chuyển nước lên ruộng. Còn bạn Páo đưa điện thoại lên ngang mặt cho màn hình mở khoá, rồi bấm micro nói \"Mở bản nhạc hôm qua nghe\" thì máy phát đúng bài đó.",
+        "Cô giáo cho lớp 12A kể những thiết bị \"tự động\" gặp hằng ngày. Sùng kể ấm điện tự ngắt khi nước sôi. Dín kể cửa kính siêu thị tự mở khi có người tới gần. Mai kể guồng nước ở khe suối quê mình quay nhờ dòng chảy tự nhiên. Còn Páo đưa điện thoại lên mặt cho màn hình mở khoá, rồi nói \"Mở bản nhạc hôm qua nghe\" thì máy phát đúng bài.",
       statements: [
         {
           text: "Ấm điện tự ngắt, cửa siêu thị tự mở và guồng nước đều là hệ thống tự động hoá, không phải ứng dụng AI.",
@@ -68,7 +68,7 @@ const extra: LessonExtra = {
     {
       id: "b1-tf3",
       context:
-        "Hợp tác xã trồng cam ở xã bên vừa được hỗ trợ một ứng dụng điện thoại: bác nông dân chụp ảnh chiếc lá bị đốm rồi gửi lên, vài giây sau ứng dụng báo tên loại bệnh kèm cách xử lí. Cán bộ khuyến nông cho biết ứng dụng được xây dựng từ hơn năm mươi nghìn bức ảnh lá cây đã được các kĩ sư nông nghiệp gắn nhãn bệnh. Thời gian đầu ứng dụng còn hay nhầm, nhưng sau mỗi đợt bà con gửi thêm ảnh và báo lại kết quả đúng thì nó nhận dạng ngày một chính xác hơn.",
+        "Hợp tác xã trồng cam ở xã bên được hỗ trợ một ứng dụng điện thoại: bác nông dân chụp ảnh lá bị đốm rồi gửi lên, vài giây sau ứng dụng báo tên bệnh kèm cách xử lí. Ứng dụng được xây dựng từ hơn năm mươi nghìn ảnh lá cây đã được kĩ sư nông nghiệp gắn nhãn bệnh. Ban đầu còn hay nhầm, nhưng sau mỗi đợt bà con gửi thêm ảnh thì nó nhận dạng ngày một chính xác hơn.",
       statements: [
         {
           text: "Việc ứng dụng nhận dạng chính xác hơn sau mỗi đợt bổ sung ảnh thể hiện khả năng học của AI.",

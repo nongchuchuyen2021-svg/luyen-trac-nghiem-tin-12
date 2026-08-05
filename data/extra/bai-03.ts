@@ -7,7 +7,7 @@ const extra: LessonExtra = {
     {
       id: "b3-tf1",
       context:
-        "Phòng thực hành Tin học của Trường THPT Na Rì có 30 máy tính nối với nhau bằng cáp mạng. Ban đầu nhà trường định mua toàn bộ hub cho rẻ, nhưng thầy phụ trách phòng máy khuyên nên dùng switch. Thầy giải thích: khi cả lớp cùng nộp bài lên máy chủ một lúc, nếu dùng hub thì tín hiệu của các máy sẽ chồng lên nhau, phải truyền đi truyền lại nhiều lần rất chậm. Cuối cùng phòng máy được lắp hai switch nối tầng với nhau, còn chiếc hub cũ thì chuyển sang phòng thư viện chỉ có bốn máy.",
+        "Phòng thực hành Tin học của trường có 30 máy nối bằng cáp mạng. Nhà trường định mua toàn hub cho rẻ, nhưng thầy phụ trách khuyên dùng switch: khi cả lớp cùng nộp bài lên máy chủ, dùng hub thì tín hiệu các máy chồng lên nhau, phải truyền lại nhiều lần rất chậm. Cuối cùng phòng máy lắp hai switch nối tầng, còn hub cũ chuyển sang thư viện chỉ có bốn máy.",
       statements: [
         {
           text: "Hiện tượng tín hiệu của các máy chồng lên nhau khi cùng gửi dữ liệu gọi là xung đột tín hiệu.",
@@ -38,7 +38,7 @@ const extra: LessonExtra = {
     {
       id: "b3-tf2",
       context:
-        "Nhà bạn Dín ở xã vừa lắp Internet cáp quang. Nhân viên nhà mạng mang tới một hộp thiết bị nối vào sợi cáp quang chạy từ ngoài cột điện vào, rồi cắm một sợi cáp mạng từ hộp đó sang cổng màu xanh của chiếc router Wi-Fi sáu anten. Bốn cổng màu vàng còn lại trên router để cắm cáp cho máy tính bàn trong nhà. Dín thắc mắc vì sao phải có tới hai thiết bị chứ không gộp làm một, và vì sao điện thoại của cả nhà đều vào mạng được mà không phải cắm sợi dây nào.",
+        "Nhà Dín vừa lắp Internet cáp quang. Nhân viên nhà mạng mang tới một hộp thiết bị nối vào sợi cáp quang từ ngoài cột điện, rồi cắm cáp mạng từ hộp đó sang cổng xanh của router Wi-Fi sáu anten. Bốn cổng vàng còn lại để cắm cáp cho máy tính bàn. Dín thắc mắc vì sao phải có hai thiết bị chứ không gộp làm một, và vì sao điện thoại cả nhà vào mạng được mà không cắm dây nào.",
       statements: [
         {
           text: "Hộp thiết bị nối vào sợi cáp quang là modem, làm nhiệm vụ chuyển đổi giữa tín hiệu số và tín hiệu quang.",
@@ -69,7 +69,7 @@ const extra: LessonExtra = {
     {
       id: "b3-tf3",
       context:
-        "Bạn Páo mang chiếc máy tính để bàn cũ của gia đình tới phòng thực hành nhờ thầy giúp nối mạng. Thầy cắm một đầu cáp UTP vào cổng RJ45 phía sau máy, đầu kia vào switch của phòng, nhưng máy vẫn chưa vào được Internet. Thầy bảo còn phải đặt địa chỉ và khai báo cách kết nối ra ngoài cho máy nữa. Páo hỏi sao không cho máy này bắt Wi-Fi như chiếc máy tính xách tay của bạn Mai cho tiện, thầy nói máy để bàn thường không có sẵn khả năng đó.",
+        "Páo mang máy tính để bàn cũ tới phòng thực hành nhờ thầy nối mạng. Thầy cắm một đầu cáp UTP vào cổng RJ45 sau máy, đầu kia vào switch của phòng, nhưng máy vẫn chưa vào được Internet — còn phải đặt địa chỉ và khai báo cách kết nối ra ngoài. Páo hỏi sao không cho máy bắt Wi-Fi như máy xách tay của Mai cho tiện, thầy nói máy để bàn thường không có sẵn khả năng đó.",
       statements: [
         {
           text: "Cáp UTP có bốn đôi dây xoắn, hai đầu là giắc cắm RJ45 để cắm vào cổng RJ45.",

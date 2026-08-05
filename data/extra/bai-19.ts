@@ -22,7 +22,7 @@ const extra: LessonExtra = {
             "Sai. Phát triển một hệ điều hành mới thuộc về lĩnh vực nghiên cứu và kĩ sư phần mềm mức độ cao, không phải là công việc chính của kĩ thuật viên sửa chữa, bảo trì máy tính thông thường.",
         },
         {
-          text: "Nhiệm vụ 3 (Cài đặt phần mềm, cấu hình mạng) đòi hỏi kĩ thuật viên phải có kiến thức về phần mềm và mạng máy tính.",
+          text: "Nhiệm vụ 3 (Cài phần mềm, cấu hình mạng) đòi hỏi kĩ thuật viên có kiến thức phần mềm và mạng máy tính.",
           answer: true,
           explain:
             "Đúng. Cài đặt các phần mềm ứng dụng thuộc kiến thức phần mềm, còn cấu hình truy cập Internet đòi hỏi kiến thức cơ bản về kết nối và cấu hình mạng.",
@@ -42,25 +42,25 @@ const extra: LessonExtra = {
       code: "",
       statements: [
         {
-          text: "Mô hình làm việc từ xa yêu cầu kĩ thuật viên phải có kĩ năng chẩn đoán, sửa lỗi từ xa thay vì chỉ gặp mặt trực tiếp.",
+          text: "Làm việc từ xa đòi hỏi kĩ thuật viên phải có kĩ năng chẩn đoán, sửa lỗi từ xa.",
           answer: true,
           explain:
             "Đúng. Khi người dùng làm việc từ xa, kĩ thuật viên không thể lúc nào cũng có mặt vật lí ngay lập tức, do đó kĩ năng hỗ trợ từ xa qua các phần mềm điều khiển là rất cần thiết.",
         },
         {
-          text: "Sự bùng nổ của các thiết bị kết nối IoT sẽ làm suy giảm nghiêm trọng nhu cầu nhân lực của nghề sửa chữa máy tính.",
+          text: "Sự bùng nổ thiết bị IoT sẽ làm suy giảm nhu cầu nhân lực của nghề sửa chữa máy tính.",
           answer: false,
           explain:
             "Sai. Thực tế là sự bùng nổ của các thiết bị kết nối sẽ khiến nhu cầu duy trì, bảo dưỡng hệ thống tăng lên, làm tăng nhu cầu nhân lực của ngành này.",
         },
         {
-          text: "Vấn đề bảo mật thông tin ngày càng trở nên quan trọng và đòi hỏi người làm nghề bảo trì phải nắm vững các biện pháp an toàn mạng.",
+          text: "Bảo mật thông tin ngày càng quan trọng, đòi hỏi người làm nghề bảo trì nắm vững an toàn mạng.",
           answer: true,
           explain:
             "Đúng. Việc cấu hình phần mềm chống virus, bảo đảm an toàn dữ liệu và quét mã độc là yêu cầu cấp thiết để ngăn chặn các vụ xâm nhập trái phép hiện nay.",
         },
         {
-          text: "Sinh viên theo học sửa chữa máy tính ở bậc Đại học chỉ tập trung thực hành kĩ năng tay nghề mà không cần học nguyên lí hoạt động phức tạp.",
+          text: "Sinh viên học sửa chữa máy tính ở bậc Đại học chỉ thực hành tay nghề, không cần học nguyên lí.",
           answer: false,
           explain:
             "Sai. Bậc Cao đẳng, Trung cấp mới chú trọng chủ yếu vào rèn kĩ năng tay nghề. Bậc Đại học chú trọng vào nguyên lí, kĩ năng giải quyết các vấn đề phức tạp và có tính hệ thống cao hơn.",
@@ -73,7 +73,7 @@ const extra: LessonExtra = {
         "Anh Sùng, cựu học sinh của trường, về nói chuyện hướng nghiệp với lớp 12A. Anh kể mình học hệ Cao đẳng ngành Công nghệ kĩ thuật máy tính, ra trường làm ở một cửa hàng máy tính dưới thị trấn. Một ngày của anh thường gồm: sáng thay ổ cứng cho khách, trưa cài lại hệ điều hành và quét mã độc cho máy của một trường học, chiều sang công ty cấu hình lại mạng nội bộ, tối trả lời tin nhắn hướng dẫn khách tự khắc phục vài lỗi nhỏ. Anh nói nghề này bận nên phải biết sắp xếp thời gian, và học xong rồi vẫn phải tự đọc thêm liên tục vì thiết bị đổi mới rất nhanh.",
       statements: [
         {
-          text: "Việc anh Sùng vừa thay ổ cứng vừa cài lại hệ điều hành cho thấy nghề này không tách rời phần cứng với phần mềm.",
+          text: "Anh Sùng vừa thay ổ cứng vừa cài hệ điều hành cho thấy nghề này không tách rời phần cứng với phần mềm.",
           answer: true,
           explain:
             "Máy tính chỉ hoạt động được khi phần cứng và phần mềm phối hợp với nhau, nên trong quá trình sửa chữa và bảo trì thì hai mảng công việc này không thể tách rời.",

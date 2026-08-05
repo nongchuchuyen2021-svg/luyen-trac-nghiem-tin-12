@@ -10,25 +10,25 @@ const extra: LessonExtra = {
       code: "",
       statements: [
         {
-          text: "Chuyên gia quản trị mạng sẽ chịu trách nhiệm chính trong việc cài đặt và cấu hình phần mềm kế toán trên máy tính của từng nhân viên.",
+          text: "Cài đặt và cấu hình phần mềm kế toán cho từng máy nhân viên là nhiệm vụ chính của chuyên gia quản trị mạng.",
           answer: false,
           explain:
             "Sai. Cài đặt phần mềm ứng dụng trên máy tính cá nhân thuộc về chuyên gia hỗ trợ kĩ thuật hoặc quản trị hệ thống, không phải chuyên môn chính của chuyên gia quản trị mạng (quản lí hạ tầng mạng, thiết bị mạng).",
         },
         {
-          text: "Chuyên gia bảo mật hệ thống thông tin sẽ thiết lập tường lửa (firewall) và hệ thống phát hiện xâm nhập (IDS) để bảo vệ dữ liệu đám mây của tập đoàn.",
+          text: "Chuyên gia bảo mật thiết lập tường lửa và hệ thống phát hiện xâm nhập (IDS) để bảo vệ dữ liệu đám mây.",
           answer: true,
           explain:
             "Đúng. Nhiệm vụ của chuyên gia bảo mật là triển khai các biện pháp bảo mật, giám sát phát hiện xâm nhập (IDS, tường lửa) để bảo vệ hệ thống.",
         },
         {
-          text: "Người làm nghề quản trị và bảo trì hệ thống phải theo dõi hiệu suất hoạt động của các máy chủ đám mây nhằm đảm bảo chúng luôn trong trạng thái ổn định nhất.",
+          text: "Người quản trị và bảo trì hệ thống phải theo dõi hiệu suất máy chủ đám mây để hệ thống luôn ổn định.",
           answer: true,
           explain:
             "Đúng. Quản trị và bảo trì hệ thống là quản lí toàn bộ hệ thống (kể cả máy chủ đám mây), theo dõi hiệu suất và duy trì tính ổn định.",
         },
         {
-          text: "Các chuyên gia này chỉ cần nắm vững kiến thức kĩ thuật mà không cần quan tâm đến các điều luật quốc tế về quyền riêng tư dữ liệu.",
+          text: "Các chuyên gia chỉ cần giỏi kĩ thuật, không cần quan tâm luật quốc tế về quyền riêng tư dữ liệu.",
           answer: false,
           explain:
             "Sai. Kiến thức về Luật pháp và tuân thủ quy định là cực kì cần thiết để đảm bảo hệ thống không vi phạm các tiêu chuẩn quốc tế về bảo mật và quyền riêng tư dữ liệu (ví dụ GDPR).",
@@ -42,25 +42,25 @@ const extra: LessonExtra = {
       code: "",
       statements: [
         {
-          text: "Ngành học của A là một trong những ngành đào tạo phù hợp, liên quan trực tiếp đến nhóm nghề quản trị mạng và bảo mật thông tin.",
+          text: "Ngành học của A phù hợp và liên quan trực tiếp đến nhóm nghề quản trị mạng, bảo mật thông tin.",
           answer: true,
           explain:
             "Đúng. Ngành 'Mạng máy tính và truyền thông dữ liệu' cung cấp kiến thức nền tảng vững chắc để phát triển thành chuyên gia mạng hoặc an ninh mạng.",
         },
         {
-          text: "A bắt buộc phải tìm hiểu cách thức hoạt động của các cuộc tấn công mạng, ví dụ như tấn công DoS, để biết cách phòng thủ hiệu quả.",
+          text: "A cần tìm hiểu cách các cuộc tấn công mạng như DoS hoạt động để biết cách phòng thủ.",
           answer: true,
           explain:
             "Đúng. Để bảo vệ hệ thống, chuyên gia an ninh mạng phải nắm được các phương thức tấn công (như DoS, lỗ hổng) để triển khai biện pháp ngăn chặn (như IDS).",
         },
         {
-          text: "Để thành công, A chỉ cần trang bị các chứng chỉ kĩ năng cứng mà không cần trau dồi khả năng làm việc nhóm hay giao tiếp.",
+          text: "Để thành công, A chỉ cần chứng chỉ kĩ năng cứng, không cần giao tiếp hay làm việc nhóm.",
           answer: false,
           explain:
             "Sai. Bên cạnh kiến thức kĩ thuật, kĩ năng mềm như giao tiếp, quản lí thời gian, làm việc nhóm là rất cần thiết để nâng cao hiệu quả làm việc.",
         },
         {
-          text: "Trong thời đại hiện nay, do có sự hỗ trợ của trí tuệ nhân tạo (AI), A sẽ không cần phải tự mình học hỏi thêm kiến thức mới sau khi tốt nghiệp.",
+          text: "Nhờ có AI hỗ trợ, A sẽ không cần tự học thêm kiến thức mới sau khi tốt nghiệp.",
           answer: false,
           explain:
             "Sai. Kĩ năng tự nghiên cứu, học hỏi là yếu tố bắt buộc vì công nghệ liên tục thay đổi. AI chỉ là công cụ hỗ trợ, người quản trị vẫn phải không ngừng cập nhật để làm chủ công cụ đó.",
@@ -70,10 +70,10 @@ const extra: LessonExtra = {
     {
       id: "b20-tf3",
       context:
-        "Trường THPT Na Rì lắp thêm một phòng máy mới và hệ thống camera nối Internet. Thầy phụ trách công nghệ thông tin phải cấu hình bộ định tuyến, theo dõi hiệu suất đường truyền và xử lí sự cố để mạng luôn chạy ổn định; đồng thời thầy cài đặt một hệ thống phát hiện xâm nhập để được cảnh báo khi có truy cập bất thường vào máy chủ của trường. Thầy kể lại vụ mã độc WannaCry năm 2017 khiến hàng loạt cơ quan trên thế giới tê liệt, rồi nhắc học sinh rằng mỗi chiếc camera nối mạng cũng là một cửa ngõ có thể bị tấn công.",
+        "Trường THPT Na Rì lắp thêm một phòng máy mới và hệ thống camera nối Internet. Thầy phụ trách công nghệ thông tin cấu hình bộ định tuyến, theo dõi hiệu suất và xử lí sự cố để mạng luôn ổn định, đồng thời cài một hệ thống phát hiện xâm nhập để cảnh báo truy cập bất thường. Thầy nhắc tới vụ mã độc WannaCry năm 2017 từng làm tê liệt nhiều cơ quan trên thế giới, và mỗi chiếc camera nối mạng cũng là một cửa ngõ có thể bị tấn công.",
       statements: [
         {
-          text: "Việc cấu hình bộ định tuyến, theo dõi hiệu suất và xử lí sự cố đường truyền thuộc công việc quản trị mạng.",
+          text: "Cấu hình bộ định tuyến, theo dõi hiệu suất và xử lí sự cố đường truyền là việc của quản trị mạng.",
           answer: true,
           explain:
             "Đây đúng là nhiệm vụ của người quản trị mạng: cài đặt, cấu hình, theo dõi hiệu suất và xử lí các sự cố để bảo đảm mạng lưới luôn hoạt động ổn định.",

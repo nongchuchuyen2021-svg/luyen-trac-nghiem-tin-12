@@ -9,7 +9,7 @@ const extra: LessonExtra = {
     {
       id: "b6-tf1",
       context:
-        "Đợt mưa lũ, đường vào xã sạt lở nên lớp 12A phải học trực tuyến một tuần. Cô giáo dạy qua phần mềm hội nghị truyền hình, các bạn ở bản xa vẫn theo được bài mà không phải đi bộ mấy cây số đường trơn. Nhưng bạn Dín kể có hôm mạng chập chờn, cô giảng đứt quãng nên phải học lại. Bạn Mai thì nhắn tin hỏi bài một bạn khác, viết cụt lủn quá nên bạn kia tưởng Mai đang giận, hai bạn hiểu lầm nhau mất mấy hôm mới nói lại được với nhau.",
+        "Đợt mưa lũ, đường vào xã sạt lở nên lớp 12A học trực tuyến một tuần qua phần mềm hội nghị truyền hình; các bạn ở bản xa vẫn theo được bài mà không phải đi bộ mấy cây số đường trơn. Nhưng Dín kể có hôm mạng chập chờn, cô giảng đứt quãng phải học lại. Mai thì nhắn tin hỏi bài một bạn, viết cụt lủn quá nên bạn kia tưởng Mai đang giận, hai bạn hiểu lầm nhau mấy hôm mới nói lại được.",
       statements: [
         {
           text: "Việc các bạn ở bản xa vẫn học được mà không phải đi bộ thể hiện ưu điểm thuận tiện, tiết kiệm.",
@@ -40,7 +40,7 @@ const extra: LessonExtra = {
     {
       id: "b6-tf2",
       context:
-        "Giờ ra chơi, hai bạn lớp bên xô xát nhau. Một bạn ở lớp 12A quay được cả đoạn video và định đăng lên mạng xã hội cho \"mọi người biết\". Bạn Páo ngăn lại, nói rằng đăng lên sẽ làm hai bạn kia xấu hổ và câu chuyện sẽ lan đi không kiểm soát được. Cũng hôm đó, một bạn khác chụp trộm trang nhật kí của bạn cùng bàn — trang viết về những điều bạn ấy không hài lòng với một bạn trong lớp — rồi gửi cho mấy bạn khác xem cho vui.",
+        "Giờ ra chơi, hai bạn lớp bên xô xát nhau. Một bạn lớp 12A quay được video và định đăng lên mạng xã hội cho \"mọi người biết\". Páo ngăn lại, nói đăng lên sẽ làm hai bạn kia xấu hổ và câu chuyện lan đi không kiểm soát được. Cũng hôm đó, một bạn khác chụp trộm trang nhật kí của bạn cùng bàn — viết về điều bạn ấy không hài lòng với một bạn trong lớp — rồi gửi cho mấy bạn khác xem cho vui.",
       statements: [
         {
           text: "Việc Páo ngăn không cho đăng đoạn video lên mạng là một biểu hiện của ứng xử nhân văn.",
@@ -71,7 +71,7 @@ const extra: LessonExtra = {
     {
       id: "b6-tf3",
       context:
-        "Trên nhóm Zalo của thôn bỗng lan truyền một đoạn video: một người rất giống ông trưởng thôn đang kêu gọi bà con chuyển tiền vào một tài khoản để ủng hộ đồng bào vùng lũ. Khuôn mặt và giọng nói đều giống thật, nhiều người định chuyển tiền ngay trong buổi tối. Bạn Páo xem kĩ thì thấy khẩu hình chưa khớp với tiếng và không ai tìm được bản gốc của đoạn video. Páo gọi điện hỏi trực tiếp thì ông trưởng thôn khẳng định mình chưa từng quay đoạn video nào như vậy.",
+        "Trên nhóm Zalo của thôn lan truyền một video: người rất giống ông trưởng thôn kêu gọi bà con chuyển tiền vào một tài khoản để ủng hộ đồng bào vùng lũ. Mặt và giọng đều giống thật, nhiều người định chuyển tiền ngay. Páo xem kĩ thấy khẩu hình chưa khớp tiếng, không ai tìm được bản gốc. Páo gọi hỏi trực tiếp thì ông trưởng thôn khẳng định chưa từng quay video nào như vậy.",
       statements: [
         {
           text: "Việc Páo kiểm tra tính chính xác của thông tin trước khi tin và chia sẻ là đúng nguyên tắc ứng xử trên mạng.",

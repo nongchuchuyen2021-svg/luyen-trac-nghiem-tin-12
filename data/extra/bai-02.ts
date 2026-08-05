@@ -7,7 +7,7 @@ const extra: LessonExtra = {
     {
       id: "b2-tf1",
       context:
-        "Trung tâm y tế huyện vừa được trang bị một phần mềm hỗ trợ đọc ảnh chụp X-quang phổi. Bác sĩ chụp phim rồi đưa lên phần mềm; sau vài giây, phần mềm làm nổi bật vùng nghi ngờ tổn thương và ghi mức độ nghi ngờ theo phần trăm. Phần mềm được xây dựng từ tri thức của nhiều bác sĩ chẩn đoán hình ảnh cùng hàng trăm nghìn phim đã có kết luận. Dù vậy, bác sĩ ở trung tâm vẫn xem lại từng phim và tự đưa ra kết luận cuối cùng, phần mềm chỉ đóng vai trò gợi ý.",
+        "Trung tâm y tế huyện được trang bị một phần mềm hỗ trợ đọc ảnh X-quang phổi. Bác sĩ chụp phim đưa lên, vài giây sau phần mềm làm nổi bật vùng nghi tổn thương kèm mức độ nghi ngờ theo phần trăm. Phần mềm được xây dựng từ tri thức của nhiều bác sĩ cùng hàng trăm nghìn phim đã có kết luận. Dù vậy, bác sĩ vẫn xem lại từng phim và tự kết luận, phần mềm chỉ gợi ý.",
       statements: [
         {
           text: "Đây là ứng dụng AI trong lĩnh vực y học và chăm sóc sức khoẻ.",
@@ -38,7 +38,7 @@ const extra: LessonExtra = {
     {
       id: "b2-tf2",
       context:
-        "Bạn Mai lớp 12A dùng ChatGPT để chuẩn bị bài thuyết trình về nghề nghiệp tương lai. Mai gõ một câu hỏi dài, ChatGPT trả lời trôi chảy; Mai hỏi lại theo hướng khác thì nó đưa ra câu trả lời khác hẳn, bám đúng ý mới. Khi Mai nhờ xem giúp một đoạn chương trình Python bị lỗi, nó chỉ ra dòng lệnh sai và giải thích vì sao sai. Nhưng lúc Mai hỏi về số liệu dân số xã mình thì nó đưa ra một con số, Mai tra lại trên cổng thông tin của xã thì thấy không khớp.",
+        "Mai lớp 12A dùng ChatGPT chuẩn bị bài thuyết trình về nghề nghiệp tương lai. Mai hỏi một câu, ChatGPT trả lời trôi chảy; hỏi lại theo hướng khác thì nó đưa ra câu trả lời khác hẳn, bám đúng ý mới. Khi Mai nhờ xem một đoạn Python bị lỗi, nó chỉ ra dòng sai và giải thích vì sao. Nhưng lúc hỏi số liệu dân số xã mình thì nó đưa ra một con số không khớp với cổng thông tin của xã.",
       statements: [
         {
           text: "Việc ChatGPT đưa ra câu trả lời khác nhau tuỳ theo ngữ cảnh và yêu cầu cho thấy khả năng suy luận của nó.",
@@ -69,7 +69,7 @@ const extra: LessonExtra = {
     {
       id: "b2-tf3",
       context:
-        "Xã triển khai một ứng dụng dùng AI để xét duyệt hồ sơ vay vốn cho các hộ nông dân. Người vay nhập thông tin cá nhân, thu nhập, diện tích đất canh tác; hệ thống trả về \"đồng ý\" hoặc \"từ chối\" kèm một điểm số. Hồ sơ nhà bạn Dín bị từ chối. Bố Dín hỏi cán bộ vì sao thì cán bộ cũng không giải thích được, chỉ nói \"phần mềm nó tính ra vậy\". Ngoài ra, mỗi lần nộp hồ sơ, ứng dụng lại yêu cầu chụp ảnh giấy tờ tuỳ thân và xin quyền truy cập danh bạ điện thoại.",
+        "Xã triển khai một ứng dụng dùng AI để xét duyệt hồ sơ vay vốn cho hộ nông dân. Người vay nhập thông tin cá nhân, thu nhập, diện tích đất; hệ thống trả về \"đồng ý\" hoặc \"từ chối\" kèm điểm số. Hồ sơ nhà Dín bị từ chối, bố Dín hỏi cán bộ thì cán bộ cũng chỉ nói \"phần mềm nó tính ra vậy\". Mỗi lần nộp hồ sơ, ứng dụng còn yêu cầu chụp ảnh giấy tờ tuỳ thân và xin quyền truy cập danh bạ điện thoại.",
       statements: [
         {
           text: "Việc không ai giải thích được vì sao hệ thống từ chối là biểu hiện của nguy cơ thiếu minh bạch.",

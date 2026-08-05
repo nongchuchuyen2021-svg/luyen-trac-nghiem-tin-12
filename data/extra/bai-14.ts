@@ -10,13 +10,13 @@ const extra: LessonExtra = {
       code: "",
       statements: [
         {
-          text: "Trong bộ chọn body, trình duyệt sẽ luôn luôn sử dụng phông chữ serif để hiển thị văn bản, bỏ qua Arial và Times New Roman.",
+          text: "Trong bộ chọn body, trình duyệt luôn dùng phông serif, bỏ qua Arial và Times New Roman.",
           answer: false,
           explain:
             "Trình duyệt sẽ tìm từ trái sang phải: đầu tiên tìm Arial, nếu không có mới tìm \"Times New Roman\", cuối cùng mới dùng phông serif mặc định. Không phải luôn dùng serif.",
         },
         {
-          text: "Tên phông \"Times New Roman\" và \"Comic Sans MS\" bắt buộc phải đặt trong dấu nháy (đơn hoặc kép) vì chúng có chứa dấu cách.",
+          text: "Tên phông \"Times New Roman\" và \"Comic Sans MS\" phải đặt trong dấu nháy vì có chứa dấu cách.",
           answer: true,
           explain:
             "SGK lưu ý: Nếu tên phông chữ có chứa dấu cách thì cần đặt trong hai dấu nháy kép (hoặc nháy đơn). Các phông không có dấu cách (như Arial) thì không cần.",
@@ -48,19 +48,19 @@ const extra: LessonExtra = {
             "Kí hiệu * dùng trong bộ chọn có ý nghĩa là phần tử bất kì. Mức độ ưu tiên của * là thấp nhất, chỉ áp dụng khi không có mẫu định dạng nào khác cho phần tử đó.",
         },
         {
-          text: "Theo nguyên tắc cascading, quy định p { color: black; } viết trước sẽ ghi đè lên quy định p { color: blue; } viết sau.",
+          text: "Theo cascading, quy định p { color: black; } viết trước sẽ ghi đè p { color: blue; } viết sau.",
           answer: false,
           explain:
             "Ngược lại mới đúng. Khi có nhiều mẫu định dạng cạnh tranh ở cùng mức ưu tiên, trình duyệt áp dụng mẫu được viết CUỐI CÙNG. Do đó blue ghi đè black chứ không phải black ghi đè blue.",
         },
         {
-          text: "Kết quả cuối cùng, văn bản trong thẻ <p> sẽ có màu xanh lá (green) vì bộ chọn * có tác dụng ưu tiên ghi đè mọi định dạng cụ thể.",
+          text: "Văn bản trong thẻ <p> sẽ có màu xanh lá (green) vì bộ chọn * ghi đè mọi định dạng cụ thể.",
           answer: false,
           explain:
             "Sai hoàn toàn. Bộ chọn * có mức ưu tiên thấp nhất. Quy định cụ thể (p) luôn ưu tiên cao hơn (*).",
         },
         {
-          text: "Kết quả thực tế, văn bản trong thẻ <p> sẽ có màu đỏ (red) vì quy định này chứa kí hiệu !important, giúp nó có mức ưu tiên cao nhất, bất chấp vị trí viết.",
+          text: "Văn bản trong thẻ <p> sẽ có màu đỏ (red) vì quy định đó có !important, mức ưu tiên cao nhất.",
           answer: true,
           explain:
             "Kí hiệu !important mang lại mức ưu tiên cao nhất mà không phụ thuộc vào vị trí của mẫu trong CSS. Vì vậy, color: red !important; sẽ thắng color: blue; dù blue viết sau.",
