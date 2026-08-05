@@ -547,6 +547,200 @@ function ModemSoTuongTu() {
   );
 }
 
+// ── Địa chỉ IP: 4 byte nhị phân thành 4 số thập phân (Bài 4) ────────────────
+function DiaChiIp() {
+  const nhiPhan = ["00001010", "00011001", "00000000", "11111111"];
+  const thapPhan = ["10", "25", "0", "255"];
+  const colX = [10, 170, 330, 490]; // 4 cột rộng 140, cách nhau 20
+
+  return (
+    <Frame viewBox="0 0 640 250">
+      <Lines x={320} y={22} lines={["Địa chỉ IP (IPv4) = 4 byte = 32 bit"]} size={14} weight={700} fill={C.ink} />
+
+      {nhiPhan.map((b, i) => (
+        <g key={b + i}>
+          <rect x={colX[i]} y="36" width="140" height="34" rx="10" fill={C.sea} fillOpacity="0.09" stroke={C.sea} strokeWidth="1.5" />
+          <text
+            x={colX[i] + 70}
+            y="59"
+            fontSize="14"
+            textAnchor="middle"
+            fill={C.seaDeep}
+            fontWeight="600"
+            style={{ fontFamily: "var(--font-mono)" }}
+          >
+            {b}
+          </text>
+          <Lines x={colX[i] + 70} y={86} lines={["1 byte = 8 bit"]} size={12} />
+          <path d={`M${colX[i] + 70} 94 L ${colX[i] + 70} 118`} stroke={C.coral} strokeWidth="2.5" fill="none" markerEnd="url(#arrow-coral)" />
+          <rect x={colX[i] + 38} y="124" width="64" height="40" rx="12" fill={C.coral} fillOpacity="0.12" stroke={C.coral} strokeWidth="2" />
+          <text x={colX[i] + 70} y="151" fontSize="19" textAnchor="middle" fill={C.coral} fontWeight="700">
+            {thapPhan[i]}
+          </text>
+        </g>
+      ))}
+
+      {/* Dấu chấm ngăn giữa các byte */}
+      {[160, 320, 480].map((x) => (
+        <text key={x} x={x} y="152" fontSize="22" textAnchor="middle" fill={C.coral} fontWeight="700">
+          .
+        </text>
+      ))}
+
+      <rect x="170" y="182" width="300" height="42" rx="14" fill={C.gold} fillOpacity="0.14" />
+      <text x="320" y="210" fontSize="21" textAnchor="middle" fill={C.goldDeep} fontWeight="700">
+        10.25.0.255
+      </text>
+      <Lines
+        x={320}
+        y={240}
+        lines={["cách viết “dot decimal”: mỗi byte một số thập phân, ngăn nhau bởi dấu chấm"]}
+        size={12}
+      />
+    </Frame>
+  );
+}
+
+// ── Bảng định tuyến và cổng mặc định (Bài 4) ────────────────────────────────
+function BangDinhTuyen() {
+  const rows = [
+    { dia: "126.13.*.*", cong: "1", ghi: "Mỹ, cổng mặc định", mac: true },
+    { dia: "172.18.*.*", cong: "2", ghi: "Hồng Kông", mac: false },
+    { dia: "113.23.12.*", cong: "3", ghi: "Singapore", mac: false },
+    { dia: "230.17.*.*", cong: "4", ghi: "Thái Lan", mac: false },
+  ];
+
+  return (
+    <Frame viewBox="0 0 640 330">
+      <Lines
+        x={320}
+        y={26}
+        lines={["Bảng định tuyến của một router  (dấu * = bất cứ giá trị nào)"]}
+        size={13.5}
+        weight={700}
+        fill={C.ink}
+      />
+
+      {/* Hàng tiêu đề */}
+      <rect x="60" y="42" width="520" height="34" rx="8" fill={C.sea} />
+      <Lines x={72} y={64} lines={["Địa chỉ"]} size={12.5} weight={700} fill={C.white} anchor="start" />
+      <Lines x={285} y={64} lines={["Cổng"]} size={12.5} weight={700} fill={C.white} anchor="middle" />
+      <Lines x={342} y={64} lines={["Ghi chú"]} size={12.5} weight={700} fill={C.white} anchor="start" />
+
+      {rows.map((r, i) => {
+        const y = 76 + i * 34;
+        return (
+          <g key={r.dia}>
+            <rect
+              x="60"
+              y={y}
+              width="520"
+              height="34"
+              fill={r.mac ? C.gold : C.white}
+              fillOpacity={r.mac ? 0.18 : 1}
+              stroke={C.line}
+              strokeWidth="1.5"
+            />
+            <text
+              x="72"
+              y={y + 22}
+              fontSize="13"
+              fill={C.ink}
+              fontWeight="600"
+              style={{ fontFamily: "var(--font-mono)" }}
+            >
+              {r.dia}
+            </text>
+            <Lines x={285} y={y + 22} lines={[r.cong]} size={13} weight={700} fill={C.seaDeep} />
+            <Lines x={342} y={y + 22} lines={[r.ghi]} size={12.5} anchor="start" />
+          </g>
+        );
+      })}
+
+      {/* Ví dụ tra bảng */}
+      <rect x="60" y="230" width="520" height="40" rx="14" fill={C.sea} fillOpacity="0.09" stroke={C.sea} strokeWidth="1.5" />
+      <Lines
+        x={320}
+        y={255}
+        lines={["Gói gửi tới 172.18.4.9  →  khớp dòng 172.18.*.*  →  đi ra cổng 2"]}
+        size={12.5}
+        weight={600}
+        fill={C.seaDeep}
+      />
+
+      <rect x="60" y="280" width="520" height="40" rx="14" fill={C.gold} fillOpacity="0.16" />
+      <Lines
+        x={320}
+        y={305}
+        lines={["Địa chỉ không khớp dòng nào  →  đi theo CỔNG MẶC ĐỊNH (cổng 1)"]}
+        size={12.5}
+        weight={600}
+        fill={C.goldDeep}
+      />
+    </Frame>
+  );
+}
+
+// ── TCP cắt dữ liệu thành gói, đánh số rồi ráp lại (Bài 4) ──────────────────
+function TcpCatGoi() {
+  const goiX = [54, 192, 330, 468]; // 4 gói rộng 118, cách nhau 20
+  const denNoi = ["Gói 3", "Gói 1", "Gói 4", "Gói 2"];
+
+  return (
+    <Frame viewBox="0 0 640 380">
+      <rect x="40" y="8" width="560" height="42" rx="14" fill={C.leaf} fillOpacity="0.09" stroke={C.leaf} strokeWidth="2" />
+      <Lines x={320} y={34} lines={["📤 Nơi gửi — dữ liệu của một ứng dụng"]} size={13.5} weight={700} fill={C.leafDeep} />
+
+      <path d="M320 52 L 320 74" stroke={C.sea} strokeWidth="2.5" fill="none" markerEnd="url(#arrow)" />
+
+      {goiX.map((x, i) => (
+        <g key={`g${i}`}>
+          <rect x={x} y="80" width="118" height="40" rx="12" fill={C.sea} fillOpacity="0.12" stroke={C.sea} strokeWidth="2" />
+          <Lines x={x + 59} y={105} lines={[`Gói ${i + 1}`]} size={13} weight={700} fill={C.seaDeep} />
+        </g>
+      ))}
+      <Lines
+        x={320}
+        y={140}
+        lines={["TCP cắt dữ liệu thành các gói có độ dài xác định và ĐÁNH SỐ theo từng ứng dụng"]}
+        size={12}
+      />
+
+      <rect x="40" y="154" width="560" height="58" rx="20" fill={C.sea} fillOpacity="0.07" stroke={C.sea} strokeWidth="2" strokeDasharray="7 5" />
+      <Lines
+        x={320}
+        y={180}
+        lines={["🌐 Mỗi gói có thể đi một đường khác nhau, lưu ở các router với thời gian khác nhau", "→ gói gửi sau lại có thể đến trước"]}
+        size={12}
+        gap={17}
+        fill={C.ink}
+      />
+
+      <path d="M320 214 L 320 236" stroke={C.sea} strokeWidth="2.5" fill="none" markerEnd="url(#arrow)" />
+
+      {goiX.map((x, i) => (
+        <g key={`d${i}`}>
+          <rect x={x} y="242" width="118" height="40" rx="12" fill={C.coral} fillOpacity="0.12" stroke={C.coral} strokeWidth="2" />
+          <Lines x={x + 59} y={267} lines={[denNoi[i]]} size={13} weight={700} fill={C.coral} />
+        </g>
+      ))}
+      <Lines x={320} y={302} lines={["📥 Nơi nhận — các gói đến KHÔNG đúng thứ tự"]} size={12} weight={600} fill={C.coral} />
+
+      <path d="M320 310 L 320 330" stroke={C.sea} strokeWidth="2.5" fill="none" markerEnd="url(#arrow)" />
+
+      <rect x="40" y="336" width="560" height="42" rx="14" fill={C.leaf} fillOpacity="0.12" stroke={C.leaf} strokeWidth="2" />
+      <Lines
+        x={320}
+        y={362}
+        lines={["✅ TCP ráp lại đúng thứ tự 1 → 2 → 3 → 4 nhờ số đã đánh, đúng từng ứng dụng"]}
+        size={12.5}
+        weight={600}
+        fill={C.leafDeep}
+      />
+    </Frame>
+  );
+}
+
 const DIAGRAMS: Record<string, () => JSX.Element> = {
   "turing-test": TuringTest,
   "ai-hep-va-manh": AiHepVaManh,
@@ -555,6 +749,9 @@ const DIAGRAMS: Record<string, () => JSX.Element> = {
   "hub-vs-switch": HubVsSwitch,
   "router-lan-wan": RouterLanWan,
   "modem-so-tuong-tu": ModemSoTuongTu,
+  "dia-chi-ip": DiaChiIp,
+  "bang-dinh-tuyen": BangDinhTuyen,
+  "tcp-cat-goi": TcpCatGoi,
 };
 
 export default function Diagram({ name }: { name: string }) {
