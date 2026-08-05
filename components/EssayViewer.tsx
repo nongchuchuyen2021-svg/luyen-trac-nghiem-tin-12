@@ -32,7 +32,7 @@ export default function EssayViewer({
         <div className="flex items-center justify-between gap-3">
           <button
             onClick={onBack}
-            className="rounded-full border border-ink/10 bg-white px-3 py-1.5 font-mono text-xs text-ink-soft transition hover:border-grape/40 hover:text-grape-deep"
+            className="rounded-full border border-ink/10 bg-white px-3 py-1.5 font-mono text-xs text-ink-soft transition hover:border-sea/40 hover:text-sea-deep"
           >
             ← Quay lại
           </button>
@@ -60,19 +60,19 @@ export default function EssayViewer({
           onChange={(e) => setDraft(e.target.value)}
           placeholder="Em nháp câu trả lời ở đây trước khi xem gợi ý… (nội dung không bị lưu lại)"
           rows={5}
-          className="mt-4 w-full resize-y rounded-xl border border-ink/10 bg-white px-4 py-3 text-sm leading-relaxed placeholder:text-ink-soft/50 focus:border-grape"
+          className="mt-4 w-full resize-y rounded-xl border border-ink/10 bg-white px-4 py-3 text-sm leading-relaxed placeholder:text-ink-soft/50 focus:border-sea"
         />
 
         {!revealed ? (
           <button
             onClick={() => setRevealed(true)}
-            className="mt-3 w-full rounded-full bg-gradient-to-r from-grape to-bubble px-5 py-2.5 font-medium text-white transition hover:opacity-90"
+            className="mt-3 w-full rounded-full bg-gradient-to-r from-sea to-coral px-5 py-2.5 font-medium text-white transition hover:opacity-90"
           >
             Xem gợi ý trả lời 💡
           </button>
         ) : (
-          <div className="mt-3 animate-pop-in rounded-xl border border-mint/30 bg-mint/5 p-4">
-            <p className="font-display text-sm font-semibold text-mint">💡 Gợi ý trả lời</p>
+          <div className="mt-3 animate-pop-in rounded-xl border border-leaf/30 bg-leaf/5 p-4">
+            <p className="font-display text-sm font-semibold text-leaf-deep">💡 Gợi ý trả lời</p>
             <p className="mt-2 whitespace-pre-wrap text-sm leading-relaxed text-ink">
               {q.answer}
             </p>
@@ -86,21 +86,21 @@ export default function EssayViewer({
           <button
             onClick={() => go(-1)}
             disabled={current === 0}
-            className="rounded-full border border-ink/10 bg-white px-5 py-2 text-sm font-medium text-ink-soft transition hover:border-grape/40 disabled:opacity-40"
+            className="rounded-full border border-ink/10 bg-white px-5 py-2 text-sm font-medium text-ink-soft transition hover:border-sea/40 disabled:opacity-40"
           >
             ← Câu trước
           </button>
           {current + 1 < questions.length ? (
             <button
               onClick={() => go(1)}
-              className="rounded-full border border-ink/10 bg-white px-5 py-2 text-sm font-medium text-ink-soft transition hover:border-grape/40"
+              className="rounded-full border border-ink/10 bg-white px-5 py-2 text-sm font-medium text-ink-soft transition hover:border-sea/40"
             >
               Câu sau →
             </button>
           ) : (
             <button
               onClick={onBack}
-              className="rounded-full bg-gradient-to-r from-grape to-bubble px-5 py-2 text-sm font-medium text-white transition hover:opacity-90"
+              className="rounded-full bg-gradient-to-r from-sea to-coral px-5 py-2 text-sm font-medium text-white transition hover:opacity-90"
             >
               Hoàn thành 🏁
             </button>

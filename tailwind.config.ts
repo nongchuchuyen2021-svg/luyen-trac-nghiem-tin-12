@@ -4,16 +4,22 @@ const config: Config = {
   content: ["./app/**/*.{ts,tsx}", "./components/**/*.{ts,tsx}"],
   theme: {
     extend: {
+      // Bảng màu lớp 12: xanh biển sâu + cam san hô.
+      // Cố ý khác hẳn web lớp 10 (tím #7C3AED + hồng #EC4899) — tông trầm và
+      // tập trung hơn, hợp với khối thi. Tên màu đặt riêng, không trùng tên màu
+      // mặc định của Tailwind để không ghi đè các thang màu sẵn có.
       colors: {
-        ink: "#1E2438",
-        "ink-soft": "#4A5370",
-        cream: "#FDF9F0",
-        grape: "#7C3AED",
-        "grape-deep": "#5B21B6",
-        bubble: "#EC4899",
-        mint: "#10B981",
-        sun: "#F59E0B",
-        tomato: "#EF4444",
+        ink: "#12212B", // chữ chính, xanh đen
+        "ink-soft": "#4C5D6B", // chữ phụ
+        cream: "#F5F8F9", // nền trang, xanh sương rất nhạt
+        sea: "#0D7C86", // màu chủ đạo
+        "sea-deep": "#075B63", // màu chủ đạo, sắc đậm
+        coral: "#F2683C", // màu nhấn, cặp với sea trong các dải chuyển màu
+        leaf: "#0E9F6E", // trả lời đúng — dùng làm NỀN
+        "leaf-deep": "#0B6E4F", // bản đậm, dùng cho CHỮ trên nền nhạt (6,25:1)
+        gold: "#EFA31D", // sao, thành tích — dùng làm NỀN
+        "gold-deep": "#8F5D02", // bản đậm, dùng cho CHỮ trên nền nhạt (5,62:1)
+        berry: "#DC2626", // trả lời sai
       },
       fontFamily: {
         display: ["var(--font-display)"],

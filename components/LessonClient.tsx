@@ -106,7 +106,7 @@ export default function LessonClient({
       <div className="mx-auto max-w-2xl px-5 pt-10 sm:px-8">
         <Link
           href="/"
-          className="rounded-full border border-ink/10 bg-white px-3 py-1.5 font-mono text-xs text-ink-soft transition hover:border-grape/40 hover:text-grape-deep"
+          className="rounded-full border border-ink/10 bg-white px-3 py-1.5 font-mono text-xs text-ink-soft transition hover:border-sea/40 hover:text-sea-deep"
         >
           ← Trang chủ
         </Link>
@@ -122,11 +122,11 @@ export default function LessonClient({
               <button
                 key={o.key}
                 onClick={() => setMode(o.key)}
-                className="group flex w-full items-center gap-4 rounded-2xl border border-ink/5 bg-white p-5 text-left shadow-card transition hover:-translate-y-0.5 hover:border-grape/30 hover:shadow-card-hover"
+                className="group flex w-full items-center gap-4 rounded-2xl border border-ink/5 bg-white p-5 text-left shadow-card transition hover:-translate-y-0.5 hover:border-sea/30 hover:shadow-card-hover"
               >
                 <span className="text-3xl">{o.emoji}</span>
                 <span className="min-w-0 flex-1">
-                  <span className="block font-display text-base font-semibold text-ink group-hover:text-grape-deep">
+                  <span className="block font-display text-base font-semibold text-ink group-hover:text-sea-deep">
                     {o.name}
                   </span>
                   <span className="mt-0.5 block text-sm text-ink-soft">{o.desc}</span>
@@ -135,17 +135,17 @@ export default function LessonClient({
                   <span
                     className={`shrink-0 rounded-full px-2.5 py-1 font-mono text-xs font-medium ${
                       o.best >= 80
-                        ? "bg-mint/15 text-mint"
+                        ? "bg-leaf/15 text-leaf-deep"
                         : o.best >= 50
-                          ? "bg-sun/15 text-sun"
-                          : "bg-tomato/10 text-tomato"
+                          ? "bg-gold/15 text-gold-deep"
+                          : "bg-berry/10 text-berry"
                     }`}
                   >
                     {o.best >= 80 ? "⭐ " : ""}
                     {o.best}%
                   </span>
                 )}
-                <span className="shrink-0 text-ink-soft/40 transition group-hover:translate-x-0.5 group-hover:text-grape">
+                <span className="shrink-0 text-ink-soft/40 transition group-hover:translate-x-0.5 group-hover:text-sea">
                   →
                 </span>
               </button>

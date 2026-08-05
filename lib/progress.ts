@@ -1,6 +1,6 @@
 import type { LessonProgress, ProgressMap } from "./types";
 
-const KEY = "ltn10:progress";
+const KEY = "ltn12:progress";
 
 export function getProgress(): ProgressMap {
   if (typeof window === "undefined") return {};

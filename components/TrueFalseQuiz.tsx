@@ -85,13 +85,13 @@ export default function TrueFalseQuiz({
           <div className="mt-6 flex flex-wrap justify-center gap-3">
             <button
               onClick={retry}
-              className="rounded-full bg-gradient-to-r from-grape to-bubble px-6 py-2.5 font-medium text-white shadow-card transition hover:opacity-90"
+              className="rounded-full bg-gradient-to-r from-sea to-coral px-6 py-2.5 font-medium text-white shadow-card transition hover:opacity-90"
             >
               Làm lại
             </button>
             <button
               onClick={onBack}
-              className="rounded-full border border-ink/10 bg-white px-6 py-2.5 font-medium text-ink-soft transition hover:border-grape/40 hover:text-grape-deep"
+              className="rounded-full border border-ink/10 bg-white px-6 py-2.5 font-medium text-ink-soft transition hover:border-sea/40 hover:text-sea-deep"
             >
               ← Chọn phần khác
             </button>
@@ -109,7 +109,7 @@ export default function TrueFalseQuiz({
         <div className="flex items-center justify-between gap-3">
           <button
             onClick={onBack}
-            className="rounded-full border border-ink/10 bg-white px-3 py-1.5 font-mono text-xs text-ink-soft transition hover:border-grape/40 hover:text-grape-deep"
+            className="rounded-full border border-ink/10 bg-white px-3 py-1.5 font-mono text-xs text-ink-soft transition hover:border-sea/40 hover:text-sea-deep"
           >
             ← Quay lại
           </button>
@@ -122,7 +122,7 @@ export default function TrueFalseQuiz({
         </h1>
         <div className="mt-3 h-2 overflow-hidden rounded-full bg-ink/5">
           <div
-            className="h-full rounded-full bg-gradient-to-r from-grape to-bubble transition-all duration-300"
+            className="h-full rounded-full bg-gradient-to-r from-sea to-coral transition-all duration-300"
             style={{ width: `${Math.round((current / questions.length) * 100)}%` }}
           />
         </div>
@@ -153,9 +153,9 @@ export default function TrueFalseQuiz({
                 key={i}
                 className={`rounded-xl border-2 bg-white p-4 transition ${
                   isCorrect
-                    ? "border-mint bg-mint/5"
+                    ? "border-leaf bg-leaf/5"
                     : isWrong
-                      ? "border-tomato bg-tomato/5"
+                      ? "border-berry bg-berry/5"
                       : "border-ink/10"
                 }`}
               >
@@ -171,8 +171,8 @@ export default function TrueFalseQuiz({
                     disabled={submitted}
                     className={`rounded-full border-2 px-4 py-1 text-xs font-semibold transition ${
                       chosen === true
-                        ? "border-grape bg-grape text-white"
-                        : "border-ink/15 bg-white text-ink-soft hover:border-grape/50"
+                        ? "border-sea bg-sea text-white"
+                        : "border-ink/15 bg-white text-ink-soft hover:border-sea/50"
                     }`}
                   >
                     Đúng
@@ -182,8 +182,8 @@ export default function TrueFalseQuiz({
                     disabled={submitted}
                     className={`rounded-full border-2 px-4 py-1 text-xs font-semibold transition ${
                       chosen === false
-                        ? "border-bubble bg-bubble text-white"
-                        : "border-ink/15 bg-white text-ink-soft hover:border-bubble/50"
+                        ? "border-coral bg-coral text-white"
+                        : "border-ink/15 bg-white text-ink-soft hover:border-coral/50"
                     }`}
                   >
                     Sai
@@ -191,7 +191,7 @@ export default function TrueFalseQuiz({
                   {submitted && (
                     <span
                       className={`ml-1 font-mono text-xs font-semibold ${
-                        isCorrect ? "text-mint" : "text-tomato"
+                        isCorrect ? "text-leaf-deep" : "text-berry"
                       }`}
                     >
                       {isCorrect ? "✓" : `✗ Đáp án: ${st.answer ? "Đúng" : "Sai"}`}
@@ -212,7 +212,7 @@ export default function TrueFalseQuiz({
           <button
             onClick={submit}
             disabled={!allAnswered}
-            className="mt-4 w-full rounded-full bg-gradient-to-r from-grape to-bubble px-5 py-2.5 font-medium text-white transition hover:opacity-90 disabled:opacity-40"
+            className="mt-4 w-full rounded-full bg-gradient-to-r from-sea to-coral px-5 py-2.5 font-medium text-white transition hover:opacity-90 disabled:opacity-40"
           >
             {allAnswered ? "Chấm câu này" : "Hãy chọn Đúng/Sai cho đủ 4 ý"}
           </button>
@@ -230,7 +230,7 @@ export default function TrueFalseQuiz({
             </p>
             <button
               onClick={next}
-              className="mt-3 w-full rounded-full bg-gradient-to-r from-grape to-bubble px-5 py-2.5 font-medium text-white transition hover:opacity-90"
+              className="mt-3 w-full rounded-full bg-gradient-to-r from-sea to-coral px-5 py-2.5 font-medium text-white transition hover:opacity-90"
             >
               {current + 1 >= questions.length ? "Xem tổng kết 🏁" : "Câu tiếp theo →"}
             </button>

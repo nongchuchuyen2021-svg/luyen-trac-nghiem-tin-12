@@ -144,28 +144,28 @@ export default function QuizClient({
             </h1>
             <p className="mt-2 text-ink-soft">{message}</p>
             {best !== null && scorePercent > best && (
-              <p className="mt-2 font-mono text-sm font-medium text-mint">
+              <p className="mt-2 font-mono text-sm font-medium text-leaf-deep">
                 🚀 Kỉ lục mới! (trước đó: {best}%)
               </p>
             )}
             <div className="mt-6 flex flex-wrap justify-center gap-3">
               <button
                 onClick={retry}
-                className="rounded-full bg-gradient-to-r from-grape to-bubble px-6 py-2.5 font-medium text-white shadow-card transition hover:opacity-90"
+                className="rounded-full bg-gradient-to-r from-sea to-coral px-6 py-2.5 font-medium text-white shadow-card transition hover:opacity-90"
               >
                 Làm lại (trộn đề mới)
               </button>
               {onBack ? (
                 <button
                   onClick={onBack}
-                  className="rounded-full border border-ink/10 bg-white px-6 py-2.5 font-medium text-ink-soft transition hover:border-grape/40 hover:text-grape-deep"
+                  className="rounded-full border border-ink/10 bg-white px-6 py-2.5 font-medium text-ink-soft transition hover:border-sea/40 hover:text-sea-deep"
                 >
                   ← Chọn phần khác
                 </button>
               ) : (
                 <Link
                   href="/"
-                  className="rounded-full border border-ink/10 bg-white px-6 py-2.5 font-medium text-ink-soft transition hover:border-grape/40 hover:text-grape-deep"
+                  className="rounded-full border border-ink/10 bg-white px-6 py-2.5 font-medium text-ink-soft transition hover:border-sea/40 hover:text-sea-deep"
                 >
                   Chọn bài khác
                 </Link>
@@ -182,7 +182,7 @@ export default function QuizClient({
                 {wrongQuestions.map((item) => (
                   <li
                     key={item.id}
-                    className="rounded-xl border border-tomato/20 bg-white p-4 shadow-card"
+                    className="rounded-xl border border-berry/20 bg-white p-4 shadow-card"
                   >
                     <p className="text-sm font-medium text-ink">{item.q}</p>
                     {item.code && item.code !== "?" && (
@@ -190,7 +190,7 @@ export default function QuizClient({
                         {item.code}
                       </pre>
                     )}
-                    <p className="mt-2 text-sm text-mint">
+                    <p className="mt-2 text-sm text-leaf-deep">
                       ✔ Đáp án đúng: {item.options[item.answer]}
                     </p>
                     <p className="mt-1 text-sm leading-relaxed text-ink-soft">{item.explain}</p>
@@ -215,14 +215,14 @@ export default function QuizClient({
             {onBack ? (
               <button
                 onClick={onBack}
-                className="rounded-full border border-ink/10 bg-white px-3 py-1.5 font-mono text-xs text-ink-soft transition hover:border-grape/40 hover:text-grape-deep"
+                className="rounded-full border border-ink/10 bg-white px-3 py-1.5 font-mono text-xs text-ink-soft transition hover:border-sea/40 hover:text-sea-deep"
               >
                 ← Quay lại
               </button>
             ) : (
               <Link
                 href="/"
-                className="rounded-full border border-ink/10 bg-white px-3 py-1.5 font-mono text-xs text-ink-soft transition hover:border-grape/40 hover:text-grape-deep"
+                className="rounded-full border border-ink/10 bg-white px-3 py-1.5 font-mono text-xs text-ink-soft transition hover:border-sea/40 hover:text-sea-deep"
               >
                 ← Trang chủ
               </Link>
@@ -238,7 +238,7 @@ export default function QuizClient({
           <p className="font-mono text-xs text-ink-soft/60">{topicName}</p>
           <div className="mt-3 h-2 overflow-hidden rounded-full bg-ink/5">
             <div
-              className="h-full rounded-full bg-gradient-to-r from-grape to-bubble transition-all duration-300"
+              className="h-full rounded-full bg-gradient-to-r from-sea to-coral transition-all duration-300"
               style={{ width: `${progressPercent}%` }}
             />
           </div>
@@ -259,12 +259,12 @@ export default function QuizClient({
               const isPicked = picked === i;
               const isCorrect = i === q.correctIndex;
               let cls =
-                "border-ink/10 bg-white hover:border-grape/50 hover:bg-grape/5";
+                "border-ink/10 bg-white hover:border-sea/50 hover:bg-sea/5";
               if (picked !== null) {
                 if (isCorrect) {
-                  cls = "border-mint bg-mint/10";
+                  cls = "border-leaf bg-leaf/10";
                 } else if (isPicked) {
-                  cls = "border-tomato bg-tomato/10 animate-wiggle";
+                  cls = "border-berry bg-berry/10 animate-wiggle";
                 } else {
                   cls = "border-ink/5 bg-white/60 opacity-60";
                 }
@@ -279,9 +279,9 @@ export default function QuizClient({
                   <span
                     className={`mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full font-mono text-xs font-semibold ${
                       picked !== null && isCorrect
-                        ? "bg-mint text-white"
+                        ? "bg-leaf text-white"
                         : picked !== null && isPicked
-                          ? "bg-tomato text-white"
+                          ? "bg-berry text-white"
                           : "bg-ink/5 text-ink-soft"
                     }`}
                   >
@@ -306,7 +306,7 @@ export default function QuizClient({
             >
               <p
                 className={`font-display text-sm font-semibold ${
-                  picked === q.correctIndex ? "text-mint" : "text-tomato"
+                  picked === q.correctIndex ? "text-leaf-deep" : "text-berry"
                 }`}
               >
                 {picked === q.correctIndex ? "🎯 Chính xác!" : "😅 Chưa đúng rồi"}
@@ -314,7 +314,7 @@ export default function QuizClient({
               <p className="mt-1.5 text-sm leading-relaxed text-ink-soft">{q.explain}</p>
               <button
                 onClick={next}
-                className="mt-3 w-full rounded-full bg-gradient-to-r from-grape to-bubble px-5 py-2.5 font-medium text-white transition hover:opacity-90"
+                className="mt-3 w-full rounded-full bg-gradient-to-r from-sea to-coral px-5 py-2.5 font-medium text-white transition hover:opacity-90"
               >
                 {current + 1 >= quiz.length ? "Xem kết quả 🏁" : "Câu tiếp theo →"}
               </button>

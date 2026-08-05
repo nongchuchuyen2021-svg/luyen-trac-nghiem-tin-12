@@ -8,7 +8,7 @@ export default function NotFound() {
       <p className="text-ink-soft">Bài luyện tập này không tồn tại hoặc chưa có câu hỏi.</p>
       <Link
         href="/"
-        className="mt-2 rounded-full bg-grape px-6 py-2.5 font-medium text-white transition hover:bg-grape-deep"
+        className="mt-2 rounded-full bg-sea px-6 py-2.5 font-medium text-white transition hover:bg-sea-deep"
       >
         Về trang chủ
       </Link>
