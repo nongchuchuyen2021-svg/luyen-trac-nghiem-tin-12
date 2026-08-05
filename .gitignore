@@ -8,4 +8,5 @@ out/
 tai-lieu/*.pdf
 tai-lieu/*.docx
 tai-lieu/sgk-pages/
-tai-lieu/sgk-pages/
+
+.vercel
