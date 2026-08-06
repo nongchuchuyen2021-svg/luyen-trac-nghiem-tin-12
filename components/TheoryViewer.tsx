@@ -243,8 +243,14 @@ function Block({ block }: { block: TheoryBlock }) {
           <figcaption className="mt-2 text-center font-mono text-xs text-ink-soft/70">
             {block.caption}
           </figcaption>
-          <p className="mt-1 text-center font-mono text-[11px] text-ink-soft/50 sm:hidden">
-            ↔ vuốt ngang để xem hết hình
+          {/* Dòng nhắc này trước để màu quá nhạt (ink-soft/50), trên điện thoại
+              gần như chìm vào nền nên học sinh không biết là vuốt được. */}
+          <p className="mt-2 text-center sm:hidden">
+            {/* Dùng sea-deep chứ không dùng coral: coral trên nền trắng chỉ
+                đạt tương phản 3,08:1, dưới chuẩn 4,5:1 cho chữ cỡ nhỏ. */}
+            <span className="inline-block rounded-full bg-sea/10 px-3 py-1 font-mono text-xs font-semibold text-sea-deep">
+              ↔ vuốt ngang để xem hết hình
+            </span>
           </p>
         </figure>
       );

@@ -1,0 +1,13 @@
+{
+  "type": "service_account",
+  "project_id": "on-luyen-tin-12",
+  "private_key_id": "b17b2b9e45e8499483beaf4b709bb851dc24d831",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQDVwKvEsNUHz+RI\nw4x8X8TKd5vSycS7DvztmwJeoyJvPFx4deOwoOdFFOaniTcH21UWSFklZzfIzPI3\nXVDLqLs4z3JtmFgQ/p1nm7o9PUcteyYvlCMm/8EKldRNrr8BVIVARYc30yD51RVJ\nZ+0Og4ktXjiwvkFiO4CWm78zCQ+NROazFryE8EfmD01udTWq4iEpLRZLt57Hllb/\nZFjZJ1i0ohH5Uk8crzWiNMSiIhdT5be09mY5PDGxgg6IF6jOvdGOzg8BTm0HRBW+\nBSaSD3u/XqkL2wfOBLCKrjgEGa2SWuv2n6rM/o//O2MTlKnvtdLBCmLXbVpwgi7X\nQg31tEN/AgMBAAECggEABhxLbMSHWoFRa9kXP4j3VbhknnqBIr3TcjFvuGfeeKKX\nnCP2ndqDsgBedaShC5r0DD6GOeEBAb8GH5oN0LyimYWopkRoJBg7RLZ5dP229rBi\nD5MjDB7clGJjHtNjh3S0mHlEW86vzySNxrrvVm5hMghTA450zQuZafTK2vkj1ix4\nKCy7lBg4uMphcV4kQCPSXkyakvKPokae4wc2hfrEDKIVRC88q1h2Qivb7R8uKDSe\nQDVDlzNujMwGaaFu2kcKlTN2A/YWz7tq2SFeAomgVwORahzZNkY1QEaEAWLzCws+\nKPaRvsvkvvAHpI0EYOBKifK7zucoYGiX9ct15VAHzQKBgQD8UPxuHpWdjXrN0GMw\njpNr02lOfQTyaucHJ6032V/lLutcLBnYc31mEwsEyHRaEqFIRSPkiZuO2qzgIiOG\n85x25tRzpBje/O3aFrLpYM1Bu4xeD9DnDWRG8oZYSoW1lDbMli0ZMu1UK+I/Kqux\nKdKgfxkV45iW1rGHQ6R/CjNs0wKBgQDY345IAE82Zy/UTU2UeoM/DeUAgdFoIZ7S\n/85rX++eyJUKnsL4h0oM9j5v/DwVMzlODSoNv+KIKaDACb2utK4L/DWQPQP8D+ht\n//kPf5rJrO3njWQzC7kBM55ff8jKbF9lybMJHTmslC5/LRKoThjXFZCXRHR2DA1p\nAnGIh1qzJQKBgHFNGJ2GZF70aiHDotbqHy77Jz2UjEUjVgzzdyguF469q/ie4Rg+\nfB/7CyahsQXFeeEPExgL5uuWLK0VB2kROcB21Q38sSJo55HYQYzk6CbNRjHy3jby\n34WwYD2DcVlhbd4eza+UG9iBQD5nNeP/SNLDYAthQWLyk5OO/24Asaj7AoGBAJ1C\nLgfjwYyvci0+CL1bwQPd7WpauCAMEQDrYSDXJgg7ZmeXC8XvRDD19fx6KI8u36TL\nQu1JcNhPZzMZXSPr/DDQp3554APM/TuWW2FzpCgNb01yZ2/kVjia14JkRJMT1nEW\nuu4m9QVBRh4N7vN//d8o0fn+N3zJ7IdysCTSEWDJAoGBAOd6o5fWGgwWC/P0lulK\n7todhJdiwes2yJxzqrIGOFrKPfxcjRmjIGfd4eQGtdfzjybtZ49vTxicid+NnTGb\nq+peUSvJ0I+hbWToLC/EhgI9cp1HvpOTV8NR7pPkCQ15rjquKOi0vVWKhLIhV7Kp\nOcEei8+FKsoX9LSw6/mYMypm\n-----END PRIVATE KEY-----\n",
+  "client_email": "ghi-ket-qua@on-luyen-tin-12.iam.gserviceaccount.com",
+  "client_id": "113026054146808650678",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/ghi-ket-qua%40on-luyen-tin-12.iam.gserviceaccount.com",
+  "universe_domain": "googleapis.com"
+}
