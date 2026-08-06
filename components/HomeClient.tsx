@@ -3,10 +3,8 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { CURRICULUM } from "@/data/curriculum";
-import { getQuestions } from "@/lib/questions";
-import { hasTheory } from "@/lib/theory";
 import { getProgress } from "@/lib/progress";
-import type { ProgressMap } from "@/lib/types";
+import type { LessonCounts, ProgressMap } from "@/lib/types";
 
 function ScoreBadge({ best }: { best: number }) {
   if (best >= 80) {
@@ -30,7 +28,7 @@ function ScoreBadge({ best }: { best: number }) {
   );
 }
 
-export default function HomeClient() {
+export default function HomeClient({ counts }: { counts: Record<string, LessonCounts> }) {
   const [progress, setProgress] = useState<ProgressMap>({});
   const [loaded, setLoaded] = useState(false);
 
@@ -57,8 +55,9 @@ export default function HomeClient() {
             </span>
           </h1>
           <p className="mx-auto mt-3 max-w-xl text-ink-soft">
-            Chọn bài để luyện — làm đến đâu chấm đến đó, có giải thích từng câu. Đạt từ 80%
-            trở lên sẽ nhận sao ⭐. Tiến độ được lưu ngay trên máy của em.
+            Mỗi bài có phần lý thuyết tự học kèm hình vẽ minh hoạ, rồi tới trắc nghiệm,
+            đúng/sai và tự luận — làm đến đâu chấm đến đó, có giải thích từng câu. Đạt từ
+            80% trở lên sẽ nhận sao ⭐. Tiến độ được lưu ngay trên máy của em.
           </p>
           {loaded && (
             <p className="mt-4 inline-block rounded-full border border-sea/20 bg-white px-4 py-1.5 font-mono text-sm text-sea-deep shadow-card">
@@ -89,7 +88,19 @@ export default function HomeClient() {
                         </li>
                       );
                     }
-                    const count = getQuestions(lesson.id).length;
+                    // Dòng thông tin phụ ghép từ các mảnh có thật, ngăn nhau
+                    // bởi dấu chấm giữa — bài nào thiếu dạng nào thì bỏ qua
+                    // mảnh đó chứ không hiện "0 tự luận".
+                    const c = counts[lesson.id];
+                    const meta = [
+                      `${c.mcq} trắc nghiệm`,
+                      c.tf > 0 ? `${c.tf} đúng/sai` : "",
+                      c.essay > 0 ? `${c.essay} tự luận` : "",
+                      c.theory ? "📖 có lý thuyết" : "",
+                      p ? `đã làm ${p.attempts} lần` : "",
+                    ]
+                      .filter(Boolean)
+                      .join(" · ");
                     return (
                       <li key={lesson.id}>
                         <Link
@@ -102,10 +113,8 @@ export default function HomeClient() {
                             <p className="text-sm font-medium leading-snug text-ink group-hover:text-sea-deep">
                               {lesson.title}
                             </p>
-                            <p className="mt-0.5 font-mono text-xs text-ink-soft/70">
-                              {count} câu hỏi
-                              {hasTheory(lesson.id) ? " · 📖 có lý thuyết" : ""}
-                              {p ? ` · đã làm ${p.attempts} lần` : ""}
+                            <p className="mt-0.5 font-mono text-xs leading-relaxed text-ink-soft/70">
+                              {meta}
                             </p>
                           </div>
                           <div className="flex shrink-0 items-center gap-2">

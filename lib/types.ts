@@ -103,6 +103,16 @@ export type LessonTheory = {
   summary: string[]; // "Ghi nhớ nhanh" cuối bài, 3-5 gạch đầu dòng
 };
 
+// Số câu từng dạng của một bài, đếm sẵn ở phía máy chủ rồi truyền xuống trang
+// chủ. Làm vậy để trang chủ không phải nạp cả ngân hàng câu hỏi vào trình duyệt
+// chỉ để đếm số câu.
+export type LessonCounts = {
+  mcq: number;
+  tf: number;
+  essay: number;
+  theory: boolean;
+};
+
 export type Lesson = {
   id: string; // slug dùng trong URL, vd "bai-01"
   title: string; // vd "Bài 1. Thông tin và xử lí thông tin"
