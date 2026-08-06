@@ -1352,7 +1352,7 @@ function KichThuocAnh() {
 // không tải lại — đây là điều chữ suông khó truyền tải.
 function IframeLienKet() {
   return (
-    <Frame viewBox="0 0 640 340">
+    <Frame viewBox="0 0 640 366">
       <Lines
         x={320}
         y={24}
@@ -1396,10 +1396,14 @@ function IframeLienKet() {
 
       <Lines
         x={320}
-        y={320}
-        lines={['target phải TRÙNG với id của iframe thì nội dung mới nạp đúng chỗ']}
+        y={328}
+        lines={[
+          "Bấm liên kết → nội dung nạp thẳng vào khung, cả trang KHÔNG tải lại",
+          "⚠ Trình duyệt khớp target theo name của khung, không phải id — xem hộp bên dưới",
+        ]}
         size={12}
         weight={600}
+        gap={19}
         fill={C.seaDeep}
       />
     </Frame>

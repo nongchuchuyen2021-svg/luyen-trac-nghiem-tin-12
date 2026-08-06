@@ -109,7 +109,7 @@ const questions: Question[] = [
     id: "b11-08",
     q: "Thuộc tính autoplay trong thẻ <video> có đặc điểm gì theo SGK?",
     options: [
-      "Là thuộc tính boolean, cho phép trình duyệt chạy video ngay khi hiển thị, nhưng một số trình duyệt không cho phép",
+      "Là thuộc tính boolean, cho phép trình duyệt chạy video ngay khi hiển thị, nhưng một số trình duyệt sẽ chặn",
       "Là thuộc tính bắt buộc phải có giá trị là \"true\" hoặc \"false\" để kiểm soát chế độ tự động phát video",
       "Đảm bảo video phát tự động ngay lập tức trên mọi trình duyệt mà không cần thêm thuộc tính nào khác",
       "Chỉ hoạt động khi được kết hợp cùng với thuộc tính controls để thanh điều khiển hiện ra kèm theo",

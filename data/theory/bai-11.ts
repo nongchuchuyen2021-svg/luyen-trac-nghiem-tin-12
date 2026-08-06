@@ -83,8 +83,8 @@ ngay bây giờ.</p>`,
           kind: "check",
           q: "Nhận định nào sau đây đúng về thẻ <img>?",
           options: [
-            "Chỉ chèn được ảnh định dạng .jpg",
-            "Là thẻ đơn, thuộc tính src bắt buộc để chỉ đường dẫn tới tệp ảnh",
+            "Chỉ chèn được ảnh có định dạng .jpg vào trang web",
+            "Là thẻ đơn, bắt buộc có thuộc tính src chỉ đường dẫn ảnh",
             "Bắt buộc phải có cả hai thuộc tính width và height",
             "Ảnh luôn hiển thị đúng dù đường dẫn trong src bị sai",
           ],
@@ -188,10 +188,10 @@ Trình duyệt của bạn không hỗ trợ HTML video
           kind: "check",
           q: "Vì sao thuộc tính autoplay có thể không làm video tự phát ngay trên một số trình duyệt như Google Chrome?",
           options: [
-            "Vì thẻ video không hỗ trợ autoplay",
-            "Vì Chrome thường chặn tự phát có tiếng, chỉ cho tự phát khi có thêm thuộc tính muted",
+            "Vì thẻ video vốn không hỗ trợ thuộc tính autoplay",
+            "Vì Chrome thường chặn tự phát có tiếng, phải thêm muted",
             "Vì phải có thuộc tính controls thì autoplay mới hoạt động",
-            "Vì autoplay chỉ hoạt động với thẻ audio, không hoạt động với video",
+            "Vì autoplay chỉ hoạt động với thẻ audio, không dùng cho video",
           ],
           answer: 1,
           explain:
@@ -268,6 +268,11 @@ Trình duyệt của bạn không hỗ trợ HTML video
 <a href="nghe_thuat.html" target="iframe">Câu lạc bộ Nghệ thuật</a>`,
         },
         {
+          kind: "update",
+          title: "Gõ đúng như sách mà khung vẫn trống?",
+          text: "Trên các trình duyệt hiện nay, thuộc tính **`target`** tìm khung theo thuộc tính **`name`** của `<iframe>`, **không phải theo `id`**. Với đoạn mã của SGK ở trên (khung chỉ có `id`), bấm liên kết sẽ **không nạp vào khung** mà mở ra trang mới. Khi thực hành, em hãy **đặt cả hai** cho chắc: `<iframe id=\"iframe\" name=\"iframe\" …>`. Phần lí thuyết và bài thi vẫn giữ đúng theo sách.",
+        },
+        {
           kind: "note",
           text: "Thẻ **`<iframe>`** sử dụng để chèn một trang web hoặc một tài nguyên web trong một trang web khác.",
         },
@@ -282,16 +287,16 @@ Trình duyệt của bạn không hỗ trợ HTML video
           ],
           answer: 1,
           explain:
-            "Phải gán `target` cho thẻ `<a>` bằng đúng **giá trị `id`** của khung `iframe` cần hiển thị nội dung — trình duyệt dựa vào đó biết nạp tài liệu liên kết vào đúng khung đó thay vì mở tab hay trang mới.",
+            "Theo SGK, phải gán `target` cho thẻ `<a>` bằng đúng **giá trị `id`** của khung `iframe` cần hiển thị nội dung, thay vì mở tab hay trang mới. *Khi thực hành trên máy, nhớ đặt thêm `name` trùng giá trị đó thì khung mới nhận nội dung — xem hộp Cập nhật 2026 ở trên.*",
         },
         {
           kind: "check",
           q: "Trong ví dụ Nhiệm vụ 3 của SGK, muốn hai liên kết chọn câu lạc bộ hiển thị ở PHÍA TRÊN khung iframe trên trang, ta cần làm gì?",
           options: [
-            "Đặt đoạn mã liên kết (Bước 3) TRƯỚC đoạn mã tạo iframe (Bước 2) trong tệp HTML",
-            "Đặt thuộc tính width của iframe lớn hơn",
-            "Thêm thuộc tính target=\"_blank\" cho liên kết",
-            "Không thể thay đổi được vị trí hiển thị",
+            "Đặt đoạn mã liên kết (Bước 3) TRƯỚC đoạn mã tạo iframe (Bước 2)",
+            "Đặt thuộc tính height của iframe nhỏ lại cho vừa màn hình",
+            "Thêm thuộc tính target=\"_blank\" cho cả hai liên kết",
+            "Không đổi được, vị trí do trình duyệt tự quyết định",
           ],
           answer: 0,
           explain:
