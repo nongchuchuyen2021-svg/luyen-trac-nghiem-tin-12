@@ -261,15 +261,20 @@ const theory: LessonTheory = {
         {
           kind: "code",
           caption:
-            "Thử ngay: ảnh dưới đây nhúng thẳng vào mã nên chạy được trong khung xem trước — di chuột lên ảnh sẽ thấy con trỏ đổi thành bàn tay",
+            "Thử ngay: nháy vào hình Mặt Trời — ảnh nằm trong thẻ <a> nên bấm vào ảnh là đi theo liên kết. Ở đây href trỏ tới một mục ngay bên dưới để chạy được trong khung; ngoài thực tế href thường là tên tệp trang khác như ví dụ trên.",
           preview: true,
-          code: `<a href="thong_tin.html">
+          code: `<a href="#gioi-thieu">
   <img width="90" height="90" alt="Mặt Trời"
        src="data:image/svg+xml;utf8,
        <svg xmlns='http://www.w3.org/2000/svg' width='90' height='90'>
        <circle cx='45' cy='45' r='24' fill='%23EFA31D'/></svg>">
 </a>
-<p>Nháy vào hình Mặt Trời để mở trang thong_tin.html</p>`,
+<p>Nháy vào hình Mặt Trời ở trên ↑</p>
+<p>Nội dung ở giữa…</p>
+<p>Nội dung ở giữa…</p>
+<p>Nội dung ở giữa…</p>
+<h3 id="gioi-thieu">Em vừa nháy vào một tấm ảnh!</h3>
+<p>Ảnh đặt trong thẻ a nên bấm vào ảnh cũng đi theo liên kết.</p>`,
         },
         {
           kind: "note",

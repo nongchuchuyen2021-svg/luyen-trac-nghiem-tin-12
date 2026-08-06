@@ -128,11 +128,20 @@ function CodeBlock({
               👀 Trình duyệt hiện ra
             </p>
             {/* sandbox rỗng: khung xem trước không chạy script, không đụng được
-                vào trang chính — an toàn kể cả khi ví dụ có mã lạ */}
+                vào trang chính — an toàn kể cả khi ví dụ có mã lạ.
+
+                <base href="about:srcdoc"> là BẮT BUỘC: tài liệu srcdoc mặc định
+                lấy địa chỉ gốc của TRANG CHA, nên trong khung xem trước thì
+                href="#id" bị hiểu thành "trang bài học #id" (bấm vào là cả bài
+                học chui vào khung 180px), còn href="thong_tin.html" thành
+                "/luyen/thong_tin.html" (ra trang 404). Đặt gốc về about:srcdoc
+                thì liên kết #id nhảy đúng trong khung, còn đường dẫn tương đối
+                không giải ra được nên bấm cũng không đi đâu.
+                Thẻ base chỉ thêm lúc hiển thị, không lọt vào mã học sinh đọc. */}
             <iframe
               title="Kết quả hiển thị"
               sandbox=""
-              srcDoc={code}
+              srcDoc={`<base href="about:srcdoc">${code}`}
               className="h-[180px] w-full border-0 bg-white"
             />
           </div>

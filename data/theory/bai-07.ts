@@ -241,10 +241,10 @@ và cả xuống dòng
           kind: "check",
           q: "Dòng `<!DOCTYPE html>` ở đầu tệp có phải là một phần tử HTML không?",
           options: [
-            "Có, vì nó cũng nằm trong cặp dấu < >",
-            "Không — nó chỉ thông báo cho trình duyệt biết đây là tệp định dạng html",
-            "Có, và nó chính là phần tử gốc của trang",
-            "Không, vì nó là một dòng chú thích",
+            "Có, vì nó cũng nằm trong cặp dấu < > như thẻ",
+            "Không — nó chỉ báo cho trình duyệt biết đây là tệp html",
+            "Có, và nó chính là phần tử gốc của cả trang web",
+            "Không, vì nó chỉ là một dòng chú thích cho người đọc",
           ],
           answer: 1,
           explain:

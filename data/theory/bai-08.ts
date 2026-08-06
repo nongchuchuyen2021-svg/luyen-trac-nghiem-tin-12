@@ -131,10 +131,10 @@ const theory: LessonTheory = {
           kind: "check",
           q: "Điểm khác nhau cơ bản giữa <div> và <span> là gì?",
           options: [
-            "div dùng cho chữ, span dùng cho hình ảnh",
-            "div là một khối bắt đầu trên dòng mới, còn span hiển thị ngay trên dòng đang viết",
-            "div phải có thuộc tính style, span thì không",
-            "span là thẻ đơn, div là thẻ đôi",
+            "div dùng cho chữ, còn span dùng cho hình ảnh",
+            "div là khối bắt đầu dòng mới, span nằm trong dòng",
+            "div phải có thuộc tính style, còn span thì không",
+            "span là thẻ đơn còn div là thẻ đôi có thẻ đóng",
           ],
           answer: 1,
           explain:
@@ -198,10 +198,10 @@ const theory: LessonTheory = {
           kind: "check",
           q: "Vì sao SGK khuyến khích dùng <strong> và <em> nhiều hơn <b> và <i>?",
           options: [
-            "Vì <strong> và <em> hiển thị đẹp hơn",
-            "Vì <strong> và <em> mang ý nghĩa nhấn mạnh vào ngữ nghĩa của nội dung",
+            "Vì <strong> và <em> hiển thị đẹp hơn hẳn",
+            "Vì <strong> và <em> nhấn mạnh về mặt ngữ nghĩa",
             "Vì <b> và <i> đã bị HTML5 loại bỏ hoàn toàn",
-            "Vì <strong> và <em> gõ nhanh hơn",
+            "Vì <strong> và <em> gõ nhanh hơn khi soạn mã",
           ],
           answer: 1,
           explain:

@@ -117,9 +117,9 @@ const theory: LessonTheory = {
           kind: "check",
           q: "Vì sao nhắn tin dễ gây hiểu lầm hơn nói chuyện trực tiếp?",
           options: [
-            "Vì tin nhắn thường bị gửi chậm",
-            "Vì thiếu tín hiệu phi ngôn ngữ: nét mặt, ngôn ngữ cơ thể và biểu cảm giọng nói",
-            "Vì tin nhắn có giới hạn số kí tự",
+            "Vì tin nhắn thường bị gửi chậm hơn lời nói",
+            "Vì thiếu nét mặt, cử chỉ và biểu cảm giọng nói",
+            "Vì tin nhắn bị giới hạn số kí tự gửi mỗi lần",
             "Vì tin nhắn không lưu lại được để đọc lại",
           ],
           answer: 1,
@@ -255,7 +255,7 @@ const theory: LessonTheory = {
           q: "Một bạn đăng lên nhóm lớp một ý kiến mà em thấy hoàn toàn sai. Cách ứng xử nào thể hiện tính nhân văn?",
           options: [
             "Bình luận thẳng bằng từ ngữ mạnh cho bạn ấy biết là mình bất bình",
-            "Trao đổi lịch sự, đưa ra lí do và phản bác trên tinh thần tôn trọng quan điểm của bạn",
+            "Trao đổi lịch sự, nêu lí do và tôn trọng quan điểm của bạn",
             "Chụp màn hình gửi sang nhóm khác để mọi người cùng bình luận",
             "Im lặng rồi chặn bạn đó để khỏi phải đọc thêm",
           ],

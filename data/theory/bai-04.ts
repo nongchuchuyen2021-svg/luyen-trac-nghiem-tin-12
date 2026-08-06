@@ -284,10 +284,10 @@ const theory: LessonTheory = {
           kind: "check",
           q: "Đã có giao thức IP dẫn dữ liệu tới đúng máy nhận rồi, vì sao vẫn cần thêm giao thức TCP?",
           options: [
-            "Vì IP chỉ chạy được trên mạng có dây",
-            "Vì IP chuyển được dữ liệu tới máy nhận nhưng không đảm bảo tới đúng ứng dụng, đúng thứ tự và không sai sót",
-            "Vì IP không dùng được địa chỉ MAC",
-            "Vì TCP thay thế hoàn toàn cho IP",
+            "Vì IP chỉ chạy được trên mạng có dây, không có Wi-Fi",
+            "Vì IP không đảm bảo đúng ứng dụng, đúng thứ tự, không lỗi",
+            "Vì IP không dùng được địa chỉ MAC của máy nhận",
+            "Vì TCP đã thay thế hoàn toàn cho giao thức IP",
           ],
           answer: 1,
           explain:

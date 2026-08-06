@@ -73,10 +73,10 @@ const theory: LessonTheory = {
           kind: "check",
           q: "Điểm khác biệt lớn nhất của hệ chuyên gia thời nay so với hệ chuyên gia thời đầu là gì?",
           options: [
-            "Chạy nhanh hơn nhờ máy tính mạnh hơn",
-            "Tự học từ dữ liệu để hình thành luật và tri thức",
-            "Giao diện đẹp và dễ dùng hơn",
-            "Không cần cơ sở dữ liệu nữa",
+            "Chạy nhanh hơn nhờ máy tính ngày nay mạnh hơn",
+            "Tự học từ dữ liệu để hình thành tri thức",
+            "Giao diện đẹp và dễ sử dụng hơn trước nhiều",
+            "Không cần đến cơ sở dữ liệu tri thức nữa",
           ],
           answer: 1,
           explain:
@@ -175,10 +175,10 @@ const theory: LessonTheory = {
           kind: "check",
           q: "Vì sao nói ChatGPT thể hiện “khả năng học” của AI?",
           options: [
-            "Vì nó dạy học trực tuyến cho học sinh",
-            "Vì nó được huấn luyện trên lượng lớn dữ liệu văn bản và thích nghi theo phản hồi người dùng",
+            "Vì nó có thể dạy học trực tuyến cho học sinh",
+            "Vì học từ kho văn bản lớn và phản hồi người dùng",
             "Vì nó có thể tự viết ra chương trình máy tính mới",
-            "Vì nó trả lời được bằng nhiều thứ tiếng",
+            "Vì nó trả lời trôi chảy được bằng nhiều thứ tiếng",
           ],
           answer: 1,
           explain:
@@ -251,10 +251,10 @@ const theory: LessonTheory = {
           kind: "check",
           q: "Vì sao cần ngăn cấm việc giao toàn quyền quyết định cho AI điều khiển vũ khí sát thương?",
           options: [
-            "Vì AI chạy chậm hơn con người",
-            "Vì AI có thể bị tấn công, thay đổi dữ liệu và đưa ra quyết định sai gây nguy hại trực tiếp cho con người",
-            "Vì AI không hiểu được tiếng Việt",
-            "Vì vũ khí quá đắt tiền",
+            "Vì AI xử lí chậm hơn con người trong tình huống gấp",
+            "Vì AI có thể bị tấn công, đổi dữ liệu và quyết định sai",
+            "Vì AI chưa hiểu được đầy đủ ngôn ngữ tiếng Việt",
+            "Vì chi phí chế tạo các loại vũ khí này quá đắt",
           ],
           answer: 1,
           explain:
