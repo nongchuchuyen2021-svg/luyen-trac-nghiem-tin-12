@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import type { TFQuestion } from "@/lib/types";
 import { saveAttempt, getLessonProgress } from "@/lib/progress";
 import { scrollIntoViewIfNeeded } from "@/components/QuizClient";
+import NopBai from "@/components/NopBai";
 
 // Điểm mỗi câu theo quy chế thi tốt nghiệp: đúng 1 ý 0,1đ; 2 ý 0,25đ; 3 ý 0,5đ; 4 ý 1đ
 const POINTS = [0, 0.1, 0.25, 0.5, 1];
@@ -24,6 +25,9 @@ export default function TrueFalseQuiz({
   const [answers, setAnswers] = useState<(boolean | null)[]>([null, null, null, null]);
   const [submitted, setSubmitted] = useState(false);
   const [earned, setEarned] = useState<number[]>([]); // điểm từng câu đã nộp
+  // Tổng số Ý trả lời đúng (mỗi câu 4 ý) — dùng khi nộp bài cho giáo viên,
+  // vì với dạng Đúng/Sai thì "số câu đúng" không phản ánh đủ, phải đếm theo ý.
+  const [soYDung, setSoYDung] = useState(0);
   const [finished, setFinished] = useState(false);
   const resultRef = useRef<HTMLDivElement>(null);
 
@@ -43,6 +47,7 @@ export default function TrueFalseQuiz({
   function submit() {
     const correct = q.statements.filter((st, i) => answers[i] === st.answer).length;
     setEarned((prev) => [...prev, POINTS[correct]]);
+    setSoYDung((s) => s + correct);
     setSubmitted(true);
   }
 
@@ -64,6 +69,7 @@ export default function TrueFalseQuiz({
     setAnswers([null, null, null, null]);
     setSubmitted(false);
     setEarned([]);
+    setSoYDung(0);
     setFinished(false);
   }
 
@@ -97,6 +103,15 @@ export default function TrueFalseQuiz({
             </button>
           </div>
         </div>
+
+        <NopBai
+          baiId={lessonId}
+          tenBai={lessonTitle}
+          dang="Đúng/Sai"
+          diem={percent}
+          soCauDung={soYDung}
+          tongSoCau={questions.length * 4}
+        />
       </div>
     );
   }

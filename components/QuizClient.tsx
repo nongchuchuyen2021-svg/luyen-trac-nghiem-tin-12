@@ -4,6 +4,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import type { Question } from "@/lib/types";
 import { getLessonProgress, saveAttempt } from "@/lib/progress";
+import NopBai from "@/components/NopBai";
 
 // Cuộn phần vừa hiện ra vào tầm nhìn. Trên điện thoại, ô giải thích nằm dưới
 // đáy màn hình nên không tự thấy được; gọi hàm này để học sinh khỏi vuốt tay
@@ -172,6 +173,15 @@ export default function QuizClient({
               )}
             </div>
           </div>
+
+          <NopBai
+            baiId={lessonId}
+            tenBai={lessonTitle}
+            dang="Trắc nghiệm"
+            diem={scorePercent}
+            soCauDung={correctCount}
+            tongSoCau={quiz.length}
+          />
 
           {wrongQuestions.length > 0 && (
             <section className="mt-8">
