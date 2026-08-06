@@ -1282,6 +1282,130 @@ function CayThuMucWebsite() {
   );
 }
 
+// ── Thuộc tính width, height trên thẻ <img> (Hình 11.3 SGK, Bài 11) ─────────
+// Vẽ lại 3 trường hợp của sách bằng một hình trái tim SVG bóp méo theo tỉ lệ
+// scale khác nhau, để thấy ngay hậu quả khi set sai width/height so với ảnh gốc.
+function KichThuocAnh() {
+  const heart =
+    "M0,18 C-22,-2 -34,-26 -18,-38 C-6,-46 4,-38 0,-30 C-4,-38 6,-46 18,-38 C34,-26 22,-2 0,18 Z";
+  const cols: {
+    x: number;
+    tag: string[];
+    tagColor: string;
+    sx: number;
+    sy: number;
+    caption: string[];
+  }[] = [
+    {
+      x: 110,
+      tag: ["Không dùng", "width, height"],
+      tagColor: C.seaDeep,
+      sx: 1.3,
+      sy: 1.3,
+      caption: ["Hiển thị đúng", "kích thước gốc của ảnh"],
+    },
+    {
+      x: 320,
+      tag: ['width="131"'],
+      tagColor: C.seaDeep,
+      sx: 0.75,
+      sy: 0.75,
+      caption: ["Chỉ set width —", "height tự theo tỉ lệ gốc"],
+    },
+    {
+      x: 530,
+      tag: ['width="200"', 'height="120"'],
+      tagColor: C.coral,
+      sx: 1.05,
+      sy: 0.55,
+      caption: ["⚠️ Méo hình vì tỉ lệ", "không đúng ảnh gốc"],
+    },
+  ];
+
+  return (
+    <Frame viewBox="0 0 640 300">
+      <Lines
+        x={320}
+        y={24}
+        lines={["Thuộc tính width, height trên thẻ <img> (Hình 11.3 SGK)"]}
+        size={13.5}
+        weight={700}
+        fill={C.ink}
+      />
+      {cols.map((c, i) => (
+        <g key={i}>
+          <rect x={c.x - 95} y={42} width={190} height={200} rx={16} fill={C.white} stroke={C.line} strokeWidth={1.5} />
+          <Lines x={c.x} y={64} lines={c.tag} size={12} weight={700} fill={c.tagColor} gap={14} />
+          <g transform={`translate(${c.x} 150) scale(${c.sx} ${c.sy})`}>
+            <path d={heart} fill={C.coral} fillOpacity={i === 2 ? 0.85 : 0.7} stroke={C.coral} strokeWidth={2} />
+          </g>
+          <Lines x={c.x} y={196} lines={c.caption} size={12} gap={16} fill={C.inkSoft} />
+        </g>
+      ))}
+    </Frame>
+  );
+}
+
+// ── <iframe> kết hợp <a target="..."> (Hình 11.4–11.5 SGK, Bài 11) ─────────
+// Học sinh hay hiểu nhầm iframe chỉ hiển thị tĩnh. Hình này chỉ rõ: bấm liên
+// kết có target trùng id của iframe thì nội dung nạp NGAY vào khung đó, trang
+// không tải lại — đây là điều chữ suông khó truyền tải.
+function IframeLienKet() {
+  return (
+    <Frame viewBox="0 0 640 340">
+      <Lines
+        x={320}
+        y={24}
+        lines={['<iframe> + liên kết target — đổi nội dung không cần tải lại trang']}
+        size={13}
+        weight={700}
+        fill={C.ink}
+      />
+
+      <rect x={40} y={50} width={250} height={64} rx={14} fill={C.coral} fillOpacity={0.16} stroke={C.coral} strokeWidth={2} />
+      <Lines x={165} y={72} lines={["🏃 Câu lạc bộ Thể thao"]} size={12.5} weight={700} fill={C.coral} />
+      <Lines x={165} y={94} lines={['href="the_thao.html"', 'target="iframe"']} size={12} gap={13} fill={C.inkSoft} />
+
+      <rect x={350} y={50} width={250} height={64} rx={14} fill={C.white} stroke={C.line} strokeWidth={2} />
+      <Lines x={475} y={72} lines={["🎨 Câu lạc bộ Nghệ thuật"]} size={12.5} weight={700} fill={C.inkSoft} />
+      <Lines x={475} y={94} lines={['href="nghe_thuat.html"', 'target="iframe"']} size={12} gap={13} fill={C.inkSoft} />
+
+      <path
+        d="M165 114 C165 152, 230 152, 230 178"
+        stroke={C.coral}
+        strokeWidth={2.5}
+        fill="none"
+        markerEnd="url(#arrow-coral)"
+      />
+
+      <rect x={60} y={182} width={520} height={124} rx={16} fill={C.sea} fillOpacity={0.06} stroke={C.sea} strokeWidth={2} />
+      <text
+        x={84}
+        y={206}
+        fontSize={12.5}
+        fontWeight={700}
+        fill={C.seaDeep}
+        textAnchor="start"
+        style={{ fontFamily: "var(--font-mono)" }}
+      >
+        {'<iframe id="iframe">'}
+      </text>
+
+      <rect x={80} y={218} width={480} height={70} rx={10} fill={C.white} stroke={C.line} strokeWidth={1.5} />
+      <Lines x={320} y={248} lines={["⚽ Nội dung của the_thao.html", "hiển thị ngay trong khung này"]} size={12} gap={20} weight={600} fill={C.ink} />
+
+      <Lines
+        x={320}
+        y={320}
+        lines={['target phải TRÙNG với id của iframe thì nội dung mới nạp đúng chỗ']}
+        size={12}
+        weight={600}
+        fill={C.seaDeep}
+      />
+    </Frame>
+  );
+}
+
 const DIAGRAMS: Record<string, () => JSX.Element> = {
   "turing-test": TuringTest,
   "ai-hep-va-manh": AiHepVaManh,
@@ -1302,6 +1426,8 @@ const DIAGRAMS: Record<string, () => JSX.Element> = {
   "cu-phap-thuoc-tinh": CuPhapThuocTinh,
   "div-va-span": DivVaSpan,
   "cay-thu-muc-website": CayThuMucWebsite,
+  "kich-thuoc-anh": KichThuocAnh,
+  "iframe-lien-ket": IframeLienKet,
 };
 
 export default function Diagram({ name }: { name: string }) {
