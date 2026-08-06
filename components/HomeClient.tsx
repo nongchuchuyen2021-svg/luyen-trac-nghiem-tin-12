@@ -96,24 +96,19 @@ export default function HomeClient() {
                           href={`/luyen/${lesson.id}`}
                           className="group flex items-center justify-between gap-3 rounded-xl border border-ink/5 bg-white px-4 py-3 shadow-card transition hover:-translate-y-0.5 hover:border-sea/30 hover:shadow-card-hover"
                         >
+                          {/* Tên bài để tự xuống dòng, KHÔNG cắt bằng truncate —
+                              trên điện thoại tên bài dài bị cắt còn "Bài 1. L…" */}
                           <div className="min-w-0">
-                            <p className="truncate text-sm font-medium text-ink group-hover:text-sea-deep">
+                            <p className="text-sm font-medium leading-snug text-ink group-hover:text-sea-deep">
                               {lesson.title}
                             </p>
                             <p className="mt-0.5 font-mono text-xs text-ink-soft/70">
                               {count} câu hỏi
+                              {hasTheory(lesson.id) ? " · 📖 có lý thuyết" : ""}
                               {p ? ` · đã làm ${p.attempts} lần` : ""}
                             </p>
                           </div>
                           <div className="flex shrink-0 items-center gap-2">
-                            {hasTheory(lesson.id) && (
-                              <span
-                                title="Bài này đã có phần lý thuyết tự học"
-                                className="rounded-full bg-sea/10 px-2.5 py-1 font-mono text-xs font-medium text-sea-deep"
-                              >
-                                📖 lý thuyết
-                              </span>
-                            )}
                             {loaded && p && <ScoreBadge best={p.best} />}
                             <span className="text-ink-soft/40 transition group-hover:translate-x-0.5 group-hover:text-sea">
                               →
@@ -131,7 +126,7 @@ export default function HomeClient() {
         </div>
 
         <footer className="mt-12 space-y-1 text-center font-mono text-xs text-ink-soft/50">
-          <p>Tổ Tin học — Trường THPT Na Rì, tỉnh Thái Nguyên</p>
+          <p>Tổ Toán - Tin, trường THPT Na Rì, xã Na Rì, tỉnh Thái Nguyên</p>
           <p>SGK Kết nối tri thức với cuộc sống · Tiến độ lưu trên trình duyệt của bạn</p>
         </footer>
       </div>

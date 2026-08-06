@@ -163,35 +163,41 @@ export default function LessonClient({
               <button
                 key={o.key}
                 onClick={() => setMode(o.key)}
-                className="group flex w-full items-center gap-4 rounded-2xl border border-ink/5 bg-white p-5 text-left shadow-card transition hover:-translate-y-0.5 hover:border-sea/30 hover:shadow-card-hover"
+                className="group flex w-full items-start gap-4 rounded-2xl border border-ink/5 bg-white p-5 text-left shadow-card transition hover:-translate-y-0.5 hover:border-sea/30 hover:shadow-card-hover"
               >
-                <span className="text-3xl">{o.emoji}</span>
+                <span className="shrink-0 text-3xl leading-none">{o.emoji}</span>
+                {/* Huy hiệu nằm CÙNG HÀNG với tên phần và được phép xuống dòng,
+                    còn dòng mô tả chiếm trọn bề ngang. Trước đây huy hiệu đứng
+                    riêng một cột nên trên điện thoại nó bóp dòng mô tả còn vài
+                    kí tự, chữ tràn thành cả chục dòng. */}
                 <span className="min-w-0 flex-1">
-                  <span className="block font-display text-base font-semibold text-ink group-hover:text-sea-deep">
-                    {o.name}
+                  <span className="flex flex-wrap items-center gap-x-2 gap-y-1">
+                    <span className="font-display text-base font-semibold text-ink group-hover:text-sea-deep">
+                      {o.name}
+                    </span>
+                    {o.done && (
+                      <span className="rounded-full bg-leaf/15 px-2.5 py-0.5 font-mono text-xs font-medium text-leaf-deep">
+                        ✓ đã đọc
+                      </span>
+                    )}
+                    {o.best !== null && (
+                      <span
+                        className={`rounded-full px-2.5 py-0.5 font-mono text-xs font-medium ${
+                          o.best >= 80
+                            ? "bg-leaf/15 text-leaf-deep"
+                            : o.best >= 50
+                              ? "bg-gold/15 text-gold-deep"
+                              : "bg-berry/10 text-berry"
+                        }`}
+                      >
+                        {o.best >= 80 ? "⭐ " : ""}
+                        {o.best}%
+                      </span>
+                    )}
                   </span>
-                  <span className="mt-0.5 block text-sm text-ink-soft">{o.desc}</span>
+                  <span className="mt-1 block text-sm leading-relaxed text-ink-soft">{o.desc}</span>
                 </span>
-                {o.done && (
-                  <span className="shrink-0 rounded-full bg-leaf/15 px-2.5 py-1 font-mono text-xs font-medium text-leaf-deep">
-                    ✓ đã đọc
-                  </span>
-                )}
-                {o.best !== null && (
-                  <span
-                    className={`shrink-0 rounded-full px-2.5 py-1 font-mono text-xs font-medium ${
-                      o.best >= 80
-                        ? "bg-leaf/15 text-leaf-deep"
-                        : o.best >= 50
-                          ? "bg-gold/15 text-gold-deep"
-                          : "bg-berry/10 text-berry"
-                    }`}
-                  >
-                    {o.best >= 80 ? "⭐ " : ""}
-                    {o.best}%
-                  </span>
-                )}
-                <span className="shrink-0 text-ink-soft/40 transition group-hover:translate-x-0.5 group-hover:text-sea">
+                <span className="shrink-0 self-center text-ink-soft/40 transition group-hover:translate-x-0.5 group-hover:text-sea">
                   →
                 </span>
               </button>
