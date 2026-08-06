@@ -24,12 +24,24 @@ const theory: LessonTheory = {
           text: "Để hiển thị được trên web, tệp ảnh cần có định dạng được trình duyệt hỗ trợ. Định dạng phổ biến nhất là **PNG, JPEG, GIF**; một số định dạng mới hơn cho web là **JPEG-XR, WebP**. Ảnh định dạng khác như **TIFF, EPS,…** cần được chuyển đổi sang định dạng được hỗ trợ ở trên trước khi chèn.",
         },
         {
+          kind: "update",
+          title: "JPEG-XR giờ hầu như không dùng được",
+          text: "SGK liệt kê JPEG-XR là định dạng mới cho web, nhưng thực tế **các trình duyệt phổ biến hiện nay không đọc được JPEG-XR** — Chrome đánh dấu sẽ **không bao giờ hỗ trợ** (WONTFIX), Firefox cũng không hỗ trợ. Định dạng thật sự dùng được rộng rãi cho web là **WebP** (SGK có nhắc) và **AVIF** (mới hơn, SGK chưa nhắc tới).",
+        },
+        {
           kind: "text",
           text: "**Thẻ `<img>`** là thẻ đơn, dùng để thêm ảnh vào trang web. Khi gặp thẻ `<img>`, trình duyệt hiểu là *\"cần đặt một hình ảnh vào đây\"* — ảnh được chèn ngay trong dòng văn bản mà **không tạo ngắt dòng**.",
         },
         {
           kind: "code",
-          caption: "Hình 11.1 SGK — chèn ảnh ngay trong dòng văn bản",
+          caption: "Hình 11.1 SGK — a) đoạn mã",
+          code: `<p> Tôi muốn uống một cốc
+<img src="images/coffee.png"> ngay bây giờ.</p>`,
+        },
+        {
+          kind: "code",
+          caption:
+            "Hình 11.1 SGK — b) kết quả hiển thị trên trình duyệt (ảnh coffee.png đổi bằng hình vẽ tay để chạy được trong khung này)",
           preview: true,
           code: `<p>Tôi muốn uống một cốc
 <img width="46" height="46"
@@ -54,9 +66,20 @@ ngay bây giờ.</p>`,
           code: `<img src="đường dẫn tới tệp tin ảnh" alt="đoạn văn bản thay thế">`,
         },
         {
+          kind: "code",
+          caption:
+            "Hình 11.2 SGK — ảnh pdffiles.png dùng làm liên kết tới biểu mẫu. Thử ngay: khung dưới KHÔNG có sẵn tệp ảnh này (giống Hình 11.2b của sách) nên trình duyệt tự hiện đúng hành vi lỗi — icon ảnh vỡ kèm chữ alt",
+          preview: true,
+          code: `<p> Tải biểu mẫu xin nhập học:
+<a href="tai_lieu/bieu_mau.pdf">
+    <img src="images/pdffiles.png" alt="Biểu mẫu xin nhập học ">
+</a>
+</p>`,
+        },
+        {
           kind: "example",
           title: "Vì sao cần alt?",
-          text: "SGK ví dụ: tạo liên kết từ ảnh `pdffiles.png` tới tệp `bieu_mau.pdf`. Nếu tệp ảnh `pdffiles.png` **có sẵn** trong thư mục, trình duyệt hiện đúng icon PDF. Nếu **không có**, trình duyệt hiện icon ảnh vỡ kèm ngay dòng chữ `alt` — nhờ vậy người đọc vẫn biết đây là liên kết \"Biểu mẫu xin nhập học\".",
+          text: "Đoạn mã trên chạy trong khung ở trên. Nếu tệp ảnh `pdffiles.png` **có sẵn** trong thư mục `images`, trình duyệt hiện đúng icon PDF (Hình 11.2a của sách). Nếu **không có** — như khung xem trước ở trên — trình duyệt hiện icon ảnh vỡ kèm ngay dòng chữ `alt`, nhờ vậy người đọc vẫn biết đây là liên kết \"Biểu mẫu xin nhập học\".",
         },
         {
           kind: "text",
