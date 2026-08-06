@@ -741,6 +741,120 @@ function TcpCatGoi() {
   );
 }
 
+// ── Chia sẻ thư mục trong mạng cục bộ (Bài 5) ───────────────────────────────
+function ChiaSeThuMuc() {
+  return (
+    <Frame viewBox="0 0 640 340">
+      {/* Máy chủ tài nguyên */}
+      <rect x="10" y="26" width="190" height="160" rx="18" fill={C.sea} fillOpacity="0.1" stroke={C.sea} strokeWidth="2" />
+      <text x="105" y="70" fontSize="28" textAnchor="middle">
+        🖥️
+      </text>
+      <Lines x={105} y={94} lines={["MAY_1"]} size={14} weight={700} fill={C.seaDeep} />
+      <rect x="24" y="106" width="162" height="42" rx="12" fill={C.gold} fillOpacity="0.2" />
+      <text x="46" y="134" fontSize="18" textAnchor="middle">
+        📁
+      </text>
+      <Lines x={124} y={134} lines={["SÁCH LỚP 12"]} size={12} weight={700} fill={C.goldDeep} />
+      <Lines x={105} y={172} lines={["chủ tài nguyên"]} size={12} />
+
+      {/* Chia sẻ đi */}
+      <path d="M204 106 L 310 106" stroke={C.coral} strokeWidth="3" fill="none" markerEnd="url(#arrow-coral)" />
+      <Lines x={257} y={90} lines={["chia sẻ cho"]} size={12} weight={600} fill={C.coral} />
+      <Lines x={257} y={132} lines={["Everyone"]} size={12} weight={600} fill={C.coral} />
+
+      {/* Các máy khác nhìn thấy */}
+      {[
+        { y: 26, ten: "MAY_2" },
+        { y: 116, ten: "MAY_3" },
+      ].map((m) => (
+        <g key={m.ten}>
+          <rect x="320" y={m.y} width="310" height="70" rx="16" fill={C.white} stroke={C.line} strokeWidth="2" />
+          <text x="352" y={m.y + 44} fontSize="24" textAnchor="middle">
+            🖥️
+          </text>
+          <Lines x={386} y={m.y + 32} lines={[m.ten]} size={13} weight={700} fill={C.ink} anchor="start" />
+          <Lines x={386} y={m.y + 52} lines={["nhìn thấy 📁 SÁCH LỚP 12"]} size={12} anchor="start" />
+        </g>
+      ))}
+
+      {/* Hai mức quyền */}
+      <rect x="10" y="210" width="300" height="76" rx="16" fill={C.sea} fillOpacity="0.09" stroke={C.sea} strokeWidth="2" />
+      <Lines x={160} y={238} lines={["🔍 Quyền Read"]} size={13.5} weight={700} fill={C.seaDeep} />
+      <Lines x={160} y={262} lines={["chỉ được xem, KHÔNG sửa được"]} size={12} />
+
+      <rect x="330" y="210" width="300" height="76" rx="16" fill={C.coral} fillOpacity="0.11" stroke={C.coral} strokeWidth="2" />
+      <Lines x={480} y={238} lines={["✏️ Quyền Read/Write"]} size={13.5} weight={700} fill={C.coral} />
+      <Lines x={480} y={262} lines={["vừa xem vừa sửa được"]} size={12} />
+
+      <Lines
+        x={320}
+        y={314}
+        lines={["Biểu tượng thư mục đã chia sẻ có hình chữ nhật màu xanh — tượng trưng cho dây cáp mạng"]}
+        size={12}
+      />
+    </Frame>
+  );
+}
+
+// ── Máy in mạng và máy chủ cung cấp dịch vụ in (Bài 5) ──────────────────────
+function MayInMang() {
+  const pcX = [40, 235, 430];
+  const lenhX = [75, 245, 415];
+
+  return (
+    <Frame viewBox="0 0 640 370">
+      {pcX.map((x, i) => (
+        <g key={`pc${i}`}>
+          <rect x={x} y="8" width="170" height="58" rx="16" fill={C.white} stroke={C.line} strokeWidth="2" />
+          <text x={x + 32} y="44" fontSize="22" textAnchor="middle">
+            💻
+          </text>
+          <Lines x={x + 58} y={32} lines={[`Máy tính ${i + 1}`]} size={12.5} weight={700} fill={C.ink} anchor="start" />
+          <Lines x={x + 58} y={52} lines={["gửi lệnh in"]} size={12} anchor="start" />
+          <path d={`M${x + 85} 66 L ${x + 85} 98`} stroke={C.sea} strokeWidth="2.5" fill="none" markerEnd="url(#arrow)" />
+        </g>
+      ))}
+
+      <rect x="40" y="104" width="560" height="104" rx="18" fill={C.sea} fillOpacity="0.09" stroke={C.sea} strokeWidth="2" />
+      <Lines
+        x={320}
+        y={130}
+        lines={["🖨️ Máy tính cung cấp dịch vụ in (Print Server)"]}
+        size={13.5}
+        weight={700}
+        fill={C.seaDeep}
+      />
+      <Lines x={320} y={150} lines={["nhận yêu cầu từ các máy khác, xếp thành hàng đợi"]} size={12} />
+      {lenhX.map((x, i) => (
+        <g key={`l${i}`}>
+          <rect x={x} y="162" width="150" height="34" rx="10" fill={C.white} stroke={C.sea} strokeWidth="1.5" />
+          <Lines x={x + 75} y={184} lines={[`Lệnh in ${i + 1}`]} size={12} weight={600} fill={C.seaDeep} />
+        </g>
+      ))}
+
+      <path d="M320 208 L 320 238" stroke={C.sea} strokeWidth="2.5" fill="none" markerEnd="url(#arrow)" />
+
+      <rect x="190" y="244" width="260" height="66" rx="18" fill={C.coral} fillOpacity="0.11" stroke={C.coral} strokeWidth="2" />
+      <text x="228" y="288" fontSize="26" textAnchor="middle">
+        🖨️
+      </text>
+      <Lines x={262} y={276} lines={["Máy in mạng"]} size={13.5} weight={700} fill={C.coral} anchor="start" />
+      <Lines x={262} y={296} lines={["in lần lượt từng tài liệu"]} size={12} anchor="start" />
+
+      <rect x="40" y="322" width="560" height="36" rx="18" fill={C.gold} fillOpacity="0.15" />
+      <Lines
+        x={320}
+        y={345}
+        lines={["Chia sẻ máy in = biến máy tính có máy in thành máy chủ cung cấp dịch vụ in"]}
+        size={12.5}
+        weight={600}
+        fill={C.goldDeep}
+      />
+    </Frame>
+  );
+}
+
 const DIAGRAMS: Record<string, () => JSX.Element> = {
   "turing-test": TuringTest,
   "ai-hep-va-manh": AiHepVaManh,
@@ -752,6 +866,8 @@ const DIAGRAMS: Record<string, () => JSX.Element> = {
   "dia-chi-ip": DiaChiIp,
   "bang-dinh-tuyen": BangDinhTuyen,
   "tcp-cat-goi": TcpCatGoi,
+  "chia-se-thu-muc": ChiaSeThuMuc,
+  "may-in-mang": MayInMang,
 };
 
 export default function Diagram({ name }: { name: string }) {
