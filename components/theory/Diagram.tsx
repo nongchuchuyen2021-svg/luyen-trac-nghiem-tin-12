@@ -855,6 +855,90 @@ function MayInMang() {
   );
 }
 
+// ── Ưu và nhược điểm của giao tiếp trong không gian mạng (Bài 6) ────────────
+function UuNhuocGiaoTiepMang() {
+  const uu = [
+    ["Thực hiện thuận tiện"],
+    ["Tiết kiệm thời gian", "và chi phí"],
+    ["Mở rộng kết nối xã hội"],
+    ["Công cụ giao tiếp đa dạng"],
+  ];
+  const nhuoc = [
+    ["Thiếu tín hiệu", "phi ngôn ngữ"],
+    ["Nguy cơ bảo mật", "và quyền riêng tư"],
+    ["Thiếu kết nối cá nhân", "chặt chẽ"],
+    ["Dễ bị ảnh hưởng", "bởi sự cố kĩ thuật"],
+  ];
+  const chipY = [56, 114, 172, 230];
+
+  const cot = (px: number, mau: string, mauChu: string, tieuDe: string, items: string[][]) => (
+    <g>
+      <rect x={px} y="8" width="304" height="294" rx="18" fill={mau} fillOpacity="0.07" stroke={mau} strokeWidth="2" />
+      <Lines x={px + 152} y={38} lines={[tieuDe]} size={15} weight={700} fill={mauChu} />
+      {items.map((dong, i) => (
+        <g key={i}>
+          <rect x={px + 14} y={chipY[i]} width="276" height="50" rx="14" fill={C.white} stroke={mau} strokeWidth="1.5" />
+          <Lines
+            x={px + 152}
+            y={dong.length === 1 ? chipY[i] + 31 : chipY[i] + 22}
+            lines={dong}
+            size={13}
+            gap={17}
+            weight={600}
+            fill={C.ink}
+          />
+        </g>
+      ))}
+    </g>
+  );
+
+  return (
+    <Frame viewBox="0 0 640 310">
+      {cot(8, C.leaf, C.leafDeep, "👍 ƯU ĐIỂM", uu)}
+      {cot(328, C.coral, C.coral, "👎 NHƯỢC ĐIỂM", nhuoc)}
+    </Frame>
+  );
+}
+
+// ── Bốn yếu tố của ứng xử nhân văn (Bài 6) ──────────────────────────────────
+function BonYeuToNhanVan() {
+  const o = [
+    { x: 10, y: 12, emoji: "🤝", ten: "Tôn trọng", mo: ["quyền riêng tư và", "quan điểm của mỗi người"] },
+    { x: 450, y: 12, emoji: "💬", ten: "Lịch sự", mo: ["ngôn từ đúng mực,", "không lăng mạ, châm chọc"] },
+    { x: 10, y: 194, emoji: "💗", ten: "Thấu hiểu", mo: ["đặt mình vào hoàn cảnh", "của người khác"] },
+    { x: 450, y: 194, emoji: "🫶", ten: "Hỗ trợ", mo: ["sẵn lòng giúp đỡ,", "động viên chân thành"] },
+  ];
+
+  return (
+    <Frame viewBox="0 0 640 300">
+      {/* Vẽ đường nối trước rồi mới vẽ vòng tròn đè lên cho gọn đầu nối */}
+      {o.map((b) => (
+        <path
+          key={`n${b.x}${b.y}`}
+          d={`M${b.x === 10 ? 190 : 450} ${b.y + 47} L 320 150`}
+          stroke={C.line}
+          strokeWidth="2"
+          fill="none"
+        />
+      ))}
+
+      {o.map((b) => (
+        <g key={b.ten}>
+          <rect x={b.x} y={b.y} width="180" height="94" rx="18" fill={C.white} stroke={C.sea} strokeWidth="2" />
+          <text x={b.x + 90} y={b.y + 30} fontSize="22" textAnchor="middle">
+            {b.emoji}
+          </text>
+          <Lines x={b.x + 90} y={b.y + 54} lines={[b.ten]} size={13.5} weight={700} fill={C.seaDeep} />
+          <Lines x={b.x + 90} y={b.y + 72} lines={b.mo} size={12} gap={15} />
+        </g>
+      ))}
+
+      <circle cx="320" cy="150" r="64" fill={C.sea} />
+      <Lines x={320} y={145} lines={["ỨNG XỬ", "NHÂN VĂN"]} size={14} gap={19} weight={700} fill={C.white} />
+    </Frame>
+  );
+}
+
 const DIAGRAMS: Record<string, () => JSX.Element> = {
   "turing-test": TuringTest,
   "ai-hep-va-manh": AiHepVaManh,
@@ -868,6 +952,8 @@ const DIAGRAMS: Record<string, () => JSX.Element> = {
   "tcp-cat-goi": TcpCatGoi,
   "chia-se-thu-muc": ChiaSeThuMuc,
   "may-in-mang": MayInMang,
+  "uu-nhuoc-giao-tiep-mang": UuNhuocGiaoTiepMang,
+  "bon-yeu-to-nhan-van": BonYeuToNhanVan,
 };
 
 export default function Diagram({ name }: { name: string }) {
