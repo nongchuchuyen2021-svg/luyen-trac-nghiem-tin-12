@@ -939,6 +939,152 @@ function BonYeuToNhanVan() {
   );
 }
 
+// ── Giải phẫu một phần tử HTML (Bài 7) ──────────────────────────────────────
+function PhanTuHtml() {
+  return (
+    <Frame viewBox="0 0 640 200">
+      {/* Nhãn và đường chỉ xuống */}
+      {[
+        { x: 141, l: ["Thẻ bắt đầu", "(opening tag)"], mau: C.seaDeep },
+        { x: 320, l: ["Nội dung", "của phần tử"], mau: C.goldDeep },
+        { x: 499, l: ["Thẻ kết thúc", "(closing tag)"], mau: C.coral },
+      ].map((n) => (
+        <g key={n.x}>
+          <Lines x={n.x} y={26} lines={n.l} size={12.5} gap={16} weight={600} fill={n.mau} />
+          <path d={`M${n.x} 50 L ${n.x} 74`} stroke={C.line} strokeWidth="2" fill="none" />
+        </g>
+      ))}
+
+      {/* Khối mã */}
+      <rect x="70" y="76" width="500" height="48" rx="12" fill={C.white} stroke={C.coral} strokeWidth="2.5" />
+      <rect x="82" y="86" width="118" height="28" rx="8" fill={C.sea} fillOpacity="0.16" />
+      <text
+        x="141"
+        y="105"
+        fontSize="14"
+        textAnchor="middle"
+        fill={C.seaDeep}
+        fontWeight="600"
+        style={{ fontFamily: "var(--font-mono)" }}
+      >
+        &lt;tên thẻ&gt;
+      </text>
+      <text
+        x="320"
+        y="105"
+        fontSize="13"
+        textAnchor="middle"
+        fill={C.ink}
+        style={{ fontFamily: "var(--font-mono)" }}
+      >
+        nội dung
+      </text>
+      <rect x="440" y="86" width="118" height="28" rx="8" fill={C.coral} fillOpacity="0.16" />
+      <text
+        x="499"
+        y="105"
+        fontSize="14"
+        textAnchor="middle"
+        fill={C.coral}
+        fontWeight="600"
+        style={{ fontFamily: "var(--font-mono)" }}
+      >
+        &lt;/tên thẻ&gt;
+      </text>
+
+      {/* Dấu ngoặc gộp cả ba phần */}
+      <path d="M70 138 L 70 146 L 570 146 L 570 138" stroke={C.leaf} strokeWidth="2.5" fill="none" />
+      <path d="M320 146 L 320 156" stroke={C.leaf} strokeWidth="2.5" fill="none" />
+      <Lines x={320} y={176} lines={["PHẦN TỬ HTML (element)"]} size={14} weight={700} fill={C.leafDeep} />
+    </Frame>
+  );
+}
+
+// ── Cây thông tin của một trang web (Bài 7) ─────────────────────────────────
+function CayHtml() {
+  // Toạ độ tâm mỗi nút; ô rộng 48 nên các nút cùng hàng cách nhau ít nhất 55.
+  const nut = [
+    { ten: "html", x: 320, y: 28, goc: true },
+    { ten: "head", x: 150, y: 98 },
+    { ten: "body", x: 450, y: 98 },
+    { ten: "meta", x: 85, y: 168 },
+    { ten: "title", x: 205, y: 168 },
+    { ten: "div", x: 390, y: 168 },
+    { ten: "p", x: 540, y: 168 },
+    { ten: "h1", x: 300, y: 245 },
+    { ten: "p", x: 355, y: 245 },
+    { ten: "hr", x: 410, y: 245 },
+    { ten: "p", x: 465, y: 245 },
+    { ten: "em", x: 540, y: 245 },
+  ];
+  const canh: [number, number][] = [
+    [0, 1],
+    [0, 2],
+    [1, 3],
+    [1, 4],
+    [2, 5],
+    [2, 6],
+    [5, 7],
+    [5, 8],
+    [5, 9],
+    [5, 10],
+    [6, 11],
+  ];
+
+  return (
+    <Frame viewBox="0 0 640 300">
+      {canh.map(([a, b], i) => (
+        <path
+          key={i}
+          d={`M${nut[a].x} ${nut[a].y + 15} L ${nut[b].x} ${nut[b].y - 15}`}
+          stroke={C.line}
+          strokeWidth="2"
+          fill="none"
+        />
+      ))}
+
+      {nut.map((n, i) => (
+        <g key={i}>
+          <rect
+            x={n.x - 24}
+            y={n.y - 15}
+            width="48"
+            height="30"
+            rx="9"
+            fill={n.goc ? C.sea : C.white}
+            stroke={n.goc ? C.sea : C.line}
+            strokeWidth="2"
+          />
+          <text
+            x={n.x}
+            y={n.y + 5}
+            fontSize="13"
+            textAnchor="middle"
+            fill={n.goc ? C.white : C.ink}
+            fontWeight={n.goc ? 700 : 500}
+            style={{ fontFamily: "var(--font-mono)" }}
+          >
+            {n.ten}
+          </text>
+        </g>
+      ))}
+
+      <path d="M420 34 L 350 30" stroke={C.coral} strokeWidth="2" fill="none" markerEnd="url(#arrow-coral)" />
+      <Lines x={430} y={38} lines={["nút gốc (root)"]} size={12.5} weight={600} fill={C.coral} anchor="start" />
+
+      <rect x="40" y="272" width="560" height="26" rx="13" fill={C.gold} fillOpacity="0.15" />
+      <Lines
+        x={320}
+        y={290}
+        lines={["Phần tử lồng trong phần tử khác = quan hệ cha – con trên cây"]}
+        size={12.5}
+        weight={600}
+        fill={C.goldDeep}
+      />
+    </Frame>
+  );
+}
+
 const DIAGRAMS: Record<string, () => JSX.Element> = {
   "turing-test": TuringTest,
   "ai-hep-va-manh": AiHepVaManh,
@@ -954,6 +1100,8 @@ const DIAGRAMS: Record<string, () => JSX.Element> = {
   "may-in-mang": MayInMang,
   "uu-nhuoc-giao-tiep-mang": UuNhuocGiaoTiepMang,
   "bon-yeu-to-nhan-van": BonYeuToNhanVan,
+  "phan-tu-html": PhanTuHtml,
+  "cay-html": CayHtml,
 };
 
 export default function Diagram({ name }: { name: string }) {
