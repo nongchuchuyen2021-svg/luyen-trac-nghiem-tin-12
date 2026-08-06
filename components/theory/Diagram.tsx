@@ -1085,6 +1085,102 @@ function CayHtml() {
   );
 }
 
+// ── Cú pháp thuộc tính của thẻ (Bài 8) ──────────────────────────────────────
+function CuPhapThuocTinh() {
+  const o = [
+    { x: 30, w: 56, chu: "<p", nen: C.sea, chuMau: C.seaDeep },
+    { x: 94, w: 94, chu: "style", nen: C.gold, chuMau: C.goldDeep },
+    { x: 196, w: 26, chu: "=", nen: null, chuMau: C.ink },
+    { x: 230, w: 160, chu: '"color:red"', nen: C.coral, chuMau: C.coral },
+    { x: 398, w: 26, chu: ">", nen: null, chuMau: C.ink },
+    { x: 432, w: 100, chu: "Nội dung", nen: C.leaf, chuMau: C.leafDeep },
+    { x: 540, w: 70, chu: "</p>", nen: C.sea, chuMau: C.seaDeep },
+  ];
+  const nhan = [
+    { x: 58, l: ["tên thẻ"], mau: C.seaDeep },
+    { x: 141, l: ["tên thuộc tính"], mau: C.goldDeep },
+    { x: 310, l: ["giá trị, đặt trong nháy kép"], mau: C.coral },
+    { x: 482, l: ["nội dung"], mau: C.leafDeep },
+  ];
+
+  return (
+    <Frame viewBox="0 0 640 210">
+      {nhan.map((n) => (
+        <g key={n.x}>
+          <Lines x={n.x} y={40} lines={n.l} size={12.5} weight={600} fill={n.mau} />
+          <path d={`M${n.x} 50 L ${n.x} 86`} stroke={C.line} strokeWidth="2" fill="none" />
+        </g>
+      ))}
+
+      {o.map((c) => (
+        <g key={c.x}>
+          {c.nen && <rect x={c.x} y="90" width={c.w} height="34" rx="9" fill={c.nen} fillOpacity="0.16" />}
+          <text
+            x={c.x + c.w / 2}
+            y="112"
+            fontSize="14"
+            textAnchor="middle"
+            fill={c.chuMau}
+            fontWeight="600"
+            style={{ fontFamily: "var(--font-mono)" }}
+          >
+            {c.chu}
+          </text>
+        </g>
+      ))}
+
+      <rect x="30" y="150" width="580" height="46" rx="16" fill={C.gold} fillOpacity="0.15" />
+      <Lines
+        x={320}
+        y={172}
+        lines={[
+          "Thuộc tính nằm trong THẺ BẮT ĐẦU, viết sau tên thẻ.",
+          "Có nhiều thuộc tính thì ngăn cách nhau bởi dấu cách.",
+        ]}
+        size={12.5}
+        gap={17}
+        weight={600}
+        fill={C.goldDeep}
+      />
+    </Frame>
+  );
+}
+
+// ── div là khối, span nằm trong dòng (Bài 8) ────────────────────────────────
+function DivVaSpan() {
+  return (
+    <Frame viewBox="0 0 640 300">
+      {/* div */}
+      <rect x="8" y="8" width="304" height="284" rx="18" fill={C.sea} fillOpacity="0.07" stroke={C.sea} strokeWidth="2" />
+      <Lines x={160} y={38} lines={["🧱 <div> — một KHỐI"]} size={14.5} weight={700} fill={C.seaDeep} />
+      <Lines x={160} y={60} lines={["bắt đầu trên dòng mới,", "chiếm trọn bề ngang"]} size={12} gap={16} />
+
+      <rect x="24" y="102" width="272" height="126" rx="12" fill={C.white} stroke={C.line} strokeWidth="1.5" />
+      <rect x="40" y="118" width="180" height="12" rx="6" fill={C.line} />
+      <rect x="40" y="142" width="240" height="42" rx="10" fill={C.sea} fillOpacity="0.18" stroke={C.sea} strokeWidth="2" />
+      <Lines x={160} y={168} lines={["nội dung của div"]} size={12.5} weight={600} fill={C.seaDeep} />
+      <rect x="40" y="196" width="146" height="12" rx="6" fill={C.line} />
+
+      <Lines x={160} y={256} lines={["Dùng cho quy mô LỚN"]} size={12.5} weight={600} fill={C.seaDeep} />
+
+      {/* span */}
+      <rect x="328" y="8" width="304" height="284" rx="18" fill={C.coral} fillOpacity="0.07" stroke={C.coral} strokeWidth="2" />
+      <Lines x={480} y={38} lines={["🔤 <span> — TRONG DÒNG"]} size={14.5} weight={700} fill={C.coral} />
+      <Lines x={480} y={60} lines={["nằm ngay trong dòng", "văn bản đang viết"]} size={12} gap={16} />
+
+      <rect x="344" y="102" width="272" height="126" rx="12" fill={C.white} stroke={C.line} strokeWidth="1.5" />
+      <rect x="360" y="118" width="180" height="12" rx="6" fill={C.line} />
+      <rect x="360" y="146" width="64" height="12" rx="6" fill={C.line} />
+      <rect x="432" y="138" width="96" height="28" rx="9" fill={C.coral} fillOpacity="0.2" stroke={C.coral} strokeWidth="2" />
+      <Lines x={480} y={157} lines={["span"]} size={12.5} weight={600} fill={C.coral} />
+      <rect x="536" y="146" width="62" height="12" rx="6" fill={C.line} />
+      <rect x="360" y="196" width="146" height="12" rx="6" fill={C.line} />
+
+      <Lines x={480} y={256} lines={["Dùng cho quy mô NHỎ hơn"]} size={12.5} weight={600} fill={C.coral} />
+    </Frame>
+  );
+}
+
 const DIAGRAMS: Record<string, () => JSX.Element> = {
   "turing-test": TuringTest,
   "ai-hep-va-manh": AiHepVaManh,
@@ -1102,6 +1198,8 @@ const DIAGRAMS: Record<string, () => JSX.Element> = {
   "bon-yeu-to-nhan-van": BonYeuToNhanVan,
   "phan-tu-html": PhanTuHtml,
   "cay-html": CayHtml,
+  "cu-phap-thuoc-tinh": CuPhapThuocTinh,
+  "div-va-span": DivVaSpan,
 };
 
 export default function Diagram({ name }: { name: string }) {
