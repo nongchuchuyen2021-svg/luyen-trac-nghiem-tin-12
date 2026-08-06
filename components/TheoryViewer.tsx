@@ -137,11 +137,17 @@ function CodeBlock({
                 "/luyen/thong_tin.html" (ra trang 404). Đặt gốc về about:srcdoc
                 thì liên kết #id nhảy đúng trong khung, còn đường dẫn tương đối
                 không giải ra được nên bấm cũng không đi đâu.
-                Thẻ base chỉ thêm lúc hiển thị, không lọt vào mã học sinh đọc. */}
+                Dòng style đi kèm khoá mọi liên kết KHÔNG phải dạng "#id": khung
+                xem trước là để nhìn kết quả hiển thị, không phải để duyệt web.
+                Bấm liên kết ra ngoài (http://) sẽ kéo nguyên trang ngoài vào
+                khung 180px — mà sandbox chặn JavaScript nên trang đó thường chỉ
+                hiện dòng "hãy bật JavaScript", lấp mất khung xem trước.
+                Liên kết #id vẫn bấm được vì nó nhảy trong chính khung.
+                Cả hai thứ chỉ thêm lúc hiển thị, không lọt vào mã học sinh đọc. */}
             <iframe
               title="Kết quả hiển thị"
               sandbox=""
-              srcDoc={`<base href="about:srcdoc">${code}`}
+              srcDoc={`<base href="about:srcdoc"><style>a:not([href^="#"]){pointer-events:none}</style>${code}`}
               className="h-[180px] w-full border-0 bg-white"
             />
           </div>
