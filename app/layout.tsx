@@ -21,9 +21,9 @@ const mono = IBM_Plex_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Luyện trắc nghiệm Tin học 12 — THPT Na Rì",
+  title: "Ôn luyện Tin học 12 — THPT Na Rì",
   description:
-    "Web luyện tập trắc nghiệm Tin học 12 (Kết nối tri thức, định hướng Tin học ứng dụng) của Trường THPT Na Rì, tỉnh Thái Nguyên — tự chấm, xem giải thích, theo dõi tiến độ theo từng bài.",
+    "Web ôn luyện Tin học 12 (Kết nối tri thức, định hướng Tin học ứng dụng) của Trường THPT Na Rì, tỉnh Thái Nguyên — lý thuyết tự học có hình minh hoạ, luyện trắc nghiệm tự chấm, xem giải thích, theo dõi tiến độ theo từng bài.",
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

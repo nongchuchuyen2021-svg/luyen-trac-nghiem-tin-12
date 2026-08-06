@@ -46,12 +46,12 @@ export default function HomeClient() {
     <main className="playground min-h-screen pb-16">
       <div className="mx-auto max-w-3xl px-5 pt-12 sm:px-8">
         <header className="text-center">
-          <p className="inline-block rounded-full bg-gradient-to-r from-sea to-coral px-4 py-1.5 font-display text-sm font-semibold text-white shadow-card">
-            🏫 Trường THPT Na Rì · Tỉnh Thái Nguyên
+          <p className="inline-block rounded-full bg-gradient-to-r from-sea to-coral px-5 py-2 font-display text-base font-semibold text-white shadow-card sm:px-6 sm:py-2.5 sm:text-xl">
+            🏫 Trường THPT Na Rì - Tỉnh Thái Nguyên
           </p>
           <p className="mt-5 text-5xl">📚✨</p>
           <h1 className="mt-3 font-display text-3xl font-bold leading-tight text-ink sm:text-4xl">
-            Luyện trắc nghiệm{" "}
+            Ôn luyện{" "}
             <span className="bg-gradient-to-r from-sea to-coral bg-clip-text text-transparent">
               Tin học 12
             </span>

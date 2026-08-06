@@ -1,6 +1,6 @@
-# Luyện trắc nghiệm Tin học 12 — THPT Na Rì
+# Ôn luyện Tin học 12 — THPT Na Rì
 
-Web luyện trắc nghiệm Tin học 12 theo SGK **Kết nối tri thức với cuộc sống**,
+Web ôn luyện Tin học 12 theo SGK **Kết nối tri thức với cuộc sống**,
 **định hướng Tin học ứng dụng (ICT)**, của **Trường THPT Na Rì, tỉnh Thái
 Nguyên**, dành cho học sinh tự ôn tập: chọn bài → làm câu hỏi → chấm ngay từng
 câu kèm giải thích → xem tổng kết và ôn lại câu sai. Xây bằng Next.js 14 +
