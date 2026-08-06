@@ -1181,6 +1181,107 @@ function DivVaSpan() {
   );
 }
 
+// ── Cây thư mục một website và cách viết đường dẫn (Bài 10) ─────────────────
+// Vẽ lại Hình 10.1 của SGK nhưng theo kiểu cây thư mục thụt lề (dễ đọc trên
+// điện thoại hơn sơ đồ ngang của sách), đồng thời gắn luôn đường dẫn tương
+// ứng vào bên phải — chỗ này SGK để rời ở phần chữ nên học sinh khó nối.
+function CayThuMucWebsite() {
+  const mucX = [26, 54, 82, 110];
+  const hang = [
+    { c: 0, i: "📁", t: "web/", tm: true },
+    { c: 1, i: "📁", t: "images/", tm: true },
+    { c: 2, i: "🖼️", t: "sun.png" },
+    { c: 2, i: "🖼️", t: "star.gif" },
+    { c: 1, i: "📄", t: "index.html", dangO: true },
+    { c: 1, i: "📄", t: "thong_tin.html", duong: '"thong_tin.html"' },
+    { c: 1, i: "📁", t: "bai_tap/", tm: true },
+    { c: 2, i: "📄", t: "bai_tap_1.html", duong: '"bai_tap/bai_tap_1.html"' },
+    { c: 2, i: "📄", t: "bai_tap_2.html" },
+    { c: 2, i: "📁", t: "on_tap/", tm: true },
+    { c: 3, i: "📄", t: "bai_tap_on_tap.html", duong: '"bai_tap/on_tap/bai_tap_on_tap.html"' },
+  ];
+  const y = (i: number) => 52 + i * 29;
+
+  // Đường kẻ dọc nối thư mục cha với các con: [hàng cha, hàng con cuối cùng]
+  const noi: [number, number][] = [
+    [0, 6],
+    [1, 3],
+    [6, 9],
+    [9, 10],
+  ];
+
+  return (
+    <Frame viewBox="0 0 640 420">
+      <Lines x={150} y={26} lines={["Cấu trúc một website"]} size={14} weight={700} fill={C.ink} />
+
+      {noi.map(([cha, con], k) => {
+        const x = mucX[hang[cha].c] + 8;
+        return <path key={k} d={`M${x} ${y(cha) + 8} L ${x} ${y(con)}`} stroke={C.line} strokeWidth="2" fill="none" strokeDasharray="4 4" />;
+      })}
+
+      {hang.map((h, i) => (
+        <g key={i}>
+          {h.c > 0 && (
+            <path
+              d={`M${mucX[h.c - 1] + 8} ${y(i) - 4} L ${mucX[h.c] - 4} ${y(i) - 4}`}
+              stroke={C.line}
+              strokeWidth="2"
+              fill="none"
+              strokeDasharray="4 4"
+            />
+          )}
+          {h.dangO && (
+            <rect x={mucX[h.c] - 6} y={y(i) - 17} width="186" height="24" rx="8" fill={C.coral} fillOpacity="0.16" />
+          )}
+          <text x={mucX[h.c]} y={y(i)} fontSize="14" textAnchor="start">
+            {h.i}
+          </text>
+          <text
+            x={mucX[h.c] + 22}
+            y={y(i)}
+            fontSize="12.5"
+            textAnchor="start"
+            fill={h.tm ? C.seaDeep : C.ink}
+            fontWeight={h.tm ? 700 : 500}
+            style={{ fontFamily: "var(--font-mono)" }}
+          >
+            {h.t}
+          </text>
+          {h.dangO && (
+            <Lines x={mucX[h.c] + 186} y={y(i)} lines={["← ta đang đứng ở đây"]} size={12} weight={700} fill={C.coral} anchor="start" />
+          )}
+          {h.duong && (
+            <>
+              <path d={`M290 ${y(i) - 4} L 322 ${y(i) - 4}`} stroke={C.line} strokeWidth="1.5" fill="none" strokeDasharray="3 3" />
+              <text
+                x={326}
+                y={y(i)}
+                fontSize="12"
+                textAnchor="start"
+                fill={C.leafDeep}
+                fontWeight="600"
+                style={{ fontFamily: "var(--font-mono)" }}
+              >
+                {`href=${h.duong}`}
+              </text>
+            </>
+          )}
+        </g>
+      ))}
+
+      <rect x="20" y="372" width="600" height="34" rx="17" fill={C.gold} fillOpacity="0.15" />
+      <Lines
+        x={320}
+        y={394}
+        lines={["Cùng thư mục: chỉ cần tên tệp · Xuống cấp: thêm tên thư mục và dấu / · Lên cấp: dùng ../"]}
+        size={12}
+        weight={600}
+        fill={C.goldDeep}
+      />
+    </Frame>
+  );
+}
+
 const DIAGRAMS: Record<string, () => JSX.Element> = {
   "turing-test": TuringTest,
   "ai-hep-va-manh": AiHepVaManh,
@@ -1200,6 +1301,7 @@ const DIAGRAMS: Record<string, () => JSX.Element> = {
   "cay-html": CayHtml,
   "cu-phap-thuoc-tinh": CuPhapThuocTinh,
   "div-va-span": DivVaSpan,
+  "cay-thu-muc-website": CayThuMucWebsite,
 };
 
 export default function Diagram({ name }: { name: string }) {

@@ -5,7 +5,7 @@ import type { LessonTheory } from "@/lib/types";
 // đường dẫn tương đối, liên kết trong cùng website, liên kết trong cùng trang.
 
 const theory: LessonTheory = {
-  minutes: 15,
+  minutes: 12,
   intro:
     "Trang web sẽ trở thành một 'ốc đảo' nếu không có cách nào đi đến nó hay từ nó đi ra. Bài này dạy cách tạo **siêu liên kết** (link) bằng thẻ `<a>` — tính năng cốt lõi làm nên mạng lưới World Wide Web.",
 
@@ -20,6 +20,11 @@ const theory: LessonTheory = {
           text: "**Siêu văn bản** (hypertext) là loại văn bản mà nội dung của nó không chỉ chứa văn bản mà còn chứa nhiều dạng dữ liệu khác như âm thanh, hình ảnh,… và đặc biệt là chứa các **siêu liên kết** (hyperlink) tới siêu văn bản khác.",
         },
         {
+          kind: "example",
+          title: "Khác gì với đọc sách giấy?",
+          text: "Khi xem siêu văn bản, em **không cần xem tuần tự từ đầu đến cuối** mà có thể nhờ các siêu liên kết để **truy cập vị trí tương ứng không theo trình tự nào**. **Siêu liên kết** (còn gọi tắt là **liên kết**) là **một tham chiếu** để liên kết tới siêu văn bản khác — nháy chuột vào vị trí đặt liên kết trong văn bản ban đầu là truy cập được ngay.",
+        },
+        {
           kind: "text",
           text: "Trong HTML, người ta sử dụng **thẻ `<a>`** cho các liên kết. Cấu trúc chung:",
         },
@@ -30,7 +35,7 @@ const theory: LessonTheory = {
         },
         {
           kind: "text",
-          text: "Trong đó **URL** là địa chỉ (đường dẫn) tham chiếu tới tài liệu được liên kết. Thuộc tính **`href`** dùng để cung cấp địa chỉ của trang web hay tài liệu được liên kết. Phần lớn các liên kết trỏ tới một tài liệu HTML khác, nhưng cũng có thể trỏ tới một hình ảnh, tệp âm thanh hoặc video.",
+          text: "Trong đó **URL** là địa chỉ (đường dẫn) tham chiếu tới tài liệu được liên kết. Thuộc tính **`href`** dùng để cung cấp địa chỉ của trang web hay tài liệu được liên kết. **Đường dẫn URL phải được nằm trong cặp dấu nháy kép `\" \"`.** Phần lớn các liên kết trỏ tới một tài liệu HTML khác, nhưng cũng có thể trỏ tới một hình ảnh, tệp âm thanh hoặc video.",
         },
         {
           kind: "text",
@@ -107,26 +112,40 @@ const theory: LessonTheory = {
         },
         {
           kind: "text",
-          text: "Khi đường dẫn không có giao thức ở đầu, trình duyệt kiểm tra địa chỉ đó trên máy chủ hiện tại để tìm tài liệu. Có ba trường hợp phổ biến khi dùng đường dẫn tương đối:",
+          text: "Khi đường dẫn không có giao thức ở đầu, trình duyệt kiểm tra địa chỉ đó **trên máy chủ hiện tại** để tìm tài liệu. Muốn viết được đường dẫn tương đối, trước hết phải **nhìn ra cấu trúc thư mục của website** — em đang đứng ở tệp nào, tệp cần tới nằm ở đâu.",
+        },
+        {
+          kind: "figure",
+          diagram: "cay-thu-muc-website",
+          caption: "Hình 10.1 trong SGK — từ index.html viết đường dẫn tới từng tệp khác",
+        },
+        {
+          kind: "text",
+          text: "Giả sử em đang ở trang **`index.html`** như hình trên. Có **bốn trường hợp** khi dùng đường dẫn tương đối:",
         },
         {
           kind: "list",
+          ordered: true,
           items: [
-            "**Cùng thư mục:** Chỉ cần cung cấp tên tệp. Ví dụ: `href=\"thong_tin.html\"`.",
-            "**Thuộc thư mục con (dưới 1 cấp):** Đường dẫn gồm tên thư mục và tên tệp, ngăn cách bởi dấu `/`. Ví dụ: `href=\"bai_tap/bai_tap_1.html\"`.",
-            "**Thuộc thư mục cha (trên 1 cấp):** Sử dụng kí tự **`../`** để chỉ định \"trở lại thư mục trên một mức\". Số cụm `../` tương ứng với số mức quay trở lại. Ví dụ: `href=\"../index.html\"`.",
+            "**Cùng thư mục:** chỉ cần cung cấp tên tệp. Ví dụ: `href=\"thong_tin.html\"`.",
+            "**Dưới một cấp:** đường dẫn gồm tên thư mục và tên tệp, ngăn cách bởi dấu `/`. Ví dụ: `href=\"bai_tap/bai_tap_1.html\"`.",
+            "**Dưới hai (hay nhiều) cấp:** đường dẫn gồm **tên các thư mục theo thứ tự từ trên xuống** rồi mới tới tên tệp, **mỗi cấp ngăn nhau bởi dấu `/`**. Ví dụ: `href=\"bai_tap/on_tap/bai_tap_on_tap.html\"`.",
+            "**Ở thư mục mức trên:** dùng kí tự **`../`** để chỉ định “trở lại thư mục trên **một** mức”. **Số cụm `../` tương ứng với số mức quay trở lại.** Ví dụ từ `bai_tap_1.html` quay về trang chủ: `href=\"../index.html\"`.",
           ],
         },
         {
           kind: "code",
-          caption: "Hình 10.1 trong SGK — các cách liên kết trong cùng website",
-          code: `<!-- Cùng thư mục -->
-<a href="thong_tin.html">Giới thiệu</a>
+          caption: "Bốn trường hợp viết đường dẫn tương đối trên cấu trúc website ở hình trên",
+          code: `<!-- 1. Cùng thư mục với index.html -->
+<a href="thong_tin.html">Giới thiệu về trang web</a>
 
-<!-- Xuống một cấp thư mục (thư mục bai_tap) -->
+<!-- 2. Xuống một cấp (vào thư mục bai_tap) -->
 <a href="bai_tap/bai_tap_1.html">Bài tập 1</a>
 
-<!-- Lên một cấp thư mục (quay ra thư mục cha) -->
+<!-- 3. Xuống hai cấp (bai_tap rồi on_tap) -->
+<a href="bai_tap/on_tap/bai_tap_on_tap.html">Bài tập ôn tập</a>
+
+<!-- 4. Lên một cấp — viết trong tệp bai_tap_1.html -->
 <a href="../index.html">Quay lại trang chủ</a>`,
         },
         {
@@ -141,6 +160,19 @@ const theory: LessonTheory = {
           answer: 2,
           explain:
             "Sử dụng **`../`** để chỉ định trở lại thư mục trên một mức. Nếu muốn lên 2 mức thì dùng `../../`.",
+        },
+        {
+          kind: "check",
+          q: "Nhìn cây thư mục ở trên: từ trang index.html, muốn liên kết tới tệp bai_tap_on_tap.html thì viết href thế nào?",
+          options: [
+            'href="bai_tap_on_tap.html"',
+            'href="on_tap/bai_tap_on_tap.html"',
+            'href="bai_tap/on_tap/bai_tap_on_tap.html"',
+            'href="../bai_tap/on_tap/bai_tap_on_tap.html"',
+          ],
+          answer: 2,
+          explain:
+            "Tệp nằm **dưới hai cấp** so với index.html: phải đi qua thư mục `bai_tap` rồi tới `on_tap` mới gặp tệp. Đường dẫn gồm **tên các thư mục theo thứ tự từ trên xuống, mỗi cấp ngăn nhau bởi dấu `/`** → **`bai_tap/on_tap/bai_tap_on_tap.html`**. Không dùng `../` vì ta đang đi **xuống** chứ không đi lên.",
         },
       ],
     },
@@ -171,12 +203,24 @@ const theory: LessonTheory = {
         },
         {
           kind: "code",
-          caption: "Ví dụ: Tạo bảng có id, rồi tạo liên kết trỏ tới bảng đó",
+          caption: "Ví dụ trong SGK — tạo bảng có id, rồi tạo liên kết trỏ tới bảng đó",
           code: `<!-- 1. Đặt id cho đích đến -->
 <table id="Thong_tin"> ... </table>
 
 <!-- 2. Tạo liên kết trỏ tới id đó -->
 <a href="#Thong_tin">Thông tin chi tiết</a>`,
+        },
+        {
+          kind: "code",
+          caption: "Thử ngay: bấm vào liên kết trong khung xem trước sẽ nhảy xuống đúng mục có id",
+          preview: true,
+          code: `<p><a href="#phan-cuoi">Nhảy xuống phần cuối ↓</a></p>
+<p>Nội dung ở giữa…</p>
+<p>Nội dung ở giữa…</p>
+<p>Nội dung ở giữa…</p>
+<p>Nội dung ở giữa…</p>
+<h3 id="phan-cuoi">Phần cuối</h3>
+<p>Em đã nhảy tới đây!</p>`,
         },
         {
           kind: "check",
@@ -204,11 +248,28 @@ const theory: LessonTheory = {
           text: "Ngoài văn bản, ta có thể dùng hình ảnh làm nội dung liên kết (người dùng nháy chuột vào ảnh để mở trang khác). Để làm vậy, ta chỉ cần đặt thẻ **`<img>`** vào bên trong thẻ **`<a>`**.",
         },
         {
+          kind: "text",
+          text: "Trước hết cần hiển thị ảnh trong trang web bằng thẻ **`<img>`** với thuộc tính **`src`** chứa đường dẫn tới tệp ảnh. Đường dẫn này **cũng dùng đường dẫn tuyệt đối hoặc tương đối** giống như `href`.",
+        },
+        {
           kind: "code",
-          caption: "Dùng ảnh Mặt Trời để liên kết tới trang thong_tin.html",
+          caption: "Ví dụ trong SGK — ảnh Mặt Trời lưu ở images/sun.png, nháy vào ảnh mở trang thong_tin.html",
           code: `<a href="thong_tin.html">
   <img src="images/sun.png">
 </a>`,
+        },
+        {
+          kind: "code",
+          caption:
+            "Thử ngay: ảnh dưới đây nhúng thẳng vào mã nên chạy được trong khung xem trước — di chuột lên ảnh sẽ thấy con trỏ đổi thành bàn tay",
+          preview: true,
+          code: `<a href="thong_tin.html">
+  <img width="90" height="90" alt="Mặt Trời"
+       src="data:image/svg+xml;utf8,
+       <svg xmlns='http://www.w3.org/2000/svg' width='90' height='90'>
+       <circle cx='45' cy='45' r='24' fill='%23EFA31D'/></svg>">
+</a>
+<p>Nháy vào hình Mặt Trời để mở trang thong_tin.html</p>`,
         },
         {
           kind: "note",

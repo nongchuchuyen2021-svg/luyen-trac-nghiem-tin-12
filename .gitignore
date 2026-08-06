@@ -16,3 +16,8 @@ tai-lieu/sgk-pages/
 *-key.json
 khoa-google*.json
 
+
+# Thu muc chua khoa service account - TUYET DOI khong dua len git
+Key JSon/
+*.json.key
+
