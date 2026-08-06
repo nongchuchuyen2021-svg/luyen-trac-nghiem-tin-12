@@ -1410,6 +1410,143 @@ function IframeLienKet() {
   );
 }
 
+// ── label ↔ input nối nhau bằng for/id (Bài 12) ─────────────────────────────
+// Chỗ học sinh hay bỏ qua nhất: for của label phải TRÙNG id của input. SGK chỉ
+// nói bằng chữ, mà tác dụng thật (nháy vào nhãn thì con trỏ nhảy vào ô nhập)
+// lại chỉ thấy được khi thao tác — nên vẽ hẳn ra đây.
+function LabelForId() {
+  const mono = { fontFamily: "var(--font-mono)" } as const;
+  return (
+    <Frame viewBox="0 0 640 300">
+      <Lines
+        x={320}
+        y={24}
+        lines={["label và input nối với nhau bằng for ↔ id"]}
+        size={13.5}
+        weight={700}
+        fill={C.ink}
+      />
+
+      <rect x={24} y={44} width={592} height={110} rx={14} fill={C.ink} fillOpacity={0.04} stroke={C.line} strokeWidth={1.5} />
+
+      {/* hai o cho biet chinh la cho phai trung nhau */}
+      <rect x={93} y={62} width={92} height={22} rx={6} fill={C.coral} fillOpacity={0.18} stroke={C.coral} strokeWidth={1.5} />
+      <rect x={93} y={110} width={84} height={22} rx={6} fill={C.coral} fillOpacity={0.18} stroke={C.coral} strokeWidth={1.5} />
+
+      <text x={44} y={78} fontSize={13} fill={C.inkSoft} style={mono}>{"<label "}</text>
+      <text x={97} y={78} fontSize={13} fill={C.ink} fontWeight={700} style={mono}>{'for="monan"'}</text>
+      <text x={181} y={78} fontSize={13} fill={C.inkSoft} style={mono}>{">Tên món ăn</label>"}</text>
+
+      <text x={44} y={126} fontSize={13} fill={C.inkSoft} style={mono}>{"<input "}</text>
+      <text x={97} y={126} fontSize={13} fill={C.ink} fontWeight={700} style={mono}>{'id="monan"'}</text>
+      <text x={173} y={126} fontSize={13} fill={C.inkSoft} style={mono}>{' type="text">'}</text>
+
+      <path d="M 91 73 C 58 84, 58 110, 89 120" stroke={C.coral} strokeWidth={2.5} fill="none" markerEnd="url(#arrow-coral)" />
+
+      <Lines
+        x={320}
+        y={176}
+        lines={["Giá trị của for phải TRÙNG giá trị của id — đó là sợi dây nối nhãn với ô nhập"]}
+        size={12}
+        weight={600}
+        fill={C.seaDeep}
+      />
+
+      {/* ket qua that tren trinh duyet */}
+      <rect x={24} y={192} width={592} height={70} rx={14} fill={C.white} stroke={C.line} strokeWidth={1.5} />
+      <text x={70} y={234} fontSize={13.5} fill={C.ink} textAnchor="start">Tên món ăn</text>
+      <rect x={200} y={216} width={220} height={28} rx={5} fill={C.white} stroke={C.sea} strokeWidth={2} />
+      <line x1={212} y1={222} x2={212} y2={238} stroke={C.ink} strokeWidth={1.5} />
+      <path d="M 158 240 C 178 248, 190 240, 202 234" stroke={C.coral} strokeWidth={2} fill="none" markerEnd="url(#arrow-coral)" />
+
+      <Lines
+        x={320}
+        y={286}
+        lines={["Nháy chuột vào chữ “Tên món ăn” → con trỏ nhảy ngay vào ô nhập"]}
+        size={12}
+        weight={600}
+        fill={C.leafDeep}
+      />
+    </Frame>
+  );
+}
+
+// ── radio / checkbox / select khác nhau chỗ nào (Bài 12) ────────────────────
+// Đúng câu hỏi củng cố số 1 của SGK. Ba thứ nhìn na ná nhau trên trang web nên
+// vẽ cạnh nhau cho thấy ngay khác biệt về cách chọn.
+function RadioCheckboxSelect() {
+  const mono = { fontFamily: "var(--font-mono)" } as const;
+  const tick = (x: number, y: number) => `M ${x + 4} ${y + 9} L ${x + 7.5} ${y + 13} L ${x + 14} ${y + 5}`;
+  return (
+    <Frame viewBox="0 0 640 320">
+      <Lines
+        x={320}
+        y={24}
+        lines={["Ba cách cho người dùng chọn — nhìn giống nhau nhưng chọn khác nhau"]}
+        size={13}
+        weight={700}
+        fill={C.ink}
+      />
+
+      {/* ── radio ── */}
+      <rect x={20} y={44} width={190} height={224} rx={16} fill={C.sea} fillOpacity={0.06} stroke={C.sea} strokeWidth={2} />
+      <text x={115} y={72} fontSize={13.5} fontWeight={700} fill={C.seaDeep} textAnchor="middle" style={mono}>radio</text>
+
+      <circle cx={70} cy={110} r={9} fill={C.white} stroke={C.line} strokeWidth={2} />
+      <text x={90} y={115} fontSize={12.5} fill={C.inkSoft} textAnchor="start">Nam</text>
+      <circle cx={70} cy={142} r={9} fill={C.white} stroke={C.sea} strokeWidth={2.5} />
+      <circle cx={70} cy={142} r={4.5} fill={C.sea} />
+      <text x={90} y={147} fontSize={12.5} fill={C.ink} fontWeight={600} textAnchor="start">Nữ</text>
+
+      <Lines x={115} y={196} lines={["Chọn MỘT giá trị", "trong nhóm cùng name"]} size={12} gap={17} fill={C.inkSoft} />
+      <text x={115} y={246} fontSize={12} fill={C.seaDeep} fontWeight={600} textAnchor="middle" style={mono}>name=&quot;gioitinh&quot;</text>
+
+      {/* ── checkbox ── */}
+      <rect x={225} y={44} width={190} height={224} rx={16} fill={C.leaf} fillOpacity={0.07} stroke={C.leaf} strokeWidth={2} />
+      <text x={320} y={72} fontSize={13.5} fontWeight={700} fill={C.leafDeep} textAnchor="middle" style={mono}>checkbox</text>
+
+      <rect x={268} y={96} width={18} height={18} rx={4} fill={C.white} stroke={C.line} strokeWidth={2} />
+      <text x={298} y={110} fontSize={12.5} fill={C.inkSoft} textAnchor="start">Toán</text>
+
+      <rect x={268} y={124} width={18} height={18} rx={4} fill={C.leaf} stroke={C.leaf} strokeWidth={2} />
+      <path d={tick(268, 124)} stroke={C.white} strokeWidth={2.5} fill="none" strokeLinecap="round" strokeLinejoin="round" />
+      <text x={298} y={138} fontSize={12.5} fill={C.ink} fontWeight={600} textAnchor="start">Văn</text>
+
+      <rect x={268} y={152} width={18} height={18} rx={4} fill={C.leaf} stroke={C.leaf} strokeWidth={2} />
+      <path d={tick(268, 152)} stroke={C.white} strokeWidth={2.5} fill="none" strokeLinecap="round" strokeLinejoin="round" />
+      <text x={298} y={166} fontSize={12.5} fill={C.ink} fontWeight={600} textAnchor="start">Ngoại ngữ</text>
+
+      <Lines x={320} y={196} lines={["Mỗi ô hỏi riêng: có / không", "→ tích bao nhiêu ô cũng được"]} size={12} gap={17} fill={C.inkSoft} />
+      <text x={320} y={246} fontSize={12} fill={C.leafDeep} fontWeight={600} textAnchor="middle" style={mono}>value=&quot;Toán&quot;</text>
+
+      {/* ── select ── */}
+      <rect x={430} y={44} width={190} height={224} rx={16} fill={C.gold} fillOpacity={0.1} stroke={C.gold} strokeWidth={2} />
+      <text x={525} y={72} fontSize={13.5} fontWeight={700} fill={C.goldDeep} textAnchor="middle" style={mono}>select</text>
+
+      <rect x={462} y={94} width={126} height={26} rx={5} fill={C.white} stroke={C.line} strokeWidth={2} />
+      <text x={474} y={112} fontSize={12.5} fill={C.ink} textAnchor="start">Khoa học tự nhiên</text>
+      <path d="M 570 104 L 580 104 L 575 111 Z" fill={C.inkSoft} />
+
+      <rect x={462} y={126} width={126} height={52} rx={5} fill={C.white} stroke={C.line} strokeWidth={1.5} />
+      <rect x={464} y={128} width={122} height={24} rx={4} fill={C.gold} fillOpacity={0.3} />
+      <text x={474} y={144} fontSize={12} fill={C.ink} fontWeight={600} textAnchor="start">Khoa học tự nhiên</text>
+      <text x={474} y={169} fontSize={12} fill={C.inkSoft} textAnchor="start">Khoa học xã hội</text>
+
+      <Lines x={525} y={196} lines={["Danh sách thả xuống —", "chọn một, đỡ tốn chỗ"]} size={12} gap={17} fill={C.inkSoft} />
+      <text x={525} y={246} fontSize={12} fill={C.goldDeep} fontWeight={600} textAnchor="middle" style={mono}>&lt;option&gt;</text>
+
+      <Lines
+        x={320}
+        y={296}
+        lines={["Các ô radio chỉ loại trừ nhau khi có CÙNG name — chọn ô này thì ô kia tự bỏ"]}
+        size={12}
+        weight={600}
+        fill={C.seaDeep}
+      />
+    </Frame>
+  );
+}
+
 const DIAGRAMS: Record<string, () => JSX.Element> = {
   "turing-test": TuringTest,
   "ai-hep-va-manh": AiHepVaManh,
@@ -1432,6 +1569,8 @@ const DIAGRAMS: Record<string, () => JSX.Element> = {
   "cay-thu-muc-website": CayThuMucWebsite,
   "kich-thuoc-anh": KichThuocAnh,
   "iframe-lien-ket": IframeLienKet,
+  "label-for-id": LabelForId,
+  "radio-checkbox-select": RadioCheckboxSelect,
 };
 
 export default function Diagram({ name }: { name: string }) {

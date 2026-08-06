@@ -110,10 +110,12 @@ function CodeBlock({
   code,
   caption,
   preview,
+  tall,
 }: {
   code: string;
   caption?: string;
   preview?: boolean;
+  tall?: boolean;
 }) {
   return (
     <div>
@@ -148,7 +150,7 @@ function CodeBlock({
               title="Kết quả hiển thị"
               sandbox=""
               srcDoc={`<base href="about:srcdoc"><style>a:not([href^="#"]){pointer-events:none}</style>${code}`}
-              className="h-[180px] w-full border-0 bg-white"
+              className={`w-full border-0 bg-white ${tall ? "h-[340px]" : "h-[180px]"}`}
             />
           </div>
         )}
@@ -271,7 +273,7 @@ function Block({ block }: { block: TheoryBlock }) {
       );
 
     case "code":
-      return <CodeBlock code={block.code} caption={block.caption} preview={block.preview} />;
+      return <CodeBlock code={block.code} caption={block.caption} preview={block.preview} tall={block.tall} />;
 
     case "example":
       return (

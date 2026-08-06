@@ -69,8 +69,10 @@ export type TheoryBlock =
   | { kind: "steps"; items: { label: string; title: string; text: string }[] }
   // Hình vẽ SVG, khoá tra trong components/theory/Diagram.tsx
   | { kind: "figure"; diagram: string; caption: string }
-  // Khối mã HTML/CSS. preview = true thì hiện thêm khung "kết quả trên trình duyệt"
-  | { kind: "code"; code: string; caption?: string; preview?: boolean }
+  // Khối mã HTML/CSS. preview = true thì hiện thêm khung "kết quả trên trình duyệt".
+  // tall = true thì khung xem trước cao gấp đôi — dành cho biểu mẫu nhiều dòng
+  // (Bài 12) hay bảng dài, những thứ không lọt vừa khung 180px mặc định.
+  | { kind: "code"; code: string; caption?: string; preview?: boolean; tall?: boolean }
   // Hộp ví dụ đời thường, nền xanh biển nhạt
   | { kind: "example"; title: string; text: string }
   // Hộp ghi nhớ, nền vàng — lấy đúng kết luận đóng khung trong SGK
