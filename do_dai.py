@@ -77,6 +77,8 @@ def quet(mau, ten_nhom):
 
 h1, t1 = quet("data/questions/bai-*.ts", "Ngân hàng câu hỏi (data/questions)")
 h2, t2 = quet("data/theory/bai-*.ts", "Câu kiểm tra nhanh trong lí thuyết (data/theory)")
+h3, t3 = quet("data/thithu-csdl.ts", "Ngân hàng CSDL cho Thi thử (data/thithu-csdl.ts)")
 
-print(f"\n═══ TỔNG CỘNG: {h1 + h2}/{t1 + t2} câu cần sửa ═══")
-sys.exit(1 if h1 + h2 else 0)
+tong_hon, tong_tat_ca = h1 + h2 + h3, t1 + t2 + t3
+print(f"\n═══ TỔNG CỘNG: {tong_hon}/{tong_tat_ca} câu cần sửa ═══")
+sys.exit(1 if tong_hon else 0)

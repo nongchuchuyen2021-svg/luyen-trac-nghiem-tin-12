@@ -185,7 +185,7 @@ export default function ThiThuClient() {
                   Phần II · {vn(DIEM_TOI_DA_D2)} điểm
                 </p>
                 <p className="mt-1 text-sm text-ink-soft">
-                  2 câu Đúng/Sai (mỗi câu 4 ý), tính theo bảng điểm không tuyến tính.
+                  4 câu Đúng/Sai (mỗi câu 4 ý), tính theo bảng điểm không tuyến tính.
                 </p>
                 <p className="mt-1.5 font-mono text-xs text-ink-soft/60">
                   Lấy từ: {TEN_CHU_DE_D2.join(" · ")}
@@ -193,15 +193,14 @@ export default function ThiThuClient() {
               </div>
             </div>
 
-            <div className="mt-4 rounded-2xl border-2 border-dashed border-ink/25 bg-ink/[0.04] p-4">
-              <p className="font-display text-sm font-semibold text-ink">
-                📌 Đây là phiên bản rút gọn
+            <div className="mt-4 rounded-2xl border border-leaf/25 bg-leaf/[0.06] p-4">
+              <p className="font-display text-sm font-semibold text-leaf-deep">
+                ✅ Đủ cấu trúc như đề thật
               </p>
               <p className="mt-1.5 text-sm leading-relaxed text-ink-soft">
-                Đề thật có 4 câu Phần II, trong đó 2 câu lấy từ chủ đề Cơ sở dữ liệu (SGK{" "}
-                <strong>lớp 11</strong>). Web này mới có ngân hàng câu hỏi lớp 12 nên Phần II ở
-                đây chỉ còn <strong>2 câu</strong> (chủ đề Mạng và chủ đề Web) — mỗi câu tính điểm
-                gấp đôi để tổng vẫn ra đúng thang <strong>10 điểm</strong> quen thuộc.
+                Phần II gồm đủ <strong>4 câu</strong>: Câu 1–2 là phần chung (Mạng, Cơ sở dữ liệu),
+                Câu 5–6 là phần riêng nhánh <strong>Tin học ứng dụng</strong> (Web, thực hành CSDL)
+                — đúng vị trí và cách chấm điểm của đề tốt nghiệp thật.
               </p>
             </div>
 

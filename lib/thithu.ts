@@ -2,51 +2,59 @@ import type { Question, TFQuestion } from "./types";
 import { CURRICULUM } from "@/data/curriculum";
 import { QUESTION_BANK } from "./questions";
 import { EXTRA_BANK } from "./extras";
+import { CSDL_MCQ, CSDL_TF_LY_THUYET, CSDL_TF_THUC_HANH } from "@/data/thithu-csdl";
 
-// Chế độ Thi thử — mô phỏng cấu trúc đề tốt nghiệp THPT môn Tin học theo
-// Quyết định 764/QĐ-BGDĐT (24 câu D1 + 4 câu D2), định hướng Tin học ứng
-// dụng (ICT). Nguồn xác thực cấu trúc: xem skill `on-thi-thpt-tin`.
+// Chế độ Thi thử — mô phỏng đúng cấu trúc đề tốt nghiệp THPT môn Tin học
+// theo Quyết định 764/QĐ-BGDĐT (24 câu D1 + 4 câu D2), định hướng Tin học
+// ứng dụng (ICT). Nguồn xác thực cấu trúc: xem skill `on-thi-thpt-tin`.
 //
-// ĐÂY LÀ BẢN RÚT GỌN — đã bàn với giáo viên 2026-08-07. Lý do: ma trận thật
-// của Bộ bắt 1/6 chủ đề Phần I và 2/4 câu Phần II (Câu 2, Câu 6) phải lấy từ
-// chủ đề "11E — Giới thiệu các hệ cơ sở dữ liệu" (SGK lớp 11), nhưng ngân
-// hàng câu hỏi của web này chỉ có nội dung lớp 12, không có CSDL. Quyết định:
-//   - Phần I: chỉ dùng 5/6 chủ đề hiện có, KHÔNG cố bịa câu hỏi CSDL.
-//   - Phần II: chỉ còn 2 câu (đúng vị trí Câu 1 "Mạng" và Câu 5 "Web" của đề
-//     thật), bỏ Câu 2 và Câu 6. Mỗi câu D2 tính điểm gấp đôi công thức gốc để
-//     tổng điểm vẫn về đúng thang 10 quen thuộc — xem DIEM_D2_THEO_SO_Y_DUNG.
-// Nếu sau này ngân hàng có thêm nội dung CSDL lớp 11, bỏ ghi chú "rút gọn"
-// và đưa CHU_DE_D1/CHU_DE_D2 về đủ 6 chủ đề / 4 câu D2.
+// LỊCH SỬ: bản đầu (2026-08-07) là bản RÚT GỌN chỉ 2/4 câu D2, vì web này
+// (chỉ dạy lớp 12) không có nội dung chủ đề "11E — Giới thiệu các hệ CSDL"
+// (SGK lớp 11) mà ma trận thật của Bộ bắt 1/6 chủ đề D1 và 2/4 câu D2 phải
+// lấy từ đó. Đã bàn với giáo viên và soạn bổ sung `data/thithu-csdl.ts` từ
+// SGK Tin 11 ICT (Bài 10–15 lí thuyết CSDL, Bài 17 thực hành MySQL/HeidiSQL)
+// — từ nay đủ đúng 6 chủ đề D1 và 4 câu D2 như đề thật, không còn rút gọn.
 
 export const THOI_GIAN_GIAY = 50 * 60; // 50 phút, đúng theo QĐ 764
 export const SO_CAU_D1 = 24;
-export const SO_CAU_D2 = 2; // bản đủ theo Bộ là 4 — xem ghi chú "rút gọn" ở trên
+export const SO_CAU_D2 = 4;
 
 export const DIEM_MOI_CAU_D1 = 0.25; // 24 × 0,25 = 6,0đ, đúng chuẩn Bộ
 export const DIEM_TOI_DA_D1 = SO_CAU_D1 * DIEM_MOI_CAU_D1;
 
-// Công thức gốc của Bộ (4 câu, mỗi câu tối đa 1đ): 1 ý=0,1 · 2 ý=0,25 ·
-// 3 ý=0,5 · 4 ý=1,0. Ở đây chỉ còn 2 câu nên nhân đôi từng mức để tổng vẫn
-// ra 4,0đ như đề thật (2 câu × 2,0đ = 4,0đ).
-export const DIEM_D2_THEO_SO_Y_DUNG = [0, 0.2, 0.5, 1.0, 2.0] as const;
-export const DIEM_TOI_DA_D2 = SO_CAU_D2 * 2.0;
+// Công thức gốc của Bộ: 1 ý đúng = 0,1đ · 2 ý = 0,25đ · 3 ý = 0,5đ · cả 4 ý
+// = 1,0đ (tối đa). 4 câu × 1,0đ = 4,0đ, đúng thang điểm đề thật.
+export const DIEM_D2_THEO_SO_Y_DUNG = [0, 0.1, 0.25, 0.5, 1.0] as const;
+export const DIEM_TOI_DA_D2 = SO_CAU_D2 * 1.0;
 export const DIEM_TOI_DA = DIEM_TOI_DA_D1 + DIEM_TOI_DA_D2; // 10,0đ
 
-// Phần I: lấy từ 5/6 chủ đề kiến thức chung cốt lõi (bỏ 11E CSDL).
-const CHU_DE_D1 = [
+// Mỗi chủ đề D1 hoặc lấy câu hỏi từ một chủ đề có sẵn trong curriculum lớp 12
+// (chuDeId), hoặc — riêng "11E" — lấy thẳng từ ngân hàng CSDL soạn riêng cho
+// thi thử (nguon: "csdl"), vì CSDL không phải nội dung lớp 12 nên không nằm
+// trong CURRICULUM/QUESTION_BANK như các chủ đề khác.
+type NguonChuDe = { ma: string; ten: string; chuDeId: string } | { ma: string; ten: string; nguon: "csdl" };
+
+const CHU_DE_D1: NguonChuDe[] = [
   { ma: "12A", ten: "Trí tuệ nhân tạo", chuDeId: "chu-de-1" },
   { ma: "12B", ten: "Kết nối mạng", chuDeId: "chu-de-2" },
   { ma: "12D", ten: "Đạo đức, ứng xử trong môi trường số", chuDeId: "chu-de-3" },
   { ma: "12E", ten: "Tạo trang web (HTML, CSS)", chuDeId: "chu-de-4" },
   { ma: "12G", ten: "Hướng nghiệp CNTT", chuDeId: "chu-de-5" },
-] as const;
+  { ma: "11E", ten: "Giới thiệu các hệ cơ sở dữ liệu", nguon: "csdl" },
+];
 
-// Phần II rút gọn: đúng vị trí Câu 1 (chung, chủ đề Mạng) và Câu 5 (nhánh
-// ICT, chủ đề Web) của đề thật.
-const CHU_DE_D2 = [
-  { ten: "Kết nối mạng", chuDeId: "chu-de-2" },
-  { ten: "Tạo trang web", chuDeId: "chu-de-4" },
-] as const;
+// Phần II — đúng 4 vị trí của đề thật: Câu 1–2 là phần chung (mọi thí sinh
+// đều làm), Câu 5–6 là phần riêng nhánh Tin học ứng dụng (ICT).
+const CHU_DE_D2: (
+  | { ten: string; nhom: "chung"; chuDeId: string }
+  | { ten: string; nhom: "chung" | "rieng"; nguon: "csdl-ly-thuyet" | "csdl-thuc-hanh" }
+  | { ten: string; nhom: "rieng"; chuDeId: string }
+)[] = [
+  { ten: "Kết nối mạng (Câu 1, phần chung)", nhom: "chung", chuDeId: "chu-de-2" },
+  { ten: "Cơ sở dữ liệu (Câu 2, phần chung)", nhom: "chung", nguon: "csdl-ly-thuyet" },
+  { ten: "Tạo trang web (Câu 5, nhánh ICT)", nhom: "rieng", chuDeId: "chu-de-4" },
+  { ten: "Thực hành CSDL — SQL (Câu 6, nhánh ICT)", nhom: "rieng", nguon: "csdl-thuc-hanh" },
+];
 
 function shuffle<T>(arr: T[]): T[] {
   const a = [...arr];
@@ -62,21 +70,23 @@ function baiIdsCuaChuDe(chuDeId: string): string[] {
   return chuDe ? chuDe.lessons.filter((l) => l.available).map((l) => l.id) : [];
 }
 
-function goMcqCuaChuDe(chuDeId: string): Question[] {
-  return baiIdsCuaChuDe(chuDeId).flatMap((id) => QUESTION_BANK[id] ?? []);
+function goMcqCuaChuDe(cd: NguonChuDe): Question[] {
+  if ("nguon" in cd) return CSDL_MCQ;
+  return baiIdsCuaChuDe(cd.chuDeId).flatMap((id) => QUESTION_BANK[id] ?? []);
 }
 
-function goTfCuaChuDe(chuDeId: string): TFQuestion[] {
-  return baiIdsCuaChuDe(chuDeId).flatMap((id) => EXTRA_BANK[id]?.tf ?? []);
+function goTfCuaChuDe(cd: (typeof CHU_DE_D2)[number]): TFQuestion[] {
+  if ("nguon" in cd) return cd.nguon === "csdl-ly-thuyet" ? CSDL_TF_LY_THUYET : CSDL_TF_THUC_HANH;
+  return baiIdsCuaChuDe(cd.chuDeId).flatMap((id) => EXTRA_BANK[id]?.tf ?? []);
 }
 
 export type DeThiThu = {
   d1: Question[]; // 24 câu, đã trộn thứ tự
-  d2: TFQuestion[]; // 2 câu (bản rút gọn)
+  d2: TFQuestion[]; // 4 câu — đúng thứ tự Câu 1, 2 (chung), 5, 6 (riêng ICT)
 };
 
-// Trộn 24 câu D1 chia gần đều cho 5 chủ đề (4 hoặc 5 câu/chủ đề — ngẫu nhiên
-// chủ đề nào được dư 1 câu mỗi lần tạo đề), và 2 câu D2 lấy đúng theo ma trận.
+// Trộn 24 câu D1 chia đều cho 6 chủ đề (4 câu/chủ đề — vừa khít, không dư),
+// và 4 câu D2 lấy đúng theo ma trận thật (Mạng, CSDL, Web, CSDL thực hành).
 export function taoDeThiThu(): DeThiThu {
   const soChuDe = CHU_DE_D1.length;
   const coBan = Math.floor(SO_CAU_D1 / soChuDe);
@@ -86,11 +96,11 @@ export function taoDeThiThu(): DeThiThu {
   const d1: Question[] = [];
   CHU_DE_D1.forEach((cd, i) => {
     const soLuong = coBan + (chiSoDuocDu.has(i) ? 1 : 0);
-    const pool = shuffle(goMcqCuaChuDe(cd.chuDeId));
+    const pool = shuffle(goMcqCuaChuDe(cd));
     d1.push(...pool.slice(0, soLuong));
   });
 
-  const d2 = CHU_DE_D2.map((cd) => shuffle(goTfCuaChuDe(cd.chuDeId))[0]).filter(
+  const d2 = CHU_DE_D2.map((cd) => shuffle(goTfCuaChuDe(cd))[0]).filter(
     (x): x is TFQuestion => Boolean(x),
   );
 
