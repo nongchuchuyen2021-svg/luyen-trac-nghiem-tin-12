@@ -66,7 +66,24 @@ export default function HomeClient({ counts }: { counts: Record<string, LessonCo
           )}
         </header>
 
-        <div className="mt-10 space-y-8">
+        <Link
+          href="/thi-thu"
+          className="mt-8 flex items-center justify-between gap-4 rounded-2xl border-2 border-coral/30 bg-gradient-to-r from-coral/10 to-sea/10 p-5 shadow-card transition hover:-translate-y-0.5 hover:shadow-card-hover sm:p-6"
+        >
+          <div>
+            <p className="font-display text-lg font-bold text-ink">
+              🎯 Thi thử theo cấu trúc đề tốt nghiệp THPT
+            </p>
+            <p className="mt-1 text-sm text-ink-soft">
+              Bấm giờ 50 phút, đúng cấu trúc QĐ 764 — trộn đề mới mỗi lần làm
+            </p>
+          </div>
+          <span className="shrink-0 rounded-full bg-gradient-to-r from-sea to-coral px-4 py-2 text-sm font-medium text-white">
+            Bắt đầu →
+          </span>
+        </Link>
+
+        <div className="mt-8 space-y-8">
           {CURRICULUM.map((topic) => {
             const hasAvailable = topic.lessons.some((l) => l.available);
             return (
