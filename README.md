@@ -41,9 +41,13 @@ là phần riêng của ICT. Vì vậy tên Chủ đề 6 trùng tên Chủ đ�
 không phải lỗi. **Bài 23–28 dạy bằng Google Sites, không phải HTML/CSS** — xem
 `tai-lieu/BAN_DO_TRANG_SGK.md`.
 
-Chưa làm: chế độ **Thi thử** bấm giờ theo cấu trúc đề tốt nghiệp THPT (QĐ 764 —
-24 câu trắc nghiệm D1 + 4 câu đúng/sai D2) và phần **nâng cấp giao diện** so với
-web lớp 10.
+Đã có chế độ **Thi thử** bấm giờ theo cấu trúc đề tốt nghiệp THPT (QĐ 764) tại
+`/thi-thu` — 50 phút, 24 câu trắc nghiệm D1 + 2 câu đúng/sai D2 (**bản rút gọn**:
+đề thật có 4 câu D2 nhưng 2 câu lấy từ chủ đề Cơ sở dữ liệu SGK lớp 11, ngân hàng
+web này chưa có nội dung đó nên tạm bớt, mỗi câu D2 còn lại tính điểm gấp đôi để
+giữ đúng thang 10 điểm).
+
+Chưa làm: phần **nâng cấp giao diện** so với web lớp 10.
 
 ## Chạy ở máy local
 
