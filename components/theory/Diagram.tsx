@@ -1682,6 +1682,149 @@ function BaCachCss() {
   );
 }
 
+// ── Đường cơ sở và chiều cao dòng (Bài 14) ──────────────────────────────────
+// Hình 14.3 của SGK chỉ vẽ MỘT dòng nên không thấy được chiều cao dòng thật sự
+// là khoảng cách giữa hai đường cơ sở. Ở đây vẽ hai dòng để đo được khoảng đó.
+function BaselineLineHeight() {
+  return (
+    <Frame viewBox="0 0 640 300">
+      <Lines x={320} y={24} lines={["Đường cơ sở (baseline) và chiều cao dòng (line-height)"]} size={13.5} weight={700} fill={C.ink} />
+
+      {/* hai dong chu that, co chu g/y tho xuong duoi duong co so */}
+      <text x={70} y={112} fontSize={19} fill={C.ink}>Đây là dòng thứ nhất</text>
+      <text x={70} y={180} fontSize={19} fill={C.ink}>Đây là dòng thứ hai</text>
+
+      <line x1={60} y1={112} x2={390} y2={112} stroke={C.coral} strokeWidth={2} strokeDasharray="6 4" />
+      <line x1={60} y1={180} x2={390} y2={180} stroke={C.coral} strokeWidth={2} strokeDasharray="6 4" />
+      <Lines x={400} y={116} lines={["đường cơ sở"]} size={12} weight={600} fill={C.coral} anchor="start" />
+      <Lines x={400} y={184} lines={["đường cơ sở"]} size={12} weight={600} fill={C.coral} anchor="start" />
+
+      {/* mui ten hai dau do khoang cach giua hai duong co so */}
+      <line x1={495} y1={112} x2={515} y2={112} stroke={C.sea} strokeWidth={2} />
+      <line x1={495} y1={180} x2={515} y2={180} stroke={C.sea} strokeWidth={2} />
+      <path d="M505 148 L505 116" stroke={C.sea} strokeWidth={2.5} fill="none" markerEnd="url(#arrow)" />
+      <path d="M505 148 L505 176" stroke={C.sea} strokeWidth={2.5} fill="none" markerEnd="url(#arrow)" />
+      <Lines x={524} y={142} lines={["chiều cao dòng", "(line-height)"]} size={12} gap={17} weight={600} fill={C.seaDeep} anchor="start" />
+
+      <rect x={24} y={216} width={592} height={64} rx={14} fill={C.sea} fillOpacity={0.06} stroke={C.sea} strokeWidth={1.5} />
+      <Lines
+        x={320}
+        y={242}
+        lines={[
+          "Đường cơ sở: đường ngang mà các chữ cái đứng thẳng lên trên nó",
+          "Chiều cao dòng: khoảng cách giữa đường cơ sở của hai dòng liền nhau",
+        ]}
+        size={12}
+        gap={20}
+        weight={600}
+        fill={C.seaDeep}
+      />
+    </Frame>
+  );
+}
+
+// ── Tính kế thừa trong cây HTML (Bài 14) ────────────────────────────────────
+// Vẽ lại ý của Hình 14.5 nhưng theo dạng cây cha–con, để thấy màu "chảy" từ
+// body xuống con cháu, và thấy phần tử nào có mẫu riêng thì chặn dòng chảy đó.
+function KeThuaCayHtml() {
+  const mono = { fontFamily: "var(--font-mono)" } as const;
+  const DO = "#D12B2B";
+  const XANH = "#1D4ED8";
+  return (
+    <Frame viewBox="0 0 640 340">
+      <Lines x={320} y={24} lines={["Định dạng chảy từ phần tử cha xuống con cháu"]} size={13.5} weight={700} fill={C.ink} />
+
+      {/* nut cha */}
+      <rect x={250} y={48} width={140} height={50} rx={10} fill={C.sea} fillOpacity={0.14} stroke={C.sea} strokeWidth={2} />
+      <text x={320} y={70} fontSize={13} fontWeight={700} fill={C.seaDeep} textAnchor="middle" style={mono}>{"<body>"}</text>
+      <text x={320} y={89} fontSize={12} fill={XANH} textAnchor="middle" style={mono}>color: blue</text>
+
+      {/* ba nhanh xuong con */}
+      <path d="M 290 100 C 240 118, 160 122, 130 146" stroke={C.line} strokeWidth={2.5} fill="none" markerEnd="url(#arrow-soft)" />
+      <path d="M 320 100 L 320 146" stroke={C.line} strokeWidth={2.5} fill="none" markerEnd="url(#arrow-soft)" />
+      <path d="M 350 100 C 400 118, 480 122, 510 146" stroke={C.line} strokeWidth={2.5} fill="none" markerEnd="url(#arrow-soft)" />
+
+      {/* con 1: co mau rieng nen chan ke thua */}
+      <rect x={55} y={150} width={150} height={62} rx={10} fill={C.coral} fillOpacity={0.12} stroke={C.coral} strokeWidth={2} />
+      <text x={130} y={172} fontSize={13} fontWeight={700} fill={C.coral} textAnchor="middle" style={mono}>{"<h1>"}</text>
+      <text x={130} y={191} fontSize={12} fill={DO} textAnchor="middle" style={mono}>color: red</text>
+      <Lines x={130} y={206} lines={["có mẫu riêng"]} size={12} weight={600} fill={C.coral} />
+
+      {/* con 2 va 3: ke thua */}
+      <rect x={245} y={150} width={150} height={62} rx={10} fill={C.white} stroke={C.line} strokeWidth={2} />
+      <text x={320} y={172} fontSize={13} fontWeight={700} fill={C.inkSoft} textAnchor="middle" style={mono}>{"<h2>"}</text>
+      <text x={320} y={191} fontSize={12} fill={XANH} textAnchor="middle" style={mono}>color: blue</text>
+      <Lines x={320} y={206} lines={["kế thừa từ body"]} size={12} fill={C.inkSoft} />
+
+      <rect x={435} y={150} width={150} height={62} rx={10} fill={C.white} stroke={C.line} strokeWidth={2} />
+      <text x={510} y={172} fontSize={13} fontWeight={700} fill={C.inkSoft} textAnchor="middle" style={mono}>{"<p>"}</text>
+      <text x={510} y={191} fontSize={12} fill={XANH} textAnchor="middle" style={mono}>color: blue</text>
+      <Lines x={510} y={206} lines={["kế thừa từ body"]} size={12} fill={C.inkSoft} />
+
+      {/* ket qua tren trinh duyet */}
+      <rect x={24} y={232} width={592} height={72} rx={14} fill={C.white} stroke={C.line} strokeWidth={1.5} />
+      <text x={320} y={258} fontSize={15} fontWeight={700} fill={DO} textAnchor="middle">Tính kế thừa của CSS</text>
+      <text x={320} y={280} fontSize={12.5} fontWeight={700} fill={XANH} textAnchor="middle">1. Mô hình cây html</text>
+      <text x={320} y={298} fontSize={12} fill={XANH} textAnchor="middle">Đây là đoạn đầu tiên…</text>
+
+      <Lines
+        x={320}
+        y={326}
+        lines={["h1 có mẫu riêng nên giữ màu đỏ — h2 và p không có nên nhận màu xanh của body"]}
+        size={12}
+        weight={600}
+        fill={C.seaDeep}
+      />
+    </Frame>
+  );
+}
+
+// ── Thang ưu tiên khi nhiều mẫu tranh nhau (Bài 14) ─────────────────────────
+// SGK diễn giải bằng lời và KHÔNG có hình cho phần này, trong khi đây lại là
+// chỗ khó nhất của bài. Xếp thành ba bậc để nhìn một cái là nhớ thứ tự.
+function ThuTuUuTienCss() {
+  const mono = { fontFamily: "var(--font-mono)" } as const;
+  return (
+    <Frame viewBox="0 0 640 320">
+      <Lines x={320} y={24} lines={["Nhiều mẫu cùng tranh một phần tử — mẫu nào thắng?"]} size={13.5} weight={700} fill={C.ink} />
+
+      {/* truc uu tien tang dan */}
+      <path d="M 52 246 L 52 66" stroke={C.sea} strokeWidth={2.5} fill="none" markerEnd="url(#arrow)" />
+      <Lines x={52} y={272} lines={["ưu tiên", "tăng dần"]} size={12} gap={16} weight={600} fill={C.seaDeep} />
+
+      {/* bac 1 - cao nhat */}
+      <rect x={100} y={58} width={500} height={54} rx={12} fill={C.gold} fillOpacity={0.28} stroke={C.gold} strokeWidth={2} />
+      <text x={124} y={82} fontSize={15} fontWeight={700} fill={C.goldDeep} textAnchor="start" style={mono}>!important</text>
+      <Lines x={124} y={101} lines={["ưu tiên cao nhất, không phụ thuộc viết ở đâu trong CSS"]} size={12} fill={C.inkSoft} anchor="start" />
+
+      {/* bac 2 - thuong */}
+      <rect x={100} y={124} width={500} height={54} rx={12} fill={C.sea} fillOpacity={0.1} stroke={C.sea} strokeWidth={2} />
+      <Lines x={124} y={148} lines={["mẫu định dạng thường"]} size={14} weight={700} fill={C.seaDeep} anchor="start" />
+      <Lines x={124} y={167} lines={["nhiều mẫu cùng bộ chọn → mẫu viết SAU CÙNG được áp dụng"]} size={12} fill={C.inkSoft} anchor="start" />
+
+      {/* bac 3 - thap nhat */}
+      <rect x={100} y={190} width={500} height={54} rx={12} fill={C.ink} fillOpacity={0.05} stroke={C.line} strokeWidth={2} />
+      <text x={124} y={214} fontSize={15} fontWeight={700} fill={C.inkSoft} textAnchor="start" style={mono}>* </text>
+      <Lines x={146} y={214} lines={["— bộ chọn mọi phần tử"]} size={13} weight={600} fill={C.inkSoft} anchor="start" />
+      <Lines x={124} y={233} lines={["áp dụng cho mọi phần tử nhưng ưu tiên THẤP NHẤT"]} size={12} fill={C.inkSoft} anchor="start" />
+
+      <rect x={24} y={262} width={592} height={44} rx={12} fill={C.gold} fillOpacity={0.1} />
+      <Lines
+        x={320}
+        y={280}
+        lines={[
+          "h1 {text-align: center !important;} vẫn thắng h1 {text-align: left;}",
+          "dù mẫu sau được viết xuống dưới",
+        ]}
+        size={12}
+        gap={17}
+        weight={600}
+        fill={C.goldDeep}
+      />
+    </Frame>
+  );
+}
+
 const DIAGRAMS: Record<string, () => JSX.Element> = {
   "turing-test": TuringTest,
   "ai-hep-va-manh": AiHepVaManh,
@@ -1708,6 +1851,9 @@ const DIAGRAMS: Record<string, () => JSX.Element> = {
   "radio-checkbox-select": RadioCheckboxSelect,
   "cau-truc-css": CauTrucCss,
   "ba-cach-css": BaCachCss,
+  "baseline-line-height": BaselineLineHeight,
+  "ke-thua-cay-html": KeThuaCayHtml,
+  "thu-tu-uu-tien-css": ThuTuUuTienCss,
 };
 
 export default function Diagram({ name }: { name: string }) {
