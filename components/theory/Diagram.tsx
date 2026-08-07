@@ -1547,6 +1547,141 @@ function RadioCheckboxSelect() {
   );
 }
 
+// ── Mổ xẻ một mẫu định dạng CSS (Bài 13) ────────────────────────────────────
+// SGK gọi tên hai phần (bộ chọn / vùng mô tả) bằng chữ, nhưng học sinh cần
+// thấy chúng nằm ở ĐÂU trong dòng lệnh mới nhớ được — nên dán nhãn thẳng lên
+// từng mảnh của chính dòng CSS.
+function CauTrucCss() {
+  const mono = { fontFamily: "var(--font-mono)" } as const;
+  const x0 = 140;
+  const w = 9.6; // bề ngang một kí tự ở cỡ 16
+  const at = (n: number) => x0 + n * w;
+
+  return (
+    <Frame viewBox="0 0 640 300">
+      <Lines x={320} y={24} lines={["Một mẫu định dạng CSS gồm hai phần"]} size={13.5} weight={700} fill={C.ink} />
+
+      {/* nhan phia tren, co gach noi xuong dung manh no chi */}
+      <Lines x={at(0) + w / 2} y={70} lines={["bộ chọn"]} size={12} weight={700} fill={C.coral} />
+      <Lines x={231} y={70} lines={["thuộc tính"]} size={12} weight={700} fill={C.seaDeep} />
+      <Lines x={322} y={70} lines={["giá trị"]} size={12} weight={700} fill={C.leafDeep} />
+
+      <line x1={at(0) + w / 2} y1={78} x2={at(0) + w / 2} y2={98} stroke={C.coral} strokeWidth={1.5} strokeDasharray="3 3" />
+      <line x1={231} y1={78} x2={231} y2={98} stroke={C.sea} strokeWidth={1.5} strokeDasharray="3 3" />
+      <line x1={322} y1={78} x2={322} y2={98} stroke={C.leaf} strokeWidth={1.5} strokeDasharray="3 3" />
+
+      {/* o to mau tung manh */}
+      <rect x={at(0) - 5} y={100} width={w + 10} height={26} rx={5} fill={C.coral} fillOpacity={0.2} stroke={C.coral} strokeWidth={1.5} />
+      <rect x={at(4) - 4} y={100} width={11 * w + 8} height={26} rx={5} fill={C.sea} fillOpacity={0.14} />
+      <rect x={at(17) - 4} y={100} width={4 * w + 8} height={26} rx={5} fill={C.leaf} fillOpacity={0.16} />
+
+      {/* chinh dong CSS */}
+      <text x={x0} y={119} fontSize={16} fill={C.ink} style={mono}>{"p { text-indent: 15px; color: blue; }"}</text>
+
+      {/* dau moc duoi vung mo ta */}
+      <path d={`M ${at(2) - 5} 134 L ${at(2) - 5} 141 L ${at(37) + 5} 141 L ${at(37) + 5} 134`} stroke={C.sea} strokeWidth={2} fill="none" />
+      <line x1={327} y1={141} x2={327} y2={149} stroke={C.sea} strokeWidth={2} />
+      <Lines
+        x={327}
+        y={166}
+        lines={["vùng mô tả — gồm một hay nhiều quy định,", "các quy định ngăn nhau bởi dấu ;"]}
+        size={12}
+        gap={17}
+        weight={600}
+        fill={C.seaDeep}
+      />
+
+      {/* nhieu the cung luc */}
+      <rect x={24} y={210} width={592} height={70} rx={14} fill={C.gold} fillOpacity={0.1} stroke={C.gold} strokeWidth={1.5} />
+      <text x={320} y={240} fontSize={15} fill={C.ink} textAnchor="middle" style={mono}>{"h1, h2, h3 { color: red; }"}</text>
+      <Lines
+        x={320}
+        y={266}
+        lines={["Bộ chọn có thể gồm nhiều thẻ cùng lúc — các thẻ ngăn nhau bởi dấu phẩy"]}
+        size={12}
+        weight={600}
+        fill={C.goldDeep}
+      />
+    </Frame>
+  );
+}
+
+// ── Ba cách thiết lập CSS và tầm với của từng cách (Bài 13) ──────────────────
+// Trả lời thẳng hai câu hỏi củng cố của SGK: muốn áp dụng cho cả tệp thì dùng
+// cách nào, muốn áp dụng cho nhiều trang thì dùng cách nào. Điểm mấu chốt là
+// CSS nằm ở đâu thì với được tới đâu, nên vẽ theo trục "tầm với".
+function BaCachCss() {
+  const mono = { fontFamily: "var(--font-mono)" } as const;
+  return (
+    <Frame viewBox="0 0 640 340">
+      <Lines x={320} y={24} lines={["Ba cách thiết lập CSS — đặt ở đâu thì với được tới đâu"]} size={13} weight={700} fill={C.ink} />
+
+      {/* ── a) CSS trong ── */}
+      <rect x={20} y={44} width={190} height={252} rx={16} fill={C.sea} fillOpacity={0.06} stroke={C.sea} strokeWidth={2} />
+      <Lines x={115} y={72} lines={["CSS trong"]} size={13.5} weight={700} fill={C.seaDeep} />
+
+      <text x={115} y={98} fontSize={12} fill={C.inkSoft} textAnchor="middle" style={mono}>trang.html</text>
+      <rect x={48} y={106} width={134} height={72} rx={8} fill={C.white} stroke={C.line} strokeWidth={1.5} />
+      <rect x={54} y={145} width={104} height={15} rx={4} fill={C.gold} fillOpacity={0.35} />
+      <text x={58} y={124} fontSize={12} fill={C.inkSoft} style={mono}>{"<head>"}</text>
+      <text x={58} y={140} fontSize={12} fill={C.inkSoft} style={mono}>{" <style>"}</text>
+      <text x={58} y={156} fontSize={12} fill={C.ink} fontWeight={700} style={mono}>{" h1{...}"}</text>
+      <text x={58} y={172} fontSize={12} fill={C.inkSoft} style={mono}>{" </style>"}</text>
+
+      <rect x={48} y={196} width={134} height={26} rx={13} fill={C.sea} fillOpacity={0.18} />
+      <Lines x={115} y={213} lines={["Chỉ trang này"]} size={12} weight={700} fill={C.seaDeep} />
+      <Lines x={115} y={246} lines={["Đặt trong <style>", "ở phần head"]} size={12} gap={17} fill={C.inkSoft} />
+
+      {/* ── b) CSS ngoài ── */}
+      <rect x={225} y={44} width={190} height={252} rx={16} fill={C.gold} fillOpacity={0.1} stroke={C.gold} strokeWidth={2} />
+      <Lines x={320} y={72} lines={["CSS ngoài"]} size={13.5} weight={700} fill={C.goldDeep} />
+
+      <text x={320} y={98} fontSize={12} fill={C.inkSoft} textAnchor="middle" style={mono}>styles.css</text>
+      <rect x={258} y={106} width={124} height={36} rx={8} fill={C.gold} fillOpacity={0.25} stroke={C.gold} strokeWidth={2} />
+      <text x={320} y={129} fontSize={12} fill={C.goldDeep} fontWeight={700} textAnchor="middle" style={mono}>{"h1{color:red}"}</text>
+
+      <path d="M 310 144 C 296 150, 284 150, 278 154" stroke={C.gold} strokeWidth={2} fill="none" markerEnd="url(#arrow-soft)" />
+      <line x1={320} y1={144} x2={320} y2={154} stroke={C.gold} strokeWidth={2} />
+      <path d="M 330 144 C 344 150, 356 150, 362 154" stroke={C.gold} strokeWidth={2} fill="none" markerEnd="url(#arrow-soft)" />
+
+      <rect x={258} y={158} width={36} height={28} rx={5} fill={C.white} stroke={C.line} strokeWidth={1.5} />
+      <rect x={302} y={158} width={36} height={28} rx={5} fill={C.white} stroke={C.line} strokeWidth={1.5} />
+      <rect x={346} y={158} width={36} height={28} rx={5} fill={C.white} stroke={C.line} strokeWidth={1.5} />
+      <Lines x={276} y={177} lines={["1"]} size={12} fill={C.inkSoft} />
+      <Lines x={320} y={177} lines={["2"]} size={12} fill={C.inkSoft} />
+      <Lines x={364} y={177} lines={["3"]} size={12} fill={C.inkSoft} />
+
+      <rect x={236} y={196} width={168} height={26} rx={13} fill={C.gold} fillOpacity={0.28} />
+      <Lines x={320} y={213} lines={["Nhiều trang, cả website"]} size={12} weight={700} fill={C.goldDeep} />
+      <Lines x={320} y={246} lines={["Tệp .css riêng, nối bằng", "<link> hoặc @import"]} size={12} gap={17} fill={C.inkSoft} />
+
+      {/* ── c) CSS nội tuyến ── */}
+      <rect x={430} y={44} width={190} height={252} rx={16} fill={C.coral} fillOpacity={0.08} stroke={C.coral} strokeWidth={2} />
+      <Lines x={525} y={72} lines={["CSS nội tuyến"]} size={13.5} weight={700} fill={C.coral} />
+
+      <text x={525} y={98} fontSize={12} fill={C.inkSoft} textAnchor="middle" style={mono}>ngay trong thẻ</text>
+      <rect x={444} y={106} width={162} height={52} rx={8} fill={C.white} stroke={C.line} strokeWidth={1.5} />
+      <text x={456} y={128} fontSize={12} fill={C.inkSoft} style={mono}>{"<h1 "}</text>
+      <text x={485} y={128} fontSize={12} fill={C.coral} fontWeight={700} style={mono}>{"style="}</text>
+      <text x={456} y={146} fontSize={12} fill={C.coral} fontWeight={700} style={mono}>{'"color: red"'}</text>
+      <text x={543} y={146} fontSize={12} fill={C.inkSoft} style={mono}>{">"}</text>
+
+      <rect x={452} y={196} width={146} height={26} rx={13} fill={C.coral} fillOpacity={0.2} />
+      <Lines x={525} y={213} lines={["Chỉ một phần tử"]} size={12} weight={700} fill={C.ink} />
+      <Lines x={525} y={246} lines={["Viết thẳng vào thẻ", "qua thuộc tính style"]} size={12} gap={17} fill={C.inkSoft} />
+
+      <Lines
+        x={320}
+        y={322}
+        lines={["Càng để ra ngoài càng dùng lại được nhiều — nội tuyến chỉ đúng một phần tử"]}
+        size={12}
+        weight={600}
+        fill={C.seaDeep}
+      />
+    </Frame>
+  );
+}
+
 const DIAGRAMS: Record<string, () => JSX.Element> = {
   "turing-test": TuringTest,
   "ai-hep-va-manh": AiHepVaManh,
@@ -1571,6 +1706,8 @@ const DIAGRAMS: Record<string, () => JSX.Element> = {
   "iframe-lien-ket": IframeLienKet,
   "label-for-id": LabelForId,
   "radio-checkbox-select": RadioCheckboxSelect,
+  "cau-truc-css": CauTrucCss,
+  "ba-cach-css": BaCachCss,
 };
 
 export default function Diagram({ name }: { name: string }) {
