@@ -1825,6 +1825,119 @@ function ThuTuUuTienCss() {
   );
 }
 
+// ── Bài 15: Vòng tròn màu Hue + thang Saturation/Lightness (Hình 15.2) ──────
+function polarPoint(cx: number, cy: number, r: number, angleDeg: number) {
+  const a = ((angleDeg - 90) * Math.PI) / 180;
+  return { x: cx + r * Math.cos(a), y: cy + r * Math.sin(a) };
+}
+function donutSlicePath(cx: number, cy: number, rOuter: number, rInner: number, a0: number, a1: number) {
+  const p0 = polarPoint(cx, cy, rOuter, a0);
+  const p1 = polarPoint(cx, cy, rOuter, a1);
+  const p2 = polarPoint(cx, cy, rInner, a1);
+  const p3 = polarPoint(cx, cy, rInner, a0);
+  const large = a1 - a0 <= 180 ? 0 : 1;
+  return `M ${p0.x} ${p0.y} A ${rOuter} ${rOuter} 0 ${large} 1 ${p1.x} ${p1.y} L ${p2.x} ${p2.y} A ${rInner} ${rInner} 0 ${large} 0 ${p3.x} ${p3.y} Z`;
+}
+function HeMauHsl() {
+  const cx = 155, cy = 150, rO = 92, rI = 52;
+  const hues = [
+    "#FF0000", "#FF8000", "#FFFF00", "#80FF00", "#00FF00", "#00FF80",
+    "#00FFFF", "#0080FF", "#0000FF", "#8000FF", "#FF00FF", "#FF0080",
+  ];
+  const marks = [0, 60, 120, 180, 240, 300];
+  return (
+    <Frame viewBox="0 0 640 320">
+      <Lines x={320} y={24} lines={["Ba tham số của hệ màu HSL: Hue · Saturation · Lightness"]} size={13.5} weight={700} fill={C.ink} />
+
+      {hues.map((col, i) => (
+        <path key={i} d={donutSlicePath(cx, cy, rO, rI, i * 30, (i + 1) * 30)} fill={col} stroke={C.white} strokeWidth={1} />
+      ))}
+      {marks.map((deg, i) => {
+        const p = polarPoint(cx, cy, rO + 16, deg);
+        return <Lines key={i} x={p.x} y={p.y + 4} lines={[`${deg}°`]} size={12} fill={C.inkSoft} weight={600} />;
+      })}
+      <Lines x={cx} y={cy - 4} lines={["Hue"]} size={13} fill={C.ink} weight={700} />
+      <Lines x={cx} y={cy + 14} lines={["0°–360°"]} size={12} fill={C.inkSoft} />
+
+      <Lines x={470} y={70} lines={["Saturation (độ bão hoà)"]} size={13} weight={700} fill={C.ink} anchor="middle" />
+      <defs>
+        <linearGradient id="satGrad" x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0%" stopColor="#9C9C9C" />
+          <stop offset="100%" stopColor="#FF2020" />
+        </linearGradient>
+        <linearGradient id="lightGrad" x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0%" stopColor="#000000" />
+          <stop offset="50%" stopColor="#FF2020" />
+          <stop offset="100%" stopColor="#FFFFFF" />
+        </linearGradient>
+      </defs>
+      <rect x={330} y={82} width={280} height={26} rx={8} fill="url(#satGrad)" stroke={C.line} strokeWidth={1} />
+      <Lines x={330} y={124} lines={["0% — chỉ còn xám"]} size={12} fill={C.inkSoft} anchor="start" />
+      <Lines x={610} y={124} lines={["100% — đủ màu"]} size={12} fill={C.inkSoft} anchor="end" />
+
+      <Lines x={470} y={162} lines={["Lightness (độ sáng)"]} size={13} weight={700} fill={C.ink} anchor="middle" />
+      <rect x={330} y={174} width={280} height={26} rx={8} fill="url(#lightGrad)" stroke={C.line} strokeWidth={1} />
+      <Lines x={330} y={216} lines={["0% — đen"]} size={12} fill={C.inkSoft} anchor="start" />
+      <Lines x={470} y={216} lines={["50% — màu đúng"]} size={12} fill={C.inkSoft} anchor="middle" />
+      <Lines x={610} y={216} lines={["100% — trắng"]} size={12} fill={C.inkSoft} anchor="end" />
+
+      <rect x={24} y={252} width={592} height={48} rx={12} fill={C.sea} fillOpacity={0.08} />
+      <Lines x={320} y={272} lines={["hsl(h, s%, l%) — ví dụ hsl(0, 100%, 50%) là màu đỏ đúng,", "hsl(0, 0%, 50%) là màu xám (không có độ bão hoà)"]} size={12} gap={17} weight={600} fill={C.seaDeep} />
+    </Frame>
+  );
+}
+
+// ── Bài 15: Bốn bộ chọn tổ hợp E F, E>F, E+F, E~F (theo sơ đồ cuối trang 87) ──
+function BoChonToHop() {
+  const mono = { fontFamily: "var(--font-mono)" } as const;
+  function Node({ x, y, label }: { x: number; y: number; label: string }) {
+    return (
+      <g>
+        <rect x={x - 26} y={y - 20} width={52} height={40} rx={10} fill={C.white} stroke={C.sea} strokeWidth={2} />
+        <text x={x} y={y + 6} fontSize={15} fontWeight={700} fill={C.seaDeep} textAnchor="middle" style={mono}>{label}</text>
+      </g>
+    );
+  }
+  const cols = [
+    { cx: 90, title: "E F", desc: ["con/cháu,", "bất kỳ cấp nào"] },
+    { cx: 250, title: "E > F", desc: ["con trực tiếp"] },
+    { cx: 410, title: "E + F", desc: ["anh em,", "liền kề ngay sau"] },
+    { cx: 570, title: "E ~ F", desc: ["anh em,", "không cần liền kề"] },
+  ];
+  return (
+    <Frame viewBox="0 0 640 260">
+      <Lines x={320} y={22} lines={["Bốn kiểu bộ chọn là tổ hợp các phần tử có quan hệ"]} size={13.5} weight={700} fill={C.ink} />
+
+      {/* Cột 1: E F — qua nhiều cấp, đường chấm cong */}
+      <Node x={cols[0].cx} y={64} label="E" />
+      <path d={`M ${cols[0].cx - 10} 84 C ${cols[0].cx - 40} 110, ${cols[0].cx - 10} 120, ${cols[0].cx} 140`} stroke={C.coral} strokeWidth={2.5} fill="none" strokeDasharray="3 4" markerEnd="url(#arrow-coral)" />
+      <Node x={cols[0].cx} y={160} label="F" />
+
+      {/* Cột 2: E > F — trực tiếp, đường thẳng */}
+      <Node x={cols[1].cx} y={64} label="E" />
+      <line x1={cols[1].cx} y1={84} x2={cols[1].cx} y2={140} stroke={C.sea} strokeWidth={2.5} markerEnd="url(#arrow)" />
+      <Node x={cols[1].cx} y={160} label="F" />
+
+      {/* Cột 3: E + F — anh em liền kề, ngang hàng sát nhau */}
+      <Node x={cols[2].cx - 30} y={110} label="E" />
+      <line x1={cols[2].cx - 4} y1={110} x2={cols[2].cx + 24} y2={110} stroke={C.leaf} strokeWidth={2.5} markerEnd="url(#arrow)" />
+      <Node x={cols[2].cx + 30} y={110} label="F" />
+
+      {/* Cột 4: E ~ F — anh em không cần liền kề, ngang hàng xa nhau */}
+      <Node x={cols[3].cx - 40} y={110} label="E" />
+      <line x1={cols[3].cx - 14} y1={110} x2={cols[3].cx + 24} y2={110} stroke={C.gold} strokeWidth={2.5} strokeDasharray="3 4" markerEnd="url(#arrow-soft)" />
+      <Node x={cols[3].cx + 40} y={110} label="F" />
+
+      {cols.map((c, i) => (
+        <g key={i}>
+          <text x={c.cx} y={200} fontSize={14} fontWeight={700} fill={C.ink} textAnchor="middle" style={mono}>{c.title}</text>
+          <Lines x={c.cx} y={220} lines={c.desc} size={12} fill={C.inkSoft} gap={14} />
+        </g>
+      ))}
+    </Frame>
+  );
+}
+
 const DIAGRAMS: Record<string, () => JSX.Element> = {
   "turing-test": TuringTest,
   "ai-hep-va-manh": AiHepVaManh,
@@ -1854,6 +1967,8 @@ const DIAGRAMS: Record<string, () => JSX.Element> = {
   "baseline-line-height": BaselineLineHeight,
   "ke-thua-cay-html": KeThuaCayHtml,
   "thu-tu-uu-tien-css": ThuTuUuTienCss,
+  "he-mau-hsl": HeMauHsl,
+  "bo-chon-to-hop": BoChonToHop,
 };
 
 export default function Diagram({ name }: { name: string }) {
