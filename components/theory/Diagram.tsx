@@ -1938,6 +1938,43 @@ function BoChonToHop() {
   );
 }
 
+// ── Bài 16: Mô hình khung CSS — margin/border/padding/content (Hình 16.3) ──
+function BoxModelKhung() {
+  const outer = { x: 60, y: 40, w: 500, h: 230 };
+  const border = { x: 110, y: 66, w: 400, h: 178 };
+  const padding = { x: 126, y: 80, w: 368, h: 150 };
+  const content = { x: 190, y: 114, w: 240, h: 82 };
+  return (
+    <Frame viewBox="0 0 640 300">
+      <Lines x={320} y={22} lines={["Các thông số chính của khung một phần tử HTML"]} size={13.5} weight={700} fill={C.ink} />
+
+      <rect {...outer} fill="none" stroke={C.inkSoft} strokeWidth={1.5} strokeDasharray="5 4" />
+      <rect {...border} fill="none" stroke={C.sea} strokeWidth={4} />
+      <rect {...padding} fill={C.sea} fillOpacity={0.06} stroke={C.line} strokeWidth={1} strokeDasharray="3 3" />
+      <rect {...content} fill={C.white} stroke={C.coral} strokeWidth={2} />
+      <Lines x={content.x + content.w / 2} y={content.y + content.h / 2 - 4} lines={["Nội dung"]} size={13} weight={700} fill={C.coral} />
+      <Lines x={content.x + content.w / 2} y={content.y + content.h / 2 + 14} lines={["width × height"]} size={12} fill={C.inkSoft} />
+
+      {/* Nhãn bên phải, mỗi nhãn có mũi tên trỏ vào đúng lớp khung */}
+      {[
+        { ly: 58, px: outer.x + outer.w, py: 90, lines: ["Lề khung", "(margin)"] },
+        { ly: 108, px: border.x + border.w, py: 130, lines: ["Khung", "(border)"] },
+        { ly: 158, px: padding.x + padding.w, py: 170, lines: ["Vùng đệm", "(padding)"] },
+        { ly: 208, px: content.x + content.w, py: content.y + content.h / 2, lines: ["Nội dung", "(content)"] },
+      ].map((l, i) => (
+        <g key={i}>
+          <line x1={l.px} y1={l.py} x2={560} y2={l.ly + 4} stroke={C.line} strokeWidth={1.5} markerEnd="url(#arrow-soft)" />
+          <Lines x={566} y={l.ly} lines={l.lines} size={12} fill={C.inkSoft} weight={500} anchor="start" gap={15} />
+        </g>
+      ))}
+
+      {/* Chiều rộng, chú thích dưới */}
+      <line x1={content.x} y1={content.y + content.h + 14} x2={content.x + content.w} y2={content.y + content.h + 14} stroke={C.gold} strokeWidth={2} markerEnd="url(#arrow)" markerStart="url(#arrow)" />
+      <Lines x={content.x + content.w / 2} y={content.y + content.h + 30} lines={["Chiều rộng (width)"]} size={12} fill={C.goldDeep} weight={600} />
+    </Frame>
+  );
+}
+
 const DIAGRAMS: Record<string, () => JSX.Element> = {
   "turing-test": TuringTest,
   "ai-hep-va-manh": AiHepVaManh,
@@ -1969,6 +2006,7 @@ const DIAGRAMS: Record<string, () => JSX.Element> = {
   "thu-tu-uu-tien-css": ThuTuUuTienCss,
   "he-mau-hsl": HeMauHsl,
   "bo-chon-to-hop": BoChonToHop,
+  "box-model-khung": BoxModelKhung,
 };
 
 export default function Diagram({ name }: { name: string }) {
