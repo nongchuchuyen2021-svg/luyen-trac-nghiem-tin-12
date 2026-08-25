@@ -1975,6 +1975,85 @@ function BoxModelKhung() {
   );
 }
 
+// ── Bài 17: Bảy mức ưu tiên khi áp dụng CSS (Bảng 17.3) ─────────────────────
+function ThangBayMucUuTien() {
+  const mono = { fontFamily: "var(--font-mono)" } as const;
+  const levels = [
+    { label: "!important", desc: "mức ưu tiên cao nhất" },
+    { label: "CSS trực tiếp", desc: "thuộc tính style trong thẻ" },
+    { label: "CSS theo thiết bị", desc: "@media (kích thước màn hình)" },
+    { label: "Trọng số CSS", desc: "specificity của bộ chọn" },
+    { label: "Thứ tự cuối cùng", desc: "cùng trọng số → viết sau thắng" },
+    { label: "Kế thừa từ cha", desc: "không có mẫu nào khớp trực tiếp" },
+    { label: "Mặc định trình duyệt", desc: "không có mẫu CSS nào cả" },
+  ];
+  const top = 34, bandH = 34, gap = 4;
+  const h = top + levels.length * (bandH + gap) + 20;
+  return (
+    <Frame viewBox={`0 0 640 ${h}`}>
+      <Lines x={320} y={20} lines={["Bảy mức ưu tiên khi áp dụng CSS — từ cao xuống thấp"]} size={13.5} weight={700} fill={C.ink} />
+
+      <line x1={46} y1={top + 6} x2={46} y2={top + levels.length * (bandH + gap) - gap} stroke={C.sea} strokeWidth={2.5} markerEnd="url(#arrow)" />
+      <Lines x={46} y={h - 20} lines={["ưu tiên", "giảm dần"]} size={12} fill={C.seaDeep} weight={600} gap={14} />
+
+      {levels.map((lv, i) => {
+        const y = top + i * (bandH + gap);
+        const w = 560 - i * 8;
+        const isTop = i === 0;
+        return (
+          <g key={i}>
+            <rect x={70} y={y} width={w} height={bandH} rx={9} fill={isTop ? C.gold : C.sea} fillOpacity={isTop ? 0.26 : 0.08 + (levels.length - i) * 0.01} stroke={isTop ? C.gold : C.sea} strokeWidth={1.5} />
+            <text x={90} y={y + 15} fontSize={12.5} fontWeight={700} fill={isTop ? C.goldDeep : C.seaDeep} style={mono}>{i + 1}. {lv.label}</text>
+            <text x={90} y={y + 29} fontSize={12} fill={C.inkSoft}>{lv.desc}</text>
+          </g>
+        );
+      })}
+    </Frame>
+  );
+}
+
+// ── Bài 17: Cách tính trọng số của bộ chọn (Bảng 17.4, 17.5) ────────────────
+function TinhTrongSoBoChon() {
+  const mono = { fontFamily: "var(--font-mono)" } as const;
+  const parts = [
+    { text: "p", kind: "phần tử", w: 1, color: C.sea },
+    { text: "em", kind: "phần tử", w: 1, color: C.sea },
+    { text: "#p123", kind: "mã ID", w: 100, color: C.coral },
+  ];
+  let x = 70;
+  const chipY = 90;
+  return (
+    <Frame viewBox="0 0 640 220">
+      <Lines x={320} y={22} lines={["Trọng số = tổng giá trị đóng góp của từng thành phần trong bộ chọn"]} size={13} weight={700} fill={C.ink} />
+      <text x={320} y={54} fontSize={16} fontWeight={700} fill={C.ink} textAnchor="middle" style={mono}>p &gt; em#p123</text>
+
+      {parts.map((p, i) => {
+        const chipW = 96;
+        const cx = x;
+        x += chipW + 40;
+        return (
+          <g key={i}>
+            <rect x={cx} y={chipY} width={chipW} height={54} rx={12} fill={p.color} fillOpacity={0.12} stroke={p.color} strokeWidth={2} />
+            <text x={cx + chipW / 2} y={chipY + 22} fontSize={14} fontWeight={700} fill={p.color} textAnchor="middle" style={mono}>{p.text}</text>
+            <Lines x={cx + chipW / 2} y={chipY + 38} lines={[`${p.kind}: ${p.w}`]} size={12} fill={C.inkSoft} />
+            {i < parts.length - 1 && (
+              <text x={cx + chipW + 20} y={chipY + 32} fontSize={18} fontWeight={700} fill={C.inkSoft} textAnchor="middle">+</text>
+            )}
+          </g>
+        );
+      })}
+
+      <text x={x - 10} y={chipY + 32} fontSize={18} fontWeight={700} fill={C.inkSoft} textAnchor="middle">=</text>
+      <rect x={x + 10} y={chipY - 6} width={90} height={66} rx={14} fill={C.gold} fillOpacity={0.22} stroke={C.gold} strokeWidth={2} />
+      <text x={x + 55} y={chipY + 26} fontSize={20} fontWeight={700} fill={C.goldDeep} textAnchor="middle" style={mono}>102</text>
+      <Lines x={x + 55} y={chipY + 46} lines={["trọng số"]} size={12} fill={C.goldDeep} weight={600} />
+
+      <rect x={24} y={170} width={592} height={40} rx={10} fill={C.sea} fillOpacity={0.06} />
+      <Lines x={320} y={194} lines={["ID = 100 điểm · class/pseudo-class/thuộc tính = 10 điểm · phần tử/pseudo-element = 1 điểm"]} size={12} fill={C.seaDeep} weight={600} />
+    </Frame>
+  );
+}
+
 const DIAGRAMS: Record<string, () => JSX.Element> = {
   "turing-test": TuringTest,
   "ai-hep-va-manh": AiHepVaManh,
@@ -2007,6 +2086,8 @@ const DIAGRAMS: Record<string, () => JSX.Element> = {
   "he-mau-hsl": HeMauHsl,
   "bo-chon-to-hop": BoChonToHop,
   "box-model-khung": BoxModelKhung,
+  "thang-bay-muc-uu-tien": ThangBayMucUuTien,
+  "tinh-trong-so-bo-chon": TinhTrongSoBoChon,
 };
 
 export default function Diagram({ name }: { name: string }) {
