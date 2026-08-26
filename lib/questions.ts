@@ -24,6 +24,7 @@ import bai22 from "@/data/questions/bai-22";
 import bai23 from "@/data/questions/bai-23";
 import bai24 from "@/data/questions/bai-24";
 import bai25 from "@/data/questions/bai-25";
+import bai26 from "@/data/questions/bai-26";
 
 // Đăng ký ngân hàng câu hỏi trắc nghiệm: thêm bài mới = tạo file trong
 // data/questions/ rồi import và khai báo ở đây (và bật available trong
@@ -56,6 +57,7 @@ export const QUESTION_BANK: Record<string, Question[]> = {
   "bai-23": bai23,
   "bai-24": bai24,
   "bai-25": bai25,
+  "bai-26": bai26,
 };
 
 export function getQuestions(lessonId: string): Question[] {
