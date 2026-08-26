@@ -18,6 +18,7 @@ import bai16 from "@/data/theory/bai-16";
 import bai17 from "@/data/theory/bai-17";
 import bai19 from "@/data/theory/bai-19";
 import bai20 from "@/data/theory/bai-20";
+import bai23 from "@/data/theory/bai-23";
 
 // Bài lí thuyết tự học của từng bài.
 // Thêm bài mới: tạo data/theory/<id>.ts rồi import và khai báo thêm một dòng
@@ -44,6 +45,7 @@ export const THEORY_BANK: Record<string, LessonTheory> = {
   "bai-17": bai17,
   "bai-19": bai19,
   "bai-20": bai20,
+  "bai-23": bai23,
 };
 
 export function getTheory(lessonId: string): LessonTheory | null {

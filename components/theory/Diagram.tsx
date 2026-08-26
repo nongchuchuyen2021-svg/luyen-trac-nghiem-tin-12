@@ -2054,6 +2054,114 @@ function TinhTrongSoBoChon() {
   );
 }
 
+// ── Bài 23: Cấu trúc phần đầu trang (Hình 23.1) ─────────────────────────────
+function CauTrucDauTrang() {
+  const badge = (cx: number, cy: number, n: string) => (
+    <g>
+      <circle cx={cx} cy={cy} r={11} fill={C.gold} stroke={C.white} strokeWidth={2} />
+      <text x={cx} y={cy + 4} fontSize={12} fontWeight={700} fill={C.white} textAnchor="middle">
+        {n}
+      </text>
+    </g>
+  );
+  return (
+    <Frame viewBox="0 0 640 320">
+      <Lines x={320} y={20} lines={["Cấu trúc phần đầu trang (header)"]} size={14} weight={700} fill={C.ink} />
+
+      <rect x="40" y="40" width="560" height="120" rx="18" fill={C.sea} fillOpacity="0.05" stroke={C.sea} strokeWidth="2" />
+
+      <rect x="58" y="58" width="42" height="42" rx="10" fill={C.coral} fillOpacity="0.18" stroke={C.coral} strokeWidth="2" />
+      <text x="79" y="86" fontSize="20" textAnchor="middle">
+        🏫
+      </text>
+      {badge(52, 52, "1")}
+
+      <Lines x={116} y={84} lines={["Tên trang website"]} size={13} weight={700} anchor="start" fill={C.ink} />
+      {badge(110, 52, "2")}
+
+      <rect x="300" y="58" width="200" height="30" rx="15" fill={C.white} stroke={C.line} strokeWidth="1.5" />
+      <text x="400" y="78" fontSize="12" textAnchor="middle" fill={C.inkSoft}>
+        Trang chủ · Giới thiệu · Liên hệ
+      </text>
+      {badge(294, 52, "3")}
+
+      <text x="560" y="80" fontSize="18" textAnchor="middle">
+        🔍
+      </text>
+      {badge(566, 52, "4")}
+
+      <Lines x={320} y={122} lines={["TIÊU ĐỀ TRANG"]} size={16} weight={700} fill={C.seaDeep} />
+      {badge(224, 116, "5")}
+
+      <Lines x={320} y={144} lines={["Thông tin tóm tắt của trang"]} size={12} fill={C.inkSoft} />
+      {badge(224, 140, "6")}
+
+      <Lines x={60} y={192} lines={["1 · Logo"]} size={12.5} weight={600} anchor="start" fill={C.ink} />
+      <Lines x={60} y={216} lines={["2 · Tên trang"]} size={12.5} weight={600} anchor="start" fill={C.ink} />
+      <Lines x={60} y={240} lines={["3 · Biểu tượng bảng chọn"]} size={12.5} weight={600} anchor="start" fill={C.ink} />
+
+      <Lines x={340} y={192} lines={["4 · Biểu tượng tìm kiếm"]} size={12.5} weight={600} anchor="start" fill={C.ink} />
+      <Lines x={340} y={216} lines={["5 · Tiêu đề"]} size={12.5} weight={600} anchor="start" fill={C.ink} />
+      <Lines x={340} y={240} lines={["6 · Tóm tắt thông tin nổi bật"]} size={12.5} weight={600} anchor="start" fill={C.ink} />
+
+      <rect x="40" y="264" width="560" height="40" rx="14" fill={C.gold} fillOpacity="0.14" />
+      <Lines
+        x={320}
+        y={288}
+        lines={["Phần đầu trang có vai trò như trang bìa thu gọn của một cuốn sách"]}
+        size={12.5}
+        weight={600}
+        fill={C.goldDeep}
+      />
+    </Frame>
+  );
+}
+
+// ── Bài 23: Cấu trúc phần thân trang (Hình 23.2) ────────────────────────────
+function CauTrucThanTrang() {
+  const block = (x: number, y: number, w: number, h: number, label: string) => (
+    <g key={label}>
+      <rect x={x} y={y} width={w} height={h} rx={14} fill={C.white} stroke={C.sea} strokeWidth={2} strokeDasharray="6 5" />
+      <text x={x + w / 2} y={y + h / 2 - 4} fontSize={20} textAnchor="middle">
+        🖼️
+      </text>
+      <rect x={x + 12} y={y + h - 26} width={w - 24} height={22} rx={11} fill={C.sea} fillOpacity={0.12} />
+      <text x={x + w / 2} y={y + h - 10} fontSize={12} fontWeight={700} textAnchor="middle" fill={C.seaDeep}>
+        {label}
+      </text>
+    </g>
+  );
+  return (
+    <Frame viewBox="0 0 640 260">
+      <Lines
+        x={320}
+        y={20}
+        lines={["Cấu trúc phần thân trang (body) — mỗi khối một tiêu đề riêng"]}
+        size={13.5}
+        weight={700}
+        fill={C.ink}
+      />
+
+      {block(40, 44, 270, 70, "Khối nội dung 1.1")}
+      {block(330, 44, 270, 70, "Khối nội dung 1.2")}
+
+      {block(40, 134, 176, 70, "Khối 2.1")}
+      {block(236, 134, 176, 70, "Khối 2.2")}
+      {block(432, 134, 176, 70, "Khối 2.3")}
+
+      <rect x="40" y="220" width="560" height="34" rx="14" fill={C.gold} fillOpacity="0.14" />
+      <Lines
+        x={320}
+        y={242}
+        lines={["Mỗi khối có thể chứa văn bản, hình ảnh, âm thanh, biểu mẫu hay ứng dụng nhúng"]}
+        size={12}
+        weight={600}
+        fill={C.goldDeep}
+      />
+    </Frame>
+  );
+}
+
 const DIAGRAMS: Record<string, () => JSX.Element> = {
   "turing-test": TuringTest,
   "ai-hep-va-manh": AiHepVaManh,
@@ -2088,6 +2196,8 @@ const DIAGRAMS: Record<string, () => JSX.Element> = {
   "box-model-khung": BoxModelKhung,
   "thang-bay-muc-uu-tien": ThangBayMucUuTien,
   "tinh-trong-so-bo-chon": TinhTrongSoBoChon,
+  "cau-truc-dau-trang": CauTrucDauTrang,
+  "cau-truc-than-trang": CauTrucThanTrang,
 };
 
 export default function Diagram({ name }: { name: string }) {
