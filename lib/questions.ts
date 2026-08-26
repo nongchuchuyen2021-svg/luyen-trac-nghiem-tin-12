@@ -16,6 +16,7 @@ import bai14 from "@/data/questions/bai-14";
 import bai15 from "@/data/questions/bai-15";
 import bai16 from "@/data/questions/bai-16";
 import bai17 from "@/data/questions/bai-17";
+import bai18 from "@/data/questions/bai-18";
 import bai19 from "@/data/questions/bai-19";
 import bai20 from "@/data/questions/bai-20";
 import bai23 from "@/data/questions/bai-23";
@@ -43,6 +44,7 @@ export const QUESTION_BANK: Record<string, Question[]> = {
   "bai-15": bai15,
   "bai-16": bai16,
   "bai-17": bai17,
+  "bai-18": bai18,
   "bai-19": bai19,
   "bai-20": bai20,
   "bai-23": bai23,

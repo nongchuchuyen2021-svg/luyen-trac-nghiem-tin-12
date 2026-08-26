@@ -16,6 +16,7 @@ import bai14 from "@/data/extra/bai-14";
 import bai15 from "@/data/extra/bai-15";
 import bai16 from "@/data/extra/bai-16";
 import bai17 from "@/data/extra/bai-17";
+import bai18 from "@/data/extra/bai-18";
 import bai19 from "@/data/extra/bai-19";
 import bai20 from "@/data/extra/bai-20";
 import bai23 from "@/data/extra/bai-23";
@@ -42,6 +43,7 @@ export const EXTRA_BANK: Record<string, LessonExtra> = {
   "bai-15": bai15,
   "bai-16": bai16,
   "bai-17": bai17,
+  "bai-18": bai18,
   "bai-19": bai19,
   "bai-20": bai20,
   "bai-23": bai23,

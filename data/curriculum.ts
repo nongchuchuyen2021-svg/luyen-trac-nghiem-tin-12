@@ -72,7 +72,7 @@ export const CURRICULUM: Topic[] = [
       {
         id: "bai-18",
         title: "Bài 18. Thực hành tổng hợp thiết kế trang web",
-        available: false,
+        available: true,
       },
     ],
   },
