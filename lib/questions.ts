@@ -19,6 +19,8 @@ import bai17 from "@/data/questions/bai-17";
 import bai18 from "@/data/questions/bai-18";
 import bai19 from "@/data/questions/bai-19";
 import bai20 from "@/data/questions/bai-20";
+import bai21 from "@/data/questions/bai-21";
+import bai22 from "@/data/questions/bai-22";
 import bai23 from "@/data/questions/bai-23";
 
 // Đăng ký ngân hàng câu hỏi trắc nghiệm: thêm bài mới = tạo file trong
@@ -47,6 +49,8 @@ export const QUESTION_BANK: Record<string, Question[]> = {
   "bai-18": bai18,
   "bai-19": bai19,
   "bai-20": bai20,
+  "bai-21": bai21,
+  "bai-22": bai22,
   "bai-23": bai23,
 };
 

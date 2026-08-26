@@ -19,6 +19,8 @@ import bai17 from "@/data/extra/bai-17";
 import bai18 from "@/data/extra/bai-18";
 import bai19 from "@/data/extra/bai-19";
 import bai20 from "@/data/extra/bai-20";
+import bai21 from "@/data/extra/bai-21";
+import bai22 from "@/data/extra/bai-22";
 import bai23 from "@/data/extra/bai-23";
 
 // Câu hỏi đúng/sai và tự luận của từng bài.
@@ -46,6 +48,8 @@ export const EXTRA_BANK: Record<string, LessonExtra> = {
   "bai-18": bai18,
   "bai-19": bai19,
   "bai-20": bai20,
+  "bai-21": bai21,
+  "bai-22": bai22,
   "bai-23": bai23,
 };
 

@@ -91,7 +91,7 @@ export const CURRICULUM: Topic[] = [
         title: "Bài 20. Nhóm nghề quản trị thuộc ngành Công nghệ thông tin",
         available: true,
       },
-      { id: "bai-21", title: "Bài 21. Hội thảo hướng nghiệp", available: false },
+      { id: "bai-21", title: "Bài 21. Hội thảo hướng nghiệp", available: true },
     ],
   },
   {
@@ -105,7 +105,7 @@ export const CURRICULUM: Topic[] = [
       {
         id: "bai-22",
         title: "Bài 22. Thực hành kết nối các thiết bị số",
-        available: false,
+        available: true,
       },
     ],
   },
