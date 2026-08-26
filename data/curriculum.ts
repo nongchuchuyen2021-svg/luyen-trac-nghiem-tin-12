@@ -115,11 +115,11 @@ export const CURRICULUM: Topic[] = [
     emoji: "🏗️",
     lessons: [
       { id: "bai-23", title: "Bài 23. Chuẩn bị xây dựng trang web", available: true },
-      { id: "bai-24", title: "Bài 24. Xây dựng phần đầu trang web", available: false },
+      { id: "bai-24", title: "Bài 24. Xây dựng phần đầu trang web", available: true },
       {
         id: "bai-25",
         title: "Bài 25. Xây dựng phần thân và chân trang web",
-        available: false,
+        available: true,
       },
       { id: "bai-26", title: "Bài 26. Liên kết và thanh điều hướng", available: false },
       { id: "bai-27", title: "Bài 27. Biểu mẫu trên trang web", available: false },

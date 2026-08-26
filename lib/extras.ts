@@ -22,6 +22,8 @@ import bai20 from "@/data/extra/bai-20";
 import bai21 from "@/data/extra/bai-21";
 import bai22 from "@/data/extra/bai-22";
 import bai23 from "@/data/extra/bai-23";
+import bai24 from "@/data/extra/bai-24";
+import bai25 from "@/data/extra/bai-25";
 
 // Câu hỏi đúng/sai và tự luận của từng bài.
 // Thêm bài mới: tạo data/extra/<id>.ts rồi import và khai báo ở đây.
@@ -51,6 +53,8 @@ export const EXTRA_BANK: Record<string, LessonExtra> = {
   "bai-21": bai21,
   "bai-22": bai22,
   "bai-23": bai23,
+  "bai-24": bai24,
+  "bai-25": bai25,
 };
 
 export function getTF(lessonId: string): TFQuestion[] {
