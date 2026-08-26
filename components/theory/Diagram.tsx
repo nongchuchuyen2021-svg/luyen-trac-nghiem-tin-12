@@ -2162,6 +2162,89 @@ function CauTrucThanTrang() {
   );
 }
 
+// ── Bài 18: Bố cục website — mỗi phần một lớp CSS riêng (Hình 18.2) ─────────
+function BoCucWebsiteClb() {
+  const cell = (x: number, y: number) => (
+    <g key={`${x}-${y}`}>
+      <rect x={x} y={y} width={244} height={38} rx={8} fill={C.white} stroke={C.gold} strokeWidth={1.5} />
+      <text x={x + 122} y={y + 24} fontSize={12} textAnchor="middle" fill={C.goldDeep} fontWeight={600}>
+        Ảnh minh hoạ / Nội dung
+      </text>
+    </g>
+  );
+  return (
+    <Frame viewBox="0 0 640 340">
+      <Lines x={320} y={20} lines={["Bố cục website — mỗi phần một lớp CSS riêng"]} size={13.5} weight={700} fill={C.ink} />
+
+      <rect x="40" y="40" width="560" height="90" rx="14" fill={C.sea} fillOpacity="0.1" stroke={C.sea} strokeWidth="2" />
+      <Lines x={320} y={58} lines={["Đầu trang (Header)"]} size={13} weight={700} fill={C.seaDeep} />
+      <rect x="56" y="66" width="528" height="26" rx="8" fill={C.white} stroke={C.sea} strokeWidth="1.5" />
+      <text x={320} y={83} fontSize={12.5} textAnchor="middle" fill={C.seaDeep} fontWeight={600}>
+        Banner — .banner
+      </text>
+      <rect x="56" y="96" width="528" height="24" rx="8" fill={C.white} stroke={C.sea} strokeWidth="1.5" />
+      <text x={320} y={112} fontSize={12.5} textAnchor="middle" fill={C.seaDeep} fontWeight={600}>
+        Khẩu hiệu — .slogan
+      </text>
+
+      <rect x="40" y="140" width="560" height="130" rx="14" fill={C.gold} fillOpacity="0.12" stroke={C.gold} strokeWidth="2" />
+      <Lines x={320} y={158} lines={["Phần nội dung chính — .content"]} size={13} weight={700} fill={C.goldDeep} />
+      {cell(56, 168)}
+      {cell(340, 168)}
+      {cell(56, 216)}
+      {cell(340, 216)}
+
+      <rect x="40" y="284" width="560" height="40" rx="14" fill={C.coral} fillOpacity="0.14" stroke={C.coral} strokeWidth="2" />
+      <Lines x={320} y={308} lines={["Cuối trang (Footer) — .footer"]} size={13} weight={700} fill={C.coral} />
+    </Frame>
+  );
+}
+
+// ── Bài 18: Bố cục slogan — ba lớp CSS lồng nhau (Hình 18.3) ────────────────
+function BoCucSloganLongLop() {
+  const o = [
+    { label: "Ô 1", cls: ".block_3" },
+    { label: "Ô 2", cls: ".block_3" },
+    { label: "Ô 3", cls: ".block_3" },
+  ];
+  const xs = [80, 246, 412];
+  return (
+    <Frame viewBox="0 0 640 280">
+      <Lines x={320} y={20} lines={["Bố cục slogan — ba lớp CSS lồng nhau"]} size={13.5} weight={700} fill={C.ink} />
+
+      <rect x="40" y="60" width="560" height="170" rx="14" fill="none" stroke={C.gold} strokeWidth="2.5" />
+      <rect x="40" y="36" width="104" height="26" rx="6" fill={C.gold} />
+      <text x={92} y={54} fontSize={12.5} fontWeight={700} textAnchor="middle" fill={C.white}>
+        .slogan
+      </text>
+
+      <rect x="64" y="96" width="512" height="112" rx="12" fill="none" stroke={C.leaf} strokeWidth="2.5" />
+      <rect x="64" y="76" width="80" height="24" rx="6" fill={C.leaf} />
+      <text x={104} y={93} fontSize={12.5} fontWeight={700} textAnchor="middle" fill={C.white}>
+        .row
+      </text>
+
+      {o.map((b, i) => (
+        <g key={b.label}>
+          <rect x={xs[i]} y="118" width="150" height="70" rx="10" fill={C.sea} fillOpacity="0.08" stroke={C.sea} strokeWidth="2" />
+          <Lines x={xs[i] + 75} y={148} lines={[b.label]} size={14} weight={700} fill={C.seaDeep} />
+          <Lines x={xs[i] + 75} y={168} lines={[b.cls]} size={12} fill={C.seaDeep} />
+        </g>
+      ))}
+
+      <rect x="40" y="240" width="560" height="34" rx="14" fill={C.gold} fillOpacity="0.14" />
+      <Lines
+        x={320}
+        y={262}
+        lines={["Mỗi ô rộng 1/3 hàng nhờ .block_3 { width: 33.33333333%; }"]}
+        size={12.5}
+        weight={600}
+        fill={C.goldDeep}
+      />
+    </Frame>
+  );
+}
+
 const DIAGRAMS: Record<string, () => JSX.Element> = {
   "turing-test": TuringTest,
   "ai-hep-va-manh": AiHepVaManh,
@@ -2198,6 +2281,8 @@ const DIAGRAMS: Record<string, () => JSX.Element> = {
   "tinh-trong-so-bo-chon": TinhTrongSoBoChon,
   "cau-truc-dau-trang": CauTrucDauTrang,
   "cau-truc-than-trang": CauTrucThanTrang,
+  "bo-cuc-website-clb": BoCucWebsiteClb,
+  "bo-cuc-slogan-long-lop": BoCucSloganLongLop,
 };
 
 export default function Diagram({ name }: { name: string }) {
