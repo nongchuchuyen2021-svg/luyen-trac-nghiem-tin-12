@@ -231,14 +231,18 @@ function Block({ block }: { block: TheoryBlock }) {
 
     case "steps":
       return (
-        <ol className="relative space-y-4 border-l-2 border-dashed border-sea/25 pl-6">
+        <ol className="relative ml-2 space-y-4 border-l-2 border-dashed border-sea/25 pl-5">
           {block.items.map((s, i) => (
             <li key={i} className="relative">
-              <span className="absolute -left-[34px] flex h-6 min-w-[24px] items-center justify-center rounded-full bg-sea px-1.5 font-mono text-[10px] font-bold text-white">
-                {s.label}
-              </span>
-              <p className="font-display text-[15px] font-semibold text-ink">{s.title}</p>
-              <p className="mt-0.5 text-sm leading-relaxed text-ink-soft">
+              {/* Nốt tròn định vị trên trục timeline */}
+              <span className="absolute -left-[27px] top-1.5 h-3 w-3 rounded-full border-2 border-white bg-sea shadow-sm" />
+              <div className="flex flex-wrap items-center gap-2">
+                <span className="inline-flex items-center rounded-full bg-sea/15 px-2.5 py-0.5 font-mono text-xs font-bold text-sea-deep">
+                  {s.label}
+                </span>
+                <p className="font-display text-[15px] font-semibold text-ink">{s.title}</p>
+              </div>
+              <p className="mt-1 text-sm leading-relaxed text-ink-soft">
                 <Rich text={s.text} />
               </p>
             </li>
