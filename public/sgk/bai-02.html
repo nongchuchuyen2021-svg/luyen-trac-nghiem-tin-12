@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bài 2: Trí tuệ nhân tạo trong khoa học và đời sống – Tin học 12 KNTT (bản cập nhật 8/2026)</title>
+<meta name="description" content="SGK Tin học 12 Kết nối tri thức – Bài 2: Trí tuệ nhân tạo trong khoa học và đời sống. AI trong y học, sản xuất, giáo dục, tài chính; ChatGPT và các cảnh báo về AI.">
+<style>
+
+:root {
+  --bg: #070b14; --bg2: #0d1423; --panel: #111a2e; --panel2: #162035; --border: #1e2f4d;
+  --text: #e8eef8; --muted: #8899b8; --orange: #ff6b35; --orange2: #ff9a64;
+  --cyan: #38d9f5; --cyan2: #7ce8fa; --yellow: #ffd060; --green: #56e39f; --pink: #f06dba; --purple: #a78bfa;
+  --fs: 18px;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  background: radial-gradient(ellipse at 20% 10%, #0d1f3c 0%, #070b14 50%);
+  color: var(--text); font-family: 'Inter','Segoe UI',-apple-system,BlinkMacSystemFont,'Roboto','Helvetica Neue',Arial,sans-serif;
+  font-size: var(--fs); line-height: 1.75; min-height: 100vh;
+}
+.app { display: grid; grid-template-columns: 280px 1fr; min-height: 100vh; }
+.img-hero, .img-full, .img-illus { width:100%; border-radius:14px; margin:20px 0; border:1px solid var(--border); box-shadow:0 8px 28px rgba(0,0,0,.5); display:block; overflow:hidden; }
+.img-hero { height:220px; margin-top:20px; }
+.img-hero svg, .img-full svg, .img-illus svg { width:100%; height:auto; display:block; }
+.img-half { width:100%; border-radius:12px; margin:14px 0; border:1px solid var(--border); box-shadow:0 6px 20px rgba(0,0,0,.4); display:block; overflow:hidden; }
+.img-side { display:grid; grid-template-columns:1fr 1fr; gap:14px; margin:18px 0; align-items:start; }
+.img-side .img-half { margin:0; }
+.img-caption { text-align:center; font-size:13px; color:var(--muted); font-style:italic; margin:-10px 0 16px; padding:0 8px; }
+.sidebar { position:sticky; top:0; height:100vh; overflow-y:auto; background:rgba(7,11,20,.97); border-right:1px solid var(--border); padding:24px 16px; backdrop-filter:blur(20px); }
+.brand-box { margin-bottom:24px; }
+.series-label { font-size:11px; letter-spacing:2px; text-transform:uppercase; color:var(--cyan); font-weight:700; margin-bottom:6px; }
+.brand-title { font-size:20px; font-weight:900; color:#fff; line-height:1.2; }
+.brand-title span { color:var(--orange); }
+.brand-sub { color:var(--muted); font-size:12px; margin-top:5px; }
+.toc-title { font-size:11px; letter-spacing:1.5px; text-transform:uppercase; color:var(--muted); font-weight:700; margin:20px 0 8px; padding:0 8px; }
+.toc a { display:block; color:#9aaec8; text-decoration:none; padding:9px 12px; border-radius:10px; margin:2px 0; font-size:13.5px; font-weight:500; transition:all .2s; border-left:3px solid transparent; }
+.toc a:hover { background:rgba(56,217,245,.07); color:var(--cyan); border-left-color:var(--cyan); }
+.toc a.active { background:rgba(255,107,53,.1); color:var(--orange); border-left-color:var(--orange); }
+.ctrl-box { margin-top:24px; padding:14px; border:1px solid var(--border); border-radius:14px; background:rgba(255,255,255,.03); }
+.ctrl-box h4 { font-size:11px; letter-spacing:1px; text-transform:uppercase; color:var(--muted); margin-bottom:10px; }
+.ctrl-row { display:flex; gap:8px; margin-bottom:8px; }
+.ctrl-btn { flex:1; background:var(--panel2); border:1px solid var(--border); color:var(--text); border-radius:9px; padding:8px 6px; cursor:pointer; font-size:13px; font-weight:600; transition:all .2s; }
+.ctrl-btn:hover { background:var(--border); color:#fff; }
+.progress-bar { height:4px; background:var(--panel2); border-radius:4px; overflow:hidden; margin-top:10px; }
+.progress-fill { height:100%; width:0%; background:linear-gradient(90deg,var(--cyan),var(--orange)); transition:width .3s; border-radius:4px; }
+.main { max-width:860px; margin:0 auto; padding:32px 28px 80px; }
+.hero { background:linear-gradient(135deg,#0f2040 0%,#0a1628 60%,#131020 100%); border:1px solid var(--border); border-radius:24px; padding:36px 40px; margin-bottom:28px; box-shadow:0 24px 80px rgba(0,0,0,.5); position:relative; overflow:hidden; }
+.hero::before { content:'AI'; position:absolute; right:30px; top:20px; font-size:120px; font-weight:900; color:rgba(56,217,245,.05); line-height:1; user-select:none; }
+.chu-de-tag { display:inline-flex; align-items:center; gap:8px; background:rgba(56,217,245,.12); border:1px solid rgba(56,217,245,.3); color:var(--cyan); font-size:13px; font-weight:700; padding:6px 14px; border-radius:20px; margin-bottom:16px; letter-spacing:.5px; }
+.update-tag { display:inline-flex; align-items:center; gap:8px; background:rgba(255,208,96,.12); border:1px solid rgba(255,208,96,.35); color:var(--yellow); font-size:12.5px; font-weight:700; padding:5px 13px; border-radius:20px; margin:0 0 16px 8px; letter-spacing:.4px; }
+.hero h1 { font-size:clamp(28px,4vw,42px); font-weight:900; line-height:1.15; background:linear-gradient(90deg,#fff 0%,var(--cyan2) 50%,var(--orange2) 100%); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; margin-bottom:14px; }
+.hero-desc { color:#b0c4de; font-size:15.5px; line-height:1.6; }
+.goals-box { background:linear-gradient(135deg,#0c2233,#091c2a); border:1px solid rgba(56,217,245,.25); border-left:4px solid var(--cyan); border-radius:16px; padding:20px 24px; margin-bottom:28px; }
+.goals-box .goals-title { font-size:13px; font-weight:700; text-transform:uppercase; letter-spacing:1.5px; color:var(--cyan); margin-bottom:12px; display:flex; align-items:center; gap:8px; }
+.goals-box ul { list-style:none; }
+.goals-box li { padding:6px 0 6px 22px; position:relative; color:#c8dff0; font-size:15.5px; }
+.goals-box li::before { content:'✓'; position:absolute; left:0; color:var(--green); font-weight:700; }
+.nav-btns { display:flex; gap:10px; margin:10px 0 24px; }
+.nav-btn { background:var(--panel); border:1px solid var(--border); color:var(--text); border-radius:10px; padding:9px 18px; cursor:pointer; font-size:14px; font-weight:600; transition:all .2s; flex:1; }
+.nav-btn:hover:not(:disabled) { background:var(--panel2); border-color:var(--cyan); }
+.nav-btn:disabled { opacity:.35; cursor:default; }
+.section { background:rgba(11,17,30,.9); border:1px solid var(--border); border-radius:20px; padding:28px 32px 36px; margin-bottom:22px; scroll-margin-top:20px; position:relative; transition:border-color .3s; }
+.section:hover { border-color:rgba(56,217,245,.2); }
+.page-num { position:absolute; right:20px; bottom:14px; color:var(--muted); font-size:12px; font-weight:600; background:var(--panel2); padding:3px 10px; border-radius:10px; }
+.bai-cover { display:flex; align-items:center; gap:20px; background:linear-gradient(110deg,#1e0f0a,#1a1308,#0d1a28); border:1px solid rgba(255,107,53,.3); border-left:5px solid var(--orange); border-radius:16px; padding:24px 28px; margin-bottom:24px; }
+.bai-cover .num-block { flex-shrink:0; }
+.bai-num { font-size:13px; font-weight:700; color:var(--muted); text-transform:uppercase; letter-spacing:1px; }
+.bai-big { font-size:64px; font-weight:900; color:var(--orange); line-height:1; }
+.bai-cover .info .topic { font-size:13px; color:var(--muted); text-transform:uppercase; letter-spacing:1px; }
+.bai-cover .info .title { font-size:28px; font-weight:900; color:#fff; line-height:1.2; margin-top:6px; }
+.bai-cover .info .subtitle { font-size:14px; color:var(--cyan); margin-top:8px; }
+h2 { font-size:clamp(20px,2.5vw,26px); font-weight:800; color:#fff; margin:28px 0 14px; display:flex; align-items:center; gap:10px; }
+h2::before { content:''; display:inline-block; width:4px; height:24px; background:linear-gradient(var(--orange),var(--cyan)); border-radius:2px; flex-shrink:0; }
+h3 { font-size:clamp(16px,2vw,20px); font-weight:700; color:var(--cyan2); margin:22px 0 10px; }
+h4 { font-size:15px; font-weight:700; color:var(--orange2); margin:16px 0 8px; }
+p { color:#d0dcea; margin-bottom:14px; }
+p:last-child { margin-bottom:0; }
+em { color:var(--cyan2); font-style:italic; }
+strong { color:#fff; }
+ul, ol { padding-left:22px; margin:12px 0; }
+li { color:#c8d8ec; margin-bottom:8px; }
+li::marker { color:var(--cyan); }
+.activity { background:linear-gradient(135deg,#1a120a,#130f0a); border:1px solid rgba(255,160,60,.3); border-left:4px solid var(--orange); border-radius:14px; padding:18px 22px; margin:20px 0; }
+.activity-badge { display:inline-flex; align-items:center; gap:6px; background:var(--orange); color:#1a0a00; font-size:12px; font-weight:800; padding:4px 12px; border-radius:6px; margin-bottom:10px; letter-spacing:.5px; text-transform:uppercase; }
+.activity p, .activity li { color:#f0d8c0; }
+.info-box { background:linear-gradient(135deg,#071e2e,#071828); border:1px dashed rgba(56,217,245,.4); border-radius:14px; padding:18px 22px; margin:20px 0; }
+.info-box p, .info-box li { color:#b8d8f0; }
+.info-box strong { color:var(--cyan2); }
+.ghi-nho { background:linear-gradient(135deg,#1a2a10,#0f1e0a); border:1px solid rgba(86,227,159,.3); border-left:4px solid var(--green); border-radius:14px; padding:18px 22px; margin:20px 0; }
+.ghi-nho-title { color:var(--green); font-weight:800; font-size:14px; text-transform:uppercase; letter-spacing:1px; margin-bottom:10px; }
+.ghi-nho p, .ghi-nho li { color:#c8f0d8; }
+.cau-hoi { background:var(--panel2); border:1px solid var(--border); border-radius:12px; padding:14px 18px; margin:10px 0; display:flex; gap:14px; align-items:flex-start; }
+.cau-hoi .q-num { background:var(--cyan); color:#07080f; font-weight:800; font-size:13px; min-width:28px; height:28px; border-radius:50%; display:flex; align-items:center; justify-content:center; flex-shrink:0; margin-top:2px; }
+.cau-hoi .q-text { color:#d8e8f8; font-size:15.5px; }
+.field-grid { display:grid; grid-template-columns:1fr 1fr; gap:14px; margin:18px 0; }
+.field-card { background:var(--panel2); border:1px solid var(--border); border-radius:14px; padding:16px 18px; transition:border-color .2s; }
+.field-card:hover { border-color:var(--cyan); }
+.field-card .icon { font-size:26px; margin-bottom:8px; }
+.field-card .field-name { font-weight:700; color:var(--cyan2); margin-bottom:6px; font-size:15px; }
+.field-card p { color:#b0c0d8; font-size:14px; margin:0; }
+.canh-bao-box { background:linear-gradient(135deg,#241014,#1a0f10); border:1px solid rgba(240,109,186,.3); border-left:4px solid var(--pink); border-radius:14px; padding:16px 20px; margin:14px 0; }
+.canh-bao-box .cb-title { color:#f8a8cf; font-weight:700; font-size:15px; margin-bottom:4px; }
+.canh-bao-box p { color:#f0c8dc; font-size:14.5px; margin:0; }
+.chat-mock { background:var(--panel2); border:1px solid var(--border); border-radius:14px; padding:16px; margin:16px 0; }
+.chat-msg { border-radius:10px; padding:10px 14px; margin-bottom:10px; font-size:14px; max-width:88%; }
+.chat-msg.user { background:rgba(56,217,245,.1); border:1px solid rgba(56,217,245,.3); color:#cdeffb; margin-left:auto; }
+.chat-msg.bot { background:rgba(86,227,159,.08); border:1px solid rgba(86,227,159,.3); color:#c8f0d8; }
+.chat-msg code { background:rgba(0,0,0,.3); padding:1px 5px; border-radius:5px; font-size:13px; }
+.tag-luyen { display:inline-flex; align-items:center; gap:8px; background:rgba(167,139,250,.15); border:1px solid rgba(167,139,250,.4); color:var(--purple); font-weight:800; font-size:13px; padding:5px 14px; border-radius:20px; text-transform:uppercase; letter-spacing:1px; margin-bottom:14px; }
+.tag-van-dung { display:inline-flex; align-items:center; gap:8px; background:rgba(255,208,96,.1); border:1px solid rgba(255,208,96,.3); color:var(--yellow); font-weight:800; font-size:13px; padding:5px 14px; border-radius:20px; text-transform:uppercase; letter-spacing:1px; margin-bottom:14px; }
+.callout { background:rgba(56,217,245,.06); border:1px dashed rgba(56,217,245,.3); border-radius:12px; padding:14px 18px; margin:16px 0; font-style:italic; color:var(--cyan2); font-size:15.5px; }
+.sidebar::-webkit-scrollbar { width:4px; }
+.sidebar::-webkit-scrollbar-track { background:transparent; }
+.sidebar::-webkit-scrollbar-thumb { background:var(--border); border-radius:2px; }
+@media (max-width:900px) {
+  .app { display:block; } .sidebar { position:relative; height:auto; border-right:0; border-bottom:1px solid var(--border); }
+  .toc { display:grid; grid-template-columns:1fr 1fr; } .main { padding:18px 14px 60px; }
+  .field-grid, .img-side { grid-template-columns:1fr; } .bai-cover { flex-direction:column; }
+}
+@media (max-width:540px) {
+  body { font-size:16px; } .section { padding:18px 16px 30px; } .hero { padding:24px 20px; } .toc { grid-template-columns:1fr; }
+}
+@media print {
+  .sidebar, .nav-btns, .hero, .ctrl-box { display:none; } body { background:white; color:black; }
+  .section { border:1px solid #ccc; box-shadow:none; background:white; page-break-after:always; } p, li { color:#222; }
+}
+
+</style>
+</head>
+<body>
+<div class="app">
+
+<aside class="sidebar" id="sidebar">
+  <div class="brand-box">
+    <div class="series-label">SGK Tin học 12 · KNTT</div>
+    <div class="brand-title">Chủ đề 1<br><span>Máy tính &amp; Xã hội tri thức</span></div>
+    <div class="brand-sub">Kết nối tri thức với cuộc sống · bản cập nhật 8/2026</div>
+  </div>
+  <div class="toc-title">Nội dung bài học</div>
+  <nav class="toc">
+    <a href="#cover" class="active" onclick="setActive(this)">📖 Giới thiệu bài</a>
+    <a href="#linh-vuc" onclick="setActive(this)">1. AI và các lĩnh vực</a>
+    <a href="#san-xuat" onclick="setActive(this)">   Sản xuất &amp; Giáo dục</a>
+    <a href="#canh-bao" onclick="setActive(this)">2. AI và cảnh báo</a>
+    <a href="#chatgpt" onclick="setActive(this)">   Ví dụ: ChatGPT</a>
+    <a href="#nguy-co" onclick="setActive(this)">   Các nguy cơ, đạo đức</a>
+    <a href="#luyen-tap" onclick="setActive(this)">🏋️ Luyện tập</a>
+    <a href="#van-dung" onclick="setActive(this)">💡 Vận dụng</a>
+  </nav>
+  <div class="ctrl-box">
+    <h4>Tuỳ chỉnh hiển thị</h4>
+    <div class="ctrl-row">
+      <button class="ctrl-btn" onclick="changeFont(2)">A＋</button>
+      <button class="ctrl-btn" onclick="changeFont(-2)">A－</button>
+      <button class="ctrl-btn" onclick="toggleTheme()">☀/☾</button>
+    </div>
+    <div class="progress-bar"><div class="progress-fill" id="prog"></div></div>
+    <div style="font-size:12px; color:var(--muted); margin-top:6px; text-align:center" id="prog-label">Tiến độ đọc: 0%</div>
+  </div>
+</aside>
+
+
+<main class="main">
+  <div class="hero">
+    <div class="chu-de-tag">🖥 Chủ đề 1 · Máy tính và Xã hội tri thức</div>
+    <span class="update-tag">🕓 Cập nhật nội dung: 8/2026</span>
+    <h1>Trí tuệ nhân tạo trong<br>khoa học và đời sống</h1>
+    <p class="hero-desc">Tin học 12 · Kết nối tri thức với cuộc sống &nbsp;|&nbsp; Bài 2 trong 28 bài học &nbsp;|&nbsp; Bản viết lại có bổ sung, minh hoạ mới</p>
+  </div>
+
+  <div class="goals-box">
+    <div class="goals-title">🎯 Sau bài học này em sẽ:</div>
+    <ul>
+      <li>Chỉ ra được một số lĩnh vực của khoa học công nghệ và đời sống đã và đang phát triển mạnh mẽ dựa trên những thành tựu to lớn của Trí tuệ nhân tạo.</li>
+      <li>Nêu được ví dụ để thấy một hệ thống Trí tuệ nhân tạo có tri thức, có khả năng suy luận và khả năng học,...</li>
+      <li>Nêu được cảnh báo về sự phát triển của Trí tuệ nhân tạo trong tương lai.</li>
+    </ul>
+  </div>
+
+  <div class="nav-btns">
+    <button class="nav-btn" onclick="window.location.href='bai-01.html'">← Bài trước</button>
+    <button class="nav-btn" onclick="window.location.href='bai-03.html'">Bài tiếp →</button>
+  </div>
+
+  <section class="section" id="cover" data-page="Trang 9">
+    <div class="bai-cover">
+      <div class="num-block"><div class="bai-num">BÀI</div><div class="bai-big">2</div></div>
+      <div class="info">
+        <div class="topic">Chủ đề 1 · Máy tính và Xã hội tri thức</div>
+        <div class="title">Trí tuệ nhân tạo trong khoa học và đời sống</div>
+        <div class="subtitle">AI in Science and Life</div>
+      </div>
+    </div>
+
+    <div class="activity">
+      <div class="activity-badge">🤔 Khởi động</div>
+      <p>Trong các cuộc tranh luận về AI thường có hai quan điểm sau:</p>
+      <ul style="margin-top:10px">
+        <li>Trong tương lai, AI sẽ có thể thông minh hơn nhiều và thay thế hoàn toàn con người.</li>
+        <li>AI có thể làm được nhiều việc nhưng không thể thay thế con người.</li>
+      </ul>
+      <p style="margin-top:10px">Em ủng hộ quan điểm nào trong hai quan điểm trên? Vì sao?</p>
+    </div>
+
+    <h2 id="linh-vuc">1. TRÍ TUỆ NHÂN TẠO VÀ SỰ PHÁT TRIỂN CỦA MỘT SỐ LĨNH VỰC</h2>
+
+    <div class="activity">
+      <div class="activity-badge">Hoạt động 1</div>
+      <strong>Tìm hiểu một số lĩnh vực phát triển mạnh mẽ nhờ ứng dụng của AI</strong>
+      <p style="margin-top:10px">Ngày nay, nhiều lĩnh vực đang có thay đổi lớn lao nhờ ứng dụng AI. Hãy chỉ ra một vài lĩnh vực mà em tìm hiểu được qua các phương tiện thông tin đại chúng và Internet.</p>
+    </div>
+
+    <p>Nhiều lĩnh vực khoa học, công nghệ và đời sống đã và đang nhận được rất nhiều lợi ích từ sự phát triển của AI. Dưới đây là một vài lĩnh vực tiêu biểu:</p>
+
+    <div class="field-grid">
+      <div class="field-card"><div class="icon">📖</div><div class="field-name">Hệ chuyên gia</div>
+      <p>Ban đầu là chương trình máy tính dựa trên luật suy diễn và tri thức của chuyên gia. Với sự phát triển của AI, đặc biệt là Học máy, nhiều hệ chuyên gia đã có khả năng tự học từ dữ liệu để tự hình thành luật và tri thức.</p></div>
+      <div class="field-card"><div class="icon">🏥</div><div class="field-name">Y học và chăm sóc sức khoẻ</div>
+      <p>AI cải thiện chất lượng hình ảnh y tế, làm nổi bật cấu trúc bất thường trong cơ thể, hỗ trợ chẩn đoán và hướng điều trị chính xác, kịp thời. IBM Watson for Oncology đã góp phần nâng cao hiệu quả điều trị ung thư.</p></div>
+      <div class="field-card"><div class="icon">🚗</div><div class="field-name">Giao thông vận tải</div>
+      <p>AI được dùng để phát triển phương tiện tự lái, quản lí giao thông thông minh và định tuyến vận tải. Ô tô tự lái, máy bay không người lái phát triển mạnh mẽ nhờ có AI.</p></div>
+      <div class="field-card"><div class="icon">🏦</div><div class="field-name">Tài chính, ngân hàng</div>
+      <p>AI hỗ trợ tự động hoá cập nhật chứng từ, hoá đơn; phân tích, xử lí dữ liệu để hỗ trợ quyết định đầu tư, phát hiện và ngăn chặn gian lận, nâng cao trải nghiệm khách hàng.</p></div>
+    </div>
+
+    <h3 id="san-xuat">Sản xuất, nông nghiệp và giáo dục</h3>
+    <p>Trong công nghiệp, AI giúp tự động hoá nhiều quá trình, từ chế tạo, lắp ráp, kiểm tra chất lượng đến quản lí chuỗi cung ứng. Các robot và hệ thống tự động hoá được tích hợp AI có khả năng thực hiện nhiều công việc lặp đi lặp lại một cách hiệu quả.</p>
+
+    <div class="img-full"><svg viewBox="0 0 800 260" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Robot công nghiệp và hệ thống tự động hoá tích hợp AI trên dây chuyền sản xuất">
+<defs><linearGradient id="fbg2" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#0d1f2e"/><stop offset="1" stop-color="#0a1420"/></linearGradient></defs>
+<rect width="800" height="260" rx="18" fill="url(#fbg2)"/>
+<g font-family="Inter,Arial,sans-serif">
+<rect x="60" y="150" width="680" height="14" rx="6" fill="#1e2f4d"/>
+<g transform="translate(200,110)"><rect x="-16" y="-70" width="32" height="80" rx="8" fill="#ff6b35"/><circle cy="-72" r="16" fill="#ffd060"/><rect x="-40" y="6" width="80" height="16" rx="6" fill="#38d9f5"/></g>
+<g transform="translate(400,110)"><rect x="-16" y="-70" width="32" height="80" rx="8" fill="#a78bfa"/><circle cy="-72" r="16" fill="#7ce8fa"/><rect x="-40" y="6" width="80" height="16" rx="6" fill="#56e39f"/></g>
+<g transform="translate(600,110)"><rect x="-16" y="-70" width="32" height="80" rx="8" fill="#ff6b35"/><circle cy="-72" r="16" fill="#ffd060"/><rect x="-40" y="6" width="80" height="16" rx="6" fill="#38d9f5"/></g>
+<text x="400" y="220" text-anchor="middle" font-size="14" fill="#8899b8">Hình 2.1 · Robot và hệ thống tự động hoá tích hợp AI trong sản xuất</text>
+</g>
+</svg></div>
+    <div class="img-caption">Hình 2.1. Robot và hệ thống tự động hoá</div>
+
+    <p>Trong nông nghiệp, AI được dùng trong các trang trại thông minh để theo dõi những yếu tố có ảnh hưởng trực tiếp tới hiệu quả nuôi trồng như điều kiện thời tiết, đất đai, sức đề kháng với dịch bệnh và thời tiết của vật nuôi, cây trồng. AI có thể giúp người nông dân tối ưu hoá quy trình chăm sóc vật nuôi và cây trồng; hợp lí hoá tưới tiêu, dự đoán mùa vụ, xác định thời điểm thu hoạch tối ưu dựa trên dữ liệu về điều kiện chăm sóc, thời tiết, đất đai và cây giống,...</p>
+
+    <p><strong>Giáo dục:</strong> AI được sử dụng để phát triển các nền tảng học tập được cá nhân hoá và hỗ trợ đánh giá kết quả học tập. Các nền tảng học trực tuyến thông minh có thể theo dõi tiến trình học tập, đề xuất nội dung học tập phù hợp và cung cấp phản hồi tức thì cho từng cá nhân người học. Các trợ lí học tập ảo dựa trên AI có thể hỗ trợ học sinh và giáo viên bằng cách trả lời câu hỏi, cung cấp hướng dẫn và tài liệu học tập,...</p>
+
+    <p>AI còn ảnh hưởng tới nhiều lĩnh vực khác. Trong khoa học xã hội và nhân văn, AI không chỉ để thu thập và phân tích tự động quan điểm xã hội, mà còn để mô phỏng và mô hình hoá nhiều hiện tượng xã hội và nhân học. Một số ứng dụng AI có khả năng sáng tạo các tác phẩm âm nhạc, hội hoạ, văn học theo nhiều phong cách khác nhau. Sự kết hợp IoT và AI (AIoT) cho phép các nhà khoa học giám sát môi trường tự nhiên và theo dõi tình hình biến đổi khí hậu. Ngày nay, trong nhiều lĩnh vực như công nghiệp trò chơi điện tử hay thám hiểm không gian vũ trụ,... việc ứng dụng AI đã thật sự trở thành một phần không thể thiếu.</p>
+
+    <div class="ghi-nho">
+      <div class="ghi-nho-title">📌 Ghi nhớ</div>
+      <p>Ngày nay, nhiều lĩnh vực của khoa học công nghệ và đời sống đã và đang phát triển mạnh mẽ dựa trên những thành tựu to lớn của AI. Có thể nói AI đã trở thành một phần không thể thiếu của cuộc sống hiện đại.</p>
+    </div>
+
+    <div class="cau-hoi"><div class="q-num">?</div><div class="q-text">Hãy chỉ ra một vài lĩnh vực có sự phát triển đột phá nhờ những thành tựu của AI.</div></div>
+
+    <div class="page-num">Trang 9-10</div>
+  </section>
+
+  <section class="section" id="canh-bao" data-page="Trang 11">
+    <h2>2. TRÍ TUỆ NHÂN TẠO VÀ MỘT VÀI CẢNH BÁO</h2>
+
+    <div class="activity">
+      <div class="activity-badge">Hoạt động 2</div>
+      <strong>Những hình dung của em về tương lai của AI</strong>
+      <p style="margin-top:10px">Trên cơ sở những thông tin về sự phát triển của AI ngày nay, hãy cho biết những suy nghĩ của em về tương lai của AI.</p>
+    </div>
+
+    <p>Sự phát triển của AI đã và đang diễn ra với tốc độ nhanh chóng, có tiềm năng cách mạng hoá nhiều lĩnh vực khoa học và đời sống. Những ứng dụng hết sức đa dạng của AI đã cho ta thấy rõ điều đó. Tuy nhiên, các thành tựu hiện tại của AI vẫn chỉ hạn chế trong phạm vi <em>Trí tuệ nhân tạo hẹp/Trí tuệ nhân tạo yếu</em>. Trong tương lai, nhiều chuyên gia kì vọng sẽ phát triển thành công <em>Trí tuệ nhân tạo tổng quát/Trí tuệ nhân tạo mạnh</em>, có năng lực trí tuệ như con người, bao gồm cả khả năng áp dụng tri thức từ lĩnh vực này sang lĩnh vực khác. Có thể nói đây là mục tiêu dài hạn và hết sức phức tạp trong nghiên cứu và phát triển AI.</p>
+
+    <p>Tuy vậy, triển vọng thực tế không phải là không có nhiều hứa hẹn. Sự phát triển mạnh mẽ trong những năm gần đây của AI tạo sinh (Generative AI) là một minh chứng. AI tạo sinh tập trung vào việc xây dựng các thuật toán và mô hình có thể tạo nội dung (hình ảnh, âm thanh, văn bản) một cách tự động, được sử dụng trong nhiều lĩnh vực, bao gồm nghệ thuật, giải trí, quảng cáo và trò chơi.</p>
+
+    <h3 id="chatgpt">Ví dụ: ChatGPT</h3>
+    <p>Một ví dụ điển hình có thể nêu ở đây là ChatGPT, một hệ thống xử lí ngôn ngữ tiên tiến do OpenAI phát triển. Nó là một hệ thống có tri thức, có khả năng suy luận và khả năng học,... Cụ thể:</p>
+    <ul>
+      <li>ChatGPT được huấn luyện trên một lượng lớn dữ liệu văn bản, ví dụ, phiên bản GPT-3 được huấn luyện trên hàng vạn văn bản thuộc nhiều lĩnh vực khác nhau trên Internet, bao gồm sách, bài báo, trang web và nhiều nguồn khác.</li>
+      <li>Một trong những khả năng được đánh giá cao của ChatGPT đó là khả năng hiểu và tạo văn bản ngôn ngữ tự nhiên: đọc hiểu câu hỏi, yêu cầu của người dùng rồi trả lời một cách hợp lí và thông minh – thể hiện khả năng suy luận và tri thức về ngôn ngữ.</li>
+      <li>ChatGPT không chỉ cung cấp câu trả lời cố định mà còn đưa ra các câu trả lời đa dạng dựa trên ngữ cảnh và yêu cầu cụ thể của người dùng, cho thấy sự linh hoạt trong suy nghĩ và khả năng suy luận.</li>
+      <li>ChatGPT có khả năng xử lí thông tin phức tạp để trả lời các câu hỏi mang tính phân tích và tổng hợp, xử lí dữ liệu từ nhiều nguồn để cung cấp giải pháp dựa trên khả năng suy luận và tổng hợp tri thức.</li>
+      <li>Việc có thể tương tác một cách liên tục và cải thiện nội dung trả lời dựa trên phản hồi của người dùng cho thấy ChatGPT có khả năng nắm bắt và thích nghi với ngữ cảnh cụ thể.</li>
+      <li>ChatGPT có khả năng làm việc với nhiều thứ tiếng khác nhau, tuy nhiên mức độ hiểu và trả lời có thể khác nhau tuỳ theo mức độ dữ liệu huấn luyện cho từng ngôn ngữ – hoạt động tốt nhất với tiếng Anh, Tây Ban Nha, Pháp, Đức, Ý,...; nhà phát triển và cộng đồng có thể tạo phiên bản tuỳ chỉnh cho các ngôn ngữ khác bằng cách tinh chỉnh và huấn luyện lại mô hình.</li>
+    </ul>
+
+    <div class="chat-mock">
+      <div class="chat-msg user">Hình như chương trình này đang còn lỗi ở đâu đó?<br><code>def factorial(n):<br>&nbsp;&nbsp;if n = 0:<br>&nbsp;&nbsp;&nbsp;&nbsp;return 1<br>&nbsp;&nbsp;else:<br>&nbsp;&nbsp;&nbsp;&nbsp;return n * factorial(n-1)</code></div>
+      <div class="chat-msg bot">Có một lỗi cú pháp: dòng thứ 4, <code>if n = 0</code> cần thay bằng <code>if n == 0</code> để kiểm tra bằng, không phải gán giá trị. Còn một lỗi là giá trị nhập vào từ bàn phím là kiểu chuỗi, cần ép kiểu về số nguyên bằng <code>int(input(...))</code> trước khi gọi hàm.</div>
+      <div class="chat-msg user">Tôi đã sửa. Chương trình này cho kết quả là gì?</div>
+      <div class="chat-msg bot">Kết quả của chương trình sẽ tính và in ra giá trị giai thừa của số nhập vào từ bàn phím.</div>
+    </div>
+    <div class="img-caption">Hình 2.2. Một đoạn hội thoại được thực hiện với ChatGPT – ChatGPT phát hiện và sửa lỗi cú pháp trong một đoạn mã Python</div>
+
+    <p>Tóm lại, ChatGPT được coi là một hệ thống AI có hiểu biết sâu rộng, có khả năng tương tác với người dùng giống như một cuộc hội thoại giữa người với người. Nó có thể trích rút thông tin từ nhiều nguồn khác nhau và tạo ra văn bản chi tiết, mang tính tương tác. Bên cạnh đó, ChatGPT còn có thể làm thơ, soạn nhạc, viết thư, thiết kế và thậm chí là cả sửa lỗi trong lập trình. Mặc dù còn nhiều hạn chế, song nhiều chuyên gia đánh giá ChatGPT là minh chứng cho sức mạnh của AI, coi ChatGPT là bước đột phá trong lĩnh vực AI của năm 2022, có thể dẫn tới những thay đổi lớn về cách làm việc, cách suy nghĩ, cách dạy và học trong nhà trường.</p>
+
+    <h3 id="nguy-co">Những nguy cơ và cảnh báo</h3>
+    <p>Bên cạnh những lợi ích to lớn, sự phát triển của AI còn kéo theo những nguy cơ cần được cảnh báo, chẳng hạn:</p>
+
+    <div class="canh-bao-box"><div class="cb-title">⚠️ Áp lực thất nghiệp</div><p>AI có khả năng tự động hoá nhiều công việc, dẫn đến tình trạng thất nghiệp và tạo nên nhiều nguy cơ cho sự phát triển xã hội.</p></div>
+    <div class="canh-bao-box"><div class="cb-title">🔓 Ảnh hưởng quyền riêng tư</div><p>Nhiều ứng dụng AI hoạt động dựa vào việc thu thập một lượng lớn dữ liệu cá nhân, làm tăng mối lo ngại về quyền riêng tư có khả năng bị lạm dụng.</p></div>
+    <div class="canh-bao-box"><div class="cb-title">🕳️ Khả năng thiếu minh bạch</div><p>Phần lớn ứng dụng AI hiện nay đều là các "hộp đen", gây khó khăn cho việc hiểu các quyết định được đưa ra như thế nào, dẫn đến thiếu trách nhiệm giải trình để đảm bảo tính minh bạch.</p></div>
+    <div class="canh-bao-box"><div class="cb-title">🛡️ Rủi ro về an ninh, an toàn</div><p>Nhiều ứng dụng AI được xây dựng và triển khai trực tuyến, có thể bị lợi dụng để xâm nhập hoặc tấn công thay đổi dữ liệu và mô hình, dẫn đến những quyết định không chính xác do AI đưa ra – ví dụ chẩn đoán sai về tình trạng bệnh tật hay ra quyết định tấn công các mục tiêu dân sự trong xung đột vũ trang,...</p></div>
+
+    <p>Các cảnh báo trên cũng đặt ra một số khía cạnh đạo đức cần được xem xét để đảm bảo AI phải được xây dựng và sử dụng một cách minh bạch và có trách nhiệm. Thực tế đang đòi hỏi phải có những ràng buộc mang tính pháp lí đối với việc phát triển và ứng dụng AI trong một số lĩnh vực có khả năng ảnh hưởng trực tiếp tới sinh mạng con người. Ví dụ, ngăn cấm việc giao toàn quyền quyết định cho AI điều khiển vũ khí sát thương. Những thử nghiệm liên kết sinh học và công nghệ với nhau theo cách kết hợp bộ não con người và "bộ não" robot trong một chỉnh thể hợp nhất cũng đang là vấn đề gây nhiều tranh cãi. Ngoài khía cạnh đạo đức, những thử nghiệm này mang tính rủi ro cao. Bởi lẽ, trong trường hợp "bộ não" robot được phát triển tới mức thông minh hơn con người, việc công nghệ có thể được sử dụng để kiểm soát hoặc thay đổi ý thức, hành vi của con người theo một cách không mong muốn là nguy cơ hoàn toàn có thực.</p>
+
+    <p>Vì vậy, cần phải có các giải pháp đảm bảo an toàn và giám sát chặt chẽ quá trình phát triển AI, cũng như đảm bảo sao cho AI có thể mang lại nhiều cơ hội cho sự tiến bộ, nâng cao chất lượng cuộc sống, phục vụ lợi ích cộng đồng, không gây hậu quả xấu cho xã hội. Đây đang là mối quan tâm lớn lao của các chuyên gia, các nhà khoa học, các chính trị gia, các nhà hoạt động xã hội cho tới người dân trên toàn thế giới.</p>
+
+    <div class="ghi-nho">
+      <div class="ghi-nho-title">📌 Ghi nhớ</div>
+      <p>Các thành tựu hiện tại của AI nói chung đều thuộc phạm vi <em>Trí tuệ nhân tạo hẹp/Trí tuệ nhân tạo yếu</em>. Tuy nhiên, những hệ thống như ChatGPT cũng cho thấy những khả năng không nhỏ của AI. Việc phát triển <em>Trí tuệ nhân tạo tổng quát/Trí tuệ nhân tạo mạnh</em>, có năng lực trí tuệ như con người, bao gồm cả khả năng áp dụng tri thức từ lĩnh vực này sang lĩnh vực khác vẫn đang trong quá trình nghiên cứu và phát triển. Bên cạnh đó, sự phát triển của AI cũng đặt ra nhiều cảnh báo về những nguy cơ liên quan tới các khía cạnh đạo đức và xã hội cần phải được giải quyết.</p>
+    </div>
+
+    <div class="cau-hoi"><div class="q-num">1</div><div class="q-text">Trên cơ sở các phân tích về khả năng xử lí ngôn ngữ của ChatGPT ở trên, hãy chỉ ra một vài ví dụ ứng dụng AI cũng có khả năng đọc hiểu, trả lời câu hỏi của người dùng.</div></div>
+    <div class="cau-hoi"><div class="q-num">2</div><div class="q-text">Hãy nêu một số nguy cơ có thể xảy ra liên quan tới việc phát triển AI.</div></div>
+
+    <div class="page-num">Trang 11-12</div>
+  </section>
+
+  <section class="section" id="luyen-tap" data-page="Trang 13">
+    <span class="tag-luyen">🏋️ Luyện tập</span>
+    <div class="cau-hoi"><div class="q-num">1</div><div class="q-text">ChatGPT là hệ thống AI sử dụng ngôn ngữ để tương tác với con người. Hãy nêu một vài ứng dụng AI sử dụng hình ảnh để tương tác.</div></div>
+    <div class="cau-hoi"><div class="q-num">2</div><div class="q-text">Vì sao cần ngăn cấm việc giao toàn quyền quyết định cho AI điều khiển vũ khí sát thương?</div></div>
+
+    <span class="tag-van-dung" style="margin-top:24px">💡 Vận dụng</span>
+    <div class="callout" id="van-dung">Hãy tìm hiểu cách thức hoạt động của ứng dụng tìm đường trên Google Maps để nhận biết các biểu hiện "thông minh" của ứng dụng này.</div>
+
+    <div class="page-num">Trang 13</div>
+  </section>
+</main>
+
+</div>
+
+<script>
+let fs = 18;
+function changeFont(d) { fs = Math.min(30, Math.max(13, fs + d)); document.body.style.fontSize = fs + 'px'; }
+let light = false;
+function toggleTheme() {
+  light = !light;
+  document.documentElement.style.setProperty('--bg', light ? '#f0f4f8' : '#070b14');
+  document.documentElement.style.setProperty('--text', light ? '#1a2540' : '#e8eef8');
+  document.documentElement.style.setProperty('--panel', light ? '#fff' : '#111a2e');
+  document.documentElement.style.setProperty('--panel2', light ? '#f5f8fc' : '#162035');
+  document.documentElement.style.setProperty('--border', light ? '#d0daea' : '#1e2f4d');
+  document.body.style.background = light
+    ? 'radial-gradient(ellipse at 20% 10%, #d8e8f8 0%, #f0f4f8 60%)'
+    : 'radial-gradient(ellipse at 20% 10%, #0d1f3c 0%, #070b14 50%)';
+}
+function setActive(el) { document.querySelectorAll('.toc a').forEach(a => a.classList.remove('active')); el.classList.add('active'); }
+window.addEventListener('scroll', () => {
+  const doc = document.documentElement;
+  const scrolled = doc.scrollTop || document.body.scrollTop;
+  const total = doc.scrollHeight - doc.clientHeight;
+  const pct = total > 0 ? Math.round((scrolled / total) * 100) : 0;
+  document.getElementById('prog').style.width = pct + '%';
+  document.getElementById('prog-label').textContent = 'Tiến độ đọc: ' + pct + '%';
+});
+const sections = document.querySelectorAll('section[id], h2[id], h3[id]');
+const tocLinks = document.querySelectorAll('.toc a');
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      const id = entry.target.id;
+      tocLinks.forEach(a => { a.classList.remove('active'); if (a.getAttribute('href') === '#' + id) a.classList.add('active'); });
+    }
+  });
+}, { threshold: 0.3 });
+sections.forEach(s => observer.observe(s));
+</script>
+
+</body>
+</html>

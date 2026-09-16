@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bài 3: Một số thiết bị mạng thông dụng – Tin học 12 KNTT (bản cập nhật 8/2026)</title>
+<meta name="description" content="SGK Tin học 12 Kết nối tri thức – Bài 3: Một số thiết bị mạng thông dụng. Hub, switch, Wireless Access Point, router, modem; thực hành kết nối có dây và Wi-Fi.">
+<style>
+
+:root {
+  --bg: #070b14; --bg2: #0d1423; --panel: #111a2e; --panel2: #162035; --border: #1e2f4d;
+  --text: #e8eef8; --muted: #8899b8; --orange: #ff6b35; --orange2: #ff9a64;
+  --cyan: #38d9f5; --cyan2: #7ce8fa; --yellow: #ffd060; --green: #56e39f; --pink: #f06dba; --purple: #a78bfa;
+  --fs: 18px;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  background: radial-gradient(ellipse at 20% 10%, #0d1f3c 0%, #070b14 50%);
+  color: var(--text); font-family: 'Inter','Segoe UI',-apple-system,BlinkMacSystemFont,'Roboto','Helvetica Neue',Arial,sans-serif;
+  font-size: var(--fs); line-height: 1.75; min-height: 100vh;
+}
+.app { display: grid; grid-template-columns: 280px 1fr; min-height: 100vh; }
+.img-hero, .img-full, .img-illus { width:100%; border-radius:14px; margin:20px 0; border:1px solid var(--border); box-shadow:0 8px 28px rgba(0,0,0,.5); display:block; overflow:hidden; }
+.img-hero { height:220px; margin-top:20px; }
+.img-hero svg, .img-full svg, .img-illus svg { width:100%; height:auto; display:block; }
+.img-half { width:100%; border-radius:12px; margin:14px 0; border:1px solid var(--border); box-shadow:0 6px 20px rgba(0,0,0,.4); display:block; overflow:hidden; }
+.img-side { display:grid; grid-template-columns:1fr 1fr; gap:14px; margin:18px 0; align-items:start; }
+.img-side .img-half { margin:0; }
+.img-caption { text-align:center; font-size:13px; color:var(--muted); font-style:italic; margin:-10px 0 16px; padding:0 8px; }
+.sidebar { position:sticky; top:0; height:100vh; overflow-y:auto; background:rgba(7,11,20,.97); border-right:1px solid var(--border); padding:24px 16px; backdrop-filter:blur(20px); }
+.brand-box { margin-bottom:24px; }
+.series-label { font-size:11px; letter-spacing:2px; text-transform:uppercase; color:var(--cyan); font-weight:700; margin-bottom:6px; }
+.brand-title { font-size:20px; font-weight:900; color:#fff; line-height:1.2; }
+.brand-title span { color:var(--orange); }
+.brand-sub { color:var(--muted); font-size:12px; margin-top:5px; }
+.toc-title { font-size:11px; letter-spacing:1.5px; text-transform:uppercase; color:var(--muted); font-weight:700; margin:20px 0 8px; padding:0 8px; }
+.toc a { display:block; color:#9aaec8; text-decoration:none; padding:9px 12px; border-radius:10px; margin:2px 0; font-size:13.5px; font-weight:500; transition:all .2s; border-left:3px solid transparent; }
+.toc a:hover { background:rgba(56,217,245,.07); color:var(--cyan); border-left-color:var(--cyan); }
+.toc a.active { background:rgba(255,107,53,.1); color:var(--orange); border-left-color:var(--orange); }
+.ctrl-box { margin-top:24px; padding:14px; border:1px solid var(--border); border-radius:14px; background:rgba(255,255,255,.03); }
+.ctrl-box h4 { font-size:11px; letter-spacing:1px; text-transform:uppercase; color:var(--muted); margin-bottom:10px; }
+.ctrl-row { display:flex; gap:8px; margin-bottom:8px; }
+.ctrl-btn { flex:1; background:var(--panel2); border:1px solid var(--border); color:var(--text); border-radius:9px; padding:8px 6px; cursor:pointer; font-size:13px; font-weight:600; transition:all .2s; }
+.ctrl-btn:hover { background:var(--border); color:#fff; }
+.progress-bar { height:4px; background:var(--panel2); border-radius:4px; overflow:hidden; margin-top:10px; }
+.progress-fill { height:100%; width:0%; background:linear-gradient(90deg,var(--cyan),var(--orange)); transition:width .3s; border-radius:4px; }
+.main { max-width:860px; margin:0 auto; padding:32px 28px 80px; }
+.hero { background:linear-gradient(135deg,#0f2040 0%,#0a1628 60%,#131020 100%); border:1px solid var(--border); border-radius:24px; padding:36px 40px; margin-bottom:28px; box-shadow:0 24px 80px rgba(0,0,0,.5); position:relative; overflow:hidden; }
+.hero::before { content:'LAN'; position:absolute; right:30px; top:20px; font-size:120px; font-weight:900; color:rgba(56,217,245,.05); line-height:1; user-select:none; }
+.chu-de-tag { display:inline-flex; align-items:center; gap:8px; background:rgba(56,217,245,.12); border:1px solid rgba(56,217,245,.3); color:var(--cyan); font-size:13px; font-weight:700; padding:6px 14px; border-radius:20px; margin-bottom:16px; letter-spacing:.5px; }
+.update-tag { display:inline-flex; align-items:center; gap:8px; background:rgba(255,208,96,.12); border:1px solid rgba(255,208,96,.35); color:var(--yellow); font-size:12.5px; font-weight:700; padding:5px 13px; border-radius:20px; margin:0 0 16px 8px; letter-spacing:.4px; }
+.hero h1 { font-size:clamp(28px,4vw,42px); font-weight:900; line-height:1.15; background:linear-gradient(90deg,#fff 0%,var(--cyan2) 50%,var(--orange2) 100%); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; margin-bottom:14px; }
+.hero-desc { color:#b0c4de; font-size:15.5px; line-height:1.6; }
+.goals-box { background:linear-gradient(135deg,#0c2233,#091c2a); border:1px solid rgba(56,217,245,.25); border-left:4px solid var(--cyan); border-radius:16px; padding:20px 24px; margin-bottom:28px; }
+.goals-box .goals-title { font-size:13px; font-weight:700; text-transform:uppercase; letter-spacing:1.5px; color:var(--cyan); margin-bottom:12px; display:flex; align-items:center; gap:8px; }
+.goals-box ul { list-style:none; }
+.goals-box li { padding:6px 0 6px 22px; position:relative; color:#c8dff0; font-size:15.5px; }
+.goals-box li::before { content:'✓'; position:absolute; left:0; color:var(--green); font-weight:700; }
+.nav-btns { display:flex; gap:10px; margin:10px 0 24px; }
+.nav-btn { background:var(--panel); border:1px solid var(--border); color:var(--text); border-radius:10px; padding:9px 18px; cursor:pointer; font-size:14px; font-weight:600; transition:all .2s; flex:1; }
+.nav-btn:hover:not(:disabled) { background:var(--panel2); border-color:var(--cyan); }
+.nav-btn:disabled { opacity:.35; cursor:default; }
+.section { background:rgba(11,17,30,.9); border:1px solid var(--border); border-radius:20px; padding:28px 32px 36px; margin-bottom:22px; scroll-margin-top:20px; position:relative; transition:border-color .3s; }
+.section:hover { border-color:rgba(56,217,245,.2); }
+.page-num { position:absolute; right:20px; bottom:14px; color:var(--muted); font-size:12px; font-weight:600; background:var(--panel2); padding:3px 10px; border-radius:10px; }
+.bai-cover { display:flex; align-items:center; gap:20px; background:linear-gradient(110deg,#1e0f0a,#1a1308,#0d1a28); border:1px solid rgba(255,107,53,.3); border-left:5px solid var(--orange); border-radius:16px; padding:24px 28px; margin-bottom:24px; }
+.bai-cover .num-block { flex-shrink:0; }
+.bai-num { font-size:13px; font-weight:700; color:var(--muted); text-transform:uppercase; letter-spacing:1px; }
+.bai-big { font-size:64px; font-weight:900; color:var(--orange); line-height:1; }
+.bai-cover .info .topic { font-size:13px; color:var(--muted); text-transform:uppercase; letter-spacing:1px; }
+.bai-cover .info .title { font-size:28px; font-weight:900; color:#fff; line-height:1.2; margin-top:6px; }
+.bai-cover .info .subtitle { font-size:14px; color:var(--cyan); margin-top:8px; }
+h2 { font-size:clamp(20px,2.5vw,26px); font-weight:800; color:#fff; margin:28px 0 14px; display:flex; align-items:center; gap:10px; }
+h2::before { content:''; display:inline-block; width:4px; height:24px; background:linear-gradient(var(--orange),var(--cyan)); border-radius:2px; flex-shrink:0; }
+h3 { font-size:clamp(16px,2vw,20px); font-weight:700; color:var(--cyan2); margin:22px 0 10px; }
+h4 { font-size:15px; font-weight:700; color:var(--orange2); margin:16px 0 8px; }
+p { color:#d0dcea; margin-bottom:14px; }
+p:last-child { margin-bottom:0; }
+em { color:var(--cyan2); font-style:italic; }
+strong { color:#fff; }
+ul, ol { padding-left:22px; margin:12px 0; }
+li { color:#c8d8ec; margin-bottom:8px; }
+li::marker { color:var(--cyan); }
+.activity { background:linear-gradient(135deg,#1a120a,#130f0a); border:1px solid rgba(255,160,60,.3); border-left:4px solid var(--orange); border-radius:14px; padding:18px 22px; margin:20px 0; }
+.activity-badge { display:inline-flex; align-items:center; gap:6px; background:var(--orange); color:#1a0a00; font-size:12px; font-weight:800; padding:4px 12px; border-radius:6px; margin-bottom:10px; letter-spacing:.5px; text-transform:uppercase; }
+.activity p, .activity li { color:#f0d8c0; }
+.info-box { background:linear-gradient(135deg,#071e2e,#071828); border:1px dashed rgba(56,217,245,.4); border-radius:14px; padding:18px 22px; margin:20px 0; }
+.info-box p, .info-box li { color:#b8d8f0; }
+.info-box strong { color:var(--cyan2); }
+.ghi-nho { background:linear-gradient(135deg,#1a2a10,#0f1e0a); border:1px solid rgba(86,227,159,.3); border-left:4px solid var(--green); border-radius:14px; padding:18px 22px; margin:20px 0; }
+.ghi-nho-title { color:var(--green); font-weight:800; font-size:14px; text-transform:uppercase; letter-spacing:1px; margin-bottom:10px; }
+.ghi-nho p, .ghi-nho li { color:#c8f0d8; }
+.cau-hoi { background:var(--panel2); border:1px solid var(--border); border-radius:12px; padding:14px 18px; margin:10px 0; display:flex; gap:14px; align-items:flex-start; }
+.cau-hoi .q-num { background:var(--cyan); color:#07080f; font-weight:800; font-size:13px; min-width:28px; height:28px; border-radius:50%; display:flex; align-items:center; justify-content:center; flex-shrink:0; margin-top:2px; }
+.cau-hoi .q-text { color:#d8e8f8; font-size:15.5px; }
+.field-grid { display:grid; grid-template-columns:1fr 1fr; gap:14px; margin:18px 0; }
+.field-card { background:var(--panel2); border:1px solid var(--border); border-radius:14px; padding:16px 18px; transition:border-color .2s; }
+.field-card:hover { border-color:var(--cyan); }
+.field-card .icon { font-size:26px; margin-bottom:8px; }
+.field-card .field-name { font-weight:700; color:var(--cyan2); margin-bottom:6px; font-size:15px; }
+.field-card p { color:#b0c0d8; font-size:14px; margin:0; }
+.canh-bao-box { background:linear-gradient(135deg,#241014,#1a0f10); border:1px solid rgba(240,109,186,.3); border-left:4px solid var(--pink); border-radius:14px; padding:16px 20px; margin:14px 0; }
+.canh-bao-box .cb-title { color:#f8a8cf; font-weight:700; font-size:15px; margin-bottom:4px; }
+.canh-bao-box p { color:#f0c8dc; font-size:14.5px; margin:0; }
+.chat-mock { background:var(--panel2); border:1px solid var(--border); border-radius:14px; padding:16px; margin:16px 0; }
+.chat-msg { border-radius:10px; padding:10px 14px; margin-bottom:10px; font-size:14px; max-width:88%; }
+.chat-msg.user { background:rgba(56,217,245,.1); border:1px solid rgba(56,217,245,.3); color:#cdeffb; margin-left:auto; }
+.chat-msg.bot { background:rgba(86,227,159,.08); border:1px solid rgba(86,227,159,.3); color:#c8f0d8; }
+.chat-msg code { background:rgba(0,0,0,.3); padding:1px 5px; border-radius:5px; font-size:13px; }
+.tag-luyen { display:inline-flex; align-items:center; gap:8px; background:rgba(167,139,250,.15); border:1px solid rgba(167,139,250,.4); color:var(--purple); font-weight:800; font-size:13px; padding:5px 14px; border-radius:20px; text-transform:uppercase; letter-spacing:1px; margin-bottom:14px; }
+.tag-van-dung { display:inline-flex; align-items:center; gap:8px; background:rgba(255,208,96,.1); border:1px solid rgba(255,208,96,.3); color:var(--yellow); font-weight:800; font-size:13px; padding:5px 14px; border-radius:20px; text-transform:uppercase; letter-spacing:1px; margin-bottom:14px; }
+.callout { background:rgba(56,217,245,.06); border:1px dashed rgba(56,217,245,.3); border-radius:12px; padding:14px 18px; margin:16px 0; font-style:italic; color:var(--cyan2); font-size:15.5px; }
+.sidebar::-webkit-scrollbar { width:4px; }
+.sidebar::-webkit-scrollbar-track { background:transparent; }
+.sidebar::-webkit-scrollbar-thumb { background:var(--border); border-radius:2px; }
+@media (max-width:900px) {
+  .app { display:block; } .sidebar { position:relative; height:auto; border-right:0; border-bottom:1px solid var(--border); }
+  .toc { display:grid; grid-template-columns:1fr 1fr; } .main { padding:18px 14px 60px; }
+  .field-grid, .img-side { grid-template-columns:1fr; } .bai-cover { flex-direction:column; }
+}
+@media (max-width:540px) {
+  body { font-size:16px; } .section { padding:18px 16px 30px; } .hero { padding:24px 20px; } .toc { grid-template-columns:1fr; }
+}
+@media print {
+  .sidebar, .nav-btns, .hero, .ctrl-box { display:none; } body { background:white; color:black; }
+  .section { border:1px solid #ccc; box-shadow:none; background:white; page-break-after:always; } p, li { color:#222; }
+}
+
+</style>
+</head>
+<body>
+<div class="app">
+
+<aside class="sidebar" id="sidebar">
+  <div class="brand-box">
+    <div class="series-label">SGK Tin học 12 · KNTT</div>
+    <div class="brand-title">Chủ đề 2<br><span>Mạng máy tính &amp; Internet</span></div>
+    <div class="brand-sub">Kết nối tri thức với cuộc sống · bản cập nhật 8/2026</div>
+  </div>
+  <div class="toc-title">Nội dung bài học</div>
+  <nav class="toc">
+    <a href="#cover" class="active" onclick="setActive(this)">📖 Giới thiệu bài</a>
+    <a href="#hub-switch" onclick="setActive(this)">1a. Hub và switch</a>
+    <a href="#wap" onclick="setActive(this)">1b. Wireless Access Point</a>
+    <a href="#router" onclick="setActive(this)">1c. Router</a>
+    <a href="#modem" onclick="setActive(this)">1d. Modem</a>
+    <a href="#thuc-hanh" onclick="setActive(this)">2. Thực hành kết nối</a>
+    <a href="#wifi" onclick="setActive(this)">   Kết nối không dây</a>
+    <a href="#luyen-tap" onclick="setActive(this)">🏋️ Luyện tập</a>
+    <a href="#van-dung" onclick="setActive(this)">💡 Vận dụng</a>
+  </nav>
+  <div class="ctrl-box">
+    <h4>Tuỳ chỉnh hiển thị</h4>
+    <div class="ctrl-row">
+      <button class="ctrl-btn" onclick="changeFont(2)">A＋</button>
+      <button class="ctrl-btn" onclick="changeFont(-2)">A－</button>
+      <button class="ctrl-btn" onclick="toggleTheme()">☀/☾</button>
+    </div>
+    <div class="progress-bar"><div class="progress-fill" id="prog"></div></div>
+    <div style="font-size:12px; color:var(--muted); margin-top:6px; text-align:center" id="prog-label">Tiến độ đọc: 0%</div>
+  </div>
+</aside>
+
+<main class="main">
+  <div class="hero">
+    <div class="chu-de-tag">🌐 Chủ đề 2 · Mạng máy tính và Internet</div>
+    <span class="update-tag">🕓 Cập nhật nội dung: 8/2026</span>
+    <h1>Một số thiết bị<br>mạng thông dụng</h1>
+    <p class="hero-desc">Tin học 12 · Kết nối tri thức với cuộc sống &nbsp;|&nbsp; Bài 3 trong 28 bài học &nbsp;|&nbsp; Bản viết lại, minh hoạ mới</p>
+  </div>
+
+  <div class="goals-box">
+    <div class="goals-title">🎯 Sau bài học này em sẽ:</div>
+    <ul>
+      <li>Nêu được chức năng chính của một số thiết bị mạng thông dụng.</li>
+      <li>Biết cách kết nối máy tính với thiết bị mạng.</li>
+    </ul>
+  </div>
+
+  <div class="nav-btns">
+    <button class="nav-btn" onclick="window.location.href='bai-02.html'">← Bài trước</button>
+    <button class="nav-btn" disabled>Bài tiếp →</button>
+  </div>
+
+  <section class="section" id="cover" data-page="Trang 14">
+    <div class="bai-cover">
+      <div class="num-block"><div class="bai-num">BÀI</div><div class="bai-big">3</div></div>
+      <div class="info">
+        <div class="topic">Chủ đề 2 · Mạng máy tính và Internet</div>
+        <div class="title">Một số thiết bị mạng thông dụng</div>
+        <div class="subtitle">Hub · Switch · WAP · Router · Modem</div>
+      </div>
+    </div>
+
+    <div class="activity">
+      <div class="activity-badge">🤔 Khởi động</div>
+      <p>Dữ liệu trên đường truyền mạng được mang bởi các tín hiệu vật lí như dao động điện trong mạng cục bộ (Local area network – LAN), sóng vô tuyến điện trong mạng không dây, tín hiệu ánh sáng trong cáp quang,...</p>
+      <p>Ngoài cáp mạng, còn có các thiết bị mạng khác gọi là thiết bị kết nối như bộ chia tín hiệu (hub), bộ chuyển mạch (switch), bộ định tuyến (router), bộ thu phát không dây (Wi-Fi),... Mỗi thiết bị đó đều có những chức năng riêng. Hãy cùng tìm hiểu chức năng và cách sử dụng chúng.</p>
+    </div>
+
+    <h2>1. THIẾT BỊ MẠNG THÔNG DỤNG</h2>
+    <h3 id="hub-switch">a) Hub và switch</h3>
+    <p>Hình 3.1 gồm một switch, một hub và cáp mạng để kết nối các cổng của chúng và máy tính. Nhìn bên ngoài, rất khó phân biệt được switch và hub. Điểm khác nhau của chúng nằm ở <strong>cách thức hoạt động</strong>. Khi máy tính gửi dữ liệu qua một cổng của hub, tín hiệu sẽ được gửi đến <strong>tất cả các cổng còn lại</strong>. Trong khi đó, switch xác định cổng kết nối giữa thiết bị gửi và thiết bị nhận, sau đó thiết lập tạm thời kênh truyền giữa hai cổng kết nối để truyền dữ liệu và huỷ kết nối sau khi hoàn thành việc truyền.</p>
+
+    <div class="img-full"><svg viewBox="0 0 800 280" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="So sánh cách truyền tín hiệu của hub và switch">
+<defs><linearGradient id="hsbg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#0d1f2e"/><stop offset="1" stop-color="#0a1420"/></linearGradient>
+<marker id="ah" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 z" fill="#ff6b35"/></marker>
+<marker id="as" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 z" fill="#56e39f"/></marker></defs>
+<rect width="800" height="280" rx="18" fill="url(#hsbg)"/>
+<g font-family="Inter,Arial,sans-serif">
+<text x="200" y="34" text-anchor="middle" font-size="15" font-weight="800" fill="#ff9a64">HUB – phát tán ra mọi cổng</text>
+<rect x="150" y="120" width="100" height="36" rx="8" fill="#111a2e" stroke="#ff6b35" stroke-width="2"/><text x="200" y="143" text-anchor="middle" font-size="13" fill="#ff9a64" font-weight="700">hub</text>
+<g fill="#162035" stroke="#38d9f5" stroke-width="1.5"><rect x="40" y="60" width="60" height="34" rx="6"/><rect x="300" y="60" width="60" height="34" rx="6"/><rect x="40" y="190" width="60" height="34" rx="6"/><rect x="300" y="190" width="60" height="34" rx="6"/></g>
+<g font-size="11" fill="#7ce8fa" text-anchor="middle"><text x="70" y="82">Gửi</text><text x="330" y="82">Nhận</text><text x="70" y="212">Máy C</text><text x="330" y="212">Máy D</text></g>
+<g stroke="#ff6b35" stroke-width="2.2"><line x1="100" y1="80" x2="150" y2="125" marker-end="url(#ah)"/><line x1="250" y1="125" x2="298" y2="88" marker-end="url(#ah)"/><line x1="150" y1="152" x2="102" y2="192" marker-end="url(#ah)"/><line x1="250" y1="152" x2="298" y2="192" marker-end="url(#ah)"/></g>
+<text x="200" y="258" text-anchor="middle" font-size="12" fill="#8899b8">Nhiều máy cùng gửi → dễ xung đột tín hiệu</text>
+<line x1="400" y1="30" x2="400" y2="250" stroke="#1e2f4d" stroke-width="2" stroke-dasharray="5 5"/>
+<text x="600" y="34" text-anchor="middle" font-size="15" font-weight="800" fill="#8ef0c0">SWITCH – chỉ nối đúng cặp cổng</text>
+<rect x="550" y="120" width="100" height="36" rx="8" fill="#111a2e" stroke="#56e39f" stroke-width="2"/><text x="600" y="143" text-anchor="middle" font-size="13" fill="#8ef0c0" font-weight="700">switch</text>
+<g fill="#162035" stroke="#38d9f5" stroke-width="1.5"><rect x="440" y="60" width="60" height="34" rx="6"/><rect x="700" y="60" width="60" height="34" rx="6"/><rect x="440" y="190" width="60" height="34" rx="6"/><rect x="700" y="190" width="60" height="34" rx="6"/></g>
+<g font-size="11" fill="#7ce8fa" text-anchor="middle"><text x="470" y="82">Gửi</text><text x="730" y="82">Nhận</text><text x="470" y="212">Máy C</text><text x="730" y="212">Máy D</text></g>
+<g stroke="#56e39f" stroke-width="2.6"><line x1="500" y1="80" x2="550" y2="125" marker-end="url(#as)"/><line x1="650" y1="125" x2="698" y2="88" marker-end="url(#as)"/></g>
+<g stroke="#2a4468" stroke-width="1.5" stroke-dasharray="3 4"><line x1="550" y1="152" x2="502" y2="192"/><line x1="650" y1="152" x2="698" y2="192"/></g>
+<text x="600" y="258" text-anchor="middle" font-size="12" fill="#8899b8">Các cổng khác không bị ảnh hưởng</text>
+</g></svg></div>
+    <div class="img-caption">Minh hoạ cách hoạt động của hub và switch (tương ứng Hình 3.1 – Hub, switch và cáp mạng)</div>
+
+    <div class="activity">
+      <div class="activity-badge">Hoạt động 1</div>
+      <strong>Hub hay switch?</strong>
+      <p style="margin-top:10px">Em đã bao giờ tham dự một buổi gặp gỡ mà nhiều người nói cùng một lúc, gây ồn đến mức không thể nghe được ai nói gì chưa? Điều tương tự cũng có thể xảy ra trong LAN. Khi nhiều máy đồng thời gửi dữ liệu lên đường truyền chung, tín hiệu sẽ bị hỏng khiến các máy tính không thể nhận biết được dữ liệu. Hiện tượng này gọi là <strong>xung đột (collision)</strong> tín hiệu dẫn đến phải truyền lại làm giảm hiệu quả của mạng. Hãy thảo luận để trả lời các câu hỏi sau: hub hay switch, thiết bị nào dễ gây ra xung đột tín hiệu hơn? Khi nào nên dùng hub, khi nào nên dùng switch?</p>
+    </div>
+
+    <p>Khi dùng switch thì tín hiệu đi từ máy gửi đến máy nhận sẽ không gây xung đột với tín hiệu của các cuộc truyền ở cổng khác. Khi dùng hub, tín hiệu phát tán ra tất cả các cổng nên càng nhiều máy trong mạng, nguy cơ xung đột tín hiệu càng cao.</p>
+    <p>Vì thế với các mạng có ít thiết bị đầu cuối, chẳng hạn như mạng gia đình thì có thể dùng hub vì chi phí rẻ hơn rất nhiều so với một switch có cùng số cổng. LAN có từ vài chục đến hàng trăm máy tính thì nên dùng switch, thậm chí dùng nhiều switch kết nối thành nhiều tầng, kết hợp với hub ở tầng cuối cùng như Hình 3.2.</p>
+
+    <div class="img-full"><svg viewBox="0 0 800 300" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Sơ đồ LAN nhiều tầng switch kết hợp hub">
+<defs><linearGradient id="lbg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#0c1b2e"/><stop offset="1" stop-color="#0a1220"/></linearGradient>
+<marker id="ar" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 z" fill="#ff6b35"/></marker></defs>
+<rect width="800" height="300" rx="18" fill="url(#lbg)"/>
+<g font-family="Inter,Arial,sans-serif" font-size="12" text-anchor="middle">
+<g stroke="#38d9f5" stroke-width="1.4" opacity=".7">
+<line x1="400" y1="50" x2="220" y2="130"/><line x1="400" y1="50" x2="400" y2="130"/><line x1="400" y1="50" x2="560" y2="130"/><line x1="400" y1="50" x2="640" y2="50"/>
+<line x1="220" y1="130" x2="110" y2="210"/><line x1="220" y1="130" x2="300" y2="210"/><line x1="400" y1="130" x2="580" y2="210"/>
+<line x1="300" y1="210" x2="250" y2="270"/><line x1="300" y1="210" x2="350" y2="270"/><line x1="580" y1="210" x2="530" y2="270"/><line x1="580" y1="210" x2="650" y2="270"/></g>
+<g stroke="#ff6b35" stroke-width="3" fill="none"><line x1="620" y1="50" x2="425" y2="50" marker-end="url(#ar)"/><line x1="400" y1="62" x2="400" y2="118" marker-end="url(#ar)"/><line x1="412" y1="140" x2="565" y2="202" marker-end="url(#ar)"/><line x1="572" y1="222" x2="536" y2="260" marker-end="url(#ar)"/></g>
+<rect x="360" y="36" width="80" height="26" rx="7" fill="#111a2e" stroke="#56e39f" stroke-width="2"/><text x="400" y="54" fill="#8ef0c0" font-weight="700">switch</text>
+<rect x="180" y="118" width="80" height="26" rx="7" fill="#111a2e" stroke="#56e39f" stroke-width="2"/><text x="220" y="136" fill="#8ef0c0" font-weight="700">switch</text>
+<rect x="360" y="118" width="80" height="26" rx="7" fill="#111a2e" stroke="#56e39f" stroke-width="2"/><text x="400" y="136" fill="#8ef0c0" font-weight="700">switch</text>
+<rect x="260" y="198" width="80" height="26" rx="7" fill="#111a2e" stroke="#ff6b35" stroke-width="2"/><text x="300" y="216" fill="#ff9a64" font-weight="700">hub</text>
+<rect x="540" y="198" width="80" height="26" rx="7" fill="#111a2e" stroke="#ff6b35" stroke-width="2"/><text x="580" y="216" fill="#ff9a64" font-weight="700">hub</text>
+<g fill="#162035" stroke="#7ce8fa"><rect x="640" y="36" width="70" height="26" rx="6"/><rect x="530" y="118" width="70" height="26" rx="6"/><rect x="75" y="198" width="70" height="26" rx="6"/><rect x="215" y="258" width="70" height="26" rx="6"/><rect x="315" y="258" width="70" height="26" rx="6"/><rect x="495" y="258" width="70" height="26" rx="6"/><rect x="615" y="258" width="70" height="26" rx="6"/></g>
+<g fill="#c8d8ec"><text x="675" y="54">Máy chủ</text><text x="565" y="136">Máy in</text><text x="110" y="216">Máy tính</text><text x="250" y="276">Máy tính</text><text x="350" y="276">Máy tính</text><text x="530" y="276">Máy tính</text><text x="650" y="276">Máy tính</text></g>
+</g></svg></div>
+    <div class="img-caption">Hình 3.2. Sơ đồ một LAN sử dụng nhiều tầng switch kết hợp với hub (mũi tên cam: đường đi dữ liệu từ máy chủ tới một máy tính)</div>
+    <div class="page-num">Trang 14-15</div>
+  </section>
+
+  <section class="section" id="wap" data-page="Trang 15">
+    <div class="activity">
+      <div class="activity-badge">Hoạt động 2</div>
+      <strong>Điểm truy cập không dây là gì?</strong>
+      <p style="margin-top:10px">Có thể em đã từng nghe nói đến điểm truy cập không dây (Wireless Access Point). Ý nghĩa của nó là gì?</p>
+    </div>
+    <h3>b) Wireless Access Point</h3>
+    <p><strong>Wi-Fi</strong> là chữ viết tắt của cụm từ Wireless Fidelity. Người ta thường hiểu "Wi-Fi" là thiết bị kết nối không dây trong mạng cục bộ. Thực ra Wi-Fi là một bộ tiêu chuẩn kĩ thuật truyền dữ liệu bằng sóng vô tuyến điện được sử dụng rộng rãi trong các mạng cục bộ.</p>
+    <p>Cách đơn giản nhất để thiết lập một LAN là dùng một bộ thu phát Wi-Fi (Hình 3.3) để kết nối tất cả các thiết bị đầu cuối trong một khu vực mà không phải mua sắm, lắp đặt hub, switch hay cáp mạng. Yêu cầu đối với các thiết bị đầu cuối trong trường hợp này là phải hỗ trợ truy cập Wi-Fi. Chính vì cách kết nối này mà bộ (thiết bị, trạm) thu phát Wi-Fi còn được gọi là <em>"điểm truy cập không dây"</em> (Wireless Access Point – <strong>WAP</strong>, hay Access Point – <strong>AP</strong>).</p>
+    <p>Thông thường LAN kết nối có dây các máy tính qua các thiết bị như switch hay hub trong một phạm vi địa lí nhất định. Khi nối thêm một WAP vào LAN, ta có thể kết nối không dây các thiết bị di động giúp <strong>mở rộng phạm vi địa lí</strong> của LAN.</p>
+    <div class="info-box"><p>📡 <strong>Hình 3.3</strong> trong SGK là một bộ thu phát Wi-Fi không có anten ngoài, dạng hộp tròn gắn trần/tường – loại thường thấy ở trường học, văn phòng, quán cà phê.</p></div>
+    <div class="page-num">Trang 15</div>
+  </section>
+
+  <section class="section" id="router" data-page="Trang 16">
+    <div class="activity">
+      <div class="activity-badge">Hoạt động 3</div>
+      <strong>Kết nối máy tính thuộc các LAN khác nhau</strong>
+      <p style="margin-top:10px">Có thể sử dụng hub hay switch để kết nối hai máy tính thuộc hai LAN khác nhau qua Internet được không?</p>
+    </div>
+    <h3>c) Router</h3>
+    <p>Khi kết nối hai máy tính (có thể cách xa hàng nghìn kilômét) qua Internet, người ta không thể dùng cáp mạng nối qua hub hay switch mà cần sử dụng dịch vụ truyền dữ liệu của các nhà cung cấp dịch vụ viễn thông để kết nối các LAN với nhau. Mạng viễn thông sử dụng các <strong>bộ định tuyến (router)</strong> để chuyển tiếp dữ liệu. Mỗi router có một số cổng có thể kết nối trực tiếp vào LAN gọi là <strong>cổng LAN</strong> và một số cổng để kết nối với các router khác gọi là <strong>cổng WAN</strong>. Dữ liệu chuyển từ một máy tính ở LAN này đến một máy tính ở LAN khác trên Internet trước hết phải chuyển đến router của LAN qua cổng LAN, sau đó chuyển ra ngoài qua cổng WAN. Khi router có nhiều cổng WAN thì cần chọn cổng thích hợp để chuyển dữ liệu đi tới đích. Thuật ngữ <em>định tuyến</em> hay chọn đường (routing) hàm ý router phải chọn một cổng thích hợp để gửi dữ liệu đi sao cho tới được LAN của máy nhận. Dữ liệu có thể phải trung chuyển qua nhiều router (Hình 3.4). Khi đến router cuối cùng, dữ liệu được chuyển qua cổng LAN để tới máy nhận.</p>
+
+    <div class="img-full"><svg viewBox="0 0 800 260" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Dữ liệu từ LAN này tới LAN khác trung chuyển qua nhiều router trên Internet">
+<defs><linearGradient id="rbg2" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#0d1f2e"/><stop offset="1" stop-color="#0a1420"/></linearGradient>
+<marker id="ar2" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 z" fill="#ff6b35"/></marker></defs>
+<rect width="800" height="260" rx="18" fill="url(#rbg2)"/>
+<g font-family="Inter,Arial,sans-serif" font-size="12" text-anchor="middle">
+<ellipse cx="130" cy="130" rx="105" ry="80" fill="rgba(255,154,100,.08)" stroke="#ff9a64" stroke-width="1.5"/>
+<ellipse cx="670" cy="130" rx="105" ry="80" fill="rgba(255,154,100,.08)" stroke="#ff9a64" stroke-width="1.5"/>
+<ellipse cx="400" cy="130" rx="150" ry="85" fill="rgba(56,217,245,.06)" stroke="#38d9f5" stroke-width="1.5" stroke-dasharray="5 4"/>
+<text x="130" y="200" fill="#ff9a64" font-weight="700">LAN gửi</text><text x="670" y="200" fill="#ff9a64" font-weight="700">LAN nhận</text><text x="400" y="62" fill="#7ce8fa" font-weight="700">Internet</text>
+<g fill="#ffd060" stroke="#1a0a00"><rect x="215" y="118" width="40" height="16" rx="4"/><rect x="320" y="90" width="40" height="16" rx="4"/><rect x="440" y="100" width="40" height="16" rx="4"/><rect x="380" y="160" width="40" height="16" rx="4"/><rect x="545" y="118" width="40" height="16" rx="4"/></g>
+<text x="235" y="152" fill="#ffe19a">Router</text><text x="565" y="152" fill="#ffe19a">Router</text>
+<rect x="60" y="112" width="50" height="30" rx="6" fill="#162035" stroke="#7ce8fa"/><text x="85" y="131" fill="#cdeffb">Máy gửi</text>
+<rect x="690" y="112" width="50" height="30" rx="6" fill="#162035" stroke="#7ce8fa"/><text x="715" y="131" fill="#cdeffb">Máy nhận</text>
+<rect x="140" y="116" width="44" height="20" rx="5" fill="#111a2e" stroke="#56e39f"/><text x="162" y="130" fill="#8ef0c0" font-size="10">switch</text>
+<rect x="616" y="116" width="44" height="20" rx="5" fill="#111a2e" stroke="#56e39f"/><text x="638" y="130" fill="#8ef0c0" font-size="10">switch</text>
+<g stroke="#ff6b35" stroke-width="2.6"><line x1="110" y1="127" x2="138" y2="127" marker-end="url(#ar2)"/><line x1="184" y1="126" x2="213" y2="126" marker-end="url(#ar2)"/><line x1="255" y1="122" x2="318" y2="100" marker-end="url(#ar2)"/><line x1="360" y1="100" x2="438" y2="107" marker-end="url(#ar2)"/><line x1="480" y1="112" x2="543" y2="124" marker-end="url(#ar2)"/><line x1="585" y1="126" x2="614" y2="126" marker-end="url(#ar2)"/><line x1="660" y1="127" x2="688" y2="127" marker-end="url(#ar2)"/></g>
+<text x="400" y="240" fill="#8899b8">Router chọn cổng WAN phù hợp ở mỗi chặng – đó là "định tuyến"</text>
+</g></svg></div>
+    <div class="img-caption">Hình 3.4. Dữ liệu từ máy gửi đến máy nhận có thể trung chuyển qua nhiều router</div>
+
+    <p>Thông thường router của các nhà cung cấp dịch vụ Internet hay của các tổ chức lớn mới có nhiều cổng WAN, còn router của các mạng gia đình chỉ có một cổng WAN kết nối đến nhà cung cấp dịch vụ Internet mà không cần phải định tuyến. Các router này thường được tích hợp cả bộ thu phát Wi-Fi. Chính vì thế chúng được gọi là <strong>router Wi-Fi</strong> (Hình 3.5 – một router Wi-Fi 6 anten có 1 cổng WAN và 4 cổng LAN).</p>
+    <div class="page-num">Trang 16</div>
+  </section>
+
+  <section class="section" id="modem" data-page="Trang 17">
+    <div class="activity">
+      <div class="activity-badge">Hoạt động 4</div>
+      <strong>Máy tính có thể sử dụng trực tiếp mọi loại tín hiệu được không?</strong>
+      <p style="margin-top:10px">Tín hiệu truyền trên mạng điện thoại là sóng điện áp thể hiện dao động âm thanh. Trước khi cáp quang được sử dụng rộng rãi, người ta dùng chính đường dây điện thoại để truyền dữ liệu Internet. Máy tính có thể sử dụng trực tiếp tín hiệu điện thoại hay không?</p>
+    </div>
+    <h3>d) Modem</h3>
+    <p>Trong trường hợp truy cập Internet, tín hiệu trong LAN là <strong>tín hiệu số (digital)</strong> thể hiện các giá trị logic 0 hay 1 dùng cho máy tính. Trong khi đó, để truyền dữ liệu bên ngoài LAN người ta có thể dùng <strong>tín hiệu tương tự (analog)</strong> như tín hiệu quang, sóng điện từ trong môi trường có dây hoặc không dây như sóng mang của điện thoại công cộng hoặc sóng mang của hệ thống thông tin di động 3G, 4G, 5G,... Vì router chỉ hướng luồng dữ liệu tới đích nhưng không chuyển đổi tín hiệu nên cần có thiết bị chuyển đổi tín hiệu hai chiều đặt giữa router và nhà cung cấp dịch vụ Internet, gọi là <strong>modem</strong> để chuyển tín hiệu số thành tín hiệu tương tự và ngược lại. Sơ đồ kết nối giữa modem và router được minh hoạ trong Hình 3.6.</p>
+
+    <div class="img-full"><svg viewBox="0 0 800 200" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Sơ đồ kết nối LAN - router - modem - Internet">
+<defs><linearGradient id="mbg3" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#0c1b2e"/><stop offset="1" stop-color="#0a1220"/></linearGradient></defs>
+<rect width="800" height="200" rx="18" fill="url(#mbg3)"/>
+<g font-family="Inter,Arial,sans-serif" text-anchor="middle">
+<rect x="40" y="70" width="130" height="60" rx="12" fill="#111a2e" stroke="#38d9f5" stroke-width="2"/><text x="105" y="98" font-size="14" fill="#7ce8fa" font-weight="700">LAN</text><text x="105" y="116" font-size="11" fill="#8899b8">máy tính, switch</text>
+<rect x="250" y="70" width="130" height="60" rx="12" fill="#111a2e" stroke="#56e39f" stroke-width="2"/><text x="315" y="98" font-size="14" fill="#8ef0c0" font-weight="700">Router</text><text x="315" y="116" font-size="11" fill="#8899b8">cổng LAN · cổng WAN</text>
+<rect x="460" y="70" width="130" height="60" rx="12" fill="#111a2e" stroke="#ff6b35" stroke-width="2"/><text x="525" y="98" font-size="14" fill="#ff9a64" font-weight="700">Modem</text><text x="525" y="116" font-size="11" fill="#8899b8">số ⇄ tương tự</text>
+<rect x="670" y="70" width="100" height="60" rx="30" fill="#111a2e" stroke="#a78bfa" stroke-width="2"/><text x="720" y="105" font-size="14" fill="#c4b5fd" font-weight="700">Internet</text>
+<g stroke-width="3"><line x1="170" y1="100" x2="250" y2="100" stroke="#38d9f5"/><line x1="380" y1="100" x2="460" y2="100" stroke="#38d9f5"/><line x1="590" y1="100" x2="670" y2="100" stroke="#ff9a64" stroke-dasharray="7 5"/></g>
+<text x="210" y="90" font-size="11" fill="#7ce8fa">số</text><text x="420" y="90" font-size="11" fill="#7ce8fa">số</text><text x="630" y="90" font-size="11" fill="#ff9a64">tương tự</text>
+<text x="400" y="170" font-size="12" fill="#8899b8">Router định hướng dữ liệu · Modem chuyển đổi tín hiệu</text>
+</g></svg></div>
+    <div class="img-caption">Hình 3.6. Dùng modem kết nối Internet (sơ đồ minh hoạ)</div>
+
+    <div class="callout"><em>Modem là thiết bị có chức năng chuyển đổi tín hiệu số thành tín hiệu tương tự và ngược lại. Modem chỉ thay đổi tín hiệu mà không làm thay đổi dữ liệu được mang bởi tín hiệu.</em></div>
+    <p>Ví dụ một số loại modem:</p>
+    <ul>
+      <li><strong>Modem quay số</strong> cho phép nối hai máy tính qua hệ thống chuyển mạch của mạng điện thoại công cộng. Dữ liệu được mã hoá qua tín hiệu thoại, được chuyển qua đường dây chung với điện thoại.</li>
+      <li><strong>Modem ADSL</strong> cũng dùng cáp điện thoại nhưng sử dụng riêng cho thuê bao số, không dùng chung tần số với đường thoại. Modem ADSL rất phổ biến để kết nối Internet tốc độ cao trước khi cáp quang được dùng rộng rãi.</li>
+      <li><strong>Modem quang</strong> chuyển đổi tín hiệu số sang tín hiệu quang và ngược lại.</li>
+      <li><strong>Modem GSM 3G, 4G, 5G,...</strong> có khe SIM để truy cập Internet qua hệ thống điện thoại di động và phát lại qua sóng Wi-Fi hoặc nối vào mạng có dây.</li>
+    </ul>
+    <p>Thời kì đầu, modem thường tách rời khỏi router, nhưng sau này, chức năng modem được tích hợp ngay vào router nên chúng ta ít thấy hình ảnh các modem độc lập.</p>
+
+    <div class="info-box">
+      <p><strong>Em có biết? – Nguồn gốc tên gọi modem</strong></p>
+      <p>Việc chuyển đổi tín hiệu dạng số sang dạng tương tự hoặc dạng tín hiệu nào đó phù hợp để truyền qua đường truyền mạng gọi là điều chế xung (tiếng Anh là <strong>Mo</strong>dulation). Việc chuyển đổi ngược lại tín hiệu từ dạng tương tự hoặc các dạng tín hiệu khác nhau thành dạng số ban đầu gọi là giải điều chế xung (tiếng Anh là <strong>Dem</strong>odulation). Thiết bị thực hiện cả hai công việc trên gọi là <strong>modem</strong> (viết tắt từ modulation và demodulation).</p>
+    </div>
+
+    <div class="ghi-nho">
+      <div class="ghi-nho-title">📌 Ghi nhớ</div>
+      <ul>
+        <li>Hub, switch, WAP và router là các thiết bị kết nối mạng.</li>
+        <li>Hub và switch chỉ dùng để kết nối các máy tính trong cùng LAN trực tiếp qua cáp mạng. Hub phát tán tín hiệu đi tất cả các cổng còn switch chỉ kết nối từng cặp cổng có thiết bị gửi – nhận nên giảm thiểu được tình trạng xung đột tín hiệu giúp mạng hoạt động hiệu quả hơn.</li>
+        <li>WAP dùng để kết nối các thiết bị đầu cuối qua sóng Wi-Fi giúp giảm chi phí thiết lập LAN hoặc kết nối với một LAN để mở rộng phạm vi làm việc.</li>
+        <li>Router dùng để dẫn đường cho dữ liệu khi kết nối trên mạng rộng như Internet.</li>
+        <li>Modem có chức năng chuyển đổi tín hiệu từ tín hiệu số sang tín hiệu tương tự và ngược lại, thường dùng khi kết nối LAN với Internet.</li>
+      </ul>
+    </div>
+
+    <div class="cau-hoi"><div class="q-num">1</div><div class="q-text">So sánh chức năng của hub, switch và thiết bị thu phát Wi-Fi.</div></div>
+    <div class="cau-hoi"><div class="q-num">2</div><div class="q-text">Giải thích cách thức hoạt động của router và ý nghĩa của từ "định tuyến".</div></div>
+    <div class="cau-hoi"><div class="q-num">3</div><div class="q-text">Cho biết chức năng của modem. Kể tên một số loại modem tương ứng với những phương thức truyền tín hiệu khác nhau.</div></div>
+    <div class="page-num">Trang 17-18</div>
+  </section>
+
+  <section class="section" id="thuc-hanh" data-page="Trang 18">
+    <h2>2. THỰC HÀNH KẾT NỐI MÁY TÍNH VỚI CÁC THIẾT BỊ MẠNG</h2>
+    <p>Máy tính (kể cả các thiết bị di động) có thể kết nối vào mạng bằng cáp tín hiệu hoặc qua sóng Wi-Fi.</p>
+
+    <h3>Nhiệm vụ 1. Kết nối bằng cáp tín hiệu</h3>
+    <p><strong>Yêu cầu:</strong> Nhận biết được các cổng RJ45 và kết nối được các thiết bị qua cổng RJ45 với cáp UTP.</p>
+    <p><strong>Hướng dẫn:</strong> Các LAN thường dùng cáp mạng <strong>UTP</strong> có bốn đôi dây xoắn với giắc cắm <strong>RJ45</strong> để kết nối. Chỉ cần cắm một đầu giắc vào cổng RJ45 của máy tính, một đầu vào cổng RJ45 của switch, hub hay cổng LAN của router (Hình 3.8 – giắc cắm và cổng RJ45).</p>
+    <p>Trên thực tế, việc nối cáp chỉ là <strong>kết nối vật lí</strong>. Trong các mạng cụ thể còn phải thiết lập các <strong>kết nối logic</strong>. Ví dụ: để máy tính trong LAN có thể giao tiếp với Internet thì còn phải thiết lập địa chỉ, khai báo cách kết nối ra ngoài,...</p>
+    <p>Hãy quan sát cổng mạng của máy tính và của các thiết bị kết nối, nơi cắm các đầu cáp mạng.</p>
+
+    <h3 id="wifi">Nhiệm vụ 2. Kết nối không dây</h3>
+    <p><strong>Yêu cầu:</strong> Kết nối được máy tính hay thiết bị di động vào mạng qua một thiết bị thu phát Wi-Fi.</p>
+    <p>Kết nối không dây vào LAN, còn gọi là kết nối Wi-Fi, được thực hiện qua một trạm thu phát Wi-Fi (với vai trò là một điểm truy cập không dây – WAP). Hầu hết các máy tính để bàn thường không có sẵn khả năng kết nối Wi-Fi như máy tính xách tay, máy tính bảng hay điện thoại thông minh. Trong trường hợp đó, để có thể kết nối Wi-Fi cho máy tính để bàn, cần lắp thêm một bảng mạch mở rộng.</p>
+    <p>Mỗi trạm thu phát Wi-Fi sẽ nằm trong hoặc tạo ra một LAN.</p>
+    <p><strong>Hướng dẫn:</strong> Thủ tục kết nối Wi-Fi cho máy tính chạy trên hệ điều hành Windows, thiết bị di động chạy trên hệ điều hành Android hay iOS gần giống nhau, gồm các bước sau:</p>
+
+    <div class="activity">
+      <div class="activity-badge">Bước 1</div>
+      <strong>Tìm trạm thu phát Wi-Fi để kết nối vào LAN</strong>
+      <p style="margin-top:10px">Cần làm xuất hiện danh sách các trạm thu phát Wi-Fi ở gần rồi chọn trạm thích hợp.</p>
+      <ul>
+        <li><strong>Windows 10:</strong> nháy chuột vào biểu tượng sóng Wi-Fi ở phía bên phải thanh công việc.</li>
+        <li><strong>Windows 11:</strong> nháy chuột vào biểu tượng sóng để hiện bảng chọn các loại kết nối không dây (Wi-Fi, bluetooth), sau đó nháy tiếp vào dấu <strong>&gt;</strong> cạnh biểu tượng sóng Wi-Fi.</li>
+        <li><strong>Android:</strong> vuốt màn hình từ trên xuống rồi chọn biểu tượng cài đặt, sau đó chọn biểu tượng kết nối Wi-Fi.</li>
+        <li><strong>iOS:</strong> vuốt màn hình từ trên xuống (một vài dòng sản phẩm phải vuốt từ dưới lên) sẽ thấy ngay biểu tượng Wi-Fi.</li>
+      </ul>
+      <p>Giao diện các trạm thu phát Wi-Fi đều có tên, trạng thái có được bảo mật hay không (Hình 3.9). Nếu được bảo mật, biểu tượng sóng sẽ có một dấu hiệu khoá. Nếu đã kết nối với một trạm nào đó thì sẽ thấy thêm thông tin đang kết nối.</p>
+    </div>
+
+    <div class="activity">
+      <div class="activity-badge">Bước 2</div>
+      <strong>Kết nối</strong>
+      <p style="margin-top:10px">Muốn kết nối thiết bị vào LAN nào thì chọn một trạm thu phát Wi-Fi thuộc LAN đó. Trong trường hợp trạm được bảo mật (có biểu tượng một cái khoá), phần mềm mạng sẽ yêu cầu nhập mật khẩu. Chỉ khi gõ đúng mật khẩu, mới có thể kết nối được. Sau đó chọn <strong>Connect</strong> hay <strong>Kết nối</strong> (Hình 3.10).</p>
+      <p>Ngoài ra, có thể thiết lập chế độ kết nối tự động để thiết bị tự động kết nối ngay với trạm thu phát Wi-Fi từ lần sử dụng sau mà không cần chọn lại hoặc nhập mật khẩu, bằng cách đánh dấu vào ô <strong>Connect automatically</strong> (Windows) hay kéo con trượt <strong>Tự động kết nối lại</strong> sang phải (Android, iOS),...</p>
+    </div>
+
+    <div class="cau-hoi"><div class="q-num">?</div><div class="q-text">Kết nối không dây tiện hơn kết nối có dây rất nhiều. Tại sao các máy tính ở phòng thực hành lại dùng cáp mạng?</div></div>
+    <div class="page-num">Trang 18-20</div>
+  </section>
+
+  <section class="section" id="luyen-tap" data-page="Trang 20">
+    <span class="tag-luyen">🏋️ Luyện tập</span>
+    <div class="cau-hoi"><div class="q-num">1</div><div class="q-text">Muốn kết nối các máy tính trong phạm vi gia đình thành một mạng, nên dùng loại thiết bị kết nối nào?</div></div>
+    <div class="cau-hoi"><div class="q-num">2</div><div class="q-text">Máy tính xách tay thường có khả năng kết nối Wi-Fi nhưng không có SIM để kết nối với Internet. Làm thế nào để kết nối máy tính xách tay với Internet qua mạng điện thoại di động?</div></div>
+
+    <div id="van-dung" style="margin-top:24px"><span class="tag-van-dung">💡 Vận dụng</span></div>
+    <div class="cau-hoi"><div class="q-num">1</div><div class="q-text">Với sự giúp đỡ của thầy cô giáo, hãy tìm hiểu xem mạng máy tính của trường em sử dụng các hub, switch, WAP và router như thế nào. Hãy vẽ lại sơ đồ mạng của trường.</div></div>
+    <div class="cau-hoi"><div class="q-num">2</div><div class="q-text">Trên các xe khách đường dài ngày nay, hành khách có thể truy cập Internet qua Wi-Fi được hay không? Hãy tìm hiểu xem điều này được thực hiện như thế nào.</div></div>
+    <div class="page-num">Trang 20</div>
+  </section>
+</main>
+
+
+</div>
+
+<script>
+let fs = 18;
+function changeFont(d) { fs = Math.min(30, Math.max(13, fs + d)); document.body.style.fontSize = fs + 'px'; }
+let light = false;
+function toggleTheme() {
+  light = !light;
+  document.documentElement.style.setProperty('--bg', light ? '#f0f4f8' : '#070b14');
+  document.documentElement.style.setProperty('--text', light ? '#1a2540' : '#e8eef8');
+  document.documentElement.style.setProperty('--panel', light ? '#fff' : '#111a2e');
+  document.documentElement.style.setProperty('--panel2', light ? '#f5f8fc' : '#162035');
+  document.documentElement.style.setProperty('--border', light ? '#d0daea' : '#1e2f4d');
+  document.body.style.background = light
+    ? 'radial-gradient(ellipse at 20% 10%, #d8e8f8 0%, #f0f4f8 60%)'
+    : 'radial-gradient(ellipse at 20% 10%, #0d1f3c 0%, #070b14 50%)';
+}
+function setActive(el) { document.querySelectorAll('.toc a').forEach(a => a.classList.remove('active')); el.classList.add('active'); }
+window.addEventListener('scroll', () => {
+  const doc = document.documentElement;
+  const scrolled = doc.scrollTop || document.body.scrollTop;
+  const total = doc.scrollHeight - doc.clientHeight;
+  const pct = total > 0 ? Math.round((scrolled / total) * 100) : 0;
+  document.getElementById('prog').style.width = pct + '%';
+  document.getElementById('prog-label').textContent = 'Tiến độ đọc: ' + pct + '%';
+});
+const sections = document.querySelectorAll('section[id], h2[id], h3[id]');
+const tocLinks = document.querySelectorAll('.toc a');
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      const id = entry.target.id;
+      tocLinks.forEach(a => { a.classList.remove('active'); if (a.getAttribute('href') === '#' + id) a.classList.add('active'); });
+    }
+  });
+}, { threshold: 0.3 });
+sections.forEach(s => observer.observe(s));
+</script>
+
+</body>
+</html>
