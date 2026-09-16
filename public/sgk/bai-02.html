@@ -218,7 +218,7 @@ li::marker { color:var(--cyan); }
       <div class="field-card"><div class="icon">📖</div><div class="field-name">Hệ chuyên gia</div>
       <p>Ban đầu là chương trình máy tính dựa trên luật suy diễn và tri thức của chuyên gia. Với sự phát triển của AI, đặc biệt là Học máy, nhiều hệ chuyên gia đã có khả năng tự học từ dữ liệu để tự hình thành luật và tri thức.</p></div>
       <div class="field-card"><div class="icon">🏥</div><div class="field-name">Y học và chăm sóc sức khoẻ</div>
-      <p>AI cải thiện chất lượng hình ảnh y tế, làm nổi bật cấu trúc bất thường trong cơ thể, hỗ trợ chẩn đoán và hướng điều trị chính xác, kịp thời. IBM Watson for Oncology đã góp phần nâng cao hiệu quả điều trị ung thư.</p></div>
+      <p>AI cải thiện chất lượng hình ảnh y tế, làm nổi bật cấu trúc bất thường trong cơ thể, hỗ trợ chẩn đoán và hướng điều trị chính xác, kịp thời. IBM Watson for Oncology đã góp phần nâng cao hiệu quả điều trị ung thư (theo khẳng định của các chuyên gia y tế).</p></div>
       <div class="field-card"><div class="icon">🚗</div><div class="field-name">Giao thông vận tải</div>
       <p>AI được dùng để phát triển phương tiện tự lái, quản lí giao thông thông minh và định tuyến vận tải. Ô tô tự lái, máy bay không người lái phát triển mạnh mẽ nhờ có AI.</p></div>
       <div class="field-card"><div class="icon">🏦</div><div class="field-name">Tài chính, ngân hàng</div>
@@ -282,8 +282,10 @@ li::marker { color:var(--cyan); }
     </ul>
 
     <div class="chat-mock">
-      <div class="chat-msg user">Hình như chương trình này đang còn lỗi ở đâu đó?<br><code>def factorial(n):<br>&nbsp;&nbsp;if n = 0:<br>&nbsp;&nbsp;&nbsp;&nbsp;return 1<br>&nbsp;&nbsp;else:<br>&nbsp;&nbsp;&nbsp;&nbsp;return n * factorial(n-1)</code></div>
-      <div class="chat-msg bot">Có một lỗi cú pháp: dòng thứ 4, <code>if n = 0</code> cần thay bằng <code>if n == 0</code> để kiểm tra bằng, không phải gán giá trị. Còn một lỗi là giá trị nhập vào từ bàn phím là kiểu chuỗi, cần ép kiểu về số nguyên bằng <code>int(input(...))</code> trước khi gọi hàm.</div>
+      <div class="chat-msg user">Hình như chương trình này đang còn lỗi ở đâu đó?<br><code>def factorial(n):<br>&nbsp;&nbsp;if n = 0:<br>&nbsp;&nbsp;&nbsp;&nbsp;return 1<br>&nbsp;&nbsp;else:<br>&nbsp;&nbsp;&nbsp;&nbsp;return n * factorial(n-1)<br>num = input("Enter a number: ")<br>print("The factorial of", num, "is", factorial(num))</code></div>
+      <div class="chat-msg bot">Có một lỗi sintax trong chương trình: dòng thứ 4, <code>if n = 0</code> cần thay bằng <code>if n == 0</code> để cần kiểm tra bằng với 0, không phải gán giá trị 0 cho <code>n</code>.<br>Còn một lỗi là giá trị nhập vào từ bàn phím là kiểu chuỗi, cần ép kiểu về số nguyên bằng <code>int(input("Enter a number: "))</code> trước khi gọi hàm <code>factorial(num)</code>.</div>
+      <div class="chat-msg user">Lỗi sintax hay lỗi syntax?</div>
+      <div class="chat-msg bot">Lỗi syntax.</div>
       <div class="chat-msg user">Tôi đã sửa. Chương trình này cho kết quả là gì?</div>
       <div class="chat-msg bot">Kết quả của chương trình sẽ tính và in ra giá trị giai thừa của số nhập vào từ bàn phím.</div>
     </div>
