@@ -121,6 +121,76 @@ export type Lesson = {
   available: boolean; // false = chưa có câu hỏi, hiện mờ trên trang chủ
 };
 
+// ─── Game kéo-thả ôn bài ─────────────────────────────────────────────────────
+// Một thẻ trong game phân loại 2 nhóm (đúng/sai, có/không,...)
+export type SortGameItem = {
+  id: string;
+  emoji: string;
+  label: string;
+  isMatch: boolean; // true = thuộc nhóm bên phải (label "match"), false = nhóm bên trái
+  explain: string;
+};
+
+// Game kéo-thả phân loại 2 nhóm, vd "Lợi ích hay Nguy cơ của AI?"
+export type SortGame = {
+  kind: "sort";
+  id: string; // slug duy nhất trong 1 bài, dùng làm key khi chọn game
+  title: string;
+  emoji: string;
+  instructions: string; // hướng dẫn ngắn hiển thị đầu game
+  matchLabel: string; // nhãn khay bên phải
+  matchEmoji: string;
+  noMatchLabel: string; // nhãn khay bên trái
+  noMatchEmoji: string;
+  items: SortGameItem[];
+};
+
+// Một mốc trong game sắp xếp dòng thời gian — thứ tự đúng chính là thứ tự
+// xuất hiện trong mảng `items` của TimelineGame (không cần trường "order" riêng).
+export type TimelineItem = {
+  id: string;
+  emoji: string;
+  label: string;
+  year: string; // hiển thị sau khi kiểm tra, vd "1957"
+  explain: string;
+};
+
+// Game kéo-thả (hoặc chạm) sắp xếp các mốc theo đúng trình tự thời gian
+export type TimelineGame = {
+  kind: "timeline";
+  id: string;
+  title: string;
+  emoji: string;
+  instructions: string;
+  items: TimelineItem[]; // đã đúng thứ tự thời gian sẵn trong data — game sẽ tự xáo khi chơi
+};
+
+export type LessonGame = SortGame | TimelineGame;
+
+// ─── Ôn tập tổng kết ─────────────────────────────────────────────────────────
+// Trang ôn nhanh trước khi kiểm tra: thẻ lật ghi nhớ, lỗi hay gặp, mẹo nhớ và
+// một checklist tự đánh giá. Khác với Lý thuyết (đọc hiểu lần đầu), trang này
+// dành cho lúc đã học xong, chỉ cần ôn lại nhanh những điểm cốt lõi.
+export type ReviewFlashcard = {
+  front: string; // mặt trước: câu hỏi hoặc khái niệm
+  back: string; // mặt sau: câu trả lời ngắn gọn
+};
+
+export type ReviewMistake = {
+  mistake: string; // lỗi/nhầm lẫn hay gặp
+  fix: string; // cách hiểu/sửa đúng
+};
+
+export type LessonReview = {
+  summary: string; // 1-2 câu tổng kết cả bài
+  keyPoints: string[]; // ý cốt lõi, 4-6 gạch đầu dòng
+  commonMistakes: ReviewMistake[];
+  tips: string[]; // mẹo ghi nhớ nhanh
+  flashcards: ReviewFlashcard[];
+  checklist: string[]; // học sinh tự tick "tôi đã..."
+  diagram?: string; // khoá tra trong components/theory/Diagram.tsx, hình tổng kết (nếu có)
+};
+
 export type Topic = {
   id: string;
   name: string;

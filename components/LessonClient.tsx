@@ -2,14 +2,16 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import type { EssayQuestion, LessonTheory, Question, TFQuestion } from "@/lib/types";
+import type { EssayQuestion, LessonGame, LessonReview, LessonTheory, Question, TFQuestion } from "@/lib/types";
 import { getLessonProgress, theoryKey } from "@/lib/progress";
 import QuizClient from "@/components/QuizClient";
 import TrueFalseQuiz from "@/components/TrueFalseQuiz";
 import EssayViewer from "@/components/EssayViewer";
 import TheoryViewer from "@/components/TheoryViewer";
+import GameHub from "@/components/GameHub";
+import ReviewViewer from "@/components/ReviewViewer";
 
-type Mode = "menu" | "theory" | "mcq" | "tf" | "essay" | "sgk";
+type Mode = "menu" | "theory" | "mcq" | "tf" | "essay" | "sgk" | "games" | "review";
 
 export default function LessonClient({
   lessonId,
@@ -20,6 +22,8 @@ export default function LessonClient({
   tf,
   essay,
   sgkUrl,
+  games,
+  review,
 }: {
   lessonId: string;
   lessonTitle: string;
@@ -29,6 +33,8 @@ export default function LessonClient({
   tf: TFQuestion[];
   essay: EssayQuestion[];
   sgkUrl?: string | null;
+  games?: LessonGame[];
+  review?: LessonReview | null;
 }) {
   const [mode, setMode] = useState<Mode>("menu");
   const [bestMcq, setBestMcq] = useState<number | null>(null);
@@ -121,6 +127,14 @@ export default function LessonClient({
     );
   }
 
+  if (mode === "games" && games && games.length > 0) {
+    return <GameHub lessonId={lessonId} games={games} onBack={() => setMode("menu")} />;
+  }
+
+  if (mode === "review" && review) {
+    return <ReviewViewer lessonTitle={lessonTitle} review={review} onBack={() => setMode("menu")} />;
+  }
+
   const options = [
     {
       key: "theory" as Mode,
@@ -133,6 +147,22 @@ export default function LessonClient({
       done: readTheory,
       enabled: theory !== null,
     },
+    ...(games && games.length > 0
+      ? [
+          {
+            key: "games" as Mode,
+            emoji: "🎮",
+            name: games.length === 1 ? games[0].title : "Trung tâm Game",
+            desc:
+              games.length === 1
+                ? `${games[0].items.length} thẻ · kéo hoặc chạm để chơi`
+                : `${games.length} trò chơi ôn bài · kéo hoặc chạm để chơi`,
+            best: null,
+            done: false,
+            enabled: true,
+          },
+        ]
+      : []),
     ...(sgkUrl
       ? [
           {
@@ -173,6 +203,19 @@ export default function LessonClient({
       done: false,
       enabled: essay.length > 0,
     },
+    ...(review
+      ? [
+          {
+            key: "review" as Mode,
+            emoji: "📋",
+            name: "Ôn tập tổng kết",
+            desc: "Thẻ ghi nhớ, lỗi hay gặp, mẹo nhớ nhanh trước khi kiểm tra",
+            best: null,
+            done: false,
+            enabled: true,
+          },
+        ]
+      : []),
   ];
 
   return (
