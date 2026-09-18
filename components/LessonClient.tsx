@@ -23,6 +23,7 @@ function gameItemCount(g: LessonGame): number {
     case "topology":
       return g.nodes.length;
     case "encapsulation":
+    case "classify":
       return g.items.length;
     case "routing":
     case "menupath":

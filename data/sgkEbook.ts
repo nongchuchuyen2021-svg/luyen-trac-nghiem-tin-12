@@ -5,6 +5,7 @@ export const SGK_EBOOK: Record<string, string> = {
   "bai-02": "/sgk/bai-02.html",
   "bai-03": "/sgk/bai-03.html",
   "bai-04": "/sgk/bai-04.html",
+  "bai-06": "/sgk/bai-06.html",
 };
 
 export function getSgkUrl(lessonId: string): string | null {

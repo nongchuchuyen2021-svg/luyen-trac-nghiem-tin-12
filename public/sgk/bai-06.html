@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bài 6: Giao tiếp và ứng xử trong không gian mạng – Tin học 12 KNTT (bản cập nhật 8/2026)</title>
+<meta name="description" content="SGK Tin học 12 Kết nối tri thức – Bài 6: Giao tiếp và ứng xử trong không gian mạng. Ưu nhược điểm giao tiếp trực tuyến, ứng xử nhân văn, Quyết định 874-QĐ-BTTTT.">
+<style>
+
+:root {
+  --bg: #070b14; --bg2: #0d1423; --panel: #111a2e; --panel2: #162035; --border: #1e2f4d;
+  --text: #e8eef8; --muted: #8899b8; --orange: #ff6b35; --orange2: #ff9a64;
+  --cyan: #38d9f5; --cyan2: #7ce8fa; --yellow: #ffd060; --green: #56e39f; --pink: #f06dba; --purple: #a78bfa;
+  --fs: 18px;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  background: radial-gradient(ellipse at 20% 10%, #0d1f3c 0%, #070b14 50%);
+  color: var(--text); font-family: 'Inter','Segoe UI',-apple-system,BlinkMacSystemFont,'Roboto','Helvetica Neue',Arial,sans-serif;
+  font-size: var(--fs); line-height: 1.75; min-height: 100vh;
+}
+.app { display: grid; grid-template-columns: 280px 1fr; min-height: 100vh; }
+.img-hero, .img-full, .img-illus { width:100%; border-radius:14px; margin:20px 0; border:1px solid var(--border); box-shadow:0 8px 28px rgba(0,0,0,.5); display:block; overflow:hidden; }
+.img-hero { height:220px; margin-top:20px; }
+.img-hero svg, .img-full svg, .img-illus svg { width:100%; height:auto; display:block; }
+.img-half { width:100%; border-radius:12px; margin:14px 0; border:1px solid var(--border); box-shadow:0 6px 20px rgba(0,0,0,.4); display:block; overflow:hidden; }
+.img-side { display:grid; grid-template-columns:1fr 1fr; gap:14px; margin:18px 0; align-items:start; }
+.img-side .img-half { margin:0; }
+.img-caption { text-align:center; font-size:13px; color:var(--muted); font-style:italic; margin:-10px 0 16px; padding:0 8px; }
+.sidebar { position:sticky; top:0; height:100vh; overflow-y:auto; background:rgba(7,11,20,.97); border-right:1px solid var(--border); padding:24px 16px; backdrop-filter:blur(20px); }
+.brand-box { margin-bottom:24px; }
+.series-label { font-size:11px; letter-spacing:2px; text-transform:uppercase; color:var(--cyan); font-weight:700; margin-bottom:6px; }
+.brand-title { font-size:20px; font-weight:900; color:#fff; line-height:1.2; }
+.brand-title span { color:var(--orange); }
+.brand-sub { color:var(--muted); font-size:12px; margin-top:5px; }
+.toc-title { font-size:11px; letter-spacing:1.5px; text-transform:uppercase; color:var(--muted); font-weight:700; margin:20px 0 8px; padding:0 8px; }
+.toc a { display:block; color:#9aaec8; text-decoration:none; padding:9px 12px; border-radius:10px; margin:2px 0; font-size:13.5px; font-weight:500; transition:all .2s; border-left:3px solid transparent; }
+.toc a:hover { background:rgba(56,217,245,.07); color:var(--cyan); border-left-color:var(--cyan); }
+.toc a.active { background:rgba(255,107,53,.1); color:var(--orange); border-left-color:var(--orange); }
+.ctrl-box { margin-top:24px; padding:14px; border:1px solid var(--border); border-radius:14px; background:rgba(255,255,255,.03); }
+.ctrl-box h4 { font-size:11px; letter-spacing:1px; text-transform:uppercase; color:var(--muted); margin-bottom:10px; }
+.ctrl-row { display:flex; gap:8px; margin-bottom:8px; }
+.ctrl-btn { flex:1; background:var(--panel2); border:1px solid var(--border); color:var(--text); border-radius:9px; padding:8px 6px; cursor:pointer; font-size:13px; font-weight:600; transition:all .2s; }
+.ctrl-btn:hover { background:var(--border); color:#fff; }
+.progress-bar { height:4px; background:var(--panel2); border-radius:4px; overflow:hidden; margin-top:10px; }
+.progress-fill { height:100%; width:0%; background:linear-gradient(90deg,var(--cyan),var(--orange)); transition:width .3s; border-radius:4px; }
+.main { max-width:860px; margin:0 auto; padding:32px 28px 80px; }
+.hero { background:linear-gradient(135deg,#0f2040 0%,#0a1628 60%,#131020 100%); border:1px solid var(--border); border-radius:24px; padding:36px 40px; margin-bottom:28px; box-shadow:0 24px 80px rgba(0,0,0,.5); position:relative; overflow:hidden; }
+.hero::before { content:'874'; position:absolute; right:30px; top:20px; font-size:90px; font-weight:900; color:rgba(56,217,245,.05); line-height:1; user-select:none; }
+.chu-de-tag { display:inline-flex; align-items:center; gap:8px; background:rgba(56,217,245,.12); border:1px solid rgba(56,217,245,.3); color:var(--cyan); font-size:13px; font-weight:700; padding:6px 14px; border-radius:20px; margin-bottom:16px; letter-spacing:.5px; }
+.update-tag { display:inline-flex; align-items:center; gap:8px; background:rgba(255,208,96,.12); border:1px solid rgba(255,208,96,.35); color:var(--yellow); font-size:12.5px; font-weight:700; padding:5px 13px; border-radius:20px; margin:0 0 16px 8px; letter-spacing:.4px; }
+.hero h1 { font-size:clamp(28px,4vw,42px); font-weight:900; line-height:1.15; background:linear-gradient(90deg,#fff 0%,var(--cyan2) 50%,var(--orange2) 100%); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; margin-bottom:14px; }
+.hero-desc { color:#b0c4de; font-size:15.5px; line-height:1.6; }
+.goals-box { background:linear-gradient(135deg,#0c2233,#091c2a); border:1px solid rgba(56,217,245,.25); border-left:4px solid var(--cyan); border-radius:16px; padding:20px 24px; margin-bottom:28px; }
+.goals-box .goals-title { font-size:13px; font-weight:700; text-transform:uppercase; letter-spacing:1.5px; color:var(--cyan); margin-bottom:12px; display:flex; align-items:center; gap:8px; }
+.goals-box ul { list-style:none; }
+.goals-box li { padding:6px 0 6px 22px; position:relative; color:#c8dff0; font-size:15.5px; }
+.goals-box li::before { content:'✓'; position:absolute; left:0; color:var(--green); font-weight:700; }
+.nav-btns { display:flex; gap:10px; margin:10px 0 24px; }
+.nav-btn { background:var(--panel); border:1px solid var(--border); color:var(--text); border-radius:10px; padding:9px 18px; cursor:pointer; font-size:14px; font-weight:600; transition:all .2s; flex:1; }
+.nav-btn:hover:not(:disabled) { background:var(--panel2); border-color:var(--cyan); }
+.nav-btn:disabled { opacity:.35; cursor:default; }
+.section { background:rgba(11,17,30,.9); border:1px solid var(--border); border-radius:20px; padding:28px 32px 36px; margin-bottom:22px; scroll-margin-top:20px; position:relative; transition:border-color .3s; }
+.section:hover { border-color:rgba(56,217,245,.2); }
+.page-num { position:absolute; right:20px; bottom:14px; color:var(--muted); font-size:12px; font-weight:600; background:var(--panel2); padding:3px 10px; border-radius:10px; }
+.bai-cover { display:flex; align-items:center; gap:20px; background:linear-gradient(110deg,#1e0f0a,#1a1308,#0d1a28); border:1px solid rgba(255,107,53,.3); border-left:5px solid var(--orange); border-radius:16px; padding:24px 28px; margin-bottom:24px; }
+.bai-cover .num-block { flex-shrink:0; }
+.bai-num { font-size:13px; font-weight:700; color:var(--muted); text-transform:uppercase; letter-spacing:1px; }
+.bai-big { font-size:64px; font-weight:900; color:var(--orange); line-height:1; }
+.bai-cover .info .topic { font-size:13px; color:var(--muted); text-transform:uppercase; letter-spacing:1px; }
+.bai-cover .info .title { font-size:28px; font-weight:900; color:#fff; line-height:1.2; margin-top:6px; }
+.bai-cover .info .subtitle { font-size:14px; color:var(--cyan); margin-top:8px; }
+h2 { font-size:clamp(20px,2.5vw,26px); font-weight:800; color:#fff; margin:28px 0 14px; display:flex; align-items:center; gap:10px; }
+h2::before { content:''; display:inline-block; width:4px; height:24px; background:linear-gradient(var(--orange),var(--cyan)); border-radius:2px; flex-shrink:0; }
+h3 { font-size:clamp(16px,2vw,20px); font-weight:700; color:var(--cyan2); margin:22px 0 10px; }
+h4 { font-size:15px; font-weight:700; color:var(--orange2); margin:16px 0 8px; }
+p { color:#d0dcea; margin-bottom:14px; }
+p:last-child { margin-bottom:0; }
+em { color:var(--cyan2); font-style:italic; }
+strong { color:#fff; }
+ul, ol { padding-left:22px; margin:12px 0; }
+li { color:#c8d8ec; margin-bottom:8px; }
+li::marker { color:var(--cyan); }
+.activity { background:linear-gradient(135deg,#1a120a,#130f0a); border:1px solid rgba(255,160,60,.3); border-left:4px solid var(--orange); border-radius:14px; padding:18px 22px; margin:20px 0; }
+.activity-badge { display:inline-flex; align-items:center; gap:6px; background:var(--orange); color:#1a0a00; font-size:12px; font-weight:800; padding:4px 12px; border-radius:6px; margin-bottom:10px; letter-spacing:.5px; text-transform:uppercase; }
+.activity p, .activity li { color:#f0d8c0; }
+.info-box { background:linear-gradient(135deg,#071e2e,#071828); border:1px dashed rgba(56,217,245,.4); border-radius:14px; padding:18px 22px; margin:20px 0; }
+.info-box p, .info-box li { color:#b8d8f0; }
+.info-box strong { color:var(--cyan2); }
+.ghi-nho { background:linear-gradient(135deg,#1a2a10,#0f1e0a); border:1px solid rgba(86,227,159,.3); border-left:4px solid var(--green); border-radius:14px; padding:18px 22px; margin:20px 0; }
+.ghi-nho-title { color:var(--green); font-weight:800; font-size:14px; text-transform:uppercase; letter-spacing:1px; margin-bottom:10px; }
+.ghi-nho p, .ghi-nho li { color:#c8f0d8; }
+.cau-hoi { background:var(--panel2); border:1px solid var(--border); border-radius:12px; padding:14px 18px; margin:10px 0; display:flex; gap:14px; align-items:flex-start; }
+.cau-hoi .q-num { background:var(--cyan); color:#07080f; font-weight:800; font-size:13px; min-width:28px; height:28px; border-radius:50%; display:flex; align-items:center; justify-content:center; flex-shrink:0; margin-top:2px; }
+.cau-hoi .q-text { color:#d8e8f8; font-size:15.5px; }
+.field-grid { display:grid; grid-template-columns:1fr 1fr; gap:14px; margin:18px 0; }
+.field-card { background:var(--panel2); border:1px solid var(--border); border-radius:14px; padding:16px 18px; transition:border-color .2s; }
+.field-card:hover { border-color:var(--cyan); }
+.field-card .icon { font-size:26px; margin-bottom:8px; }
+.field-card .field-name { font-weight:700; color:var(--cyan2); margin-bottom:6px; font-size:15px; }
+.field-card p { color:#b0c0d8; font-size:14px; margin:0; }
+.canh-bao-box { background:linear-gradient(135deg,#241014,#1a0f10); border:1px solid rgba(240,109,186,.3); border-left:4px solid var(--pink); border-radius:14px; padding:16px 20px; margin:14px 0; }
+.canh-bao-box .cb-title { color:#f8a8cf; font-weight:700; font-size:15px; margin-bottom:4px; }
+.canh-bao-box p { color:#f0c8dc; font-size:14.5px; margin:0; }
+.chat-mock { background:var(--panel2); border:1px solid var(--border); border-radius:14px; padding:16px; margin:16px 0; }
+.chat-msg { border-radius:10px; padding:10px 14px; margin-bottom:10px; font-size:14px; max-width:88%; }
+.chat-msg.user { background:rgba(56,217,245,.1); border:1px solid rgba(56,217,245,.3); color:#cdeffb; margin-left:auto; }
+.chat-msg.bot { background:rgba(86,227,159,.08); border:1px solid rgba(86,227,159,.3); color:#c8f0d8; }
+.chat-msg code { background:rgba(0,0,0,.3); padding:1px 5px; border-radius:5px; font-size:13px; }
+.tag-luyen { display:inline-flex; align-items:center; gap:8px; background:rgba(167,139,250,.15); border:1px solid rgba(167,139,250,.4); color:var(--purple); font-weight:800; font-size:13px; padding:5px 14px; border-radius:20px; text-transform:uppercase; letter-spacing:1px; margin-bottom:14px; }
+.tag-van-dung { display:inline-flex; align-items:center; gap:8px; background:rgba(255,208,96,.1); border:1px solid rgba(255,208,96,.3); color:var(--yellow); font-weight:800; font-size:13px; padding:5px 14px; border-radius:20px; text-transform:uppercase; letter-spacing:1px; margin-bottom:14px; }
+.callout { background:rgba(56,217,245,.06); border:1px dashed rgba(56,217,245,.3); border-radius:12px; padding:14px 18px; margin:16px 0; font-style:italic; color:var(--cyan2); font-size:15.5px; }
+.sidebar::-webkit-scrollbar { width:4px; }
+.sidebar::-webkit-scrollbar-track { background:transparent; }
+.sidebar::-webkit-scrollbar-thumb { background:var(--border); border-radius:2px; }
+@media (max-width:900px) {
+  .app { display:block; } .sidebar { position:relative; height:auto; border-right:0; border-bottom:1px solid var(--border); }
+  .toc { display:grid; grid-template-columns:1fr 1fr; } .main { padding:18px 14px 60px; }
+  .field-grid, .img-side { grid-template-columns:1fr; } .bai-cover { flex-direction:column; }
+}
+@media (max-width:540px) {
+  body { font-size:16px; } .section { padding:18px 16px 30px; } .hero { padding:24px 20px; } .toc { grid-template-columns:1fr; }
+}
+@media print {
+  .sidebar, .nav-btns, .hero, .ctrl-box { display:none; } body { background:white; color:black; }
+  .section { border:1px solid #ccc; box-shadow:none; background:white; page-break-after:always; } p, li { color:#222; }
+}
+
+
+.feature-item { background:var(--panel2); border:1px solid var(--border); border-radius:12px; padding:14px 18px; margin:10px 0; display:flex; gap:14px; }
+.feature-icon { font-size:24px; flex-shrink:0; margin-top:2px; }
+.feature-title { font-weight:700; color:var(--cyan2); margin-bottom:4px; }
+.feature-desc { color:#b8cce0; font-size:15px; }
+code { font-family:Consolas,Menlo,monospace; background:rgba(56,217,245,.1); color:var(--cyan2); padding:1px 6px; border-radius:5px; font-size:.9em; }
+.sgk-table { width:100%; border-collapse:collapse; margin:0 0 18px; font-size:15px; }
+.sgk-table th { background:rgba(255,208,96,.18); color:var(--yellow); padding:9px 12px; border:1px solid var(--border); }
+.sgk-table td { padding:8px 12px; border:1px solid var(--border); color:#cdeffb; text-align:center; font-family:Consolas,Menlo,monospace; }
+.sgk-table td:last-child { font-family:inherit; }
+
+.wheel-grid { display:grid; grid-template-columns:repeat(5,1fr); gap:10px; margin:18px 0; }
+.wheel-card { background:var(--panel2); border:1px solid var(--border); border-radius:14px; padding:14px 10px; text-align:center; transition:border-color .2s; }
+.wheel-card:hover { border-color:var(--yellow); }
+.wheel-card .wnum { display:inline-flex; align-items:center; justify-content:center; width:26px; height:26px; border-radius:50%; background:var(--yellow); color:#1a1400; font-weight:800; font-size:13px; margin-bottom:8px; }
+.wheel-card .wtext { color:#e0d8b8; font-size:13px; font-weight:600; line-height:1.4; }
+@media (max-width:700px) { .wheel-grid { grid-template-columns:1fr 1fr; } }
+</style>
+</head>
+<body>
+<div class="app">
+
+<aside class="sidebar" id="sidebar">
+  <div class="brand-box">
+    <div class="series-label">SGK Tin học 12 · KNTT</div>
+    <div class="brand-title">Chủ đề 3<br><span>Đạo đức, pháp luật &amp; văn hoá số</span></div>
+    <div class="brand-sub">Kết nối tri thức với cuộc sống · bản cập nhật 8/2026</div>
+  </div>
+  <div class="toc-title">Nội dung bài học</div>
+  <nav class="toc">
+    <a href="#cover" class="active" onclick="setActive(this)">📖 Giới thiệu bài</a>
+    <a href="#giao-tiep" onclick="setActive(this)">1. Giao tiếp trong KGM</a>
+    <a href="#uu-nhuoc" onclick="setActive(this)">   Ưu điểm và nhược điểm</a>
+    <a href="#nhan-van" onclick="setActive(this)">2. Ứng xử nhân văn</a>
+    <a href="#thoi-quen" onclick="setActive(this)">   Rèn thói quen</a>
+    <a href="#tinh-huong" onclick="setActive(this)">   Tình huống cụ thể</a>
+    <a href="#luyen-tap" onclick="setActive(this)">🏋️ Luyện tập</a>
+    <a href="#van-dung" onclick="setActive(this)">💡 Vận dụng</a>
+  </nav>
+  <div class="ctrl-box">
+    <h4>Tuỳ chỉnh hiển thị</h4>
+    <div class="ctrl-row">
+      <button class="ctrl-btn" onclick="changeFont(2)">A＋</button>
+      <button class="ctrl-btn" onclick="changeFont(-2)">A－</button>
+      <button class="ctrl-btn" onclick="toggleTheme()">☀/☾</button>
+    </div>
+    <div class="progress-bar"><div class="progress-fill" id="prog"></div></div>
+    <div style="font-size:12px; color:var(--muted); margin-top:6px; text-align:center" id="prog-label">Tiến độ đọc: 0%</div>
+  </div>
+</aside>
+
+<main class="main">
+  <div class="hero">
+    <div class="chu-de-tag">💗 Chủ đề 3 · Đạo đức, pháp luật và văn hoá trong môi trường số</div>
+    <span class="update-tag">🕓 Cập nhật nội dung: 8/2026</span>
+    <h1>Giao tiếp và ứng xử trong không gian mạng</h1>
+    <p class="hero-desc">Tin học 12 · Kết nối tri thức với cuộc sống &nbsp;|&nbsp; Bài 6 trong 28 bài học &nbsp;|&nbsp; Bản viết lại, minh hoạ mới</p>
+  </div>
+
+  <div class="goals-box">
+    <div class="goals-title">🎯 Sau bài học này em sẽ:</div>
+    <ul>
+      <li>Phân tích được ưu và nhược điểm về giao tiếp trong không gian mạng qua các ví dụ cụ thể.</li>
+      <li>Phân tích được tính nhân văn trong ứng xử ở một số tình huống tham gia không gian mạng.</li>
+    </ul>
+  </div>
+
+  <div class="nav-btns">
+    <button class="nav-btn" onclick="window.location.href='bai-04.html'">← Bài trước</button>
+    <button class="nav-btn" disabled>Bài tiếp →</button>
+  </div>
+
+  <section class="section" id="cover" data-page="Trang 34">
+    <div class="bai-cover">
+      <div class="num-block"><div class="bai-num">BÀI</div><div class="bai-big">6</div></div>
+      <div class="info">
+        <div class="topic">Chủ đề 3 · Đạo đức, pháp luật và văn hoá trong môi trường số</div>
+        <div class="title">Giao tiếp và ứng xử trong không gian mạng</div>
+        <div class="subtitle">Cyberspace Communication · Ứng xử nhân văn</div>
+      </div>
+    </div>
+
+    <div class="activity">
+      <div class="activity-badge">🤔 Khởi động</div>
+      <p>Em đã từng được trải nghiệm hình thức học trực tuyến. Hãy cho biết ý kiến của em về ưu điểm và nhược điểm của hình thức học đó.</p>
+    </div>
+
+    <h2 id="giao-tiep">1. GIAO TIẾP TRONG KHÔNG GIAN MẠNG</h2>
+    <div class="activity">
+      <div class="activity-badge">Hoạt động 1</div>
+      <strong>Nhận biết giao tiếp trong không gian mạng</strong>
+      <p style="margin-top:10px">Trong tình huống dưới đây, theo em đâu là các tình huống sử dụng giao tiếp trong không gian mạng?</p>
+      <ul>
+        <li><strong>A.</strong> Giao tiếp với một trợ lí ảo (chatbot) trên trang web tuyển sinh của một trường đại học.</li>
+        <li><strong>B.</strong> Tham gia một lớp học trực tuyến.</li>
+        <li><strong>C.</strong> Hai người bạn gọi điện thoại video (FaceTime).</li>
+        <li><strong>D.</strong> Hẹn gặp bạn tại một quán cà phê Internet.</li>
+      </ul>
+    </div>
+    <div class="callout"><em>Gợi ý: A, B, C đều trao đổi qua phần mềm/dịch vụ trực tuyến — còn D chỉ dùng quán cà phê làm địa điểm, việc trò chuyện diễn ra trực tiếp, không qua mạng máy tính.</em></div>
+
+    <h3>a) Khái niệm không gian mạng</h3>
+    <p><strong>Không gian mạng</strong> (còn được gọi là <strong>thế giới ảo</strong>) là môi trường được tạo ra nhờ sử dụng mạng máy tính, trong đó <strong>Internet có thể được coi là không gian mạng lớn nhất</strong>.</p>
+    <p>Không gian mạng cho phép con người giao tiếp với nhau thông qua các phần mềm và dịch vụ giao tiếp trực tuyến như <em>mạng xã hội, thư điện tử, ứng dụng nhắn tin, gọi điện thoại video, diễn đàn trực tuyến, nhật kí web (blog) và trang web cá nhân, các trang thương mại điện tử</em>,…</p>
+
+    <h3>b) Ưu điểm và nhược điểm của giao tiếp trong không gian mạng</h3>
+    <p>Giao tiếp trong không gian mạng (giao tiếp trực tuyến) có nhiều ưu điểm. Đáng kể nhất đó là:</p>
+    <div class="page-num">Trang 34</div>
+  </section>
+
+  <section class="section" id="uu-nhuoc" data-page="Trang 34-35">
+    <div class="field-grid">
+      <div class="field-card"><div class="icon">📍</div><div class="field-name">Thuận tiện</div><p>Thực hiện được mọi nơi, mọi lúc, miễn là có kết nối mạng. Đặc biệt có lợi cho những người không có điều kiện giao tiếp trực tiếp, chẳng hạn những người sống xa nhau.</p></div>
+      <div class="field-card"><div class="icon">💰</div><div class="field-name">Tiết kiệm thời gian và chi phí</div><p>Giúp tiết kiệm thời gian, chi phí di chuyển nhưng vẫn đảm bảo hiệu quả công việc. Ví dụ: hội nghị truyền hình giảm nhu cầu đi lại; điện thoại video giúp con người gần nhau hơn.</p></div>
+      <div class="field-card"><div class="icon">🤝</div><div class="field-name">Mở rộng kết nối xã hội</div><p>Dễ dàng mở rộng mạng lưới quan hệ, kết nối những người cùng sở thích, quan điểm hoặc nhu cầu — cũng là cách xây dựng thương hiệu cá nhân hoặc doanh nghiệp.</p></div>
+      <div class="field-card"><div class="icon">🧰</div><div class="field-name">Công cụ giao tiếp đa dạng</div><p>Hội nghị truyền hình, nhắn tin nhanh, thư điện tử, mạng xã hội,… cho phép người dùng chọn công cụ phù hợp nhất với nhu cầu liên lạc.</p></div>
+    </div>
+    <div class="img-caption">Hình 6.1. Bốn ưu điểm của giao tiếp trong không gian mạng</div>
+
+    <p>Những lợi ích trên làm cho giao tiếp trong không gian mạng trở thành <strong>một công cụ hỗ trợ đáng kể cho khoa học, giáo dục và cuộc sống</strong>. Tuy nhiên giao tiếp trong không gian mạng cũng có nhiều nhược điểm. Ngoài những hậu quả tổn hại tinh thần và vật chất xảy ra do "nghiện mạng", nó còn ẩn chứa không ít nhược điểm khác:</p>
+
+    <div class="field-grid">
+      <div class="field-card" style="border-color:rgba(240,109,186,.35)"><div class="icon">😐</div><div class="field-name" style="color:var(--pink)">Thiếu tín hiệu phi ngôn ngữ</div><p>Thư điện tử hay tin nhắn có thể thiếu tín hiệu phi ngôn ngữ như nét mặt, ngôn ngữ cơ thể và biểu cảm giọng nói — gây khó khăn truyền đạt cảm xúc, dẫn đến hiểu lầm không đáng có.</p></div>
+      <div class="field-card" style="border-color:rgba(240,109,186,.35)"><div class="icon">🔓</div><div class="field-name" style="color:var(--pink)">Nguy cơ bảo mật và quyền riêng tư</div><p>Có thể bị vi phạm tính bảo mật (lộ mật khẩu, bị tấn công mạng), làm gia tăng lo ngại về quyền riêng tư: dữ liệu, thông tin nhạy cảm bị lộ lọt hoặc bị tấn công.</p></div>
+      <div class="field-card" style="border-color:rgba(240,109,186,.35)"><div class="icon">🎭</div><div class="field-name" style="color:var(--pink)">Thiếu kết nối quan hệ cá nhân chặt chẽ</div><p>Người dùng dễ giấu mặt, tạo bản sao không đầy đủ hoặc giả mạo thông tin, khiến người khác khó đánh giá tính chân thật — gây khó khăn xây dựng lòng tin.</p></div>
+      <div class="field-card" style="border-color:rgba(240,109,186,.35)"><div class="icon">📵</div><div class="field-name" style="color:var(--pink)">Dễ bị ảnh hưởng bởi sự cố kĩ thuật</div><p>Mất kết nối mạng, phần mềm không tương thích có thể cản trở giao tiếp trực tuyến, dẫn đến giao tiếp bị trì hoãn hoặc gián đoạn.</p></div>
+    </div>
+    <div class="img-caption">Hình 6.2. Bốn nhược điểm của giao tiếp trong không gian mạng</div>
+
+    <div class="ghi-nho">
+      <div class="ghi-nho-title">📌 Ghi nhớ</div>
+      <p>Không gian mạng là môi trường được tạo ra nhờ các mạng máy tính. Giao tiếp trong không gian mạng có nhiều ưu điểm song cũng tiềm ẩn những nhược điểm đòi hỏi người dùng phải biết ứng xử đúng cách.</p>
+    </div>
+    <div class="cau-hoi"><div class="q-num">1</div><div class="q-text">Hãy kể tên một số dịch vụ và phần mềm hỗ trợ giao tiếp trong không gian mạng. Nêu tóm tắt khả năng của chúng.</div></div>
+    <div class="cau-hoi"><div class="q-num">2</div><div class="q-text">Hãy trình bày một vài ưu điểm và nhược điểm của giao tiếp trong không gian mạng mà em thấy tâm đắc nhất.</div></div>
+    <div class="page-num">Trang 35</div>
+  </section>
+
+  <section class="section" id="nhan-van" data-page="Trang 36">
+    <h2 id="nhan-van-h2">2. THỂ HIỆN TÍNH NHÂN VĂN TRONG KHÔNG GIAN MẠNG</h2>
+    <div class="activity">
+      <div class="activity-badge">Hoạt động 2</div>
+      <strong>Tìm hiểu về ứng xử nhân văn trong không gian mạng</strong>
+      <p style="margin-top:10px">Trong các trường hợp sau, trường hợp nào <strong>KHÔNG</strong> phải là sự thể hiện của việc ứng xử nhân văn trong không gian mạng?</p>
+      <ul>
+        <li><strong>A.</strong> Đưa lên mạng ảnh chụp bạn trong một tư thế không đẹp.</li>
+        <li><strong>B.</strong> Sử dụng những ngôn từ khiếm nhã khi phê phán bạn trên mạng xã hội.</li>
+        <li><strong>C.</strong> Ngăn không cho bạn gửi lên mạng video quay cảnh hai bạn trong lớp đánh nhau.</li>
+        <li><strong>D.</strong> Chụp đoạn nhật kí của bạn (viết về những điều bạn không hài lòng về một bạn cùng lớp) rồi gửi cho các bạn khác.</li>
+      </ul>
+    </div>
+    <div class="callout"><em>Gợi ý: A, B, D đều xâm phạm quyền riêng tư hoặc thiếu lịch sự — chỉ có C là hành động nhân văn, ngăn chặn nội dung có hại lan truyền.</em></div>
+
+    <h3>a) Ứng xử nhân văn khi giao tiếp trong không gian mạng</h3>
+    <p>Bên cạnh việc thực hiện các quy tắc ứng xử trên mạng xã hội phù hợp với quy định của pháp luật được nêu trong <strong>Quyết định số 874-QĐ-BTTTT ngày 17/6/2021</strong>, khi giao tiếp trong không gian mạng người dùng còn cần phải biết ứng xử một cách nhân văn. Việc ứng xử nhân văn được thể hiện qua nhiều khía cạnh, sau đây là một vài khía cạnh quan trọng nhất:</p>
+
+    <div class="field-grid">
+      <div class="field-card"><div class="icon">🤝</div><div class="field-name">Tôn trọng</div><p>Tôn trọng quyền riêng tư, không phát tán thông tin riêng tư của người khác mà không có sự cho phép; tôn trọng quan điểm của mỗi người, không châm chọc hay làm người khác tổn thương.</p></div>
+      <div class="field-card"><div class="icon">💬</div><div class="field-name">Lịch sự</div><p>Dùng ngôn từ đúng mực, không nhạy cảm, lăng mạ, châm chọc, phân biệt chủng tộc, giới tính, tôn giáo. Chia sẻ thông tin chính xác, tránh tin đồn và thư rác.</p></div>
+      <div class="field-card"><div class="icon">💗</div><div class="field-name">Thấu hiểu</div><p>Cảm thông với người khác, đặt mình vào hoàn cảnh của họ để hiểu suy nghĩ, tình cảm, vấn đề họ gặp phải. Thấu hiểu được thì mới giúp đỡ hiệu quả hơn.</p></div>
+      <div class="field-card"><div class="icon">🫶</div><div class="field-name">Hỗ trợ</div><p>Luôn sẵn lòng giúp đỡ khi người khác gặp khó khăn — đôi khi chỉ là lời động viên chân thành, tin nhắn an ủi kịp thời — để xây dựng cộng đồng trực tuyến mạnh mẽ.</p></div>
+    </div>
+    <div class="img-caption">Hình 6.3. Bốn yếu tố của ứng xử nhân văn trong không gian mạng</div>
+    <div class="page-num">Trang 36</div>
+  </section>
+
+  <section class="section" id="thoi-quen" data-page="Trang 36-37">
+    <p>Để hình thành thói quen ứng xử nhân văn trong không gian mạng, có thể áp dụng các cách sau đây:</p>
+    <div class="wheel-grid">
+      <div class="wheel-card"><div class="wnum">1</div><div class="wtext">Tự kiểm tra, cải thiện hành vi trực tuyến của mình</div></div>
+      <div class="wheel-card"><div class="wnum">2</div><div class="wtext">Bình tĩnh lắng nghe và tôn trọng ý kiến người khác</div></div>
+      <div class="wheel-card"><div class="wnum">3</div><div class="wtext">Học cách xử lí các tình huống khó xử</div></div>
+      <div class="wheel-card"><div class="wnum">4</div><div class="wtext">Cẩn trọng với ngôn từ và cách viết</div></div>
+      <div class="wheel-card"><div class="wnum">5</div><div class="wtext">Đối xử với người khác theo cách mình muốn được đối xử</div></div>
+    </div>
+    <div class="img-caption">Hình 6.4. Năm cách hình thành thói quen ứng xử nhân văn</div>
+
+    <ul>
+      <li><em>Tự kiểm tra, cải thiện hành vi trực tuyến của mình:</em> Hãy xem lại và tự đánh giá các hành vi của mình trên mạng xã hội, trong các cuộc trò chuyện trực tuyến, thư điện tử. Nếu nhận thấy hành vi nào không đúng mực hoặc thiếu nhân văn, hãy cố gắng tìm cách sửa đổi.</li>
+      <li><em>Bình tĩnh lắng nghe và tôn trọng ý kiến của người khác:</em> Hãy lắng nghe ý kiến của người khác và đối xử với họ một cách tôn trọng. Nếu không đồng ý với ý kiến của họ, hãy đưa ra lí do và phản bác một cách lịch sự.</li>
+      <li><em>Học cách xử lí các tình huống khó xử:</em> Nếu cảm thấy không chắc chắn về cách xử lí, hãy tìm kiếm sự giúp đỡ từ những người có kinh nghiệm hoặc từ các tài liệu hướng dẫn trực tuyến.</li>
+      <li><em>Cẩn trọng với ngôn từ và cách viết:</em> Chú ý đến cách viết của mình để đảm bảo nó không gây hiểu nhầm hoặc mang tính khiêu khích.</li>
+      <li><em>Đối xử với người khác theo cách mà mình muốn được đối xử:</em> Đây là tinh thần cần quán triệt để hình thành thói quen ứng xử nhân văn trong không gian mạng.</li>
+    </ul>
+
+    <h3>b) Ứng xử nhân văn trong một số tình huống cụ thể</h3>
+    <p>Dưới đây là một số ví dụ về ứng xử nhân văn trong một số tình huống cụ thể khi giao tiếp trong không gian mạng:</p>
+    <div class="page-num">Trang 37</div>
+  </section>
+
+  <section class="section" id="tinh-huong" data-page="Trang 37-38">
+    <div class="feature-item"><div class="feature-icon">🗣️</div><div><div class="feature-title">Tranh luận trên diễn đàn</div><div class="feature-desc">Nếu không đồng ý với ý kiến của ai đó, hãy trao đổi một cách lịch sự và không bao giờ dùng ngôn ngữ khiêu khích hoặc phân biệt chủng tộc, giới tính, tôn giáo, tấn công cá nhân. Giữ bình tĩnh trong tình huống khó chịu hoặc bị xúc phạm.</div></div></div>
+    <div class="feature-item"><div class="feature-icon">💭</div><div><div class="feature-title">Thảo luận trên mạng xã hội</div><div class="feature-desc">Hãy đọc kĩ bài viết của người khác trước khi đưa ra ý kiến của mình. Nếu có ý kiến trái ngược, cần trao đổi một cách lịch sự trên tinh thần tôn trọng quan điểm của họ.</div></div></div>
+    <div class="feature-item"><div class="feature-icon">✉️</div><div><div class="feature-title">Viết thư hoặc tin nhắn</div><div class="feature-desc">Hãy viết một cách lịch sự, tránh ngôn từ thô tục hoặc khiêu khích. Tôn trọng quyền riêng tư của người nhận — không chia sẻ thông tin trao đổi riêng với bên thứ ba khi chưa được phép.</div></div></div>
+    <div class="feature-item"><div class="feature-icon">📹</div><div><div class="feature-title">Trò chuyện qua video</div><div class="feature-desc">Hãy mặc quần áo lịch sự, không để lộ những vật dụng hoặc cảnh quan không phù hợp. Giữ một thái độ đúng đắn trong suốt cuộc trò chuyện.</div></div></div>
+    <div class="feature-item"><div class="feature-icon">📤</div><div><div class="feature-title">Đăng bài hoặc chia sẻ thông tin</div><div class="feature-desc">Hãy đọc kĩ nội dung, kiểm tra tính chính xác của nó để đảm bảo không làm tổn hại đến danh tiếng hoặc quyền riêng tư của người khác.</div></div></div>
+
+    <div class="ghi-nho">
+      <div class="ghi-nho-title">📌 Ghi nhớ</div>
+      <p>Tôn trọng, lịch sự, thấu hiểu và sẵn sàng hỗ trợ là những yếu tố quan trọng của việc ứng xử nhân văn trong không gian mạng. Các yếu tố này giúp tạo ra một môi trường trao đổi thông tin và giao tiếp trong không gian mạng an toàn, lành mạnh, tránh làm tổn thương người khác, đồng thời cũng tạo sự thoải mái và tin tưởng cho mọi người khi tham gia vào các hoạt động trên không gian đó.</p>
+    </div>
+
+    <div class="cau-hoi"><div class="q-num">1</div><div class="q-text">Khi giao tiếp trong không gian mạng, nên tránh những hành vi nào sau đây: A. Liên tục gửi các tin nhắn vô thưởng vô phạt cho người khác. B. Chia sẻ các thông tin về thành công của bạn bè, các tấm gương sống đẹp,… C. Chia sẻ thông tin cá nhân của người khác mà không được phép. D. Nói xấu hoặc đe doạ người khác trên mạng xã hội.</div></div>
+    <div class="cau-hoi"><div class="q-num">2</div><div class="q-text">Hành vi nào dưới đây không phù hợp với tính nhân văn khi giao tiếp trong không gian mạng: A. Tôn trọng ý kiến và quan điểm của người khác. B. Sử dụng từ ngữ thô tục và xúc phạm để thể hiện sự bất bình. C. Chủ động tìm hiểu thêm thông tin trước khi đưa ra ý kiến của mình. D. Chê bai việc làm của người khác.</div></div>
+    <div class="callout"><em>Gợi ý: Câu 1 nên tránh A, C, D (chỉ B là hành vi tích cực nên giữ). Câu 2 không phù hợp là B và D.</em></div>
+
+    <span class="tag-luyen" id="luyen-tap">🏋️ Luyện tập</span>
+    <div class="cau-hoi"><div class="q-num">1</div><div class="q-text">Hãy kể về một trải nghiệm giao tiếp trong không gian mạng mà em từng tham gia.</div></div>
+    <div class="cau-hoi"><div class="q-num">2</div><div class="q-text">Hãy nêu một vài ví dụ minh hoạ cho việc vận dụng các lợi ích của giao tiếp trong không gian mạng để tạo sự tiện lợi cho công việc hoặc cuộc sống.</div></div>
+
+    <div id="van-dung" style="margin-top:24px"><span class="tag-van-dung">💡 Vận dụng</span></div>
+    <div class="cau-hoi"><div class="q-num">1</div><div class="q-text">Chọn một tình huống giả định trong học tập hoặc trong cuộc sống, ví dụ như bị ốm cần mượn vở của bạn để chép bài,… Hãy viết một thư điện tử gửi cho bạn để trao đổi về tình huống đó.</div></div>
+    <div class="page-num">Trang 38</div>
+  </section>
+</main>
+
+
+
+</div>
+
+<script>
+let fs = 18;
+function changeFont(d) { fs = Math.min(30, Math.max(13, fs + d)); document.body.style.fontSize = fs + 'px'; }
+let light = false;
+function toggleTheme() {
+  light = !light;
+  document.documentElement.style.setProperty('--bg', light ? '#f0f4f8' : '#070b14');
+  document.documentElement.style.setProperty('--text', light ? '#1a2540' : '#e8eef8');
+  document.documentElement.style.setProperty('--panel', light ? '#fff' : '#111a2e');
+  document.documentElement.style.setProperty('--panel2', light ? '#f5f8fc' : '#162035');
+  document.documentElement.style.setProperty('--border', light ? '#d0daea' : '#1e2f4d');
+  document.body.style.background = light
+    ? 'radial-gradient(ellipse at 20% 10%, #d8e8f8 0%, #f0f4f8 60%)'
+    : 'radial-gradient(ellipse at 20% 10%, #0d1f3c 0%, #070b14 50%)';
+}
+function setActive(el) { document.querySelectorAll('.toc a').forEach(a => a.classList.remove('active')); el.classList.add('active'); }
+window.addEventListener('scroll', () => {
+  const doc = document.documentElement;
+  const scrolled = doc.scrollTop || document.body.scrollTop;
+  const total = doc.scrollHeight - doc.clientHeight;
+  const pct = total > 0 ? Math.round((scrolled / total) * 100) : 0;
+  document.getElementById('prog').style.width = pct + '%';
+  document.getElementById('prog-label').textContent = 'Tiến độ đọc: ' + pct + '%';
+});
+const sections = document.querySelectorAll('section[id], h2[id], h3[id]');
+const tocLinks = document.querySelectorAll('.toc a');
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      const id = entry.target.id;
+      tocLinks.forEach(a => { a.classList.remove('active'); if (a.getAttribute('href') === '#' + id) a.classList.add('active'); });
+    }
+  });
+}, { threshold: 0.3 });
+sections.forEach(s => observer.observe(s));
+</script>
+
+</body>
+</html>

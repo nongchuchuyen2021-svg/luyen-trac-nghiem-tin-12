@@ -273,7 +273,37 @@ export type MenuPathGame = {
   questions: MenuPathQuestion[];
 };
 
-export type LessonGame = SortGame | TimelineGame | TopologyGame | EncapsulationGame | RoutingGame | MenuPathGame;
+// Một nhóm phân loại phẳng (KHÔNG lồng nhau, khác EncapsulationGame) — hiển
+// thị dạng lưới thẻ song song, mỗi thẻ có nhãn + mô tả ngắn.
+export type ClassifyCategory = {
+  id: string;
+  emoji: string;
+  name: string;
+  subtitle: string;
+};
+
+// Một mẩu (hành vi, tình huống, phát biểu…) cần xếp đúng vào 1 trong các nhóm
+export type ClassifyItem = {
+  id: string;
+  label: string;
+  categoryId: string; // trùng ClassifyCategory.id
+  explain: string;
+};
+
+// Game xếp các mẩu vào đúng nhóm phân loại (2-6 nhóm song song) — toàn bộ
+// hiện ra một lần, chấm điểm một lượt, giống EncapsulationGame về tương tác
+// nhưng KHÔNG mang ý nghĩa lồng nhau nên hiển thị dạng lưới phẳng.
+export type ClassifyGame = {
+  kind: "classify";
+  id: string;
+  title: string;
+  emoji: string;
+  instructions: string;
+  categories: ClassifyCategory[];
+  items: ClassifyItem[];
+};
+
+export type LessonGame = SortGame | TimelineGame | TopologyGame | EncapsulationGame | RoutingGame | MenuPathGame | ClassifyGame;
 
 // ─── Ôn tập tổng kết ─────────────────────────────────────────────────────────
 // Trang ôn nhanh trước khi kiểm tra: thẻ lật ghi nhớ, lỗi hay gặp, mẹo nhớ và

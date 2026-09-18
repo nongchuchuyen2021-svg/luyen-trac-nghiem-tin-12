@@ -9,6 +9,7 @@ import TopologyGameClient from "@/components/TopologyGame";
 import EncapsulationGameClient from "@/components/EncapsulationGame";
 import RoutingGameClient from "@/components/RoutingGame";
 import MenuPathGameClient from "@/components/MenuPathGame";
+import ClassifyGameClient from "@/components/ClassifyGame";
 
 export default function GameHub({
   lessonId,
@@ -50,7 +51,10 @@ export default function GameHub({
     if (active.kind === "routing") {
       return <RoutingGameClient lessonId={lessonId} game={active} onBack={handleBack} />;
     }
-    return <MenuPathGameClient lessonId={lessonId} game={active} onBack={handleBack} />;
+    if (active.kind === "menupath") {
+      return <MenuPathGameClient lessonId={lessonId} game={active} onBack={handleBack} />;
+    }
+    return <ClassifyGameClient lessonId={lessonId} game={active} onBack={handleBack} />;
   }
 
   return (
@@ -80,7 +84,9 @@ export default function GameHub({
                 ? `${g.items.length} mẩu thông tin · xếp đúng lớp đóng gói`
                 : g.kind === "routing"
                 ? `${g.questions.length} gói tin · chọn đúng cổng theo bảng định tuyến`
-                : `${g.questions.length} thử thách · ghép đúng đường đi trong menu`;
+                : g.kind === "menupath"
+                ? `${g.questions.length} thử thách · ghép đúng đường đi trong menu`
+                : `${g.items.length} mẩu · xếp đúng nhóm phân loại`;
             const best = bestByGame[g.id] ?? null;
             return (
               <button
