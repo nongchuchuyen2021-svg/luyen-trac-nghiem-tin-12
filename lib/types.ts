@@ -165,7 +165,29 @@ export type TimelineGame = {
   items: TimelineItem[]; // đã đúng thứ tự thời gian sẵn trong data — game sẽ tự xáo khi chơi
 };
 
-export type LessonGame = SortGame | TimelineGame;
+// Một nút thiết bị cố định trên sơ đồ mạng — vị trí/thứ tự đã đúng sẵn theo
+// mảng `nodes`, học sinh phải ghép đúng THẺ HÀNH ĐỘNG vào đúng thiết bị (khác
+// TimelineGame ở chỗ thử thách là "ai làm gì" chứ không phải "trước/sau").
+export type TopologyNode = {
+  id: string;
+  node: string; // tên thiết bị hiển thị cố định trên sơ đồ, vd "Switch A"
+  emoji: string;
+  action: string; // hành động xảy ra tại thiết bị này — nội dung thẻ cần ghép đúng
+  explain: string;
+};
+
+// Game kéo-thả (hoặc chạm) ghép hành động vào đúng thiết bị trên sơ đồ mạng
+export type TopologyGame = {
+  kind: "topology";
+  id: string;
+  title: string;
+  emoji: string;
+  instructions: string;
+  nodes: TopologyNode[]; // đúng thứ tự vật lý cố định của sơ đồ (đầu → cuối)
+  endLabel?: string; // nhãn thiết bị đích cuối cùng, chỉ trang trí, vd "💻 Máy B (đích)"
+};
+
+export type LessonGame = SortGame | TimelineGame | TopologyGame;
 
 // ─── Ôn tập tổng kết ─────────────────────────────────────────────────────────
 // Trang ôn nhanh trước khi kiểm tra: thẻ lật ghi nhớ, lỗi hay gặp, mẹo nhớ và

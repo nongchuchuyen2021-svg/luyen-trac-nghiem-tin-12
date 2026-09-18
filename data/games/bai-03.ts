@@ -1,4 +1,4 @@
-import type { LessonGame, SortGame, TimelineGame } from "@/lib/types";
+import type { LessonGame, SortGame, TopologyGame } from "@/lib/types";
 
 // Game 1: Phân loại "Trong một LAN hay Ra ngoài Internet?" — Bài 3, toàn bộ
 // mục hub/switch/WAP (chỉ hoạt động trong 1 LAN) đối lại router/modem (đưa
@@ -203,77 +203,80 @@ const sortGameBayDeThi: SortGame = {
   ],
 };
 
-// Game 3: Sắp xếp trình tự "Hành trình gói tin từ LAN này sang LAN khác" —
-// ráp lại TOÀN BỘ 4 thiết bị của bài (switch, router, modem) thành một câu
-// chuyện liền mạch, thay vì tách rời từng thiết bị như 2 game trên. Thứ tự
-// trong mảng items CHÍNH LÀ thứ tự đúng — game tự xáo khi hiển thị.
-const timelineGameHanhTrinhGoiTin: TimelineGame = {
-  kind: "timeline",
+// Game 3: Sơ đồ mạng "Hành trình gói tin từ LAN này sang LAN khác" — ráp lại
+// TOÀN BỘ 4 thiết bị của bài (switch, router, modem) thành một câu chuyện
+// liền mạch, thay vì tách rời từng thiết bị như 2 game trên. Khác bản sắp xếp
+// mốc thời gian cũ: thứ tự thiết bị trên sơ đồ đã CỐ ĐỊNH SẴN đúng (đây chính
+// là sơ đồ mạng thật), thử thách là ghép đúng HÀNH ĐỘNG vào đúng THIẾT BỊ —
+// buộc học sinh nối kiến thức với đúng thiết bị vật lí thay vì chỉ nhớ số thứ tự.
+const topologyGameHanhTrinhGoiTin: TopologyGame = {
+  kind: "topology",
   id: "hanh-trinh-goi-tin",
   title: "Hành trình gói tin từ LAN này sang LAN khác",
   emoji: "📦",
   instructions:
-    "Kéo (hoặc chạm chọn rồi đặt) 8 bước sau vào đúng thứ tự: dữ liệu đi từ máy A (LAN 1) tới máy B (ở một LAN khác, cách xa) theo trình tự nào?",
-  items: [
+    "Đây là sơ đồ đúng đường đi của dữ liệu từ máy A (LAN 1) tới máy B (ở một LAN khác, cách xa). Kéo (hoặc chạm chọn rồi đặt) 8 thẻ hành động vào ĐÚNG THIẾT BỊ thực hiện việc đó.",
+  nodes: [
     {
       id: "b1-may-a-gui",
+      node: "Máy A",
       emoji: "💻",
-      label: "Máy A gửi dữ liệu qua cáp UTP/RJ45 vào switch (hoặc hub) trong LAN của mình",
-      year: "Bước 1",
+      action: "Gửi dữ liệu qua cáp UTP/RJ45 vào switch (hoặc hub) trong LAN của mình",
       explain: "Nối vật lí bằng cáp UTP với giắc RJ45 là cách phổ biến nhất đưa một máy tính vào LAN.",
     },
     {
       id: "b2-switch-a",
+      node: "Switch A",
       emoji: "🔀",
-      label: "Switch xác định đúng cổng nhận, chuyển dữ liệu tới cổng LAN của router A",
-      year: "Bước 2",
+      action: "Xác định đúng cổng nhận, chuyển dữ liệu tới cổng LAN của router A",
       explain: "Switch chỉ mở kênh truyền tạm thời giữa cổng gửi và cổng nhận rồi đưa dữ liệu tới đúng thiết bị kế tiếp.",
     },
     {
       id: "b3-router-a-wan",
+      node: "Router A",
       emoji: "🧭",
-      label: "Router A nhận dữ liệu qua cổng LAN, rồi đẩy ra ngoài qua cổng WAN",
-      year: "Bước 3",
+      action: "Nhận dữ liệu qua cổng LAN, rồi đẩy ra ngoài qua cổng WAN",
       explain: "Cổng LAN là nơi router nhận dữ liệu từ các máy trong chính LAN đó; cổng WAN là 'cửa ra' để dữ liệu rời LAN đi tiếp.",
     },
     {
       id: "b4-modem-a-doi-tin-hieu",
+      node: "Modem A",
       emoji: "🔄",
-      label: "Modem của LAN A đổi tín hiệu số (digital) thành tín hiệu tương tự (analog) để truyền đi xa",
-      year: "Bước 4",
+      action: "Đổi tín hiệu số (digital) thành tín hiệu tương tự (analog) để truyền đi xa",
       explain: "Trong LAN tín hiệu là tín hiệu số; ra ngoài LAN phải dùng tín hiệu tương tự (quang, sóng vô tuyến, sóng điện thoại...), nên modem đứng giữa router và nhà cung cấp dịch vụ để chuyển đổi.",
     },
     {
       id: "b5-dinh-tuyen",
+      node: "Mạng viễn thông (WAN)",
       emoji: "🗺️",
-      label: "Dữ liệu được định tuyến (routing), có thể trung chuyển qua nhiều router trên mạng viễn thông",
-      year: "Bước 5",
+      action: "Định tuyến (routing) dữ liệu, có thể trung chuyển qua nhiều router trên mạng viễn thông",
       explain: "Router chọn cổng WAN thích hợp để dữ liệu đi tới đúng LAN đích — nếu đường đi xa, dữ liệu có thể phải qua nhiều router trung gian.",
     },
     {
       id: "b6-modem-b-doi-nguoc",
+      node: "Modem B",
       emoji: "🔁",
-      label: "Modem ở đầu LAN B đổi tín hiệu tương tự trở lại thành tín hiệu số",
-      year: "Bước 6",
+      action: "Đổi tín hiệu tương tự trở lại thành tín hiệu số",
       explain: "Modem làm việc hai chiều: số → tương tự khi dữ liệu đi ra, và tương tự → số khi dữ liệu tới gần LAN đích để đọc được.",
     },
     {
       id: "b7-router-b",
+      node: "Router B",
       emoji: "🧭",
-      label: "Router B nhận dữ liệu qua cổng WAN, xác định cổng LAN cần gửi tiếp",
-      year: "Bước 7",
+      action: "Nhận dữ liệu qua cổng WAN, xác định cổng LAN cần gửi tiếp",
       explain: "Đây là router cuối cùng trên hành trình — nó đưa dữ liệu từ ngoài Internet quay trở lại đúng cổng LAN hướng vào LAN B.",
     },
     {
       id: "b8-switch-b",
+      node: "Switch B",
       emoji: "🔀",
-      label: "Switch trong LAN B chuyển dữ liệu tới đúng máy B",
-      year: "Bước 8",
+      action: "Chuyển dữ liệu tới đúng máy B",
       explain: "Bước cuối cùng lại là công việc nội bộ một LAN — switch mở kênh truyền riêng để đưa dữ liệu đến đúng máy nhận.",
     },
   ],
+  endLabel: "💻 Máy B (đích đến)",
 };
 
-const games: LessonGame[] = [sortGameLanHayInternet, sortGameBayDeThi, timelineGameHanhTrinhGoiTin];
+const games: LessonGame[] = [sortGameLanHayInternet, sortGameBayDeThi, topologyGameHanhTrinhGoiTin];
 
 export default games;

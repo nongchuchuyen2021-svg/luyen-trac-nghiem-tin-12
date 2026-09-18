@@ -5,6 +5,7 @@ import type { LessonGame } from "@/lib/types";
 import { getLessonProgress } from "@/lib/progress";
 import SortGameClient from "@/components/SortGame";
 import TimelineGameClient from "@/components/TimelineGame";
+import TopologyGameClient from "@/components/TopologyGame";
 
 export default function GameHub({
   lessonId,
@@ -31,11 +32,13 @@ export default function GameHub({
     // Nếu bài chỉ có đúng 1 game thì màn chọn game không hiện — "Quay lại" đi
     // thẳng ra ngoài luôn. Nếu có nhiều game thì "Quay lại" về màn chọn trước.
     const handleBack = games.length === 1 ? onBack : () => setActive(null);
-    return active.kind === "sort" ? (
-      <SortGameClient lessonId={lessonId} game={active} onBack={handleBack} />
-    ) : (
-      <TimelineGameClient lessonId={lessonId} game={active} onBack={handleBack} />
-    );
+    if (active.kind === "sort") {
+      return <SortGameClient lessonId={lessonId} game={active} onBack={handleBack} />;
+    }
+    if (active.kind === "timeline") {
+      return <TimelineGameClient lessonId={lessonId} game={active} onBack={handleBack} />;
+    }
+    return <TopologyGameClient lessonId={lessonId} game={active} onBack={handleBack} />;
   }
 
   return (
@@ -57,7 +60,9 @@ export default function GameHub({
             const desc =
               g.kind === "sort"
                 ? `${g.items.length} thẻ · kéo hoặc bấm để phân loại`
-                : `${g.items.length} mốc · kéo hoặc chạm để sắp xếp`;
+                : g.kind === "timeline"
+                ? `${g.items.length} mốc · kéo hoặc chạm để sắp xếp`
+                : `${g.nodes.length} thiết bị · ghép hành động vào sơ đồ mạng`;
             const best = bestByGame[g.id] ?? null;
             return (
               <button

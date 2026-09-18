@@ -155,7 +155,7 @@ export default function LessonClient({
             name: games.length === 1 ? games[0].title : "Trung tâm Game",
             desc:
               games.length === 1
-                ? `${games[0].items.length} thẻ · kéo hoặc chạm để chơi`
+                ? `${games[0].kind === "topology" ? games[0].nodes.length : games[0].items.length} thẻ · kéo hoặc chạm để chơi`
                 : `${games.length} trò chơi ôn bài · kéo hoặc chạm để chơi`,
             best: null,
             done: false,
