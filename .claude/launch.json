@@ -12,6 +12,18 @@
       "runtimeExecutable": "npm",
       "runtimeArgs": ["start"],
       "port": 3002
+    },
+    {
+      "name": "gddp-chu-de",
+      "runtimeExecutable": "python",
+      "runtimeArgs": ["-m", "http.server", "5601", "--directory", "E:/01 NAM HOC 2026-2027/SGK/GDDP/Chu_de"],
+      "port": 5601
+    },
+    {
+      "name": "trinh-chieu",
+      "runtimeExecutable": "python",
+      "runtimeArgs": ["-m", "http.server", "5599", "--directory", "E:/du-an/Trinh-chieu/TrinhChieu-HTML"],
+      "port": 5599
     }
   ]
 }

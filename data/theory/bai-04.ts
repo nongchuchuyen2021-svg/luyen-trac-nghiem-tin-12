@@ -336,6 +336,81 @@ const theory: LessonTheory = {
         },
       ],
     },
+    {
+      id: "meo-nho-va-cam-bay",
+      emoji: "💡",
+      heading: "Mẹo nhớ & Cảnh báo bẫy",
+      blocks: [
+        {
+          kind: "text",
+          text: "Kiến thức về Giao thức mạng có nhiều thuật ngữ tiếng Anh và con số dễ nhầm. Dưới đây là các **mẹo liên tưởng thực tế** giúp em nhớ nhanh và **bảng cảnh báo các bẫy câu chữ** hay gặp nhất trong đề thi trắc nghiệm.",
+        },
+        {
+          kind: "cards",
+          tone: "leaf",
+          items: [
+            {
+              emoji: "🏠",
+              title: "IP vs Cổng: Nhà và Số phòng",
+              text: "Địa chỉ **IP** dẫn dữ liệu đến đúng **ngôi nhà (máy tính)**; **Cổng ứng dụng** dẫn vào đúng **căn phòng (phần mềm Web, Chat, Mail)**.",
+            },
+            {
+              emoji: "🚦",
+              title: "MAC vs IP: Trong phòng và Ra ngoài",
+              text: "**MAC** dùng liên lạc **trong nội bộ mạng LAN** (gắn cứng phần cứng); **IP** dùng liên lạc **ra ngoài mạng Internet** (được gán, đổi được).",
+            },
+            {
+              emoji: "✉️",
+              title: "SMTP vs POP3/IMAP: Gửi và Nhận",
+              text: "**S**MTP = **S**end (giao thức dùng để **gửi thư**); **P**OP3 / IMAP = **P**ull / get (giao thức dùng để **nhận/tải thư về** máy).",
+            },
+            {
+              emoji: "📦",
+              title: "IP vs TCP: Dẫn đường và Chất lượng",
+              text: "**IP** lo dẫn đường đi từ mạng này sang mạng khác; **TCP** lo cắt gói, đánh số, kiểm tra lỗi và xác nhận để dữ liệu không bị thất lạc.",
+            },
+          ],
+        },
+        {
+          kind: "compare",
+          left: {
+            emoji: "❌",
+            title: "Bẫy câu chữ đề thi hay gài",
+            items: [
+              "IPv4 dài **4 bit** hoặc **32 byte**",
+              "Địa chỉ MAC có thể **tự do thay đổi**",
+              "Giao thức IP lo việc **gửi đúng phần mềm**",
+              "Không tìm thấy đường đi thì **huỷ gói ngay**",
+              "SMTP dùng cho cả **gửi và nhận thư**",
+            ],
+          },
+          right: {
+            emoji: "✅",
+            title: "Bản chất chính xác cần chọn",
+            items: [
+              "IPv4 dài **4 byte (32 bit)**; MAC dài **6 byte**",
+              "MAC **gắn cứng phần cứng**; IP mới **thay đổi được**",
+              "**TCP** mới lo mức phần mềm (qua số hiệu cổng)",
+              "Chuyển qua **cổng mặc định** để tìm đường tiếp",
+              "**SMTP chỉ gửi**; nhận thư là **POP3 hoặc IMAP**",
+            ],
+          },
+        },
+        {
+          kind: "check",
+          q: "Phát biểu nào sau đây là **CHÍNH XÁC** về các giao thức và địa chỉ mạng?",
+          options: [
+            "Địa chỉ IPv4 gồm 4 byte, địa chỉ MAC gồm 6 byte gắn cứng",
+            "Địa chỉ IPv4 gồm 4 bit, địa chỉ MAC gồm 6 bit gắn cứng",
+            "Giao thức SMTP dùng nhận thư, POP3 dùng để gửi thư đi",
+            "Khi không tìm thấy đường đi, router lập tức huỷ bỏ gói tin",
+          ],
+          answer: 0,
+          explain:
+            "**Địa chỉ IPv4 gồm 4 byte (32 bit)**, còn **địa chỉ MAC gồm 6 byte (48 bit) gắn với phần cứng**. Các câu còn lại đều là bẫy: SMTP là gửi thư, POP3 là nhận thư; router chuyển gói tin qua cổng mặc định chứ không huỷ ngay.",
+        },
+      ],
+    },
   ],
 
   summary: [

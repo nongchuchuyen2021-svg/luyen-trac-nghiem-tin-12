@@ -299,6 +299,81 @@ const theory: LessonTheory = {
         },
       ],
     },
+    {
+      id: "meo-nho-va-cam-bay",
+      emoji: "💡",
+      heading: "Mẹo nhớ & Cảnh báo bẫy",
+      blocks: [
+        {
+          kind: "text",
+          text: "Bài 3 có rất nhiều thiết bị mạng dễ bị gọi lẫn lộn trong đời sống. Dưới đây là các **mẹo phân biệt 1 câu** và **bảng cảnh báo bẫy trắc nghiệm**:",
+        },
+        {
+          kind: "cards",
+          tone: "sea",
+          items: [
+            {
+              emoji: "📢",
+              title: "Hub: Cái loa phát thanh (Broadcast)",
+              text: "Máy A gửi thì **tất cả các máy khác đều nhận** (phát tán ra mọi cổng) → rất dễ xảy ra hiện tượng **xung đột tín hiệu** khi nhiều máy cùng gửi.",
+            },
+            {
+              emoji: "🤫",
+              title: "Switch: Kênh truyền riêng (Chuyển mạch)",
+              text: "Máy A gửi cho máy C thì Switch **chỉ mở riêng đường nối giữa A và C** → không làm phiền máy khác, **triệt tiêu xung đột tín hiệu**.",
+            },
+            {
+              emoji: "🗺️",
+              title: "Router: Người dẫn đường liên mạng",
+              text: "Hub và Switch chỉ dùng **trong nội bộ một mạng LAN**. Muốn chuyển dữ liệu **ra ngoài Internet hoặc sang LAN khác** bắt buộc phải qua **Router**.",
+            },
+            {
+              emoji: "🔄",
+              title: "Modem: Người phiên dịch tín hiệu",
+              text: "**Số (Digital) ↔ Tương tự (Analog)**. Modem chỉ đổi hình thức tín hiệu để truyền đi xa, **hoàn toàn không làm thay đổi nội dung dữ liệu**.",
+            },
+          ],
+        },
+        {
+          kind: "compare",
+          left: {
+            emoji: "❌",
+            title: "Bẫy câu chữ đề thi hay gài",
+            items: [
+              "Dùng Hub hoặc Switch để kết nối 2 LAN cách xa nhau",
+              "Switch phát tán tín hiệu ra tất cả các cổng như Hub",
+              "Modem làm thay đổi nội dung dữ liệu khi truyền",
+              "Cáp mạng LAN xoắn đôi thông dụng là cáp HDMI",
+              "Router chuyển dữ liệu ra ngoài Internet qua cổng LAN",
+            ],
+          },
+          right: {
+            emoji: "✅",
+            title: "Bản chất chính xác cần chọn",
+            items: [
+              "Kết nối giữa 2 LAN khác nhau **bắt buộc dùng Router**",
+              "Switch **chỉ thiết lập kênh truyền riêng** giữa 2 cổng",
+              "Modem **chỉ đổi dạng tín hiệu**, giữ nguyên dữ liệu",
+              "Cáp mạng LAN là **cáp UTP** (4 đôi xoắn) với **giắc RJ45**",
+              "Dữ liệu đi ra Internet qua **cổng WAN** của Router",
+            ],
+          },
+        },
+        {
+          kind: "check",
+          q: "Một trường học có 100 máy tính trong phòng thực hành, cần kết nối mạng với hiệu quả cao và tránh xung đột tín hiệu. Thiết bị nào sau đây là phù hợp nhất để nối các máy trong phòng?",
+          options: [
+            "Bộ chuyển mạch (Switch), vì mở kênh riêng giữa từng cặp máy",
+            "Bộ chia tín hiệu (Hub), vì chi phí thấp và cấu tạo đơn giản",
+            "Điểm truy cập không dây (WAP), vì không cần dùng cáp mạng",
+            "Bộ điều chế tín hiệu (Modem), vì có chức năng đổi tín hiệu",
+          ],
+          answer: 0,
+          explain:
+            "Với mạng có số lượng máy lớn (hàng chục đến hàng trăm máy), **Switch** là lựa chọn bắt buộc vì nó tạo kênh truyền riêng cho từng cặp máy gửi - nhận, giảm thiểu tối đa nguy cơ xung đột tín hiệu so với Hub.",
+        },
+      ],
+    },
   ],
 
   summary: [

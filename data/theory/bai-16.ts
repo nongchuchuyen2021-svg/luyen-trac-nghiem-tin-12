@@ -240,6 +240,81 @@ em {border: 2px double red;}
         },
       ],
     },
+    {
+      id: "meo-nho-va-cam-bay",
+      emoji: "💡",
+      heading: "Mẹo nhớ & Cảnh báo bẫy",
+      blocks: [
+        {
+          kind: "text",
+          text: "Định dạng khung (Box Model) và các bộ chọn đặc biệt là nội dung thực hành rất trọng tâm. Hãy ghi nhớ các mẹo phân biệt và bẫy trắc nghiệm dưới đây:",
+        },
+        {
+          kind: "cards",
+          tone: "leaf",
+          items: [
+            {
+              emoji: "📦",
+              title: "Thứ tự 4 lớp mô hình hộp (Box Model)",
+              text: "Từ trong ra ngoài: **Nội dung (Content)** → **Đệm (Padding)** → **Viền (Border)** → **Lề (Margin)**. Nhớ từ khoá: *Padding là đệm bên trong viền, Margin là khoảng cách bên ngoài viền*.",
+            },
+            {
+              emoji: "⏰",
+              title: "Quy tắc kim đồng hồ: TRÊN - PHẢI - DƯỚI - TRÁI",
+              text: "Khi viết 4 giá trị ngắn gọn: `margin: 10px 20px 30px 40px;` tương ứng với **Top (Trên) → Right (Phải) → Bottom (Dưới) → Left (Trái)** (theo chiều kim đồng hồ bắt đầu từ 12 giờ).",
+            },
+            {
+              emoji: "🎯",
+              title: "Dấu chấm (.) vs Dấu thăng (#)",
+              text: "**.class** (dấu chấm): giống như *tên lớp học*, nhiều phần tử có thể cùng chung một lớp. **#id** (dấu thăng): giống như *số CCCD*, mỗi phần tử chỉ có đúng 1 mã duy nhất trong toàn trang web.",
+            },
+            {
+              emoji: "🧱",
+              title: "Khối vs Nội tuyến: width và height",
+              text: "Chỉ có **phần tử khối (block)** mới chỉnh được `width` và `height`. Phần tử **nội tuyến (inline)** không nhận `width/height` (muốn nhận phải đổi sang `display: block`).",
+            },
+          ],
+        },
+        {
+          kind: "compare",
+          left: {
+            emoji: "❌",
+            title: "Bẫy câu chữ đề thi hay gài",
+            items: [
+              "Padding là khoảng cách bên ngoài đường viền",
+              "Thẻ span hay a có thể đặt thuộc tính width",
+              "Tên ID và Class được phép bắt đầu bằng chữ số",
+              "Thuộc tính khung (margin, border) có tính kế thừa",
+              "display: none; chỉ làm mờ đi chứ không ẩn phần tử",
+            ],
+          },
+          right: {
+            emoji: "✅",
+            title: "Bản chất chính xác cần chọn",
+            items: [
+              "**Margin** mới là ngoài viền; **Padding** là đệm bên trong",
+              "Thẻ nội tuyến (span, a) **không có width/height**",
+              "Tên ID/Class **bắt buộc không được bắt đầu bằng số**",
+              "Mọi thuộc tính khung đều **KHÔNG có tính kế thừa**",
+              "display: none; **làm ẩn hoàn toàn** khỏi trang web",
+            ],
+          },
+        },
+        {
+          kind: "check",
+          q: "Khai báo CSS nào sau đây sẽ thiết lập lề trên và lề dưới là 10px, lề trái và lề phải là 20px?",
+          options: [
+            "margin: 10px 20px; (giá trị 1: trên/dưới, giá trị 2: trái/phải)",
+            "margin: 20px 10px; (giá trị 1: trái/phải, giá trị 2: trên/dưới)",
+            "padding: 10px 20px; (vì khoảng cách lề được gọi là padding)",
+            "border: 10px 20px; (vì đường bao quanh phần tử là border)",
+          ],
+          answer: 0,
+          explain:
+            "margin: 10px 20px; viết theo dạng 2 giá trị rút gọn: giá trị thứ nhất (10px) cho trên/dưới (Top/Bottom), giá trị thứ hai (20px) cho trái/phải (Left/Right).",
+        },
+      ],
+    },
   ],
 
   summary: [

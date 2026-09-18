@@ -278,6 +278,81 @@ const theory: LessonTheory = {
         },
       ],
     },
+    {
+      id: "meo-nho-va-cam-bay",
+      emoji: "💡",
+      heading: "Mẹo nhớ & Cảnh báo bẫy",
+      blocks: [
+        {
+          kind: "text",
+          text: "Bài 1 là bài mở đầu chương trình Tin học 12 nhưng lại có nhiều câu hỏi trắc nghiệm gài bẫy khái niệm. Dưới đây là các **mẹo phân biệt nhanh** và **bảng cảnh báo bẫy thi**:",
+        },
+        {
+          kind: "cards",
+          tone: "sea",
+          items: [
+            {
+              emoji: "⏱️",
+              title: "Mẹo nhớ 2 mốc: 1950 vs 1956",
+              text: "**1950 (Turing Test)**: Cách *thử* máy có thông minh không; **1956 (Dartmouth)**: *Đặt tên* ra đời thuật ngữ AI (sau đúng 6 năm).",
+            },
+            {
+              emoji: "🤖",
+              title: "AI vs Tự động hoá: Tự thích nghi",
+              text: "Nếu máy chỉ **làm theo kịch bản cố định, gặp tình huống mới thì chịu** (máy giặt, tay robot hàn, đèn tín hiệu) ➔ **Tự động hoá**. Chỉ khi có **học, suy luận, tự thích ứng** ➔ mới là **AI**.",
+            },
+            {
+              emoji: "🎯",
+              title: "AI Hẹp vs AI Tổng quát",
+              text: "**AI hẹp (yếu)**: Giỏi **1 nhiệm vụ cụ thể** (chơi cờ, dịch thuật, Face ID). *Toàn bộ AI hiện nay đều là AI hẹp*. **AI tổng quát (mạnh)**: Đa năng như não người (vẫn là *mục tiêu tương lai*).",
+            },
+            {
+              emoji: "🖐️",
+              title: "5 đặc trưng trí tuệ của AI",
+              text: "Nhớ 5 từ: **HỌC** (rút kinh nghiệm) - **SUY LUẬN** (logic) - **NHẬN THỨC** (cảm biến/camera) - **NGÔN NGỮ** (tiếng nói/chữ) - **GIẢI QUYẾT VẤN ĐỀ** (tình huống mới).",
+            },
+          ],
+        },
+        {
+          kind: "compare",
+          left: {
+            emoji: "❌",
+            title: "Bẫy câu chữ đề thi hay gài",
+            items: [
+              "Máy giặt tự ngắt hay robot hàn là ứng dụng AI",
+              "Phần mềm AlphaGo chơi cờ siêu đẳng là AI tổng quát",
+              "Thuật ngữ AI xuất hiện lần đầu ở Phép thử Turing 1950",
+              "Mọi hệ thống AI bắt buộc có đủ cả 5 đặc trưng",
+              "Hệ chuyên gia MYCIN (1972) sử dụng Học máy",
+            ],
+          },
+          right: {
+            emoji: "✅",
+            title: "Bản chất chính xác cần chọn",
+            items: [
+              "Chỉ là **Tự động hoá** (chạy theo kịch bản cố định)",
+              "Vẫn là **AI hẹp** (vì chỉ giỏi 1 việc là chơi cờ)",
+              "Thuật ngữ AI ra đời tại **Hội thảo Dartmouth (1956)**",
+              "Chỉ cần **kết hợp một số đặc trưng** ở các mức độ",
+              "MYCIN dùng **600 luật suy diễn**, chưa dùng Học máy",
+            ],
+          },
+        },
+        {
+          kind: "check",
+          q: "Trường hợp nào sau đây là một ví dụ thực sự về ứng dụng của Trí tuệ nhân tạo (AI)?",
+          options: [
+            "Hệ thống camera giám sát tự nhận dạng biển số xe vi phạm",
+            "Dây chuyền dập vỏ xe ô tô tự động theo khuôn mẫu cơ khí",
+            "Nồi cơm điện tử tự ngắt điện khi đạt nhiệt độ cài đặt sẵn",
+            "Đèn tín hiệu giao thông tự đổi màu theo chu kì thời gian",
+          ],
+          answer: 0,
+          explain:
+            "Nhận dạng biển số xe đòi hỏi khả năng nhận thức thị giác máy và xử lí hình ảnh — đây là đặc trưng của AI. Các trường hợp còn lại đều là tự động hoá thuần tuý theo cảm biến vật lí hoặc chu kì cố định.",
+        },
+      ],
+    },
   ],
 
   summary: [

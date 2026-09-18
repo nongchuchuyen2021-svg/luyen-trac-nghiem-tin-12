@@ -179,6 +179,81 @@ p::first-line {
         },
       ],
     },
+    {
+      id: "meo-nho-va-cam-bay",
+      emoji: "💡",
+      heading: "Mẹo nhớ & Cảnh báo bẫy",
+      blocks: [
+        {
+          kind: "text",
+          text: "Bài 17 là bài có độ phân hoá cao nhất trong học kì 1 vì quy tắc ưu tiên và tính trọng số rất dễ bị nhầm. Hãy lưu lại các mẹo và bẫy kinh điển dưới đây:",
+        },
+        {
+          kind: "cards",
+          tone: "coral",
+          items: [
+            {
+              emoji: "🎯",
+              title: "Thang điểm trọng số (100 - 10 - 1)",
+              text: "**ID (#)** = 100 điểm > **Class (.) / Pseudo-class (:)** = 10 điểm > **Tag (p, h1...) / Pseudo-element (::)** = 1 điểm. Dù có 9 class cộng lại (90 điểm) vẫn thua 1 ID (100 điểm).",
+            },
+            {
+              emoji: "👑",
+              title: "Thần chú thứ tự 7 mức ưu tiên",
+              text: "**Quan trọng (!important)** > **Trực tiếp (inline style)** > **Thiết bị (@media)** > **Trọng số (ID/Class/Tag)** > **Thứ tự cuối (viết sau đè trước)** > **Kế thừa cha** > **Mặc định trình duyệt**.",
+            },
+            {
+              emoji: "👻",
+              title: "Phân biệt 1 dấu (:) và 2 dấu (::)",
+              text: "**Một dấu hai chấm (`:`)** = Trạng thái hành động (*:hover, :link*); **Hai dấu hai chấm (`::`)** = Một mẩu/bộ phận của phần tử (*::first-letter, ::first-line*).",
+            },
+            {
+              emoji: "✍️",
+              title: "Quy tắc Viết sau đè viết trước",
+              text: "Khi hai mẫu CSS có **cùng điểm trọng số** cùng áp dụng cho một phần tử, mẫu nào được viết ở **vị trí sau cùng (ở dưới)** trong tệp CSS sẽ giành chiến thắng.",
+            },
+          ],
+        },
+        {
+          kind: "compare",
+          left: {
+            emoji: "❌",
+            title: "Bẫy câu chữ đề thi hay gài",
+            items: [
+              "Cộng dồn nhiều thẻ HTML sẽ thắng được 1 class",
+              ":hover là pseudo-element vì có trạng thái",
+              "Mẫu CSS viết ở trên đầu luôn được ưu tiên trước",
+              "Thuộc tính kế thừa từ thẻ cha sẽ đè được thẻ con",
+              "Bộ chọn * có trọng số bằng 1 điểm như thẻ p",
+            ],
+          },
+          right: {
+            emoji: "✅",
+            title: "Bản chất chính xác cần chọn",
+            items: [
+              "1 Class = 10 điểm, luôn thắng dù có bao nhiêu thẻ (1đ)",
+              ":hover là **pseudo-class** (trạng thái, 1 dấu hai chấm)",
+              "Cùng trọng số thì **mẫu viết sau cùng** mới áp dụng",
+              "Định dạng **trực tiếp cho con** luôn thắng kế thừa",
+              "Bộ chọn * có **trọng số = 0 điểm** (thấp nhất)",
+            ],
+          },
+        },
+        {
+          kind: "check",
+          q: "Cho đoạn HTML: <p id=\"title\" class=\"highlight\">Chào bạn</p>. Mẫu CSS nào sau đây sẽ quyết định màu chữ của thẻ p?",
+          options: [
+            "#title {color: red;} (vì có trọng số ID = 100 điểm)",
+            ".highlight {color: blue;} (vì đứng gần thẻ p hơn)",
+            "p {color: green;} (vì định dạng trực tiếp tên thẻ p)",
+            "Trình duyệt trộn cả ba màu lại thành màu tổng hợp",
+          ],
+          answer: 0,
+          explain:
+            "Mã định danh #title có trọng số cao nhất (100 điểm), vượt trội so với class .highlight (10 điểm) và thẻ p (1 điểm). Do đó màu đỏ sẽ được áp dụng.",
+        },
+      ],
+    },
   ],
 
   summary: [
