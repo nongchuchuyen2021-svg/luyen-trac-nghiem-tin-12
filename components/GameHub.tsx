@@ -8,6 +8,7 @@ import TimelineGameClient from "@/components/TimelineGame";
 import TopologyGameClient from "@/components/TopologyGame";
 import BinaryIPGameClient from "@/components/BinaryIPGame";
 import RoutingGameClient from "@/components/RoutingGame";
+import MenuPathGameClient from "@/components/MenuPathGame";
 
 export default function GameHub({
   lessonId,
@@ -46,7 +47,10 @@ export default function GameHub({
     if (active.kind === "binary") {
       return <BinaryIPGameClient lessonId={lessonId} game={active} onBack={handleBack} />;
     }
-    return <RoutingGameClient lessonId={lessonId} game={active} onBack={handleBack} />;
+    if (active.kind === "routing") {
+      return <RoutingGameClient lessonId={lessonId} game={active} onBack={handleBack} />;
+    }
+    return <MenuPathGameClient lessonId={lessonId} game={active} onBack={handleBack} />;
   }
 
   return (
@@ -74,7 +78,9 @@ export default function GameHub({
                 ? `${g.nodes.length} thiết bị · ghép hành động vào sơ đồ mạng`
                 : g.kind === "binary"
                 ? `${g.questions.length} địa chỉ · gõ số đổi nhị phân sang thập phân`
-                : `${g.questions.length} gói tin · chọn đúng cổng theo bảng định tuyến`;
+                : g.kind === "routing"
+                ? `${g.questions.length} gói tin · chọn đúng cổng theo bảng định tuyến`
+                : `${g.questions.length} thử thách · ghép đúng đường đi trong menu`;
             const best = bestByGame[g.id] ?? null;
             return (
               <button

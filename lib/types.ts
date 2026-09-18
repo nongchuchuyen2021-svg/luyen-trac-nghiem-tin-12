@@ -235,7 +235,30 @@ export type RoutingGame = {
   questions: RoutingQuestion[];
 };
 
-export type LessonGame = SortGame | TimelineGame | TopologyGame | BinaryGame | RoutingGame;
+// Một thử thách "tìm đường trong menu": từ một mục tiêu thao tác, học sinh
+// phải ghép đúng thứ tự các cấp menu cần đi qua — trong túi thẻ CÓ LẪN vài
+// mục menu thật nhưng thuộc quy trình khác (decoys), không được đặt vào.
+export type MenuPathQuestion = {
+  id: string;
+  goal: string; // mục tiêu thao tác, vd "Bật cho các máy khác nhìn thấy máy này"
+  path: string[]; // đúng thứ tự các cấp menu cần đi qua, đầu → cuối
+  decoys: string[]; // các mục menu có thật (ở quy trình khác) nhưng KHÔNG thuộc đường đi này
+  explain: string;
+};
+
+// Game ghép chuỗi bước menu đúng thứ tự, tránh các "bẫy" là mục menu thật của
+// quy trình khác — khác TopologyGame ở chỗ vị trí không cố định sẵn, học sinh
+// phải tự dựng cả thứ tự lẫn tránh bẫy cùng lúc.
+export type MenuPathGame = {
+  kind: "menupath";
+  id: string;
+  title: string;
+  emoji: string;
+  instructions: string;
+  questions: MenuPathQuestion[];
+};
+
+export type LessonGame = SortGame | TimelineGame | TopologyGame | BinaryGame | RoutingGame | MenuPathGame;
 
 // ─── Ôn tập tổng kết ─────────────────────────────────────────────────────────
 // Trang ôn nhanh trước khi kiểm tra: thẻ lật ghi nhớ, lỗi hay gặp, mẹo nhớ và

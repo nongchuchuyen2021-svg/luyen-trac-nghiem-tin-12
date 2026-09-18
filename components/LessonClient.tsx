@@ -24,6 +24,7 @@ function gameItemCount(g: LessonGame): number {
       return g.nodes.length;
     case "binary":
     case "routing":
+    case "menupath":
       return g.questions.length;
   }
 }
