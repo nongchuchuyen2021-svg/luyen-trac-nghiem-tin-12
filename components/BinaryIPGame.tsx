@@ -13,6 +13,9 @@ function shuffle<T>(arr: T[]): T[] {
   return a;
 }
 
+// Giá trị luỹ thừa 2 của từng vị trí bit trong 1 byte, trái → phải
+const BIT_POWERS = [128, 64, 32, 16, 8, 4, 2, 1];
+
 // Phân tích 1 byte nhị phân (8 kí tự "0"/"1") thành các số hạng luỹ thừa 2
 // đang "bật", để hiện lời giải "11000000 = 128+64 = 192" — tính trực tiếp từ
 // đúng chuỗi bit của câu hỏi, không cần soạn tay nên không thể sai lệch.
@@ -188,14 +191,28 @@ export default function BinaryIPGameClient({
           <span>Câu {current + 1}/{n}</span>
         </div>
 
-        {/* Chuỗi nhị phân, tách rõ 4 byte */}
-        <div className="mt-4 rounded-2xl border border-ink/5 bg-white p-5 text-center shadow-card">
+        {/* Chuỗi nhị phân, tách rõ 4 byte — kèm bảng tra giá trị từng bit ngay
+            bên dưới (128/64/32…) để không bắt buộc phải thuộc lòng luỹ thừa 2;
+            chỉ những bit đang bật (=1) mới tô đậm, việc còn lại là tự cộng. */}
+        <div className="mt-4 rounded-2xl border border-ink/5 bg-white p-4 text-center shadow-card sm:p-5">
           <p className="font-mono text-[10px] uppercase tracking-wider text-ink-soft/60">Địa chỉ IPv4 dạng nhị phân (32 bit)</p>
-          <div className="mt-2 flex flex-wrap items-center justify-center gap-2 font-mono text-base font-bold text-sea-deep sm:text-lg">
+          <p className="mt-0.5 font-mono text-[10px] text-ink-soft/50">Cộng các giá trị ở bit đang bật (tô đậm) để ra từng byte</p>
+          <div className="-mx-1 mt-3 flex flex-wrap justify-center gap-x-3 gap-y-3 overflow-x-auto px-1">
             {bytes.map((b, i) => (
-              <span key={i} className="rounded-lg bg-sea/10 px-2 py-1">
-                {b}
-              </span>
+              <div key={i} className="rounded-lg bg-sea/10 px-1.5 py-1.5">
+                <div className="flex gap-0.5">
+                  {b.split("").map((bit, j) => (
+                    <div key={j} className="flex w-5 flex-col items-center sm:w-6">
+                      <span className={`font-mono text-xs font-bold sm:text-sm ${bit === "1" ? "text-sea-deep" : "text-ink-soft/30"}`}>
+                        {bit}
+                      </span>
+                      <span className={`font-mono text-[8px] sm:text-[9px] ${bit === "1" ? "font-bold text-coral" : "text-ink-soft/25"}`}>
+                        {BIT_POWERS[j]}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              </div>
             ))}
           </div>
         </div>
