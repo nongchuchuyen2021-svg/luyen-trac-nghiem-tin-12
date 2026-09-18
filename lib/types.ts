@@ -187,7 +187,55 @@ export type TopologyGame = {
   endLabel?: string; // nhãn thiết bị đích cuối cùng, chỉ trang trí, vd "💻 Máy B (đích)"
 };
 
-export type LessonGame = SortGame | TimelineGame | TopologyGame;
+// Một câu đổi địa chỉ IP nhị phân → thập phân — học sinh gõ số, không kéo-thả
+export type BinaryQuestion = {
+  id: string;
+  binary: string; // 32 bit, cách nhau bằng khoảng trắng theo từng byte, vd "11000000 10101000 00001101 11010010"
+  answer: [number, number, number, number]; // 4 byte thập phân đúng, mỗi byte 0-255
+  note?: string; // ghi chú thêm sau khi kiểm tra, nếu cần
+};
+
+// Game gõ số: đổi địa chỉ IPv4 dạng nhị phân sang thập phân (dot decimal)
+export type BinaryGame = {
+  kind: "binary";
+  id: string;
+  title: string;
+  emoji: string;
+  instructions: string;
+  questions: BinaryQuestion[];
+};
+
+// Một dòng trong bảng định tuyến cố định hiển thị suốt game
+export type RoutingRule = {
+  id: string;
+  label: string; // tên nhóm địa chỉ/mạng đích, vd "Quảng Ninh"
+  port: string; // cổng ra tương ứng, vd "Đường 37"
+};
+
+// Một gói tin cần định tuyến — đúng 1 trong các rule, hoặc đi cổng mặc định
+// (dùng id đặc biệt "default" khi không khớp rule nào)
+export type RoutingQuestion = {
+  id: string;
+  destination: string; // mô tả địa chỉ/đích đến hiển thị cho học sinh
+  correctRuleId: string; // trùng RoutingRule.id, hoặc "default"
+  explain: string;
+};
+
+// Game mô phỏng bảng định tuyến: bảng cố định luôn hiển thị, học sinh chọn
+// đúng cổng ra cho từng gói tin đến — kể cả nhận biết khi nào phải đi cổng mặc định
+export type RoutingGame = {
+  kind: "routing";
+  id: string;
+  title: string;
+  emoji: string;
+  instructions: string;
+  routerName: string; // tên router/trạm hiển thị phía trên bảng, vd "Bưu cục Hải Dương"
+  rules: RoutingRule[]; // các dòng có tên trong bảng (KHÔNG gồm dòng mặc định)
+  defaultPort: string; // nhãn cổng mặc định, vd "Đường số 5 (mặc định, về Hà Nội)"
+  questions: RoutingQuestion[];
+};
+
+export type LessonGame = SortGame | TimelineGame | TopologyGame | BinaryGame | RoutingGame;
 
 // ─── Ôn tập tổng kết ─────────────────────────────────────────────────────────
 // Trang ôn nhanh trước khi kiểm tra: thẻ lật ghi nhớ, lỗi hay gặp, mẹo nhớ và

@@ -6,6 +6,8 @@ import { getLessonProgress } from "@/lib/progress";
 import SortGameClient from "@/components/SortGame";
 import TimelineGameClient from "@/components/TimelineGame";
 import TopologyGameClient from "@/components/TopologyGame";
+import BinaryIPGameClient from "@/components/BinaryIPGame";
+import RoutingGameClient from "@/components/RoutingGame";
 
 export default function GameHub({
   lessonId,
@@ -38,7 +40,13 @@ export default function GameHub({
     if (active.kind === "timeline") {
       return <TimelineGameClient lessonId={lessonId} game={active} onBack={handleBack} />;
     }
-    return <TopologyGameClient lessonId={lessonId} game={active} onBack={handleBack} />;
+    if (active.kind === "topology") {
+      return <TopologyGameClient lessonId={lessonId} game={active} onBack={handleBack} />;
+    }
+    if (active.kind === "binary") {
+      return <BinaryIPGameClient lessonId={lessonId} game={active} onBack={handleBack} />;
+    }
+    return <RoutingGameClient lessonId={lessonId} game={active} onBack={handleBack} />;
   }
 
   return (
@@ -62,7 +70,11 @@ export default function GameHub({
                 ? `${g.items.length} thẻ · kéo hoặc bấm để phân loại`
                 : g.kind === "timeline"
                 ? `${g.items.length} mốc · kéo hoặc chạm để sắp xếp`
-                : `${g.nodes.length} thiết bị · ghép hành động vào sơ đồ mạng`;
+                : g.kind === "topology"
+                ? `${g.nodes.length} thiết bị · ghép hành động vào sơ đồ mạng`
+                : g.kind === "binary"
+                ? `${g.questions.length} địa chỉ · gõ số đổi nhị phân sang thập phân`
+                : `${g.questions.length} gói tin · chọn đúng cổng theo bảng định tuyến`;
             const best = bestByGame[g.id] ?? null;
             return (
               <button

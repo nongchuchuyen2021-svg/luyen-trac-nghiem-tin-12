@@ -13,6 +13,21 @@ import ReviewViewer from "@/components/ReviewViewer";
 
 type Mode = "menu" | "theory" | "mcq" | "tf" | "essay" | "sgk" | "games" | "review";
 
+// Số "thẻ chơi" của 1 game, dùng chung để hiện gợi ý ở màn menu — mỗi loại
+// game lưu danh sách nội dung dưới tên trường khác nhau (items/nodes/questions).
+function gameItemCount(g: LessonGame): number {
+  switch (g.kind) {
+    case "sort":
+    case "timeline":
+      return g.items.length;
+    case "topology":
+      return g.nodes.length;
+    case "binary":
+    case "routing":
+      return g.questions.length;
+  }
+}
+
 export default function LessonClient({
   lessonId,
   lessonTitle,
@@ -155,7 +170,7 @@ export default function LessonClient({
             name: games.length === 1 ? games[0].title : "Trung tâm Game",
             desc:
               games.length === 1
-                ? `${games[0].kind === "topology" ? games[0].nodes.length : games[0].items.length} thẻ · kéo hoặc chạm để chơi`
+                ? `${gameItemCount(games[0])} thẻ · kéo hoặc chạm để chơi`
                 : `${games.length} trò chơi ôn bài · kéo hoặc chạm để chơi`,
             best: null,
             done: false,
