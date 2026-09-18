@@ -187,22 +187,37 @@ export type TopologyGame = {
   endLabel?: string; // nhãn thiết bị đích cuối cùng, chỉ trang trí, vd "💻 Máy B (đích)"
 };
 
-// Một câu đổi địa chỉ IP nhị phân → thập phân — học sinh gõ số, không kéo-thả
-export type BinaryQuestion = {
-  id: string;
-  binary: string; // 32 bit, cách nhau bằng khoảng trắng theo từng byte, vd "11000000 10101000 00001101 11010010"
-  answer: [number, number, number, number]; // 4 byte thập phân đúng, mỗi byte 0-255
-  note?: string; // ghi chú thêm sau khi kiểm tra, nếu cần
+// Một lớp đóng gói dữ liệu (Ethernet / IP / TCP) — hiển thị như một "phong bì"
+// lồng vào phong bì lớp ngoài, đúng theo thứ tự đóng gói thật của TCP/IP.
+export type EncapsulationLayerId = "ethernet" | "ip" | "tcp";
+
+export type EncapsulationLayer = {
+  id: EncapsulationLayerId;
+  emoji: string;
+  name: string; // vd "Khung Ethernet"
+  subtitle: string; // giải thích ngắn lớp này lo việc gì
 };
 
-// Game gõ số: đổi địa chỉ IPv4 dạng nhị phân sang thập phân (dot decimal)
-export type BinaryGame = {
-  kind: "binary";
+// Một mẩu thông tin cần phân loại đúng vào lớp phụ trách nó
+export type EncapsulationItem = {
+  id: string;
+  label: string;
+  layerId: EncapsulationLayerId;
+  explain: string;
+};
+
+// Game xếp các mẩu thông tin vào đúng lớp đóng gói (Ethernet ⊃ IP ⊃ TCP) —
+// toàn bộ hiện ra một lần (không chia câu hỏi tuần tự) để thấy được TOÀN BỘ
+// bức tranh phân tầng cùng lúc, đúng tinh thần "vì sao cần tới 3 giao thức".
+export type EncapsulationGame = {
+  kind: "encapsulation";
   id: string;
   title: string;
   emoji: string;
   instructions: string;
-  questions: BinaryQuestion[];
+  layers: [EncapsulationLayer, EncapsulationLayer, EncapsulationLayer]; // đúng 3 lớp, NGOÀI (Ethernet) → TRONG (TCP)
+  dataLabel: string; // nhãn ô trong cùng, chỉ trang trí — dữ liệu gốc trước khi đóng gói
+  items: EncapsulationItem[];
 };
 
 // Một dòng trong bảng định tuyến cố định hiển thị suốt game
@@ -258,7 +273,7 @@ export type MenuPathGame = {
   questions: MenuPathQuestion[];
 };
 
-export type LessonGame = SortGame | TimelineGame | TopologyGame | BinaryGame | RoutingGame | MenuPathGame;
+export type LessonGame = SortGame | TimelineGame | TopologyGame | EncapsulationGame | RoutingGame | MenuPathGame;
 
 // ─── Ôn tập tổng kết ─────────────────────────────────────────────────────────
 // Trang ôn nhanh trước khi kiểm tra: thẻ lật ghi nhớ, lỗi hay gặp, mẹo nhớ và

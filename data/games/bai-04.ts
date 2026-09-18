@@ -1,4 +1,4 @@
-import type { LessonGame, SortGame, BinaryGame, RoutingGame } from "@/lib/types";
+import type { LessonGame, SortGame, EncapsulationGame, RoutingGame } from "@/lib/types";
 
 // Phải khớp đúng hằng số DEFAULT_ID trong components/RoutingGame.tsx
 const DEFAULT_ROUTE = "default";
@@ -120,49 +120,88 @@ const sortGameBayDeThi: SortGame = {
   ],
 };
 
-// Game 2: Trạm Dịch Địa Chỉ IP — gõ số (không kéo-thả), rèn đúng kĩ năng tính
-// toán duy nhất của bài: đổi 32 bit nhị phân sang 4 byte thập phân dot decimal.
-// 2 câu đầu lấy đúng 2 địa chỉ đã xuất hiện trong SGK để củng cố ngay, các câu
-// sau dùng địa chỉ quen thuộc trong đời sống mạng để luyện thêm.
-const binaryGameTramDichIP: BinaryGame = {
-  kind: "binary",
-  id: "tram-dich-dia-chi-ip",
-  title: "Trạm Dịch Địa Chỉ IP",
-  emoji: "🔢",
+// Game 2: Đóng Gói Dữ Liệu — thay cho game "đổi nhị phân" cũ (chỉ luyện một
+// phép tính nhỏ, lạc trọng tâm bài). Game này đánh thẳng vào Ý CHÍNH của cả
+// Bài 4: vì sao cần tới 3 giao thức khác nhau, mỗi giao thức lo một "lớp"
+// thông tin riêng khi đóng gói dữ liệu — Ethernet (địa chỉ MAC, mã kiểm tra,
+// khung truyền) ⊃ IP (địa chỉ IP, định tuyến) ⊃ TCP (cổng ứng dụng, đánh số
+// gói, xác nhận). Học sinh xếp từng mẩu thông tin vào đúng lớp phụ trách.
+const encapsulationGameDongGoi: EncapsulationGame = {
+  kind: "encapsulation",
+  id: "dong-goi-du-lieu",
+  title: "Đóng Gói Dữ Liệu",
+  emoji: "📦",
   instructions:
-    "Mỗi byte 8 bit nhị phân ứng với một số thập phân từ 0 đến 255. Gõ đúng 4 số thập phân của địa chỉ IPv4 rồi bấm Kiểm tra.",
-  questions: [
+    "Mỗi khi truyền dữ liệu, 3 giao thức lần lượt 'bọc' thêm thông tin của mình — như 3 lớp phong bì lồng nhau. Chạm chọn 1 thẻ rồi chạm vào đúng lớp phụ trách thông tin đó.",
+  layers: [
     {
-      id: "ip-1",
-      binary: "11000000 10101000 00000001 00000011",
-      answer: [192, 168, 1, 3],
-      note: "Đây chính là địa chỉ trong ví dụ 'Tự đổi thử một địa chỉ' ở phần Lý thuyết — dải địa chỉ hay gặp trong mạng gia đình.",
+      id: "ethernet",
+      emoji: "📶",
+      name: "Khung Ethernet",
+      subtitle: "Lớp ngoài cùng — truyền trong 1 LAN, dựa vào địa chỉ phần cứng (MAC)",
     },
     {
-      id: "ip-2",
-      binary: "11000000 10101000 00001101 11010010",
-      answer: [192, 168, 13, 210],
-      note: "Đây chính là địa chỉ trong câu hỏi kiểm tra nhanh ở phần Địa chỉ IP.",
+      id: "ip",
+      emoji: "🌍",
+      name: "Gói IP",
+      subtitle: "Lớp giữa — dẫn dữ liệu đi giữa các LAN khác nhau, dựa vào địa chỉ IP",
     },
     {
-      id: "ip-3",
-      binary: "00001010 00000000 00000000 00000001",
-      answer: [10, 0, 0, 1],
+      id: "tcp",
+      emoji: "🔌",
+      name: "Đoạn TCP",
+      subtitle: "Lớp trong cùng — đảm bảo đến đúng ứng dụng, đúng thứ tự, không lỗi",
+    },
+  ],
+  dataLabel: "Dữ liệu gốc (nội dung email, tệp, tin nhắn…)",
+  items: [
+    {
+      id: "enc-mac",
+      label: "Địa chỉ MAC của máy gửi và máy nhận",
+      layerId: "ethernet",
+      explain: "Truyền dữ liệu trong mạng cục bộ căn cứ vào địa chỉ MAC — đây là quy định về địa chỉ của giao thức Ethernet.",
     },
     {
-      id: "ip-4",
-      binary: "10101100 00010000 11111110 00000001",
-      answer: [172, 16, 254, 1],
+      id: "enc-checksum",
+      label: "Mã kiểm tra để phát hiện lỗi truyền",
+      layerId: "ethernet",
+      explain: "Máy nhận dùng mã kiểm tra để phát hiện lỗi truyền; nếu có lỗi sẽ yêu cầu gửi lại — quy định này thuộc Ethernet.",
     },
     {
-      id: "ip-5",
-      binary: "00001000 00001000 00001000 00001000",
-      answer: [8, 8, 8, 8],
+      id: "enc-frame",
+      label: "Chia dữ liệu thành từng khung có độ dài giới hạn",
+      layerId: "ethernet",
+      explain: "Không thể truyền một lượng tin dài không giới hạn nên Ethernet quy định truyền theo từng khung có độ dài xác định.",
     },
     {
-      id: "ip-6",
-      binary: "00000001 00000001 00000001 00000001",
-      answer: [1, 1, 1, 1],
+      id: "enc-ip-addr",
+      label: "Địa chỉ IP của máy gửi và máy nhận",
+      layerId: "ip",
+      explain: "Giao thức IP có hai nội dung chính: đánh địa chỉ và định tuyến. Đây là phần đánh địa chỉ.",
+    },
+    {
+      id: "enc-routing",
+      label: "Chọn đường đi (định tuyến) qua các router trung gian",
+      layerId: "ip",
+      explain: "Khi hai máy không cùng LAN, router phải định tuyến để dẫn dữ liệu tới đúng LAN đích — đây là phần định tuyến của IP.",
+    },
+    {
+      id: "enc-port",
+      label: "Số hiệu cổng ứng dụng, để dữ liệu đến đúng phần mềm đang chờ",
+      layerId: "tcp",
+      explain: "IP chỉ đưa dữ liệu tới đúng máy, chưa đủ để tới đúng ứng dụng. TCP gán cổng ứng dụng để giải quyết việc này.",
+    },
+    {
+      id: "enc-seq",
+      label: "Đánh số thứ tự từng gói, để ráp lại đúng trật tự",
+      layerId: "tcp",
+      explain: "Dữ liệu bị cắt thành nhiều gói và có thể đến không đúng thứ tự, nên TCP đánh số để nơi nhận ráp lại đúng trật tự.",
+    },
+    {
+      id: "enc-ack",
+      label: "Cơ chế xác nhận, yêu cầu gửi lại nếu gói bị lỗi hoặc thất lạc",
+      layerId: "tcp",
+      explain: "TCP có cơ chế xác nhận để nơi gửi biết gói tin có tới nơi an toàn hay không, từ đó yêu cầu gửi lại khi cần.",
     },
   ],
 };
@@ -236,6 +275,6 @@ const routingGameTramDinhTuyen: RoutingGame = {
   ],
 };
 
-const games: LessonGame[] = [sortGameBayDeThi, binaryGameTramDichIP, routingGameTramDinhTuyen];
+const games: LessonGame[] = [sortGameBayDeThi, encapsulationGameDongGoi, routingGameTramDinhTuyen];
 
 export default games;
