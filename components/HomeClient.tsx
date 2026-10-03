@@ -83,6 +83,33 @@ export default function HomeClient({ counts }: { counts: Record<string, LessonCo
           </span>
         </Link>
 
+        <Link
+          href="/dau-truong"
+          className="mt-4 flex items-center justify-between gap-4 rounded-2xl border-2 border-cyan-500/30 bg-gradient-to-r from-slate-950 via-slate-900 to-indigo-950 p-5 text-white shadow-xl transition hover:-translate-y-0.5 hover:border-cyan-400 hover:shadow-cyan-500/20 sm:p-6"
+        >
+          <div className="flex items-center gap-4">
+            <span className="flex h-12 w-12 sm:h-14 sm:w-14 shrink-0 items-center justify-center rounded-2xl bg-cyan-500/20 border border-cyan-400/40 text-2xl sm:text-3xl">
+              🌐
+            </span>
+            <div>
+              <div className="flex flex-wrap items-center gap-2">
+                <p className="font-display text-base sm:text-lg font-bold text-white">
+                  Đấu Trường Trực Tuyến Nhiều Máy Tính
+                </p>
+                <span className="rounded-full bg-cyan-400/25 border border-cyan-400/40 px-2 py-0.5 font-mono text-[10px] font-bold text-cyan-300">
+                  MÃ PIN PHÒNG
+                </span>
+              </div>
+              <p className="mt-1 text-xs sm:text-sm text-slate-300">
+                Giáo viên làm Host trên máy chiếu · Các máy học sinh nhập mã PIN đấu trực tiếp thời gian thực
+              </p>
+            </div>
+          </div>
+          <span className="hidden sm:inline-block shrink-0 rounded-full border border-cyan-400/40 bg-cyan-500/20 px-4 py-2 font-mono text-xs font-bold text-cyan-300">
+            Vào đấu trường →
+          </span>
+        </Link>
+
         <div className="mt-8 space-y-8">
           {CURRICULUM.map((topic) => {
             const hasAvailable = topic.lessons.some((l) => l.available);

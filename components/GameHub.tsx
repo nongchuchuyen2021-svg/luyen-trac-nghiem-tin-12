@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Link from "next/link";
 import type { LessonGame } from "@/lib/types";
 import { getLessonProgress } from "@/lib/progress";
 import SortGameClient from "@/components/SortGame";
@@ -118,6 +119,34 @@ export default function GameHub({
         )}
         <h1 className="mt-5 font-display text-2xl font-bold text-ink">🎮 Trung tâm Game & Đấu trường</h1>
         <p className="mt-1 text-sm text-ink-soft">Chọn 1 trò để ôn bài theo kiểu vừa học vừa chơi hoặc bước vào Đấu trường AI.</p>
+
+        {/* Banner Đấu trường nhiều máy (Mã PIN) */}
+        <Link
+          href="/dau-truong"
+          className="mt-4 flex items-center justify-between gap-3 rounded-2xl border border-cyan-500/40 bg-gradient-to-r from-slate-950 via-slate-900 to-indigo-950 p-4 text-white shadow-lg transition hover:border-cyan-400 hover:shadow-cyan-500/20"
+        >
+          <div className="flex items-center gap-3">
+            <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-cyan-500/20 border border-cyan-400/40 text-2xl">
+              🌐
+            </span>
+            <div>
+              <div className="flex items-center gap-2">
+                <span className="font-display text-sm sm:text-base font-bold text-white">
+                  Đấu Trường Nhiều Máy Tính (Mã PIN)
+                </span>
+                <span className="rounded-full bg-cyan-400/20 border border-cyan-400/40 px-2 py-0.2 font-mono text-[9px] font-bold text-cyan-300">
+                  Kahoot Mode
+                </span>
+              </div>
+              <p className="font-mono text-xs text-slate-300">
+                Host máy chiếu + Nhiều máy tính học sinh tham gia bằng mã PIN
+              </p>
+            </div>
+          </div>
+          <span className="rounded-full border border-cyan-400/40 bg-cyan-500/20 px-3 py-1 font-mono text-xs font-bold text-cyan-300 shrink-0">
+            Vào ngay →
+          </span>
+        </Link>
 
         <div className="mt-6 space-y-3.5">
           {games.map((g) => {

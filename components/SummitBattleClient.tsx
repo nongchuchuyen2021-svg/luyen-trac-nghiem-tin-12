@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, useRef, useCallback } from "react";
+import Link from "next/link";
 import type { BattleQuestion, BattleTopic } from "@/lib/battle";
 import { BATTLE_TOPICS, getBattleQuestions } from "@/lib/battle";
 import { BAI_04_BATTLE_QUESTIONS } from "@/data/games/bai-04";
@@ -722,15 +723,23 @@ export default function SummitBattleClient({
           </div>
 
           {/* Nút bắt đầu */}
-          <div className="flex justify-center pt-2">
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-3 pt-2">
             <button
               onClick={startMatch}
               disabled={loading}
-              className="group relative inline-flex items-center gap-3 overflow-hidden rounded-full border border-amber-400 bg-gradient-to-r from-amber-500 via-coral to-rose-600 px-8 py-4 font-display text-lg font-black text-white shadow-2xl shadow-amber-500/40 transition hover:scale-105 active:scale-95"
+              className="group relative inline-flex items-center gap-3 overflow-hidden rounded-full border border-amber-400 bg-gradient-to-r from-amber-500 via-coral to-rose-600 px-8 py-3.5 font-display text-base font-black text-white shadow-2xl shadow-amber-500/40 transition hover:scale-105 active:scale-95"
             >
-              <span>🚀 BẮT ĐẦU ĐẠI CHIẾN LEO ĐỈNH</span>
+              <span>🚀 BẮT ĐẦU (1 MÁY CHIẾU LỚP HỌC)</span>
               <span className="group-hover:translate-x-1 transition-transform">→</span>
             </button>
+
+            <Link
+              href="/dau-truong"
+              className="inline-flex items-center gap-2 rounded-full border border-cyan-400/50 bg-cyan-500/15 px-6 py-3 font-mono text-xs font-bold text-cyan-300 hover:bg-cyan-500/25 transition"
+            >
+              <span>🌐 Chuyển sang đấu NHIỀU MÁY (Mã PIN như Kahoot)</span>
+              <span>↗</span>
+            </Link>
           </div>
         </div>
       )}
