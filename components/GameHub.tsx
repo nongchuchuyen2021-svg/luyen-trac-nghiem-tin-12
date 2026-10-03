@@ -38,15 +38,18 @@ export default function GameHub({
         emoji: "⚔️",
         instructions:
           "Chia lớp thành 2 - 4 nhóm đối kháng trực tiếp trên màn hình máy chiếu! Bấm chuông cướp quyền, rinh cúp vô địch môn Tin học 12!",
-        questions: mcqs.map((q) => ({
-          id: q.id,
-          q: q.q,
-          options: q.options,
-          answer: q.answer,
-          explain: q.explain,
-          score: 100,
-          damage: 25,
-        })),
+        questions: mcqs.map((q) => {
+          const order = [0, 1, 2, 3].sort(() => Math.random() - 0.5);
+          return {
+            id: q.id,
+            q: q.q,
+            options: order.map((i) => q.options[i]),
+            answer: order.indexOf(q.answer),
+            explain: q.explain,
+            score: 100,
+            damage: 25,
+          };
+        }),
       };
       games.unshift(autoTeamGame);
     }

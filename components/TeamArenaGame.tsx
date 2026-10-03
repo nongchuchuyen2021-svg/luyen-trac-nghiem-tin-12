@@ -107,9 +107,16 @@ export default function TeamArenaGame({
   // Start the battle from setup
   const startBattle = () => {
     sound.click();
-    // Prepare selected questions
+    // Prepare selected questions with shuffled options
     const shuffled = [...game.questions].sort(() => Math.random() - 0.5);
-    const selectedQ = shuffled.slice(0, Math.min(questionLimit, shuffled.length));
+    const selectedQ = shuffled.slice(0, Math.min(questionLimit, shuffled.length)).map((q) => {
+      const order = [0, 1, 2, 3].sort(() => Math.random() - 0.5);
+      return {
+        ...q,
+        options: order.map((i) => q.options[i]),
+        answer: order.indexOf(q.answer),
+      };
+    });
     setQuestions(selectedQ);
     setCurrentQIndex(0);
 

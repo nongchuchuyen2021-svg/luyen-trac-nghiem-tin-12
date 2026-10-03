@@ -41,21 +41,33 @@ export const BATTLE_TOPICS: BattleTopic[] = [
   { id: "bai-13", name: "Bài 13. Khái niệm, vai trò của CSS", chapter: "Chủ đề 4: Thiết kế Web (HTML & CSS)" },
 ];
 
-export function convertQuestionToBattle(q: Question): BattleQuestion {
-  const originalCorrect = q.options[q.answer];
-  const shuffledOptions = [...q.options];
-  for (let i = shuffledOptions.length - 1; i > 0; i--) {
+function shuffleIndices(): number[] {
+  const arr = [0, 1, 2, 3];
+  for (let i = arr.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
-    [shuffledOptions[i], shuffledOptions[j]] = [shuffledOptions[j], shuffledOptions[i]];
+    [arr[i], arr[j]] = [arr[j], arr[i]];
   }
-  const newAnswerIndex = shuffledOptions.indexOf(originalCorrect);
+  return arr;
+}
+
+export function convertQuestionToBattle(q: Question): BattleQuestion {
+  const order = shuffleIndices();
   return {
     id: q.id,
     question: q.q,
     code: q.code,
-    options: shuffledOptions as [string, string, string, string],
-    correctAnswer: newAnswerIndex,
+    options: order.map((i) => q.options[i]) as [string, string, string, string],
+    correctAnswer: order.indexOf(q.answer),
     explanation: q.explain,
+  };
+}
+
+export function shuffleBattleQuestion(bq: BattleQuestion): BattleQuestion {
+  const order = shuffleIndices();
+  return {
+    ...bq,
+    options: order.map((i) => bq.options[i]) as [string, string, string, string],
+    correctAnswer: order.indexOf(bq.correctAnswer),
   };
 }
 
@@ -65,23 +77,25 @@ export async function getBattleQuestions(
   extraPool: BattleQuestion[] = []
 ): Promise<BattleQuestion[]> {
   try {
+    let pool: BattleQuestion[] = [];
     if (topicId === "all") {
       const allQs: Question[] = [];
       const keys = Object.keys(QUESTION_BANK);
       for (const k of keys) {
         allQs.push(...QUESTION_BANK[k]);
       }
-      const pool = shuffle(allQs).map(convertQuestionToBattle);
-      return pool.slice(0, count);
+      pool = allQs.map(convertQuestionToBattle);
+    } else {
+      const baseQs = getQuestions(topicId).map(convertQuestionToBattle);
+      const convertedExtra = extraPool.map(shuffleBattleQuestion);
+      pool = [...baseQs, ...convertedExtra];
     }
 
-    const baseQs = getQuestions(topicId);
-    const converted = baseQs.map(convertQuestionToBattle);
-    const fullPool = [...converted, ...extraPool];
-    return shuffle(fullPool).slice(0, count);
+    const picked = shuffle(pool).slice(0, count);
+    return picked.map(shuffleBattleQuestion);
   } catch (e) {
     console.error("Error fetching battle questions:", e);
     const fallback = getQuestions("bai-04").map(convertQuestionToBattle);
-    return shuffle(fallback).slice(0, count);
+    return shuffle(fallback).slice(0, count).map(shuffleBattleQuestion);
   }
 }
