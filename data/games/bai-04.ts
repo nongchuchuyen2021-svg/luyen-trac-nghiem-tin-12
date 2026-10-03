@@ -1,4 +1,5 @@
-import type { LessonGame, SortGame, EncapsulationGame, RoutingGame } from "@/lib/types";
+import type { LessonGame, SortGame, EncapsulationGame, RoutingGame, GroupBattleGame } from "@/lib/types";
+import type { BattleQuestion } from "@/lib/battle";
 
 // Phải khớp đúng hằng số DEFAULT_ID trong components/RoutingGame.tsx
 const DEFAULT_ROUTE = "default";
@@ -275,6 +276,137 @@ const routingGameTramDinhTuyen: RoutingGame = {
   ],
 };
 
-const games: LessonGame[] = [sortGameBayDeThi, encapsulationGameDongGoi, routingGameTramDinhTuyen];
+// ─────────────────────────────────────────────────────────────────────────────
+// Game 4: Chinh Phục Đỉnh Cao: Đại Chiến Giao Thức Mạng (2 - 4 Nhóm thi đấu)
+// ─────────────────────────────────────────────────────────────────────────────
+export const summitBattleGame: GroupBattleGame = {
+  kind: "group-battle",
+  id: "chinh-phuc-dinh-cao-bai-04",
+  title: "Chinh Phục Đỉnh Cao: Đại Chiến Giao Thức Mạng",
+  emoji: "🏔️",
+  badge: "Đại chiến 2 - 4 nhóm",
+  instructions:
+    "Chia lớp thành 2 - 4 tổ học sinh (Rồng Đỏ, Đại Bàng Xanh, Báo Sấm Sét, Hổ Hoàng Kim). Sử dụng bàn phím máy chiếu (1-4, Q-R, A-F, Z-V) hoặc chạm màn hình tương tác để đua tốc độ giải mã giao thức TCP/IP, leo tháp băng thông Gigabit 1000m!",
+};
+
+export const BAI_04_BATTLE_QUESTIONS: BattleQuestion[] = [
+  {
+    id: "b4-bt-01",
+    question: "Trong mô hình mạng TCP/IP, cổng dịch vụ nào dưới đây được sử dụng mặc định cho giao thức truyền tải web bảo mật HTTPS?",
+    options: ["Cổng 443", "Cổng 80", "Cổng 22", "Cổng 53"],
+    correctAnswer: 0,
+    explanation: "Cổng 443 là cổng tiêu chuẩn dành cho HTTPS (bảo mật bằng SSL/TLS). Cổng 80 dành cho HTTP không mã hoá, cổng 22 cho SSH, cổng 53 cho DNS.",
+  },
+  {
+    id: "b4-bt-02",
+    question: "Địa chỉ thế hệ mới IPv6 có độ dài bao nhiêu bit và thường được biểu diễn dưới hệ đếm nào?",
+    options: [
+      "128 bit, biểu diễn bằng 8 nhóm số thập lục phân (hexadecimal)",
+      "32 bit, biểu diễn bằng 4 số thập phân (dot decimal)",
+      "64 bit, biểu diễn bằng 8 cặp số nhị phân",
+      "48 bit, biểu diễn bằng 6 cặp số hexa gắn cứng",
+    ],
+    correctAnswer: 0,
+    explanation: "IPv6 dài 128 bit (16 byte), gấp 4 lần IPv4, được viết dưới dạng 8 nhóm số hexa cách nhau bởi dấu hai chấm (ví dụ: 2001:0db8:85a3::8a2e:0370:7334).",
+  },
+  {
+    id: "b4-bt-03",
+    question: "Trong mạng cục bộ Ethernet, cơ chế nào được dùng để phát hiện và xử lý xung đột khi 2 máy cùng phát tín hiệu đồng thời?",
+    options: [
+      "CSMA/CD (Đa truy cập nhận biết sóng mang có phát hiện xung đột)",
+      "TCP 3-way Handshake (Bắt tay ba bước)",
+      "Routing Table (Bảng định tuyến cổng mặc định)",
+      "DNS Resolution (Phân giải tên miền thành IP)",
+    ],
+    correctAnswer: 0,
+    explanation: "Ethernet cổ điển sử dụng cơ chế CSMA/CD: lắng nghe đường truyền trước khi gửi (Carrier Sense), nếu phát hiện đụng độ tín hiệu (Collision Detection) thì cả 2 máy ngừng gửi, chờ một khoảng thời gian ngẫu nhiên rồi gửi lại.",
+  },
+  {
+    id: "b4-bt-04",
+    question: "Giao thức nào cho phép máy khách lấy thư điện tử từ máy chủ về và đồng bộ trạng thái (đọc, xoá, thư mục) trên nhiều thiết bị?",
+    options: ["IMAP", "POP3", "SMTP", "FTP"],
+    correctAnswer: 0,
+    explanation: "IMAP (Internet Message Access Protocol) giữ thư trên máy chủ và đồng bộ 2 chiều với mọi thiết bị. POP3 thường tải thư về máy rồi xoá trên máy chủ, còn SMTP chỉ dùng khi gửi thư đi.",
+  },
+  {
+    id: "b4-bt-05",
+    question: "Địa chỉ vật lý MAC (Media Access Control) có đặc điểm nào dưới đây?",
+    options: [
+      "Dài 48 bit (6 byte), do nhà sản xuất card mạng ấn định cố định vào phần cứng",
+      "Dài 32 bit (4 byte), do người quản trị mạng cấu hình lại tuỳ ý",
+      "Dài 128 bit, tự động thay đổi mỗi khi máy tính kết nối Wi-Fi khác",
+      "Là tên miền bằng chữ do người dùng đăng ký với nhà mạng",
+    ],
+    correctAnswer: 0,
+    explanation: "Địa chỉ MAC dài 6 byte (48 bit), được nhà sản xuất nạp cứng vào chip ROM của card mạng (NIC), dùng để nhận diện duy nhất thiết bị trong mạng cục bộ.",
+  },
+  {
+    id: "b4-bt-06",
+    question: "Một máy tính có IP 192.168.1.5 muốn gửi dữ liệu tới máy chủ web có IP 142.250.204.46 ngoài Internet. Thiết bị mạng nào sẽ tiếp nhận gói tin đầu tiên?",
+    options: [
+      "Default Gateway (Cổng mặc định, thường là Router của mạng)",
+      "Switch tầng 2 trong mạng LAN",
+      "Máy chủ phân giải tên miền DNS",
+      "Máy chủ cấp phát IP động DHCP",
+    ],
+    correctAnswer: 0,
+    explanation: "Khi địa chỉ IP đích nằm ngoài mạng LAN cục bộ, máy tính gửi gói tin đến Default Gateway (Cổng mặc định - địa chỉ của Router trong LAN) để Router định tuyến ra ngoài Internet.",
+  },
+  {
+    id: "b4-bt-07",
+    question: "Khi truyền một tệp dữ liệu lớn, nếu một số gói tin bị thất lạc trên đường truyền Internet, giao thức nào có nhiệm vụ phát hiện và yêu cầu gửi lại?",
+    options: [
+      "TCP (Transmission Control Protocol)",
+      "IP (Internet Protocol)",
+      "Ethernet",
+      "HTTP",
+    ],
+    correctAnswer: 0,
+    explanation: "TCP là giao thức hướng kết nối tin cậy: đánh số thứ tự từng gói, yêu cầu bên nhận gửi gói xác nhận (ACK). Nếu bên nhận chưa báo nhận hoặc phát hiện gói lỗi, bên gửi sẽ tự động gửi lại.",
+  },
+  {
+    id: "b4-bt-08",
+    question: "Khi một router nhận được gói dữ liệu mà địa chỉ đích không khớp với bất kỳ dòng nào trong bảng định tuyến, router sẽ làm gì?",
+    options: [
+      "Chuyển gói dữ liệu theo cổng mặc định (Default Route)",
+      "Lập tức huỷ gói dữ liệu và ngắt toàn bộ kết nối",
+      "Lưu trữ gói tin vô thời hạn chờ lệnh của quản trị viên",
+      "Gửi ngược lại cho máy tính vừa phát gói tin",
+    ],
+    correctAnswer: 0,
+    explanation: "Router luôn có cấu hình một cổng mặc định (Default Route). Mọi gói tin có địa chỉ không nằm trong bảng định tuyến cụ thể sẽ được gửi qua cổng mặc định để router cấp trên tiếp tục xử lý.",
+  },
+  {
+    id: "b4-bt-09",
+    question: "Trong địa chỉ IPv4 dạng dot decimal '192.168.10.1', mỗi số nằm giữa các dấu chấm có giá trị tối đa là bao nhiêu?",
+    options: [
+      "255 (tương ứng với 1 byte = 8 bit nhị phân từ 0 đến 255)",
+      "256 (tương ứng 256 trạng thái)",
+      "128 (tương ứng 7 bit)",
+      "1024 (tương ứng 1 kilobyte)",
+    ],
+    correctAnswer: 0,
+    explanation: "IPv4 gồm 4 byte (32 bit). Mỗi byte gồm 8 bit nhị phân nên giá trị thập phân chỉ nằm trong đoạn từ 0 (00000000) đến 255 (11111111).",
+  },
+  {
+    id: "b4-bt-10",
+    question: "Vì sao các ứng dụng truyền phát trực tiếp (Livestream) hoặc thoại Internet thường ưu tiên sử dụng giao thức UDP hơn TCP?",
+    options: [
+      "Vì UDP truyền dữ liệu liên tục không chờ xác nhận, giảm độ trễ tối đa",
+      "Vì UDP có khả năng tự sửa lỗi hình ảnh bị vỡ nét tốt hơn TCP",
+      "Vì UDP mã hoá dữ liệu mạnh hơn giúp video không bị nhìn lén",
+      "Vì UDP không cần card mạng vẫn truyền được qua sóng radio",
+    ],
+    correctAnswer: 0,
+    explanation: "UDP (User Datagram Protocol) là giao thức không hướng kết nối, không kiểm tra xác nhận hay gửi lại gói mất, giúp dữ liệu truyền đi với độ trễ thấp nhất — rất phù hợp với âm thanh và video trực tiếp thời gian thực.",
+  },
+];
+
+const games: LessonGame[] = [
+  summitBattleGame,
+  sortGameBayDeThi,
+  encapsulationGameDongGoi,
+  routingGameTramDinhTuyen,
+];
 
 export default games;

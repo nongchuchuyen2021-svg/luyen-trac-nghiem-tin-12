@@ -28,6 +28,12 @@ function gameItemCount(g: LessonGame): number {
     case "routing":
     case "menupath":
       return g.questions.length;
+    case "arena":
+      return g.waves.length;
+    case "team-battle":
+      return g.questions.length;
+    case "group-battle":
+      return 15;
   }
 }
 
@@ -169,12 +175,19 @@ export default function LessonClient({
       ? [
           {
             key: "games" as Mode,
-            emoji: "🎮",
-            name: games.length === 1 ? games[0].title : "Trung tâm Game",
-            desc:
-              games.length === 1
-                ? `${gameItemCount(games[0])} thẻ · kéo hoặc chạm để chơi`
-                : `${games.length} trò chơi ôn bài · kéo hoặc chạm để chơi`,
+            emoji: games.some((g) => g.kind === "arena" || g.kind === "team-battle" || g.kind === "group-battle") ? "⚔️" : "🎮",
+            name: games.some((g) => g.kind === "arena" || g.kind === "team-battle" || g.kind === "group-battle")
+              ? "Đấu trường game"
+              : games.length === 1
+                ? games[0].title
+                : "Trung tâm Game",
+            desc: games.some((g) => g.kind === "group-battle" || g.kind === "team-battle")
+              ? `${games.length} trò chơi · Có ĐẠI CHIẾN ĐẤU TRƯỜNG GIỮA CÁC NHÓM!`
+              : games.some((g) => g.kind === "arena")
+                ? `${games.length} trò chơi · Có ĐẤU TRƯỜNG đối đầu Siêu AI Omega!`
+                : games.length === 1
+                  ? `${gameItemCount(games[0])} thẻ · kéo hoặc chạm để chơi`
+                  : `${games.length} trò chơi ôn bài · kéo hoặc chạm để chơi`,
             best: null,
             done: false,
             enabled: true,

@@ -114,6 +114,11 @@ export default function HomeClient({ counts }: { counts: Record<string, LessonCo
                       c.tf > 0 ? `${c.tf} đúng/sai` : "",
                       c.essay > 0 ? `${c.essay} tự luận` : "",
                       c.theory ? "📖 có lý thuyết" : "",
+                      c.hasArena
+                        ? "⚔️ Đấu trường game"
+                        : c.games && c.games > 0
+                        ? `🎮 ${c.games} game`
+                        : "",
                       p ? `đã làm ${p.attempts} lần` : "",
                     ]
                       .filter(Boolean)

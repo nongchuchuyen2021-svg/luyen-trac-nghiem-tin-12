@@ -113,6 +113,8 @@ export type LessonCounts = {
   tf: number;
   essay: number;
   theory: boolean;
+  games?: number;
+  hasArena?: boolean;
 };
 
 export type Lesson = {
@@ -303,7 +305,89 @@ export type ClassifyGame = {
   items: ClassifyItem[];
 };
 
-export type LessonGame = SortGame | TimelineGame | TopologyGame | EncapsulationGame | RoutingGame | MenuPathGame | ClassifyGame;
+// Thẻ thử thách trong Đấu trường Trí tuệ Nhân tạo (AI Arena)
+export type ArenaThreat = {
+  id: string;
+  threatType: "GenerativeAI" | "TraditionalAI" | "Healthcare" | "Autonomous" | "Ethics" | "Security" | "LLM";
+  threatName: string;
+  threatEmoji: string;
+  attackerTag: string; // Tên phân hệ / danh tính đe dọa (vd: "A.I. OMEGA", "Black-Box Glitch")
+  situation: string; // Tình huống mô tả thực tế
+  q: string; // Câu hỏi phản công / giải mã
+  options: string[]; // 4 lựa chọn
+  answer: number; // Chỉ số phương án đúng (0-3)
+  explain: string; // Giải thích phân tích an toàn AI chuẩn SGK Tin 12
+  damage: number; // Sát thương lên độ ổn định hệ thống (vd: 20-35)
+  score: number; // Điểm nhận được khi giải mã thành công
+};
+
+// Đợt thử thách trong Đấu trường AI
+export type ArenaWave = {
+  id: string;
+  waveNumber: number;
+  name: string;
+  subtitle: string;
+  emoji: string;
+  isBossWave?: boolean;
+  threats: ArenaThreat[];
+};
+
+// Game Đấu trường Trí tuệ Nhân tạo: thử thách phân tích, kiểm soát AI và đối đầu Siêu AI
+export type ArenaGame = {
+  kind: "arena";
+  id: string;
+  title: string;
+  emoji: string;
+  instructions: string;
+  bossName: string;
+  bossEmoji: string;
+  bossHp: number;
+  waves: ArenaWave[];
+};
+
+// Câu hỏi trong Đấu trường Đại chiến Các Nhóm
+export type TeamBattleQuestion = {
+  id: string;
+  q: string;
+  options: string[];
+  answer: number;
+  explain: string;
+  category?: string;
+  score?: number;
+  damage?: number;
+};
+
+// Game Đấu trường Đại chiến Giữa Các Nhóm (Team Battle Arena)
+export type TeamBattleGame = {
+  kind: "team-battle";
+  id: string;
+  title: string;
+  emoji: string;
+  instructions: string;
+  questions: TeamBattleQuestion[];
+};
+
+// Game Đấu trường Đại chiến 2 - 4 Nhóm (Group Battle Game kiểu Toán 12)
+export type GroupBattleGame = {
+  kind: "group-battle";
+  id: string;
+  title: string;
+  emoji: string;
+  badge?: string;
+  instructions: string;
+};
+
+export type LessonGame =
+  | SortGame
+  | TimelineGame
+  | TopologyGame
+  | EncapsulationGame
+  | RoutingGame
+  | MenuPathGame
+  | ClassifyGame
+  | ArenaGame
+  | TeamBattleGame
+  | GroupBattleGame;
 
 // ─── Ôn tập tổng kết ─────────────────────────────────────────────────────────
 // Trang ôn nhanh trước khi kiểm tra: thẻ lật ghi nhớ, lỗi hay gặp, mẹo nhớ và
@@ -343,3 +427,11 @@ export type LessonProgress = {
 };
 
 export type ProgressMap = Record<string, LessonProgress>;
+
+export type LessonErrorStat = {
+  wrong: number;
+  total: number;
+  lastAt: string;
+};
+
+export type ErrorMap = Record<string, LessonErrorStat>;
