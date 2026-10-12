@@ -1,0 +1,2346 @@
+import fs from 'node:fs';
+import path from 'node:path';
+
+// Trình biên soạn Slide bài giảng điện tử tương tác cho Bài 9: Tạo danh sách, bảng (Tin học 12)
+// Bao gồm hệ thống hoạt họa phong phú, mô phỏng chuyển động trực quan, âm thanh Web Audio và công cụ thực hành trực tiếp.
+
+const htmlContent = `<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bài 9: Tạo danh sách, bảng — Bài giảng điện tử Tin học 12</title>
+  <style>
+    /* ─── RESET & HỆ THỐNG BIẾN MÀU SẮC CHUẨN 2026 ─── */
+    :root {
+      --bg: #070D14;
+      --bg-card: rgba(13, 23, 35, 0.94);
+      --border-card: rgba(56, 225, 240, 0.18);
+      --ink: #FFFFFF;
+      --ink-soft: #94A3B8;
+      --sea: #0D7C86;
+      --sea-light: #38E1F0;
+      --sea-glow: rgba(56, 225, 240, 0.35);
+      --coral: #F2683C;
+      --coral-light: #FF855D;
+      --gold: #F5A623;
+      --gold-light: #FFC043;
+      --leaf: #10B981;
+      --leaf-light: #34D399;
+      --purple: #8B5CF6;
+      --purple-light: #C4B5FD;
+      --rose: #F43F5E;
+      --radius-lg: 24px;
+      --radius-md: 16px;
+      --radius-sm: 10px;
+      --font-main: system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      --font-mono: 'Consolas', 'Fira Code', 'Courier New', monospace;
+      --transition-slide: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.5s ease;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: var(--font-main);
+      background-color: var(--bg);
+      color: var(--ink);
+      overflow: hidden;
+      width: 100vw;
+      height: 100vh;
+      user-select: none;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ─── NỀN GRADIENT VŨ TRỤ SỐ ĐỘNG VỚI HẠT TRÔI NỔI ─── */
+    .bg-mesh {
+      position: fixed;
+      top: 0; left: 0; width: 100vw; height: 100vh;
+      background: radial-gradient(circle at 15% 15%, rgba(13, 124, 134, 0.32) 0%, transparent 45%),
+                  radial-gradient(circle at 85% 80%, rgba(242, 104, 60, 0.25) 0%, transparent 45%),
+                  radial-gradient(circle at 50% 50%, rgba(139, 92, 246, 0.16) 0%, transparent 60%);
+      z-index: 0;
+      pointer-events: none;
+      animation: meshPulse 12s ease-in-out infinite alternate;
+    }
+
+    @keyframes meshPulse {
+      0% { transform: scale(1) translate(0, 0); opacity: 0.9; }
+      100% { transform: scale(1.06) translate(-10px, 10px); opacity: 1; }
+    }
+
+    /* Ký hiệu HTML trôi lơ lửng */
+    .floating-symbols {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 1;
+      overflow: hidden;
+    }
+
+    .float-tag {
+      position: absolute;
+      font-family: var(--font-mono);
+      font-size: 14px;
+      font-weight: 700;
+      color: rgba(56, 225, 240, 0.15);
+      border: 1px solid rgba(56, 225, 240, 0.12);
+      padding: 4px 10px;
+      border-radius: 8px;
+      background: rgba(13, 124, 134, 0.05);
+      animation: floatUp 20s linear infinite;
+    }
+
+    @keyframes floatUp {
+      0% { transform: translateY(105vh) rotate(0deg); opacity: 0; }
+      10% { opacity: 0.4; }
+      90% { opacity: 0.4; }
+      100% { transform: translateY(-10vh) rotate(360deg); opacity: 0; }
+    }
+
+    /* ─── CONTAINER TRÌNH CHIẾU ─── */
+    .deck-container {
+      position: relative;
+      width: 100vw;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 2;
+    }
+
+    /* ─── KHUNG MỖI SLIDE ─── */
+    .slide {
+      position: absolute;
+      width: 95vw;
+      max-width: 1360px;
+      height: 88vh;
+      max-height: 860px;
+      background: var(--bg-card);
+      border: 1px solid var(--border-card);
+      border-radius: var(--radius-lg);
+      backdrop-filter: blur(28px);
+      -webkit-backdrop-filter: blur(28px);
+      box-shadow: 0 35px 80px rgba(0, 0, 0, 0.75), inset 0 1px 0 rgba(255, 255, 255, 0.12);
+      padding: 30px 44px;
+      display: flex;
+      flex-direction: column;
+      opacity: 0;
+      pointer-events: none;
+      transform: translateX(70px) scale(0.96);
+      transition: var(--transition-slide);
+      overflow-y: auto;
+    }
+
+    .slide::-webkit-scrollbar { width: 6px; }
+    .slide::-webkit-scrollbar-thumb { background: rgba(56, 225, 240, 0.25); border-radius: 4px; }
+
+    .slide.active {
+      opacity: 1;
+      pointer-events: auto;
+      transform: translateX(0) scale(1);
+      z-index: 3;
+    }
+
+    .slide.prev {
+      opacity: 0;
+      pointer-events: none;
+      transform: translateX(-70px) scale(0.96);
+    }
+
+    /* ─── HEADER MỖI SLIDE ─── */
+    .slide-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 16px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      padding-bottom: 12px;
+      flex-shrink: 0;
+    }
+
+    .slide-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 14px;
+      border-radius: 20px;
+      font-size: 12.5px;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      background: rgba(13, 124, 134, 0.28);
+      color: #38E1F0;
+      border: 1px solid rgba(56, 225, 240, 0.35);
+      margin-bottom: 6px;
+    }
+    .slide-badge.coral { background: rgba(242, 104, 60, 0.25); color: #FF855D; border-color: rgba(255, 133, 93, 0.35); }
+    .slide-badge.gold { background: rgba(245, 166, 35, 0.25); color: #FFC043; border-color: rgba(255, 192, 67, 0.35); }
+    .slide-badge.leaf { background: rgba(16, 185, 129, 0.25); color: #34D399; border-color: rgba(52, 211, 153, 0.35); }
+    .slide-badge.purple { background: rgba(139, 92, 246, 0.25); color: #C4B5FD; border-color: rgba(196, 181, 253, 0.35); }
+
+    .slide-title {
+      font-size: 28px;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      background: linear-gradient(135deg, #FFFFFF 40%, #BFEAF2 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      line-height: 1.25;
+    }
+
+    .slide-subtitle {
+      font-size: 14.5px;
+      color: var(--ink-soft);
+      margin-top: 3px;
+    }
+
+    .slide-body {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: 16px;
+      position: relative;
+    }
+
+    /* ─── BỘ ĐIỀU KHIỂN HIỆU ỨNG TỪNG BƯỚC (REVEAL CONTROLLER) ─── */
+    .reveal-controller {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: rgba(0, 0, 0, 0.35);
+      padding: 6px 14px;
+      border-radius: 30px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      font-size: 13px;
+    }
+
+    .reveal-status {
+      font-weight: 800;
+      color: #38E1F0;
+      font-family: var(--font-mono);
+    }
+
+    .reveal-btn {
+      background: linear-gradient(135deg, #0D7C86, #16A8B6);
+      color: white;
+      border: none;
+      padding: 5px 12px;
+      border-radius: 16px;
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .reveal-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 14px rgba(56, 225, 240, 0.45);
+    }
+
+    /* ─── CÁC PHẦN TỬ HIỂN THỊ TỪNG BƯỚC (REVEAL ITEM) ─── */
+    .reveal-item {
+      opacity: 0;
+      transform: translateY(24px) scale(0.97);
+      transition: opacity 0.5s cubic-bezier(0.16, 1, 0.3, 1), transform 0.5s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.4s;
+      will-change: opacity, transform;
+    }
+
+    .slide.active .reveal-item.visible {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+
+    .reveal-item.just-revealed {
+      box-shadow: 0 0 25px rgba(56, 225, 240, 0.4), inset 0 0 15px rgba(56, 225, 240, 0.15);
+      border-color: #38E1F0 !important;
+    }
+
+    /* ─── HỆ THỐNG THẺ CARD & LAYOUT ─── */
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 18px;
+    }
+
+    .grid-3 {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+    }
+
+    .card {
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.09);
+      border-radius: var(--radius-md);
+      padding: 16px 20px;
+      position: relative;
+      overflow: hidden;
+      transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.3s;
+    }
+
+    .card:hover {
+      transform: translateY(-3px);
+      border-color: rgba(56, 225, 240, 0.3);
+    }
+
+    .card-title {
+      font-size: 16px;
+      font-weight: 700;
+      color: #FFFFFF;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    /* ─── HỘP CODE & PREVIEW TRỰC TIẾP (CHUẨN 100% THEO CODE) ─── */
+    .code-box {
+      background: #0D1520;
+      border: 1px solid rgba(56, 225, 240, 0.25);
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 12px 28px rgba(0,0,0,0.5);
+    }
+
+    .code-header {
+      background: rgba(255, 255, 255, 0.06);
+      padding: 8px 14px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 12px;
+      font-family: var(--font-mono);
+      color: #94A3B8;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .code-content {
+      padding: 14px 18px;
+      font-family: var(--font-mono);
+      font-size: 13.5px;
+      line-height: 1.6;
+      color: #E2E8F0;
+      white-space: pre-wrap;
+      overflow-x: auto;
+    }
+
+    /* Highlight màu syntax code HTML */
+    .tag-kw { color: #F2683C; font-weight: bold; }
+    .attr-kw { color: #38E1F0; }
+    .val-kw { color: #10B981; }
+    .cmt-kw { color: #64748B; font-style: italic; }
+
+    /* Hộp Xem trước trình duyệt (NỀN TRẮNG CHUẨN TRÌNH DUYỆT) */
+    .preview-box {
+      background: #FFFFFF;
+      color: #111827;
+      border-radius: var(--radius-md);
+      padding: 16px 20px;
+      box-shadow: 0 12px 30px rgba(0,0,0,0.5);
+      font-family: var(--font-main);
+      overflow-y: auto;
+      max-height: 380px;
+      border: 2px solid #38E1F0;
+    }
+
+    .preview-header {
+      font-size: 11px;
+      text-transform: uppercase;
+      color: #64748B;
+      font-weight: 700;
+      margin-bottom: 10px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px dashed #CBD5E1;
+      padding-bottom: 6px;
+    }
+
+    /* ─── BỘ ĐIỀU KHIỂN TƯƠNG TÁC ĐỘNG (INTERACTIVE CONTROLS) ─── */
+    .interactive-panel {
+      background: rgba(13, 124, 134, 0.15);
+      border: 1px solid rgba(56, 225, 240, 0.35);
+      border-radius: var(--radius-md);
+      padding: 12px 16px;
+      margin-top: 10px;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .interactive-panel-title {
+      width: 100%;
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: #38E1F0;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-bottom: 4px;
+    }
+
+    .sim-btn {
+      background: rgba(255, 255, 255, 0.08);
+      color: #E2E8F0;
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      padding: 5px 12px;
+      border-radius: 8px;
+      font-size: 12.5px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .sim-btn:hover {
+      background: rgba(56, 225, 240, 0.2);
+      border-color: #38E1F0;
+      color: #FFFFFF;
+      transform: translateY(-1px);
+    }
+
+    .sim-btn.active {
+      background: #0D7C86;
+      border-color: #38E1F0;
+      color: #FFFFFF;
+      box-shadow: 0 0 12px rgba(56, 225, 240, 0.4);
+    }
+
+    /* ─── HOẠT HỌA CHUYỂN ĐỘNG GỘP Ô (SPAN ANIMATION ENGINE) ─── */
+    .span-demo-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+      background: white;
+      color: #1E293B;
+      font-size: 13.5px;
+      border-radius: 8px;
+      overflow: hidden;
+    }
+
+    .span-demo-table th, .span-demo-table td {
+      border: 2px solid #94A3B8;
+      padding: 10px 12px;
+      text-align: center;
+      transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+      position: relative;
+    }
+
+    .span-demo-table th {
+      background: #E2E8F0;
+      font-weight: 700;
+    }
+
+    .cell-merged {
+      background: #CCFBF1 !important;
+      color: #0F766E !important;
+      font-weight: 800;
+      border: 3px solid #0D9488 !important;
+      animation: pulseCell 2s infinite alternate;
+    }
+
+    @keyframes pulseCell {
+      0% { box-shadow: 0 0 4px rgba(13, 148, 136, 0.2); }
+      100% { box-shadow: 0 0 16px rgba(13, 148, 136, 0.6); }
+    }
+
+    .cell-removed {
+      opacity: 0.2;
+      background: #FEE2E2 !important;
+      text-decoration: line-through;
+      border: 2px dashed #EF4444 !important;
+    }
+
+    /* ─── SƠ ĐỒ TƯ DUY TƯƠNG TÁC (INTERACTIVE MINDMAP) ─── */
+    .mindmap-container {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 18px;
+      margin-top: 6px;
+    }
+
+    .mindmap-branch {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: var(--radius-md);
+      padding: 14px 18px;
+      transition: all 0.3s;
+    }
+
+    .mindmap-branch:hover {
+      border-color: rgba(56, 225, 240, 0.4);
+      box-shadow: 0 10px 24px rgba(0,0,0,0.4);
+    }
+
+    .node-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 10px;
+      border-radius: 6px;
+      font-family: var(--font-mono);
+      font-size: 13px;
+      font-weight: 700;
+      background: rgba(56, 225, 240, 0.15);
+      color: #38E1F0;
+      border: 1px solid rgba(56, 225, 240, 0.3);
+      margin: 3px;
+    }
+
+    /* ─── PHÒNG THỰC HÀNH CODE TRỰC TIẾP (LIVE PLAYGROUND) ─── */
+    .playground-wrapper {
+      display: grid;
+      grid-template-columns: 1.1fr 1fr;
+      gap: 16px;
+      height: 480px;
+    }
+
+    .editor-pane {
+      background: #0A1118;
+      border: 1px solid rgba(56, 225, 240, 0.3);
+      border-radius: var(--radius-md);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    .editor-bar {
+      background: rgba(255, 255, 255, 0.05);
+      padding: 8px 14px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      font-size: 12px;
+    }
+
+    .live-code-area {
+      flex: 1;
+      background: transparent;
+      border: none;
+      color: #F8FAFC;
+      font-family: var(--font-mono);
+      font-size: 13.5px;
+      line-height: 1.6;
+      padding: 14px;
+      resize: none;
+      outline: none;
+      white-space: pre;
+    }
+
+    .preview-pane {
+      background: #FFFFFF;
+      border-radius: var(--radius-md);
+      border: 2px solid #38E1F0;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .preview-pane-bar {
+      background: #F1F5F9;
+      padding: 8px 14px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      border-bottom: 1px solid #CBD5E1;
+      font-size: 11px;
+      font-weight: 700;
+      color: #64748B;
+      text-transform: uppercase;
+    }
+
+    .preview-frame {
+      flex: 1;
+      border: none;
+      width: 100%;
+      height: 100%;
+      background: white;
+    }
+
+    /* ─── ĐẤU TRƯỜNG MINI QUIZ TƯƠNG TÁC ─── */
+    .quiz-container {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+
+    .quiz-card {
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: var(--radius-md);
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      transition: all 0.3s;
+    }
+
+    .quiz-question {
+      font-size: 14.5px;
+      font-weight: 700;
+      color: #FFFFFF;
+      line-height: 1.4;
+    }
+
+    .quiz-btn {
+      background: rgba(255, 255, 255, 0.06);
+      color: #E2E8F0;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      padding: 8px 12px;
+      border-radius: 8px;
+      font-size: 13px;
+      text-align: left;
+      cursor: pointer;
+      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .quiz-btn:hover {
+      background: rgba(56, 225, 240, 0.15);
+      border-color: #38E1F0;
+      color: #FFFFFF;
+      transform: translateX(4px);
+    }
+
+    .quiz-btn.correct {
+      background: #059669 !important;
+      border-color: #34D399 !important;
+      color: white !important;
+      font-weight: 700;
+    }
+
+    .quiz-btn.wrong {
+      background: #DC2626 !important;
+      border-color: #F87171 !important;
+      color: white !important;
+      animation: shake 0.4s ease;
+    }
+
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      20%, 60% { transform: translateX(-6px); }
+      40%, 80% { transform: translateX(6px); }
+    }
+
+    .quiz-feedback {
+      font-size: 12.5px;
+      margin-top: 4px;
+      padding: 6px 10px;
+      border-radius: 6px;
+      display: none;
+      line-height: 1.4;
+    }
+
+    /* ─── THANH ĐIỀU HƯỚNG DECK CHÍNH ─── */
+    .deck-nav {
+      position: fixed;
+      bottom: 14px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(10, 17, 24, 0.88);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 40px;
+      padding: 7px 18px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      backdrop-filter: blur(16px);
+      z-index: 100;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
+    }
+
+    .nav-btn {
+      background: transparent;
+      border: none;
+      color: #E2E8F0;
+      font-size: 18px;
+      cursor: pointer;
+      padding: 4px 10px;
+      border-radius: 20px;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .nav-btn:hover {
+      color: #38E1F0;
+      background: rgba(255, 255, 255, 0.1);
+      transform: scale(1.1);
+    }
+
+    .deck-progress {
+      width: 220px;
+      height: 6px;
+      background: rgba(255, 255, 255, 0.15);
+      border-radius: 3px;
+      overflow: hidden;
+    }
+
+    .deck-progress-bar {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, #0D7C86, #38E1F0, #F2683C);
+      transition: width 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .deck-counter {
+      font-size: 13px;
+      font-weight: 700;
+      color: #94A3B8;
+      font-family: var(--font-mono);
+      min-width: 60px;
+      text-align: center;
+    }
+
+    /* Pháo hoa canvas */
+    #confettiCanvas {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100vw; height: 100vh;
+      pointer-events: none;
+      z-index: 999;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Nền Gradient Vũ trụ & Ký hiệu lơ lửng -->
+  <div class="bg-mesh"></div>
+  <div class="floating-symbols">
+    <div class="float-tag" style="left: 5%; animation-delay: 0s;">&lt;ol&gt;</div>
+    <div class="float-tag" style="left: 18%; animation-delay: 4s;">&lt;ul&gt;</div>
+    <div class="float-tag" style="left: 32%; animation-delay: 8s;">&lt;table&gt;</div>
+    <div class="float-tag" style="left: 48%; animation-delay: 2s;">&lt;tr&gt;</div>
+    <div class="float-tag" style="left: 63%; animation-delay: 6s;">&lt;th&gt;</div>
+    <div class="float-tag" style="left: 77%; animation-delay: 11s;">&lt;td&gt;</div>
+    <div class="float-tag" style="left: 88%; animation-delay: 14s;">colspan</div>
+    <div class="float-tag" style="left: 93%; animation-delay: 17s;">rowspan</div>
+  </div>
+
+  <canvas id="confettiCanvas"></canvas>
+
+  <div class="deck-container">
+
+    <!-- ════════════════════════════════════════════════════════════════════════
+         SLIDE 1: TRANG BÌA
+         ════════════════════════════════════════════════════════════════════════ -->
+    <section class="slide active" id="slide-1" data-total-reveal="3">
+      <div class="slide-header">
+        <div>
+          <span class="slide-badge">Tin học 12 · Định hướng Tin học ứng dụng (ICT)</span>
+          <div class="slide-title">Bài 9. Tạo danh sách, bảng</div>
+          <div class="slide-subtitle">Sách giáo khoa Kết nối tri thức với cuộc sống (Trang 52 – 56)</div>
+        </div>
+        <div class="reveal-controller">
+          <span>✨ Hiệu ứng:</span>
+          <span class="reveal-status" id="slide-1-status">0 / 3</span>
+          <button class="reveal-btn" onclick="revealNextInCurrentSlide();">▶ Hiện ý (↓)</button>
+          <button class="reveal-btn" style="background: rgba(255,255,255,0.15);" onclick="revealAllInCurrentSlide();">Hiện hết</button>
+        </div>
+      </div>
+      <div class="slide-body">
+        <div class="grid-3" style="margin-top: 10px;">
+          <div class="card reveal-item" style="border-top: 4px solid #38E1F0; text-align: center; padding: 24px 18px;">
+            <div style="font-size: 42px; margin-bottom: 12px;">📋</div>
+            <div style="font-size: 18px; font-weight: 700; color: #38E1F0; margin-bottom: 8px;">Ba loại Danh sách</div>
+            <p style="font-size: 14px; color: #CBD5E1; line-height: 1.5;">
+              Làm chủ <strong>&lt;ol&gt;</strong> (có thứ tự), <strong>&lt;ul&gt;</strong> (không có thứ tự) và <strong>&lt;dl&gt;</strong> (danh sách mô tả).
+            </p>
+          </div>
+
+          <div class="card reveal-item" style="border-top: 4px solid #F5A623; text-align: center; padding: 24px 18px;">
+            <div style="font-size: 42px; margin-bottom: 12px;">📊</div>
+            <div style="font-size: 18px; font-weight: 700; color: #FFC043; margin-bottom: 8px;">Cấu trúc Bảng HTML</div>
+            <p style="font-size: 14px; color: #CBD5E1; line-height: 1.5;">
+              Xây dựng bảng với <strong>&lt;table&gt;</strong>, hàng <strong>&lt;tr&gt;</strong>, tiêu đề <strong>&lt;th&gt;</strong>, dữ liệu <strong>&lt;td&gt;</strong> và <strong>&lt;caption&gt;</strong>.
+            </p>
+          </div>
+
+          <div class="card reveal-item" style="border-top: 4px solid #10B981; text-align: center; padding: 24px 18px;">
+            <div style="font-size: 42px; margin-bottom: 12px;">🔗</div>
+            <div style="font-size: 18px; font-weight: 700; color: #34D399; margin-bottom: 8px;">Kỹ thuật Gộp ô nâng cao</div>
+            <p style="font-size: 14px; color: #CBD5E1; line-height: 1.5;">
+              Gộp cột với <strong>colspan</strong>, gộp hàng với <strong>rowspan</strong> để thiết kế biểu mẫu phức tạp như Bảng điểm thi SGK.
+            </p>
+          </div>
+        </div>
+
+        <div class="card reveal-item" style="background: rgba(13, 124, 134, 0.15); border: 1px dashed rgba(56, 225, 240, 0.4); padding: 12px 20px; display: flex; align-items: center; justify-content: space-between;">
+          <div style="font-size: 13.5px; color: #E2E8F0;">
+            ⌨️ <strong>Mẹo trình chiếu:</strong> Nhấn phím <strong>Space</strong> hoặc <strong>Mũi tên phải (→)</strong> để chuyển slide · Phím <strong>Mũi tên xuống (↓)</strong> để mở từng ý · <strong>F</strong> để bật Toàn màn hình!
+          </div>
+          <button class="sim-btn" onclick="nextSlide();" style="background: #0D7C86; color: white;">Bắt đầu bài học 🚀</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ════════════════════════════════════════════════════════════════════════
+         SLIDE 2: TẠI SAO CẦN DANH SÁCH & BẢNG?
+         ════════════════════════════════════════════════════════════════════════ -->
+    <section class="slide" id="slide-2" data-total-reveal="3">
+      <div class="slide-header">
+        <div>
+          <span class="slide-badge coral">Đặt vấn đề</span>
+          <div class="slide-title">Vì sao dữ liệu web cần Danh sách và Bảng?</div>
+          <div class="slide-subtitle">Chuyển hóa văn bản lộn xộn thành cấu trúc thông tin khoa học, trực quan</div>
+        </div>
+        <div class="reveal-controller">
+          <span>✨ Hiệu ứng:</span>
+          <span class="reveal-status" id="slide-2-status">0 / 3</span>
+          <button class="reveal-btn" onclick="revealNextInCurrentSlide();">▶ Hiện ý (↓)</button>
+          <button class="reveal-btn" style="background: rgba(255,255,255,0.15);" onclick="revealAllInCurrentSlide();">Hiện hết</button>
+        </div>
+      </div>
+      <div class="slide-body">
+        <div class="grid-2">
+          <!-- Trước khi có danh sách & bảng -->
+          <div class="card reveal-item" style="border-left: 5px solid #EF4444; background: rgba(239, 68, 68, 0.08);">
+            <div class="card-title" style="color: #F87171;">
+              <span>❌</span> Văn bản thuần túy (Khó theo dõi)
+            </div>
+            <p style="font-size: 14px; line-height: 1.6; color: #CBD5E1; margin-bottom: 10px;">
+              "Để nấu trà sữa, bước 1 em đun sôi nước rồi ủ trà trong 10 phút, bước 2 cho bột sữa và đường khuấy tan, bước 3 cho đá và thạch vào ly. Còn giá bán thì cốc nhỏ 15k, cốc vừa 20k, cốc lớn 25k..."
+            </p>
+            <div style="font-size: 12.5px; color: #FCA5A5; font-style: italic;">
+              ⚠️ Nhược điểm: Mắt người đọc rất khó dò tìm nhanh thông tin, không biết bước nào trước bước nào sau, không đối chiếu được các mức giá!
+            </div>
+          </div>
+
+          <!-- Sau khi dùng danh sách & bảng -->
+          <div class="card reveal-item" style="border-left: 5px solid #10B981; background: rgba(16, 185, 129, 0.08);">
+            <div class="card-title" style="color: #34D399;">
+              <span>✅</span> Danh sách & Bảng (Khoa học, rõ ràng)
+            </div>
+            <div style="font-size: 13.5px; line-height: 1.6; color: #CBD5E1;">
+              <strong>1. Các bước làm:</strong> Dùng <code>&lt;ol&gt;</code> đánh số 1, 2, 3 tự động.<br>
+              <strong>2. Bảng thực đơn:</strong> Dùng <code>&lt;table&gt;</code> xếp thành hàng và cột:
+              <table style="width: 100%; border-collapse: collapse; margin-top: 8px; font-size: 12.5px; color: #111827; background: white; border-radius: 6px; overflow: hidden;">
+                <tr style="background: #E2E8F0;">
+                  <th style="border: 1px solid #CBD5E1; padding: 4px 8px;">Cỡ ly</th>
+                  <th style="border: 1px solid #CBD5E1; padding: 4px 8px;">Đơn giá</th>
+                </tr>
+                <tr>
+                  <td style="border: 1px solid #CBD5E1; padding: 4px 8px; text-align: center;">Nhỏ (S)</td>
+                  <td style="border: 1px solid #CBD5E1; padding: 4px 8px; text-align: center;">15.000 đ</td>
+                </tr>
+                <tr>
+                  <td style="border: 1px solid #CBD5E1; padding: 4px 8px; text-align: center;">Lớn (L)</td>
+                  <td style="border: 1px solid #CBD5E1; padding: 4px 8px; text-align: center;">25.000 đ</td>
+                </tr>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <div class="card reveal-item" style="background: rgba(56, 225, 240, 0.08); border-color: rgba(56, 225, 240, 0.3); padding: 12px 18px;">
+          💡 <strong>Định nghĩa SGK Tin học 12:</strong> Danh sách trong HTML cho phép <em>nhóm và liệt kê các mục tương tự nhau</em> để hiển thị tuần tự; còn Bảng được dùng khi cần sắp xếp dữ liệu dưới dạng <em>hàng và cột</em>.
+        </div>
+      </div>
+    </section>
+
+    <!-- ════════════════════════════════════════════════════════════════════════
+         SLIDE 3: DANH SÁCH CÓ THỨ TỰ <OL> VÀ THUỘC TÍNH TYPE, START
+         ════════════════════════════════════════════════════════════════════════ -->
+    <section class="slide" id="slide-3" data-total-reveal="3">
+      <div class="slide-header">
+        <div>
+          <span class="slide-badge gold">Mục 1 SGK · Trang 52</span>
+          <div class="slide-title">Danh sách có thứ tự &lt;ol&gt; (Ordered List)</div>
+          <div class="slide-subtitle">Tự động đánh số thứ tự với thuộc tính <code>type</code> và số bắt đầu <code>start</code></div>
+        </div>
+        <div class="reveal-controller">
+          <span>✨ Hiệu ứng:</span>
+          <span class="reveal-status" id="slide-3-status">0 / 3</span>
+          <button class="reveal-btn" onclick="revealNextInCurrentSlide();">▶ Hiện ý (↓)</button>
+          <button class="reveal-btn" style="background: rgba(255,255,255,0.15);" onclick="revealAllInCurrentSlide();">Hiện hết</button>
+        </div>
+      </div>
+      <div class="slide-body">
+        <div class="grid-2">
+          <!-- Cột Code HTML -->
+          <div class="code-box reveal-item">
+            <div class="code-header">
+              <span>HTML Code · Hình 9.1 SGK</span>
+              <span>index.html</span>
+            </div>
+            <div class="code-content" id="ol-code-display">&lt;<span class="tag-kw">ol</span> <span class="attr-kw">type</span>=<span class="val-kw">"i"</span> <span class="attr-kw">start</span>=<span class="val-kw">"1"</span>&gt;
+  &lt;<span class="tag-kw">li</span>&gt;Nếu &lt;<span class="tag-kw">b</span>&gt;delta&lt;/<span class="tag-kw">b</span>&gt; &amp;lt; 0: Phương trình vô nghiệm&lt;/<span class="tag-kw">li</span>&gt;
+  &lt;<span class="tag-kw">li</span>&gt;Nếu &lt;<span class="tag-kw">b</span>&gt;delta&lt;/<span class="tag-kw">b</span>&gt; = 0: Phương trình có nghiệm kép&lt;/<span class="tag-kw">li</span>&gt;
+  &lt;<span class="tag-kw">li</span>&gt;Nếu &lt;<span class="tag-kw">b</span>&gt;delta&lt;/<span class="tag-kw">b</span>&gt; &amp;gt; 0: Phương trình có 2 nghiệm&lt;/<span class="tag-kw">li</span>&gt;
+&lt;/<span class="tag-kw">ol</span>&gt;</div>
+          </div>
+
+          <!-- Cột Preview chuẩn trình duyệt -->
+          <div class="preview-box reveal-item">
+            <div class="preview-header">
+              <span>🌐 Trình duyệt hiển thị thực tế</span>
+              <span id="ol-mode-badge" style="color: #0D7C86; font-weight: 800;">type="i" (La Mã thường)</span>
+            </div>
+            <ol id="ol-live-preview" type="i" start="1" style="padding-left: 24px; font-size: 14.5px; color: #111827; line-height: 1.8;">
+              <li>Nếu <b>delta</b> &lt; 0: Phương trình vô nghiệm</li>
+              <li>Nếu <b>delta</b> = 0: Phương trình có nghiệm kép</li>
+              <li>Nếu <b>delta</b> &gt; 0: Phương trình có 2 nghiệm</li>
+            </ol>
+            <div style="margin-top: 10px; padding-top: 6px; border-top: 1px dashed #CBD5E1; font-size: 11px; color: #64748B;">
+              📌 Chữ đen mặc định, số thứ tự tự động tính toán theo chuẩn HTML.
+            </div>
+          </div>
+        </div>
+
+        <!-- Bộ giả lập chuyển động tương tác trực tiếp -->
+        <div class="interactive-panel reveal-item">
+          <div class="interactive-panel-title">
+            <span>🎮</span> Bấm nút thử nghiệm ngay các kiểu thuộc tính type & start:
+          </div>
+          <span style="font-size: 12px; color: #CBD5E1; margin-right: 4px;">Kiểu type:</span>
+          <button class="sim-btn" onclick="changeOlType('1', 'Số thập phân (1, 2, 3...)');">type="1"</button>
+          <button class="sim-btn" onclick="changeOlType('A', 'Chữ hoa (A, B, C...)');">type="A"</button>
+          <button class="sim-btn" onclick="changeOlType('a', 'Chữ thường (a, b, c...)');">type="a"</button>
+          <button class="sim-btn" onclick="changeOlType('I', 'La Mã hoa (I, II, III...)');">type="I"</button>
+          <button class="sim-btn active" onclick="changeOlType('i', 'La Mã thường (i, ii, iii...)');">type="i"</button>
+          <span style="font-size: 12px; color: #CBD5E1; margin-left: 12px; margin-right: 4px;">Bắt đầu start:</span>
+          <button class="sim-btn" onclick="changeOlStart(1);">start="1"</button>
+          <button class="sim-btn" onclick="changeOlStart(5);">start="5"</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ════════════════════════════════════════════════════════════════════════
+         SLIDE 4: DANH SÁCH KHÔNG CÓ THỨ TỰ <UL> VÀ LIST-STYLE-TYPE
+         ════════════════════════════════════════════════════════════════════════ -->
+    <section class="slide" id="slide-4" data-total-reveal="3">
+      <div class="slide-header">
+        <div>
+          <span class="slide-badge">Mục 1 SGK · Trang 53</span>
+          <div class="slide-title">Danh sách không có thứ tự &lt;ul&gt; (Unordered List)</div>
+          <div class="slide-subtitle">Sử dụng ký hiệu đầu dòng với đặc tính <code>list-style-type</code> trong thuộc tính <code>style</code></div>
+        </div>
+        <div class="reveal-controller">
+          <span>✨ Hiệu ứng:</span>
+          <span class="reveal-status" id="slide-4-status">0 / 3</span>
+          <button class="reveal-btn" onclick="revealNextInCurrentSlide();">▶ Hiện ý (↓)</button>
+          <button class="reveal-btn" style="background: rgba(255,255,255,0.15);" onclick="revealAllInCurrentSlide();">Hiện hết</button>
+        </div>
+      </div>
+      <div class="slide-body">
+        <div class="grid-2">
+          <!-- Cột Code HTML -->
+          <div class="code-box reveal-item">
+            <div class="code-header">
+              <span>HTML Code · Hình 9.2 SGK</span>
+              <span>index.html</span>
+            </div>
+            <div class="code-content" id="ul-code-display">&lt;<span class="tag-kw">ul</span> <span class="attr-kw">style</span>=<span class="val-kw">"list-style-type: square"</span>&gt;
+  &lt;<span class="tag-kw">li</span>&gt;Nếu &lt;<span class="tag-kw">b</span>&gt;delta&lt;/<span class="tag-kw">b</span>&gt; &amp;lt; 0: Phương trình vô nghiệm&lt;/<span class="tag-kw">li</span>&gt;
+  &lt;<span class="tag-kw">li</span>&gt;Nếu &lt;<span class="tag-kw">b</span>&gt;delta&lt;/<span class="tag-kw">b</span>&gt; = 0: Phương trình có nghiệm kép&lt;/<span class="tag-kw">li</span>&gt;
+  &lt;<span class="tag-kw">li</span>&gt;Nếu &lt;<span class="tag-kw">b</span>&gt;delta&lt;/<span class="tag-kw">b</span>&gt; &amp;gt; 0: Phương trình có 2 nghiệm&lt;/<span class="tag-kw">li</span>&gt;
+&lt;/<span class="tag-kw">ul</span>&gt;</div>
+          </div>
+
+          <!-- Cột Preview chuẩn trình duyệt -->
+          <div class="preview-box reveal-item">
+            <div class="preview-header">
+              <span>🌐 Trình duyệt hiển thị thực tế</span>
+              <span id="ul-mode-badge" style="color: #0D7C86; font-weight: 800;">square (Hình vuông)</span>
+            </div>
+            <ul id="ul-live-preview" style="list-style-type: square; padding-left: 24px; font-size: 14.5px; color: #111827; line-height: 1.8;">
+              <li>Nếu <b>delta</b> &lt; 0: Phương trình vô nghiệm</li>
+              <li>Nếu <b>delta</b> = 0: Phương trình có nghiệm kép</li>
+              <li>Nếu <b>delta</b> &gt; 0: Phương trình có 2 nghiệm</li>
+            </ul>
+            <div style="margin-top: 10px; padding-top: 6px; border-top: 1px dashed #CBD5E1; font-size: 11px; color: #64748B;">
+              💡 4 giá trị SGK quy định: <strong>disc</strong> (chấm tròn đặc - mặc định), <strong>circle</strong> (vòng tròn rỗng), <strong>square</strong> (hình vuông), <strong>none</strong> (không hiện).
+            </div>
+          </div>
+        </div>
+
+        <!-- Bộ chuyển đổi tương tác 4 kiểu bullet -->
+        <div class="interactive-panel reveal-item">
+          <div class="interactive-panel-title">
+            <span>🎯</span> Bấm chọn kiểu ký hiệu đầu dòng để quan sát hiệu ứng biến đổi:
+          </div>
+          <button class="sim-btn" onclick="changeUlType('disc', 'Chấm tròn đặc (disc)');">⚫ disc (Chấm tròn đặc - Mặc định)</button>
+          <button class="sim-btn" onclick="changeUlType('circle', 'Vòng tròn rỗng (circle)');">⚪ circle (Vòng tròn rỗng)</button>
+          <button class="sim-btn active" onclick="changeUlType('square', 'Hình vuông đặc (square)');">⬛ square (Hình vuông đặc - Hình 9.2)</button>
+          <button class="sim-btn" onclick="changeUlType('none', 'Không có ký hiệu (none)');">🚫 none (Ẩn ký hiệu)</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ════════════════════════════════════════════════════════════════════════
+         SLIDE 5: DANH SÁCH MÔ TẢ <DL>, <DT>, <DD> & DANH SÁCH LỒNG NHAU
+         ════════════════════════════════════════════════════════════════════════ -->
+    <section class="slide" id="slide-5" data-total-reveal="3">
+      <div class="slide-header">
+        <div>
+          <span class="slide-badge leaf">Mục 1 SGK · Trang 53</span>
+          <div class="slide-title">Danh sách mô tả &lt;dl&gt; và Danh sách lồng nhau</div>
+          <div class="slide-subtitle">Bộ 3 thẻ <code>&lt;dl&gt;</code>, <code>&lt;dt&gt;</code>, <code>&lt;dd&gt;</code> dùng khi định nghĩa thuật ngữ kèm lời giải thích</div>
+        </div>
+        <div class="reveal-controller">
+          <span>✨ Hiệu ứng:</span>
+          <span class="reveal-status" id="slide-5-status">0 / 3</span>
+          <button class="reveal-btn" onclick="revealNextInCurrentSlide();">▶ Hiện ý (↓)</button>
+          <button class="reveal-btn" style="background: rgba(255,255,255,0.15);" onclick="revealAllInCurrentSlide();">Hiện hết</button>
+        </div>
+      </div>
+      <div class="slide-body">
+        <div class="grid-2">
+          <!-- Cột Danh sách mô tả -->
+          <div class="card reveal-item" style="border-top: 4px solid #10B981;">
+            <div class="card-title" style="color: #34D399;">
+              📖 Danh sách mô tả (Hình 9.3 SGK)
+            </div>
+            <div class="code-box" style="margin-top: 8px;">
+              <div class="code-content" style="font-size: 12.5px;">&lt;<span class="tag-kw">dl</span>&gt;
+  &lt;<span class="tag-kw">dt</span>&gt;&lt;<span class="tag-kw">b</span>&gt;Kem&lt;/<span class="tag-kw">b</span>&gt;&lt;/<span class="tag-kw">dt</span>&gt;
+  &lt;<span class="tag-kw">dd</span>&gt;Món ăn ngọt, ở dạng đông lạnh.&lt;/<span class="tag-kw">dd</span>&gt;
+  &lt;<span class="tag-kw">dt</span>&gt;&lt;<span class="tag-kw">b</span>&gt;Trà sữa&lt;/<span class="tag-kw">b</span>&gt;&lt;/<span class="tag-kw">dt</span>&gt;
+  &lt;<span class="tag-kw">dd</span>&gt;Là đồ uống làm từ trà và sữa.&lt;/<span class="tag-kw">dd</span>&gt;
+&lt;/<span class="tag-kw">dl</span>&gt;</div>
+            </div>
+            <div class="preview-box" style="margin-top: 8px; max-height: 140px; padding: 10px 14px;">
+              <dl style="margin: 0; font-size: 13.5px; color: #111827;">
+                <dt><b>Kem</b></dt>
+                <dd style="margin-left: 20px; color: #475569;">Món ăn ngọt, ở dạng đông lạnh.</dd>
+                <dt style="margin-top: 4px;"><b>Trà sữa</b></dt>
+                <dd style="margin-left: 20px; color: #475569;">Là đồ uống làm từ hai nguyên liệu trà và sữa.</dd>
+              </dl>
+            </div>
+          </div>
+
+          <!-- Cột Danh sách lồng nhau -->
+          <div class="card reveal-item" style="border-top: 4px solid #8B5CF6;">
+            <div class="card-title" style="color: #C4B5FD;">
+              🪆 Danh sách lồng nhau (Nested List)
+            </div>
+            <div style="font-size: 13.5px; line-height: 1.5; color: #CBD5E1; margin-bottom: 8px;">
+              Bằng cách đặt một danh sách bên trong cặp thẻ <code>&lt;li&gt;…&lt;/li&gt;</code> của mục mẹ:
+            </div>
+            <div class="preview-box" style="padding: 10px 14px; font-size: 13.5px; color: #111827;">
+              <ol style="padding-left: 20px; margin: 0;">
+                <li>Đồ uống đá xay
+                  <ul style="padding-left: 18px; list-style-type: circle; color: #334155; margin-top: 4px;">
+                    <li>Matcha đá xay</li>
+                    <li>Cà phê cốt dừa</li>
+                  </ul>
+                </li>
+                <li style="margin-top: 6px;">Trà trái cây
+                  <ul style="padding-left: 18px; list-style-type: circle; color: #334155; margin-top: 4px;">
+                    <li>Trà đào cam sả</li>
+                    <li>Trà xoài nhiệt đới</li>
+                  </ul>
+                </li>
+              </ol>
+            </div>
+            <div style="font-size: 12px; color: #A78BFA; margin-top: 8px;">
+              💡 Ứng dụng: Menu phân cấp nhiều cấp, mục lục tài liệu, cấu trúc thư mục.
+            </div>
+          </div>
+        </div>
+
+        <div class="card reveal-item" style="background: rgba(139, 92, 246, 0.1); border-color: rgba(196, 181, 253, 0.3); padding: 10px 18px; font-size: 13.5px;">
+          🔑 <strong>Ghi nhớ bộ 3 thẻ:</strong> <code>&lt;dl&gt;</code> bao bọc danh sách (Definition List) · <code>&lt;dt&gt;</code> là tên mục/nhãn (Definition Term) · <code>&lt;dd&gt;</code> là lời mô tả/định nghĩa (Definition Description).
+        </div>
+      </div>
+    </section>
+
+    <!-- ════════════════════════════════════════════════════════════════════════
+         SLIDE 6: CẤU TRÚC BẢNG CƠ BẢN TABLE, TR, TH, TD
+         ════════════════════════════════════════════════════════════════════════ -->
+    <section class="slide" id="slide-6" data-total-reveal="4">
+      <div class="slide-header">
+        <div>
+          <span class="slide-badge gold">Mục 2 SGK · Trang 54</span>
+          <div class="slide-title">Thiết lập Bảng: &lt;table&gt;, &lt;tr&gt;, &lt;th&gt;, &lt;td&gt;</div>
+          <div class="slide-subtitle">Giải phẫu cấu trúc 4 thẻ cốt lõi xây dựng mọi bảng dữ liệu trên website</div>
+        </div>
+        <div class="reveal-controller">
+          <span>✨ Hiệu ứng:</span>
+          <span class="reveal-status" id="slide-6-status">0 / 4</span>
+          <button class="reveal-btn" onclick="revealNextInCurrentSlide();">▶ Hiện ý (↓)</button>
+          <button class="reveal-btn" style="background: rgba(255,255,255,0.15);" onclick="revealAllInCurrentSlide();">Hiện hết</button>
+        </div>
+      </div>
+      <div class="slide-body">
+        <div class="grid-2">
+          <!-- 4 Khối thẻ định nghĩa -->
+          <div style="display: flex; flex-direction: column; gap: 8px;">
+            <div class="card reveal-item" style="border-left: 4px solid #38E1F0; padding: 10px 14px;">
+              <strong style="color: #38E1F0;">&lt;table&gt;...&lt;/table&gt;</strong>: Bao bọc toàn bộ nội dung bảng.
+            </div>
+            <div class="card reveal-item" style="border-left: 4px solid #F2683C; padding: 10px 14px;">
+              <strong style="color: #FF855D;">&lt;tr&gt;...&lt;/tr&gt;</strong> (Table Row): Tạo một <strong>hàng</strong> trong bảng. Bảng có bao nhiêu dòng thì viết bấy nhiêu cặp thẻ <code>&lt;tr&gt;</code>.
+            </div>
+            <div class="card reveal-item" style="border-left: 4px solid #F5A623; padding: 10px 14px;">
+              <strong style="color: #FFC043;">&lt;th&gt;...&lt;/th&gt;</strong> (Table Header): Tạo ô <strong>tiêu đề cột</strong>. Mặc định trình duyệt tự động <em>in đậm</em> và <em>căn giữa</em>!
+            </div>
+            <div class="card reveal-item" style="border-left: 4px solid #10B981; padding: 10px 14px;">
+              <strong style="color: #34D399;">&lt;td&gt;...&lt;/td&gt;</strong> (Table Data): Tạo ô <strong>dữ liệu</strong> thông thường. Mặc định <em>chữ thường</em> và <em>căn lề trái</em>.
+            </div>
+          </div>
+
+          <!-- Code và Preview ví dụ Hình 9.4 SGK -->
+          <div class="reveal-item">
+            <div class="code-box">
+              <div class="code-header">
+                <span>Hình 9.4 SGK · Bảng thanh toán món ăn</span>
+                <span>table.html</span>
+              </div>
+              <div class="code-content" style="font-size: 13px;">&lt;<span class="tag-kw">table</span>&gt;
+  &lt;<span class="tag-kw">tr</span>&gt;
+    &lt;<span class="tag-kw">th</span>&gt;Món ăn&lt;/<span class="tag-kw">th</span>&gt; &lt;<span class="tag-kw">th</span>&gt;Đơn giá&lt;/<span class="tag-kw">th</span>&gt;
+    &lt;<span class="tag-kw">th</span>&gt;SL&lt;/<span class="tag-kw">th</span>&gt; &lt;<span class="tag-kw">th</span>&gt;Thành tiền&lt;/<span class="tag-kw">th</span>&gt;
+  &lt;/<span class="tag-kw">tr</span>&gt;
+  &lt;<span class="tag-kw">tr</span>&gt;
+    &lt;<span class="tag-kw">td</span>&gt;Thịt xiên&lt;/<span class="tag-kw">td</span>&gt; &lt;<span class="tag-kw">td</span>&gt;10K&lt;/<span class="tag-kw">td</span>&gt;
+    &lt;<span class="tag-kw">td</span>&gt;3&lt;/<span class="tag-kw">td</span>&gt; &lt;<span class="tag-kw">td</span>&gt;30&lt;/<span class="tag-kw">td</span>&gt;
+  &lt;/<span class="tag-kw">tr</span>&gt;
+  &lt;<span class="tag-kw">tr</span>&gt;
+    &lt;<span class="tag-kw">td</span>&gt;Cá viên&lt;/<span class="tag-kw">td</span>&gt; &lt;<span class="tag-kw">td</span>&gt;5K&lt;/<span class="tag-kw">td</span>&gt;
+    &lt;<span class="tag-kw">td</span>&gt;6&lt;/<span class="tag-kw">td</span>&gt; &lt;<span class="tag-kw">td</span>&gt;30&lt;/<span class="tag-kw">td</span>&gt;
+  &lt;/<span class="tag-kw">tr</span>&gt;
+&lt;/<span class="tag-kw">table</span>&gt;</div>
+            </div>
+
+            <div class="preview-box" style="margin-top: 10px; padding: 12px 16px;">
+              <div class="preview-header">
+                <span>🌐 Trình duyệt hiển thị mặc định (Chưa có viền):</span>
+              </div>
+              <table style="width: 100%; font-size: 14px; color: #111827;">
+                <tr>
+                  <th>Món ăn</th> <th>Đơn giá</th> <th>SL</th> <th>Thành tiền</th>
+                </tr>
+                <tr>
+                  <td>Thịt xiên</td> <td>10K</td> <td>3</td> <td>30</td>
+                </tr>
+                <tr>
+                  <td>Cá viên</td> <td>5K</td> <td>6</td> <td>30</td>
+                </tr>
+              </table>
+              <div style="font-size: 11px; color: #64748B; margin-top: 6px;">
+                💡 Chú ý: Bảng HTML mặc định <em>không có đường viền</em>! Muốn có viền phải dùng định dạng CSS (học ngay ở Slide sau).
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ════════════════════════════════════════════════════════════════════════
+         SLIDE 7: TIÊU ĐỀ BẢNG CAPTION & THIẾT LẬP ĐƯỜNG VIỀN BORDER
+         ════════════════════════════════════════════════════════════════════════ -->
+    <section class="slide" id="slide-7" data-total-reveal="3">
+      <div class="slide-header">
+        <div>
+          <span class="slide-badge">Mục 3 SGK · Trang 54</span>
+          <div class="slide-title">Tiêu đề bảng &lt;caption&gt; &amp; Đường viền border</div>
+          <div class="slide-subtitle">Cú pháp viền trong CSS: <code>border: độ_dày kiểu_viền màu_viền</code></div>
+        </div>
+        <div class="reveal-controller">
+          <span>✨ Hiệu ứng:</span>
+          <span class="reveal-status" id="slide-7-status">0 / 3</span>
+          <button class="reveal-btn" onclick="revealNextInCurrentSlide();">▶ Hiện ý (↓)</button>
+          <button class="reveal-btn" style="background: rgba(255,255,255,0.15);" onclick="revealAllInCurrentSlide();">Hiện hết</button>
+        </div>
+      </div>
+      <div class="slide-body">
+        <div class="grid-2">
+          <!-- Cột Kiến thức & Code -->
+          <div class="reveal-item">
+            <div class="card" style="border-left: 4px solid #38E1F0; margin-bottom: 10px;">
+              <div class="card-title">🏷️ Thẻ &lt;caption&gt; đặt ở đâu?</div>
+              <p style="font-size: 13.5px; color: #CBD5E1;">
+                Đặt <strong>ngay sau thẻ mở &lt;table&gt;</strong> và <strong>trước thẻ &lt;tr&gt; đầu tiên</strong>. Nó sẽ luôn tự động nằm chính giữa ở phía trên cùng của bảng!
+              </p>
+            </div>
+
+            <div class="code-box">
+              <div class="code-header">
+                <span>Code mẫu viền bảng</span>
+                <span>border.html</span>
+              </div>
+              <div class="code-content" id="border-code-box">&lt;<span class="tag-kw">table</span> <span class="attr-kw">style</span>=<span class="val-kw">"border: 1px solid black; border-collapse: collapse;"</span>&gt;
+  &lt;<span class="tag-kw">caption</span>&gt;&lt;<span class="tag-kw">b</span>&gt;HOÁ ĐƠN THANH TOÁN&lt;/<span class="tag-kw">b</span>&gt;&lt;/<span class="tag-kw">caption</span>&gt;
+  &lt;<span class="tag-kw">tr</span>&gt;
+    &lt;<span class="tag-kw">th</span> <span class="attr-kw">style</span>=<span class="val-kw">"border: 1px solid black;"</span>&gt;Món&lt;/<span class="tag-kw">th</span>&gt;
+    &lt;<span class="tag-kw">th</span> <span class="attr-kw">style</span>=<span class="val-kw">"border: 1px solid black;"</span>&gt;Giá&lt;/<span class="tag-kw">th</span>&gt;
+  &lt;/<span class="tag-kw">tr</span>&gt;
+&lt;/<span class="tag-kw">table</span>&gt;</div>
+            </div>
+          </div>
+
+          <!-- Cột Preview Trực quan có thể tương tác đổi viền -->
+          <div class="reveal-item">
+            <div class="preview-box">
+              <div class="preview-header">
+                <span>🌐 Trình duyệt hiển thị thực tế</span>
+                <span id="border-status-tag" style="color: #0D7C86; font-weight: 800;">1px solid black</span>
+              </div>
+              <table id="dynamic-border-table" style="width: 100%; border: 1px solid black; border-collapse: collapse; font-size: 14px; color: #111827;">
+                <caption style="font-weight: 800; font-size: 15px; margin-bottom: 6px;">HOÁ ĐƠN THANH TOÁN</caption>
+                <tr style="background: #F1F5F9;">
+                  <th style="border: 1px solid black; padding: 6px 10px;">Món ăn</th>
+                  <th style="border: 1px solid black; padding: 6px 10px;">Đơn giá</th>
+                  <th style="border: 1px solid black; padding: 6px 10px;">Số lượng</th>
+                </tr>
+                <tr>
+                  <td style="border: 1px solid black; padding: 6px 10px;">Trà đào</td>
+                  <td style="border: 1px solid black; padding: 6px 10px; text-align: center;">25K</td>
+                  <td style="border: 1px solid black; padding: 6px 10px; text-align: center;">2</td>
+                </tr>
+                <tr>
+                  <td style="border: 1px solid black; padding: 6px 10px;">Bánh flan</td>
+                  <td style="border: 1px solid black; padding: 6px 10px; text-align: center;">10K</td>
+                  <td style="border: 1px solid black; padding: 6px 10px; text-align: center;">3</td>
+                </tr>
+              </table>
+            </div>
+
+            <!-- Nút tương tác đổi viền -->
+            <div class="interactive-panel" style="margin-top: 10px;">
+              <div class="interactive-panel-title">
+                <span>🎨</span> Chọn kiểu viền thử nghiệm:
+              </div>
+              <button class="sim-btn active" onclick="changeTableBorder('1px solid black', 'solid');">solid (Nét liền)</button>
+              <button class="sim-btn" onclick="changeTableBorder('2px dashed black', 'dashed');">dashed (Nét đứt)</button>
+              <button class="sim-btn" onclick="changeTableBorder('2px dotted black', 'dotted');">dotted (Chấm bi)</button>
+              <button class="sim-btn" onclick="changeTableBorder('4px double black', 'double');">double (Viền đôi)</button>
+              <button class="sim-btn" onclick="toggleCollapse();" id="btn-collapse">border-collapse: collapse (Đang BẬT)</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ════════════════════════════════════════════════════════════════════════
+         SLIDE 8: KÍCH THƯỚC BẢNG WIDTH VÀ HEIGHT (% VS PX)
+         ════════════════════════════════════════════════════════════════════════ -->
+    <section class="slide" id="slide-8" data-total-reveal="3">
+      <div class="slide-header">
+        <div>
+          <span class="slide-badge coral">Mục 3 SGK · Trang 55</span>
+          <div class="slide-title">Kích thước Bảng &amp; Ô: width và height</div>
+          <div class="slide-subtitle">Vì sao SGK khuyên nên ưu tiên tỉ lệ % thay vì điểm ảnh cố định px?</div>
+        </div>
+        <div class="reveal-controller">
+          <span>✨ Hiệu ứng:</span>
+          <span class="reveal-status" id="slide-8-status">0 / 3</span>
+          <button class="reveal-btn" onclick="revealNextInCurrentSlide();">▶ Hiện ý (↓)</button>
+          <button class="reveal-btn" style="background: rgba(255,255,255,0.15);" onclick="revealAllInCurrentSlide();">Hiện hết</button>
+        </div>
+      </div>
+      <div class="slide-body">
+        <div class="grid-2">
+          <!-- So sánh 2 đơn vị -->
+          <div class="card reveal-item" style="border-top: 4px solid #10B981;">
+            <div class="card-title" style="color: #34D399;">
+              📱 Đơn vị phần trăm (%) — Khuyến nghị
+            </div>
+            <p style="font-size: 14px; color: #CBD5E1; line-height: 1.6;">
+              Kích thước được tính <strong>theo tỉ lệ với khung chứa bao ngoài</strong>. Khi người dùng xem trên máy tính bảng hay điện thoại thông minh, bảng sẽ <strong>tự co giãn vừa vặn màn hình</strong> (Responsive Web Design).
+            </p>
+            <div class="code-box" style="margin-top: 10px;">
+              <div class="code-content" style="font-size: 13px;">&lt;<span class="tag-kw">table</span> <span class="attr-kw">style</span>=<span class="val-kw">"width: 80%;"</span>&gt;
+  &lt;<span class="tag-kw">tr</span>&gt;
+    &lt;<span class="tag-kw">td</span> <span class="attr-kw">style</span>=<span class="val-kw">"width: 30%;"</span>&gt;Cột 1&lt;/<span class="tag-kw">td</span>&gt;
+    &lt;<span class="tag-kw">td</span> <span class="attr-kw">style</span>=<span class="val-kw">"width: 70%;"</span>&gt;Cột 2&lt;/<span class="tag-kw">td</span>&gt;
+  &lt;/<span class="tag-kw">tr</span>&gt;
+&lt;/<span class="tag-kw">table</span>&gt;</div>
+            </div>
+          </div>
+
+          <div class="card reveal-item" style="border-top: 4px solid #F2683C;">
+            <div class="card-title" style="color: #FF855D;">
+              💻 Đơn vị điểm ảnh (px) — Hạn chế dùng
+            </div>
+            <p style="font-size: 14px; color: #CBD5E1; line-height: 1.6;">
+              Kích thước bị <strong>gán cứng cố định</strong>. Trên màn hình máy tính có thể đẹp, nhưng khi mở trên điện thoại bé hơn, bảng sẽ <strong>bị tràn màn hình</strong>, xuất hiện thanh cuộn ngang gây khó chịu cho người đọc!
+            </p>
+            <div class="code-box" style="margin-top: 10px;">
+              <div class="code-content" style="font-size: 13px;">&lt;<span class="tag-kw">table</span> <span class="attr-kw">style</span>=<span class="val-kw">"width: 800px; height: 400px;"</span>&gt;
+  <span class="cmt-kw">&lt;!-- Dễ bị tràn mép trên thiết bị di động --&gt;</span>
+&lt;/<span class="tag-kw">table</span>&gt;</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Trích dẫn ghi nhớ SGK -->
+        <div class="card reveal-item" style="background: rgba(242, 104, 60, 0.1); border-color: rgba(255, 133, 93, 0.35); padding: 12px 18px;">
+          📖 <strong>Lời khuyên vàng trong SGK (Trang 55):</strong> <em>"Không nên sử dụng kích thước theo px do các thiết bị hiển thị có sự khác nhau về kích thước và số điểm ảnh, có thể dẫn đến bảng không hiển thị đúng như mong đợi."</em>
+        </div>
+      </div>
+    </section>
+
+    <!-- ════════════════════════════════════════════════════════════════════════
+         SLIDE 9: KỸ THUẬT GỘP CỘT COLSPAN (CHUYỂN ĐỘNG TRỰC QUAN)
+         ════════════════════════════════════════════════════════════════════════ -->
+    <section class="slide" id="slide-9" data-total-reveal="3">
+      <div class="slide-header">
+        <div>
+          <span class="slide-badge purple">Trọng tâm kỹ thuật</span>
+          <div class="slide-title">Kỹ thuật Gộp Cột: colspan (Column Span)</div>
+          <div class="slide-subtitle">Trải rộng một ô sang ngang chiếm chỗ của nhiều cột lân cận</div>
+        </div>
+        <div class="reveal-controller">
+          <span>✨ Hiệu ứng:</span>
+          <span class="reveal-status" id="slide-9-status">0 / 3</span>
+          <button class="reveal-btn" onclick="revealNextInCurrentSlide();">▶ Hiện ý (↓)</button>
+          <button class="reveal-btn" style="background: rgba(255,255,255,0.15);" onclick="revealAllInCurrentSlide();">Hiện hết</button>
+        </div>
+      </div>
+      <div class="slide-body">
+        <div class="grid-2">
+          <!-- Cột Quy tắc & Code -->
+          <div class="reveal-item">
+            <div class="card" style="border-left: 5px solid #8B5CF6; margin-bottom: 12px;">
+              <div class="card-title" style="color: #C4B5FD;">
+                📐 Nguyên tắc bất biến khi dùng colspan:
+              </div>
+              <ul style="margin-left: 20px; font-size: 14px; line-height: 1.6; color: #CBD5E1;">
+                <li>Viết <code>colspan="số_cột_muốn_gộp"</code> vào thẻ <code>&lt;th&gt;</code> hoặc <code>&lt;td&gt;</code>.</li>
+                <li><strong>CỰC KỲ QUAN TRỌNG:</strong> Khi một ô mở rộng thêm <em>k</em> cột, ta phải <strong>BỎ BỚT (k - 1) thẻ &lt;td&gt;</strong> ở cùng hàng đó, nếu không bảng sẽ bị thừa ô và méo mó!</li>
+              </ul>
+            </div>
+
+            <div class="code-box">
+              <div class="code-header">
+                <span>Code gộp 3 cột điểm</span>
+                <span>colspan.html</span>
+              </div>
+              <div class="code-content">&lt;<span class="tag-kw">tr</span>&gt;
+  &lt;<span class="tag-kw">th</span> <span class="attr-kw">colspan</span>=<span class="val-kw">"3"</span>&gt;Điểm thi 3 môn&lt;/<span class="tag-kw">th</span>&gt;
+&lt;/<span class="tag-kw">tr</span>&gt;
+&lt;<span class="tag-kw">tr</span>&gt;
+  &lt;<span class="tag-kw">td</span>&gt;Toán&lt;/<span class="tag-kw">td</span>&gt; &lt;<span class="tag-kw">td</span>&gt;Vật lí&lt;/<span class="tag-kw">td</span>&gt; &lt;<span class="tag-kw">td</span>&gt;Hoá học&lt;/<span class="tag-kw">td</span>&gt;
+&lt;/<span class="tag-kw">tr</span>&gt;</div>
+            </div>
+          </div>
+
+          <!-- Cột Minh họa chuyển động động -->
+          <div class="preview-box reveal-item">
+            <div class="preview-header">
+              <span>🎬 Mô phỏng chuyển động Gộp Cột (Bấm nút bên dưới)</span>
+              <span id="colspan-label" style="color: #0D7C86; font-weight: 800;">Trạng thái: 3 cột riêng lẻ</span>
+            </div>
+
+            <table class="span-demo-table" id="colspan-table">
+              <tr>
+                <th id="c-cell-1">Cột 1</th>
+                <th id="c-cell-2">Cột 2</th>
+                <th id="c-cell-3">Cột 3</th>
+              </tr>
+              <tr>
+                <td>Toán (8.5)</td>
+                <td>Vật lí (9.0)</td>
+                <td>Hoá học (8.0)</td>
+              </tr>
+            </table>
+
+            <div id="colspan-explain" style="margin-top: 12px; font-size: 13px; color: #475569; background: #F1F5F9; padding: 10px 14px; border-radius: 8px; line-height: 1.5;">
+              Bấm nút để xem cách ô Cột 1 giãn nở chiếm trọn cả 3 cột!
+            </div>
+          </div>
+        </div>
+
+        <!-- Bộ nút điều khiển chuyển động Colspan -->
+        <div class="interactive-panel reveal-item">
+          <div class="interactive-panel-title">
+            <span>✨</span> Thử nghiệm chuyển động:
+          </div>
+          <button class="sim-btn active" onclick="animateColspan(false);">Tách riêng 3 cột bình thường</button>
+          <button class="sim-btn" onclick="animateColspan(true);" style="background: #0D7C86; color: white;">▶ Gộp 3 cột lại (colspan="3")</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ════════════════════════════════════════════════════════════════════════
+         SLIDE 10: KỸ THUẬT GỘP HÀNG ROWSPAN (CHUYỂN ĐỘNG TRỰC QUAN)
+         ════════════════════════════════════════════════════════════════════════ -->
+    <section class="slide" id="slide-10" data-total-reveal="3">
+      <div class="slide-header">
+        <div>
+          <span class="slide-badge purple">Trọng tâm kỹ thuật</span>
+          <div class="slide-title">Kỹ thuật Gộp Hàng: rowspan (Row Span)</div>
+          <div class="slide-subtitle">Kéo dài một ô theo chiều dọc xuống các hàng bên dưới</div>
+        </div>
+        <div class="reveal-controller">
+          <span>✨ Hiệu ứng:</span>
+          <span class="reveal-status" id="slide-10-status">0 / 3</span>
+          <button class="reveal-btn" onclick="revealNextInCurrentSlide();">▶ Hiện ý (↓)</button>
+          <button class="reveal-btn" style="background: rgba(255,255,255,0.15);" onclick="revealAllInCurrentSlide();">Hiện hết</button>
+        </div>
+      </div>
+      <div class="slide-body">
+        <div class="grid-2">
+          <!-- Cột Quy tắc & Code -->
+          <div class="reveal-item">
+            <div class="card" style="border-left: 5px solid #F5A623; margin-bottom: 12px;">
+              <div class="card-title" style="color: #FFC043;">
+                📐 Nguyên tắc vàng khi dùng rowspan:
+              </div>
+              <ul style="margin-left: 20px; font-size: 14px; line-height: 1.6; color: #CBD5E1;">
+                <li>Thêm <code>rowspan="số_hàng_muốn_ghép"</code> vào ô ở <strong>hàng đầu tiên</strong>.</li>
+                <li><strong>Ở CÁC HÀNG TIẾP THEO:</strong> Phải <strong>BỎ QUA</strong> cặp thẻ <code>&lt;th&gt;</code> hoặc <code>&lt;td&gt;</code> tại vị trí tương ứng (vì ô của hàng trên đã kéo dài xuống chiếm vị trí này rồi!).</li>
+              </ul>
+            </div>
+
+            <div class="code-box">
+              <div class="code-header">
+                <span>Code gộp 2 hàng</span>
+                <span>rowspan.html</span>
+              </div>
+              <div class="code-content">&lt;<span class="tag-kw">tr</span>&gt;
+  &lt;<span class="tag-kw">th</span> <span class="attr-kw">rowspan</span>=<span class="val-kw">"2"</span>&gt;Họ và tên&lt;/<span class="tag-kw">th</span>&gt;
+  &lt;<span class="tag-kw">td</span>&gt;Sáng: Học Tin học&lt;/<span class="tag-kw">td</span>&gt;
+&lt;/<span class="tag-kw">tr</span>&gt;
+&lt;<span class="tag-kw">tr</span>&gt;
+  <span class="cmt-kw">&lt;!-- Đã bỏ qua ô đầu vì hàng 1 đã chiếm chỗ! --&gt;</span>
+  &lt;<span class="tag-kw">td</span>&gt;Chiều: Thực hành lập trình&lt;/<span class="tag-kw">td</span>&gt;
+&lt;/<span class="tag-kw">tr</span>&gt;</div>
+            </div>
+          </div>
+
+          <!-- Cột Minh họa chuyển động động -->
+          <div class="preview-box reveal-item">
+            <div class="preview-header">
+              <span>🎬 Mô phỏng chuyển động Gộp Hàng (Bấm nút bên dưới)</span>
+              <span id="rowspan-label" style="color: #0D7C86; font-weight: 800;">Trạng thái: 2 hàng riêng biệt</span>
+            </div>
+
+            <table class="span-demo-table" id="rowspan-table">
+              <tr>
+                <th id="r-cell-1">Họ và tên (Hàng 1)</th>
+                <td>Sáng: Học Tin học 12</td>
+              </tr>
+              <tr id="r-row-2">
+                <td id="r-cell-2">Ô thừa ở Hàng 2</td>
+                <td>Chiều: Thực hành tạo Web</td>
+              </tr>
+            </table>
+
+            <div id="rowspan-explain" style="margin-top: 12px; font-size: 13px; color: #475569; background: #F1F5F9; padding: 10px 14px; border-radius: 8px; line-height: 1.5;">
+              Bấm nút để quan sát ô Họ và tên kéo dài xuống hàng 2 và nuốt ô thừa!
+            </div>
+          </div>
+        </div>
+
+        <!-- Bộ nút điều khiển chuyển động Rowspan -->
+        <div class="interactive-panel reveal-item">
+          <div class="interactive-panel-title">
+            <span>✨</span> Thử nghiệm chuyển động:
+          </div>
+          <button class="sim-btn active" onclick="animateRowspan(false);">Tách riêng 2 hàng</button>
+          <button class="sim-btn" onclick="animateRowspan(true);" style="background: #0D7C86; color: white;">▶ Gộp 2 hàng lại (rowspan="2")</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ════════════════════════════════════════════════════════════════════════
+         SLIDE 11: GIẢI MÃ BÀI MẪU SGK HÌNH 9.6 (BẢNG ĐIỂM THI ĐA CHIỀU)
+         ════════════════════════════════════════════════════════════════════════ -->
+    <section class="slide" id="slide-11" data-total-reveal="3">
+      <div class="slide-header">
+        <div>
+          <span class="slide-badge leaf">Thực hành trọng tâm</span>
+          <div class="slide-title">Giải mã bài mẫu SGK Hình 9.6: Bảng điểm thi</div>
+          <div class="slide-subtitle">Sự kết hợp hoàn hảo giữa <code>rowspan="2"</code> và <code>colspan="3"</code></div>
+        </div>
+        <div class="reveal-controller">
+          <span>✨ Hiệu ứng:</span>
+          <span class="reveal-status" id="slide-11-status">0 / 3</span>
+          <button class="reveal-btn" onclick="revealNextInCurrentSlide();">▶ Hiện ý (↓)</button>
+          <button class="reveal-btn" style="background: rgba(255,255,255,0.15);" onclick="revealAllInCurrentSlide();">Hiện hết</button>
+        </div>
+      </div>
+      <div class="slide-body">
+        <div class="grid-2">
+          <!-- Cột Code HTML chuẩn sách -->
+          <div class="code-box reveal-item">
+            <div class="code-header">
+              <span>Đoạn mã HTML Hình 9.6 SGK</span>
+              <span>bang_diem.html</span>
+            </div>
+            <div class="code-content" style="font-size: 13px;">&lt;<span class="tag-kw">table</span> <span class="attr-kw">border</span>=<span class="val-kw">"1"</span> <span class="attr-kw">style</span>=<span class="val-kw">"border-collapse: collapse; width: 100%; text-align: center;"</span>&gt;
+  &lt;<span class="tag-kw">tr</span>&gt;
+    &lt;<span class="tag-kw">th</span> <span class="attr-kw">rowspan</span>=<span class="val-kw">"2"</span>&gt;Họ và tên&lt;/<span class="tag-kw">th</span>&gt;
+    &lt;<span class="tag-kw">th</span> <span class="attr-kw">colspan</span>=<span class="val-kw">"3"</span>&gt;Điểm thi&lt;/<span class="tag-kw">th</span>&gt;
+  &lt;/<span class="tag-kw">tr</span>&gt;
+  &lt;<span class="tag-kw">tr</span>&gt;
+    &lt;<span class="tag-kw">td</span>&gt;Toán&lt;/<span class="tag-kw">td</span>&gt;
+    &lt;<span class="tag-kw">td</span>&gt;Vật lí&lt;/<span class="tag-kw">td</span>&gt;
+    &lt;<span class="tag-kw">td</span>&gt;Hoá học&lt;/<span class="tag-kw">td</span>&gt;
+  &lt;/<span class="tag-kw">tr</span>&gt;
+  &lt;<span class="tag-kw">tr</span>&gt;
+    &lt;<span class="tag-kw">td</span>&gt;Nguyễn Văn A&lt;/<span class="tag-kw">td</span>&gt;
+    &lt;<span class="tag-kw">td</span>&gt;9.0&lt;/<span class="tag-kw">td</span>&gt;
+    &lt;<span class="tag-kw">td</span>&gt;8.5&lt;/<span class="tag-kw">td</span>&gt;
+    &lt;<span class="tag-kw">td</span>&gt;9.5&lt;/<span class="tag-kw">td</span>&gt;
+  &lt;/<span class="tag-kw">tr</span>&gt;
+&lt;/<span class="tag-kw">table</span>&gt;</div>
+          </div>
+
+          <!-- Cột Preview & Phân tích ma trận ô -->
+          <div class="reveal-item">
+            <div class="preview-box">
+              <div class="preview-header">
+                <span>🌐 Trình duyệt hiển thị thực tế:</span>
+              </div>
+              <table border="1" style="border-collapse: collapse; width: 100%; text-align: center; font-size: 14px; color: #111827;">
+                <tr style="background: #F1F5F9;">
+                  <th rowspan="2" style="padding: 10px; background: #CCFBF1; color: #0F766E;">Họ và tên<br><small style="font-size: 11px; font-weight: normal;">(rowspan="2")</small></th>
+                  <th colspan="3" style="padding: 10px; background: #FEF3C7; color: #92400E;">Điểm thi (colspan="3")</th>
+                </tr>
+                <tr style="background: #FFFBEB;">
+                  <td style="padding: 8px;">Toán</td>
+                  <td style="padding: 8px;">Vật lí</td>
+                  <td style="padding: 8px;">Hoá học</td>
+                </tr>
+                <tr>
+                  <td style="padding: 8px; text-align: left; padding-left: 12px;">Nguyễn Văn A</td>
+                  <td style="padding: 8px;">9.0</td>
+                  <td style="padding: 8px;">8.5</td>
+                  <td style="padding: 8px;">9.5</td>
+                </tr>
+              </table>
+            </div>
+
+            <div class="card" style="margin-top: 12px; background: rgba(16, 185, 129, 0.1); border-color: rgba(52, 211, 153, 0.3);">
+              <div class="card-title" style="color: #34D399; font-size: 14.5px;">
+                🔍 Phân tích ma trận dòng lệnh:
+              </div>
+              <ul style="margin-left: 18px; font-size: 13px; line-height: 1.6; color: #CBD5E1;">
+                <li><strong>Hàng 1:</strong> Gồm ô <em>"Họ và tên"</em> (chiếm 2 hàng) + ô <em>"Điểm thi"</em> (chiếm 3 cột). Tổng chiều ngang đủ 4 cột (1 + 3 = 4).</li>
+                <li><strong>Hàng 2:</strong> Chỉ cần viết 3 ô <em>"Toán"</em>, <em>"Vật lí"</em>, <em>"Hoá học"</em>. Cột đầu tiên KHÔNG CẦN VIẾT vì ô <em>"Họ và tên"</em> ở trên đã rủ xuống chiếm chỗ!</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ════════════════════════════════════════════════════════════════════════
+         SLIDE 12: SƠ ĐỒ TƯ DUY & BẢNG TRA CỨU TỔNG KẾT THẺ BÀI 9
+         ════════════════════════════════════════════════════════════════════════ -->
+    <section class="slide" id="slide-12" data-total-reveal="3">
+      <div class="slide-header">
+        <div>
+          <span class="slide-badge gold">Hệ thống hóa kiến thức</span>
+          <div class="slide-title">Sơ đồ Tư duy &amp; Bảng Tra cứu Thẻ HTML Bài 9</div>
+          <div class="slide-subtitle">Bản đồ cấu trúc giúp ghi nhớ trọn vẹn toàn bộ các thẻ danh sách và bảng</div>
+        </div>
+        <div class="reveal-controller">
+          <span>✨ Hiệu ứng:</span>
+          <span class="reveal-status" id="slide-12-status">0 / 3</span>
+          <button class="reveal-btn" onclick="revealNextInCurrentSlide();">▶ Hiện ý (↓)</button>
+          <button class="reveal-btn" style="background: rgba(255,255,255,0.15);" onclick="revealAllInCurrentSlide();">Hiện hết</button>
+        </div>
+      </div>
+      <div class="slide-body">
+        <div class="mindmap-container">
+          <!-- Nhánh 1: Danh sách -->
+          <div class="mindmap-branch reveal-item" style="border-top: 4px solid #38E1F0;">
+            <div style="font-size: 17px; font-weight: 800; color: #38E1F0; margin-bottom: 8px;">
+              📋 1. HỆ THỐNG DANH SÁCH (LISTS)
+            </div>
+            <div style="display: flex; flex-direction: column; gap: 8px; font-size: 13.5px;">
+              <div>
+                <span class="node-pill">&lt;ol&gt;</span> Có thứ tự: <code>type="1|A|a|I|i"</code>, <code>start="số"</code>
+              </div>
+              <div>
+                <span class="node-pill">&lt;ul&gt;</span> Không thứ tự: <code>list-style-type: disc|circle|square|none</code>
+              </div>
+              <div>
+                <span class="node-pill">&lt;li&gt;</span> Từng mục danh sách (dùng chung cho cả <code>ol</code> và <code>ul</code>)
+              </div>
+              <div>
+                <span class="node-pill">&lt;dl&gt;</span> Danh sách mô tả: gồm <code>&lt;dt&gt;</code> (nhãn/tên) + <code>&lt;dd&gt;</code> (mô tả)
+              </div>
+              <div>
+                <span class="node-pill">Nested</span> Danh sách lồng nhau: đặt danh sách con bên trong thẻ <code>&lt;li&gt;</code>
+              </div>
+            </div>
+          </div>
+
+          <!-- Nhánh 2: Bảng -->
+          <div class="mindmap-branch reveal-item" style="border-top: 4px solid #F5A623;">
+            <div style="font-size: 17px; font-weight: 800; color: #FFC043; margin-bottom: 8px;">
+              📊 2. HỆ THỐNG BẢNG (TABLES)
+            </div>
+            <div style="display: flex; flex-direction: column; gap: 8px; font-size: 13.5px;">
+              <div>
+                <span class="node-pill" style="color: #FFC043; border-color: rgba(245, 166, 35, 0.4);">&lt;table&gt;</span> Bao bọc toàn bảng
+              </div>
+              <div>
+                <span class="node-pill" style="color: #FFC043; border-color: rgba(245, 166, 35, 0.4);">&lt;caption&gt;</span> Tiêu đề bảng (đặt ngay sau <code>&lt;table&gt;</code>)
+              </div>
+              <div>
+                <span class="node-pill" style="color: #FFC043; border-color: rgba(245, 166, 35, 0.4);">&lt;tr&gt;</span> Tạo hàng · <span class="node-pill" style="color: #FFC043; border-color: rgba(245, 166, 35, 0.4);">&lt;th&gt;</span> Tiêu đề ô · <span class="node-pill" style="color: #FFC043; border-color: rgba(245, 166, 35, 0.4);">&lt;td&gt;</span> Ô dữ liệu
+              </div>
+              <div>
+                <span class="node-pill" style="color: #FFC043; border-color: rgba(245, 166, 35, 0.4);">colspan</span> Gộp cột (ngang) · <span class="node-pill" style="color: #FFC043; border-color: rgba(245, 166, 35, 0.4);">rowspan</span> Gộp hàng (dọc)
+              </div>
+              <div>
+                <span class="node-pill" style="color: #FFC043; border-color: rgba(245, 166, 35, 0.4);">style</span> <code>border</code> (viền), <code>width/height</code> (kích thước ưu tiên %)
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card reveal-item" style="text-align: center; padding: 12px; background: rgba(13, 124, 134, 0.15); border-color: rgba(56, 225, 240, 0.3);">
+          💡 <strong>Quy tắc nhớ nhanh:</strong> Chữ <strong>R</strong> trong <code>rowspan</code> và <code>tr</code> là <strong>Row</strong> (Hàng); Chữ <strong>D</strong> trong <code>td</code> là <strong>Data</strong> (Dữ liệu); Chữ <strong>H</strong> trong <code>th</code> là <strong>Header</strong> (Tiêu đề)!
+        </div>
+      </div>
+    </section>
+
+    <!-- ════════════════════════════════════════════════════════════════════════
+         SLIDE 13: ĐẤU TRƯỜNG TRẮC NGHIỆM NHANH (4 CÂU HỎI TRỌNG TÂM)
+         ════════════════════════════════════════════════════════════════════════ -->
+    <section class="slide" id="slide-13" data-total-reveal="2">
+      <div class="slide-header">
+        <div>
+          <span class="slide-badge coral">Kiểm tra kiến thức</span>
+          <div class="slide-title">Đấu trường Trắc nghiệm Tương tác Bài 9</div>
+          <div class="slide-subtitle">Nhấp chọn đáp án để nhận phản hồi phân tích chi tiết và tính điểm tức thì</div>
+        </div>
+        <div class="reveal-controller">
+          <span>✨ Hiệu ứng:</span>
+          <span class="reveal-status" id="slide-13-status">0 / 2</span>
+          <button class="reveal-btn" onclick="revealNextInCurrentSlide();">▶ Hiện ý (↓)</button>
+          <button class="reveal-btn" style="background: rgba(255,255,255,0.15);" onclick="revealAllInCurrentSlide();">Hiện hết</button>
+        </div>
+      </div>
+      <div class="slide-body">
+        <div class="quiz-container">
+          <!-- Câu 1 -->
+          <div class="quiz-card reveal-item">
+            <div class="quiz-question">
+              Câu 1: Muốn danh sách đánh số dạng chữ cái viết hoa (A, B, C...) thì dùng cú pháp nào?
+            </div>
+            <button class="quiz-btn" onclick="checkQuiz(this, false, 'q1', 'Sai rồi! ul là danh sách không thứ tự, không dùng type=A.')">A. &lt;ul type="A"&gt;</button>
+            <button class="quiz-btn" onclick="checkQuiz(this, true, 'q1', 'Chính xác! ol là danh sách có thứ tự, type=A là kiểu chữ cái viết hoa.')">B. &lt;ol type="A"&gt;</button>
+            <button class="quiz-btn" onclick="checkQuiz(this, false, 'q1', 'Sai rồi! start nhận giá trị là số bắt đầu chứ không nhận chữ.')">C. &lt;ol start="A"&gt;</button>
+            <button class="quiz-btn" onclick="checkQuiz(this, false, 'q1', 'Sai rồi! type=a là chữ cái thường (a, b, c...).')">D. &lt;ol type="a"&gt;</button>
+            <div class="quiz-feedback" id="q1-feedback"></div>
+          </div>
+
+          <!-- Câu 2 -->
+          <div class="quiz-card reveal-item">
+            <div class="quiz-question">
+              Câu 2: Trong danh sách mô tả &lt;dl&gt;, thẻ nào chứa nội dung giải thích / định nghĩa?
+            </div>
+            <button class="quiz-btn" onclick="checkQuiz(this, false, 'q2', 'Sai rồi! dt chứa tên mục/nhãn thuật ngữ (Definition Term).')">A. &lt;dt&gt;</button>
+            <button class="quiz-btn" onclick="checkQuiz(this, true, 'q2', 'Chính xác! dd (Definition Description) chứa phần mô tả định nghĩa.')">B. &lt;dd&gt;</button>
+            <button class="quiz-btn" onclick="checkQuiz(this, false, 'q2', 'Sai rồi! li dùng cho ol và ul, không dùng trong dl.')">C. &lt;li&gt;</button>
+            <button class="quiz-btn" onclick="checkQuiz(this, false, 'q2', 'Sai rồi! dl là thẻ bao bọc toàn bộ danh sách mô tả.')">D. &lt;dl&gt;</button>
+            <div class="quiz-feedback" id="q2-feedback"></div>
+          </div>
+
+          <!-- Câu 3 -->
+          <div class="quiz-card reveal-item">
+            <div class="quiz-question">
+              Câu 3: Thẻ nào dùng để tạo một HÀNG trong bảng HTML?
+            </div>
+            <button class="quiz-btn" onclick="checkQuiz(this, false, 'q3', 'Sai rồi! table là thẻ bao ngoài toàn bộ bảng.')">A. &lt;table&gt;</button>
+            <button class="quiz-btn" onclick="checkQuiz(this, true, 'q3', 'Chính xác! tr (Table Row) dùng để tạo một hàng trong bảng.')">B. &lt;tr&gt;</button>
+            <button class="quiz-btn" onclick="checkQuiz(this, false, 'q3', 'Sai rồi! td (Table Data) dùng để tạo ô dữ liệu.')">C. &lt;td&gt;</button>
+            <button class="quiz-btn" onclick="checkQuiz(this, false, 'q3', 'Sai rồi! th (Table Header) dùng để tạo ô tiêu đề.')">D. &lt;th&gt;</button>
+            <div class="quiz-feedback" id="q3-feedback"></div>
+          </div>
+
+          <!-- Câu 4 -->
+          <div class="quiz-card reveal-item">
+            <div class="quiz-question">
+              Câu 4: Muốn ô "Điểm thi" mở rộng sang ngang chiếm trọn 3 cột, ta viết thuộc tính gì?
+            </div>
+            <button class="quiz-btn" onclick="checkQuiz(this, false, 'q4', 'Sai rồi! rowspan là gộp theo hàng (chiều dọc).')">A. rowspan="3"</button>
+            <button class="quiz-btn" onclick="checkQuiz(this, true, 'q4', 'Chính xác! colspan (Column Span) dùng để gộp cột (chiều ngang).')">B. colspan="3"</button>
+            <button class="quiz-btn" onclick="checkQuiz(this, false, 'q4', 'Sai rồi! HTML không có thuộc tính span=3.')">C. span="3"</button>
+            <button class="quiz-btn" onclick="checkQuiz(this, false, 'q4', 'Sai rồi! width chỉ độ rộng chứ không làm nhiệm vụ gộp cột.')">D. width="3"</button>
+            <div class="quiz-feedback" id="q4-feedback"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ════════════════════════════════════════════════════════════════════════
+         SLIDE 14: PHÒNG THÍ NGHIỆM CODE TRỰC TIẾP (LIVE CODE PLAYGROUND)
+         ════════════════════════════════════════════════════════════════════════ -->
+    <section class="slide" id="slide-14" data-total-reveal="1">
+      <div class="slide-header">
+        <div>
+          <span class="slide-badge leaf">Thực hành thời gian thực</span>
+          <div class="slide-title">Phòng thí nghiệm Code Trực tiếp (Live Code Playground)</div>
+          <div class="slide-subtitle">Chỉnh sửa code HTML bên trái và thấy kết quả phản ánh tức thì bên phải!</div>
+        </div>
+        <div class="reveal-controller">
+          <button class="sim-btn" onclick="loadTemplate('template1');">📋 Mẫu 1: Danh sách lồng</button>
+          <button class="sim-btn" onclick="loadTemplate('template2');">📊 Mẫu 2: Bảng món ăn</button>
+          <button class="sim-btn" onclick="loadTemplate('template3');">🔗 Mẫu 3: Bảng gộp ô SGK</button>
+        </div>
+      </div>
+      <div class="slide-body">
+        <div class="playground-wrapper reveal-item visible">
+          <!-- Cột Editor -->
+          <div class="editor-pane">
+            <div class="editor-bar">
+              <span>📝 Trình soạn thảo HTML (Gõ trực tiếp vào đây)</span>
+              <button class="sim-btn" onclick="updateLivePlayground();">▶ Chạy lại</button>
+            </div>
+            <textarea class="live-code-area" id="playground-code" oninput="updateLivePlayground();" spellcheck="false">&lt;h3 style="color: #0D7C86; margin-top:0;"&gt;Bảng Điểm Thi Khối A&lt;/h3&gt;
+&lt;table border="1" style="border-collapse: collapse; width: 100%; text-align: center; font-family: Arial, sans-serif;"&gt;
+  &lt;tr style="background: #E0F2FE;"&gt;
+    &lt;th rowspan="2" style="padding: 8px;"&gt;Thí sinh&lt;/th&gt;
+    &lt;th colspan="3" style="padding: 8px;"&gt;Điểm các môn&lt;/th&gt;
+  &lt;/tr&gt;
+  &lt;tr style="background: #BAE6FD;"&gt;
+    &lt;th style="padding: 6px;"&gt;Toán&lt;/th&gt;
+    &lt;th style="padding: 6px;"&gt;Vật lí&lt;/th&gt;
+    &lt;th style="padding: 6px;"&gt;Hoá học&lt;/th&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+    &lt;td style="padding: 6px; text-align: left; padding-left: 10px;"&gt;Trần Mai Linh&lt;/td&gt;
+    &lt;td style="padding: 6px;"&gt;9.5&lt;/td&gt;
+    &lt;td style="padding: 6px;"&gt;8.5&lt;/td&gt;
+    &lt;td style="padding: 6px;"&gt;9.0&lt;/td&gt;
+  &lt;/tr&gt;
+&lt;/table&gt;</textarea>
+          </div>
+
+          <!-- Cột Preview Iframe -->
+          <div class="preview-pane">
+            <div class="preview-pane-bar">
+              <span>🌐 Kết quả hiển thị tức thì trên trình duyệt</span>
+            </div>
+            <iframe class="preview-frame" id="playground-frame"></iframe>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ════════════════════════════════════════════════════════════════════════
+         SLIDE 15: TỔNG KẾT & GIAO BÀI TẬP VỀ NHÀ
+         ════════════════════════════════════════════════════════════════════════ -->
+    <section class="slide" id="slide-15" data-total-reveal="3">
+      <div class="slide-header">
+        <div>
+          <span class="slide-badge gold">Tổng kết bài học</span>
+          <div class="slide-title">Chúc mừng em đã hoàn thành xuất sắc Bài 9!</div>
+          <div class="slide-subtitle">Sẵn sàng vận dụng kiến thức Danh sách và Bảng vào các dự án trang web thực tế</div>
+        </div>
+        <div class="reveal-controller">
+          <span>✨ Hiệu ứng:</span>
+          <span class="reveal-status" id="slide-15-status">0 / 3</span>
+          <button class="reveal-btn" onclick="revealNextInCurrentSlide();">▶ Hiện ý (↓)</button>
+          <button class="reveal-btn" style="background: rgba(255,255,255,0.15);" onclick="revealAllInCurrentSlide();">Hiện hết</button>
+        </div>
+      </div>
+      <div class="slide-body">
+        <div class="grid-2">
+          <!-- Cột 1: Thông điệp cốt lõi -->
+          <div class="card reveal-item" style="border-left: 5px solid #10B981;">
+            <div class="card-title" style="color: #34D399;">
+              🎯 3 Thông điệp cốt lõi cần nhớ:
+            </div>
+            <ul style="margin-left: 20px; font-size: 14px; line-height: 1.7; color: #CBD5E1;">
+              <li><strong>Chọn đúng loại danh sách:</strong> Dùng <code>&lt;ol&gt;</code> khi thứ tự các bước có ý nghĩa, dùng <code>&lt;ul&gt;</code> khi chỉ liệt kê ý, dùng <code>&lt;dl&gt;</code> cho thuật ngữ.</li>
+              <li><strong>Xây bảng theo hàng:</strong> Bảng luôn được viết từng hàng <code>&lt;tr&gt;</code> một từ trên xuống dưới. Hàng đầu dùng <code>&lt;th&gt;</code> để tạo tiêu đề nổi bật.</li>
+              <li><strong>Bảo toàn ma trận khi gộp ô:</strong> Ô dùng <code>colspan="k"</code> thì bỏ bớt (k - 1) ô cùng hàng; ô dùng <code>rowspan="m"</code> thì bỏ qua ô ở các hàng bên dưới!</li>
+            </ul>
+          </div>
+
+          <!-- Cột 2: Nhiệm vụ về nhà -->
+          <div class="card reveal-item" style="border-left: 5px solid #F5A623;">
+            <div class="card-title" style="color: #FFC043;">
+              🏠 Bài tập vận dụng về nhà:
+            </div>
+            <div style="font-size: 13.5px; line-height: 1.6; color: #CBD5E1;">
+              <p><strong>Nhiệm vụ 1:</strong> Tạo trang HTML hiển thị Thời khóa biểu tuần của lớp em, áp dụng <code>rowspan</code> gộp các môn học 2 tiết liên tiếp.</p>
+              <p style="margin-top: 8px;"><strong>Nhiệm vụ 2:</strong> Tạo menu quán nước với danh sách lồng nhau nhiều cấp (Đồ uống nóng, Đồ uống lạnh, Topping đi kèm).</p>
+            </div>
+            <div style="display: flex; gap: 10px; margin-top: 14px;">
+              <a href="/luyen/bai-09" style="display: inline-flex; align-items: center; gap: 6px; background: #0D7C86; color: white; text-decoration: none; padding: 8px 16px; border-radius: 8px; font-weight: 700; font-size: 13px;">
+                ✍️ Luyện trắc nghiệm Bài 9
+              </a>
+              <a href="/sgk/bai-09.html" target="_blank" style="display: inline-flex; align-items: center; gap: 6px; background: rgba(255,255,255,0.08); color: white; text-decoration: none; padding: 8px 16px; border-radius: 8px; font-weight: 700; font-size: 13px; border: 1px solid rgba(255,255,255,0.2);">
+                📖 Đọc SGK Điện tử
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <div class="card reveal-item" style="text-align: center; padding: 16px; background: rgba(56, 225, 240, 0.1); border-color: rgba(56, 225, 240, 0.4);">
+          <div style="font-size: 20px; font-weight: 800; color: #FFFFFF; margin-bottom: 6px;">
+            🎉 CHÚC CÁC EM HỌC TẬP TỐT VÀ ĐẠT ĐIỂM CAO MÔN TIN HỌC 12!
+          </div>
+          <button class="sim-btn" onclick="fireConfetti();" style="background: linear-gradient(135deg, #0D7C86, #38E1F0); color: white; font-weight: 800; padding: 8px 20px;">
+            🎊 Bắn pháo hoa ăn mừng!
+          </button>
+        </div>
+      </div>
+    </section>
+
+  </div>
+
+  <!-- ─── DECK NAV DƯỚI CÙNG ─── -->
+  <div class="deck-nav">
+    <button class="nav-btn" onclick="prevSlide();" title="Slide trước (← Phím Mũi tên trái)">‹</button>
+    <div class="deck-progress">
+      <div class="deck-progress-bar" id="progressBar"></div>
+    </div>
+    <div class="deck-counter" id="slideCounter">01 / 15</div>
+    <button class="nav-btn" onclick="nextSlide();" title="Slide tiếp (→ Phím Mũi tên phải hoặc Space)">›</button>
+    <button class="nav-btn" onclick="toggleMute();" id="muteBtn" title="Bật/Tắt âm thanh (M)">🔊</button>
+    <button class="nav-btn" onclick="toggleFullScreen();" title="Bật/Tắt Toàn màn hình (F)">⛶</button>
+  </div>
+
+  <script>
+    let currentSlide = 1;
+    const totalSlides = 15;
+    let isMuted = false;
+
+    /* ─── BỘ TỔNG HỢP ÂM THANH WEB AUDIO API (KHÔNG CẦN FILE NGOÀI) ─── */
+    const audioCtx = (typeof window !== 'undefined' && (window.AudioContext || window.webkitAudioContext)) 
+      ? new (window.AudioContext || window.webkitAudioContext)() : null;
+
+    function playSound(type) {
+      if (isMuted || !audioCtx) return;
+      if (audioCtx.state === 'suspended') audioCtx.resume();
+      
+      const now = audioCtx.currentTime;
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
+
+      if (type === 'click') {
+        osc.frequency.setValueAtTime(600, now);
+        osc.frequency.exponentialRampToValueAtTime(300, now + 0.05);
+        gain.gain.setValueAtTime(0.12, now);
+        gain.gain.linearRampToValueAtTime(0.01, now + 0.05);
+        osc.start(now);
+        osc.stop(now + 0.05);
+      } else if (type === 'reveal') {
+        osc.type = 'triangle';
+        osc.frequency.setValueAtTime(440, now);
+        osc.frequency.exponentialRampToValueAtTime(880, now + 0.12);
+        gain.gain.setValueAtTime(0.18, now);
+        gain.gain.linearRampToValueAtTime(0.01, now + 0.12);
+        osc.start(now);
+        osc.stop(now + 0.12);
+      } else if (type === 'success') {
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(523.25, now); // C5
+        osc.frequency.setValueAtTime(659.25, now + 0.08); // E5
+        osc.frequency.setValueAtTime(783.99, now + 0.16); // G5
+        gain.gain.setValueAtTime(0.2, now);
+        gain.gain.linearRampToValueAtTime(0.01, now + 0.35);
+        osc.start(now);
+        osc.stop(now + 0.35);
+      } else if (type === 'wrong') {
+        osc.type = 'sawtooth';
+        osc.frequency.setValueAtTime(220, now);
+        osc.frequency.linearRampToValueAtTime(150, now + 0.18);
+        gain.gain.setValueAtTime(0.2, now);
+        gain.gain.linearRampToValueAtTime(0.01, now + 0.18);
+        osc.start(now);
+        osc.stop(now + 0.18);
+      }
+    }
+
+    function toggleMute() {
+      isMuted = !isMuted;
+      document.getElementById('muteBtn').innerText = isMuted ? '🔇' : '🔊';
+    }
+
+    /* ─── QUẢN LÝ REVEAL TỪNG BƯỚC ─── */
+    function getActiveSlideElement() {
+      return document.getElementById('slide-' + currentSlide);
+    }
+
+    function updateRevealStatus() {
+      const slide = getActiveSlideElement();
+      if (!slide) return;
+      const items = slide.querySelectorAll('.reveal-item');
+      const visibleCount = slide.querySelectorAll('.reveal-item.visible').length;
+      const statusEl = document.getElementById('slide-' + currentSlide + '-status');
+      if (statusEl) {
+        statusEl.innerText = visibleCount + ' / ' + items.length;
+      }
+    }
+
+    function revealNextInCurrentSlide() {
+      const slide = getActiveSlideElement();
+      if (!slide) return false;
+      const hiddenItems = Array.from(slide.querySelectorAll('.reveal-item:not(.visible)'));
+      if (hiddenItems.length > 0) {
+        const nextItem = hiddenItems[0];
+        nextItem.classList.add('visible', 'just-revealed');
+        playSound('reveal');
+        setTimeout(() => nextItem.classList.remove('just-revealed'), 700);
+        updateRevealStatus();
+        return true;
+      }
+      return false;
+    }
+
+    function revealAllInCurrentSlide() {
+      const slide = getActiveSlideElement();
+      if (!slide) return;
+      slide.querySelectorAll('.reveal-item').forEach(item => {
+        item.classList.add('visible');
+      });
+      playSound('click');
+      updateRevealStatus();
+    }
+
+    function autoStaggerReveal(slide) {
+      const items = slide.querySelectorAll('.reveal-item');
+      if (items.length === 0) return;
+      items.forEach((item, index) => {
+        setTimeout(() => {
+          item.classList.add('visible');
+          updateRevealStatus();
+        }, (index + 1) * 160);
+      });
+    }
+
+    /* ─── ĐIỀU HƯỚNG SLIDE ─── */
+    function updateSlide() {
+      document.querySelectorAll('.slide').forEach((s, idx) => {
+        const slideIndex = idx + 1;
+        s.classList.remove('active', 'prev');
+        if (slideIndex === currentSlide) {
+          s.classList.add('active');
+          s.querySelectorAll('.reveal-item').forEach(el => el.classList.remove('visible'));
+          autoStaggerReveal(s);
+        } else if (slideIndex < currentSlide) {
+          s.classList.add('prev');
+        }
+      });
+
+      const progress = (currentSlide / totalSlides) * 100;
+      document.getElementById('progressBar').style.width = progress + '%';
+      document.getElementById('slideCounter').innerText = 
+        String(currentSlide).padStart(2, '0') + ' / ' + String(totalSlides).padStart(2, '0');
+
+      if (currentSlide === 14) {
+        setTimeout(updateLivePlayground, 100);
+      }
+      if (currentSlide === 15) {
+        setTimeout(fireConfetti, 400);
+      }
+    }
+
+    function nextSlide() {
+      if (currentSlide < totalSlides) {
+        currentSlide++;
+        playSound('click');
+        updateSlide();
+      }
+    }
+
+    function prevSlide() {
+      if (currentSlide > 1) {
+        currentSlide--;
+        playSound('click');
+        updateSlide();
+      }
+    }
+
+    function toggleFullScreen() {
+      if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen().catch(() => {});
+      } else {
+        document.exitFullscreen().catch(() => {});
+      }
+    }
+
+    /* ─── PHÍM TẮT ─── */
+    window.addEventListener('keydown', (e) => {
+      if (e.target.tagName === 'TEXTAREA' || e.target.tagName === 'INPUT') return;
+      if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown') {
+        e.preventDefault();
+        nextSlide();
+      } else if (e.key === 'ArrowLeft' || e.key === 'PageUp') {
+        e.preventDefault();
+        prevSlide();
+      } else if (e.key === 'ArrowDown') {
+        e.preventDefault();
+        revealNextInCurrentSlide();
+      } else if (e.key === 'f' || e.key === 'F') {
+        e.preventDefault();
+        toggleFullScreen();
+      } else if (e.key === 'm' || e.key === 'M') {
+        e.preventDefault();
+        toggleMute();
+      } else if (e.key === 'Home') {
+        currentSlide = 1; updateSlide();
+      } else if (e.key === 'End') {
+        currentSlide = totalSlides; updateSlide();
+      }
+    });
+
+    /* ─── BỘ GIẢ LẬP OL TYPE & START (SLIDE 3) ─── */
+    let currentOlType = 'i';
+    let currentOlStart = 1;
+
+    function changeOlType(type, label) {
+      currentOlType = type;
+      playSound('click');
+      document.querySelectorAll('#slide-3 .interactive-panel .sim-btn').forEach(b => {
+        if (b.innerText.includes('type="' + type + '"')) b.classList.add('active');
+        else if (b.innerText.includes('type=')) b.classList.remove('active');
+      });
+      document.getElementById('ol-live-preview').type = type;
+      document.getElementById('ol-mode-badge').innerText = 'type="' + type + '" (' + label + ')';
+      updateOlCode();
+    }
+
+    function changeOlStart(start) {
+      currentOlStart = start;
+      playSound('click');
+      document.querySelectorAll('#slide-3 .interactive-panel .sim-btn').forEach(b => {
+        if (b.innerText.includes('start="' + start + '"')) b.classList.add('active');
+        else if (b.innerText.includes('start=')) b.classList.remove('active');
+      });
+      document.getElementById('ol-live-preview').start = start;
+      updateOlCode();
+    }
+
+    function updateOlCode() {
+      document.getElementById('ol-code-display').innerHTML = 
+        '&lt;<span class="tag-kw">ol</span> <span class="attr-kw">type</span>=<span class="val-kw">"' + currentOlType + '"</span> <span class="attr-kw">start</span>=<span class="val-kw">"' + currentOlStart + '"</span>&gt;\\n' +
+        '  &lt;<span class="tag-kw">li</span>&gt;Nếu &lt;<span class="tag-kw">b</span>&gt;delta&lt;/<span class="tag-kw">b</span>&gt; &amp;lt; 0: Phương trình vô nghiệm&lt;/<span class="tag-kw">li</span>&gt;\\n' +
+        '  &lt;<span class="tag-kw">li</span>&gt;Nếu &lt;<span class="tag-kw">b</span>&gt;delta&lt;/<span class="tag-kw">b</span>&gt; = 0: Phương trình có nghiệm kép&lt;/<span class="tag-kw">li</span>&gt;\\n' +
+        '  &lt;<span class="tag-kw">li</span>&gt;Nếu &lt;<span class="tag-kw">b</span>&gt;delta&lt;/<span class="tag-kw">b</span>&gt; &amp;gt; 0: Phương trình có 2 nghiệm&lt;/<span class="tag-kw">li</span>&gt;\\n' +
+        '&lt;/<span class="tag-kw">ol</span>&gt;';
+    }
+
+    /* ─── BỘ GIẢ LẬP UL LIST-STYLE-TYPE (SLIDE 4) ─── */
+    function changeUlType(type, label) {
+      playSound('click');
+      document.querySelectorAll('#slide-4 .interactive-panel .sim-btn').forEach(b => {
+        if (b.innerText.includes(type)) b.classList.add('active');
+        else b.classList.remove('active');
+      });
+      document.getElementById('ul-live-preview').style.listStyleType = type;
+      document.getElementById('ul-mode-badge').innerText = label;
+      document.getElementById('ul-code-display').innerHTML = 
+        '&lt;<span class="tag-kw">ul</span> <span class="attr-kw">style</span>=<span class="val-kw">"list-style-type: ' + type + '"</span>&gt;\\n' +
+        '  &lt;<span class="tag-kw">li</span>&gt;Nếu &lt;<span class="tag-kw">b</span>&gt;delta&lt;/<span class="tag-kw">b</span>&gt; &amp;lt; 0: Phương trình vô nghiệm&lt;/<span class="tag-kw">li</span>&gt;\\n' +
+        '  &lt;<span class="tag-kw">li</span>&gt;Nếu &lt;<span class="tag-kw">b</span>&gt;delta&lt;/<span class="tag-kw">b</span>&gt; = 0: Phương trình có nghiệm kép&lt;/<span class="tag-kw">li</span>&gt;\\n' +
+        '  &lt;<span class="tag-kw">li</span>&gt;Nếu &lt;<span class="tag-kw">b</span>&gt;delta&lt;/<span class="tag-kw">b</span>&gt; &amp;gt; 0: Phương trình có 2 nghiệm&lt;/<span class="tag-kw">li</span>&gt;\\n' +
+        '&lt;/<span class="tag-kw">ul</span>&gt;';
+    }
+
+    /* ─── BỘ GIẢ LẬP ĐỔI VIỀN BẢNG (SLIDE 7) ─── */
+    let isCollapsed = true;
+    let currentBorderVal = '1px solid black';
+
+    function changeTableBorder(borderVal, styleName) {
+      currentBorderVal = borderVal;
+      playSound('click');
+      const table = document.getElementById('dynamic-border-table');
+      table.style.border = borderVal;
+      table.querySelectorAll('th, td').forEach(c => c.style.border = borderVal);
+      document.getElementById('border-status-tag').innerText = borderVal;
+      document.querySelectorAll('#slide-7 .sim-btn').forEach(b => {
+        if (b.id !== 'btn-collapse') {
+          if (b.innerText.includes(styleName)) b.classList.add('active');
+          else b.classList.remove('active');
+        }
+      });
+      updateBorderCode();
+    }
+
+    function toggleCollapse() {
+      isCollapsed = !isCollapsed;
+      playSound('click');
+      const table = document.getElementById('dynamic-border-table');
+      table.style.borderCollapse = isCollapsed ? 'collapse' : 'separate';
+      const btn = document.getElementById('btn-collapse');
+      btn.innerText = 'border-collapse: ' + (isCollapsed ? 'collapse (Đang BẬT)' : 'separate (Đang TẮT)');
+      btn.classList.toggle('active', isCollapsed);
+      updateBorderCode();
+    }
+
+    function updateBorderCode() {
+      document.getElementById('border-code-box').innerHTML = 
+        '&lt;<span class="tag-kw">table</span> <span class="attr-kw">style</span>=<span class="val-kw">"border: ' + currentBorderVal + '; border-collapse: ' + (isCollapsed ? 'collapse' : 'separate') + ';"</span>&gt;\\n' +
+        '  &lt;<span class="tag-kw">caption</span>&gt;&lt;<span class="tag-kw">b</span>&gt;HOÁ ĐƠN THANH TOÁN&lt;/<span class="tag-kw">b</span>&gt;&lt;/<span class="tag-kw">caption</span>&gt;\\n' +
+        '  &lt;<span class="tag-kw">tr</span>&gt;\\n' +
+        '    &lt;<span class="tag-kw">th</span> <span class="attr-kw">style</span>=<span class="val-kw">"border: ' + currentBorderVal + ';"</span>&gt;Món&lt;/<span class="tag-kw">th</span>&gt;\\n' +
+        '    &lt;<span class="tag-kw">th</span> <span class="attr-kw">style</span>=<span class="val-kw">"border: ' + currentBorderVal + ';"</span>&gt;Giá&lt;/<span class="tag-kw">th</span>&gt;\\n' +
+        '  &lt;/<span class="tag-kw">tr</span>&gt;\\n' +
+        '&lt;/<span class="tag-kw">table</span>&gt;';
+    }
+
+    /* ─── HOẠT HỌA CHUYỂN ĐỘNG COLSPAN (SLIDE 9) ─── */
+    function animateColspan(merged) {
+      playSound(merged ? 'success' : 'click');
+      const table = document.getElementById('colspan-table');
+      const label = document.getElementById('colspan-label');
+      const explain = document.getElementById('colspan-explain');
+      
+      document.querySelectorAll('#slide-9 .sim-btn').forEach(b => {
+        if (merged && b.innerText.includes('colspan="3"')) b.classList.add('active');
+        else if (!merged && b.innerText.includes('Tách')) b.classList.add('active');
+        else b.classList.remove('active');
+      });
+
+      if (merged) {
+        table.innerHTML = 
+          '<tr>' +
+          '  <th colspan="3" class="cell-merged">✨ Điểm thi 3 môn (colspan="3" - Chiếm trọn cả 3 cột)</th>' +
+          '</tr>' +
+          '<tr>' +
+          '  <td>Toán (8.5)</td>' +
+          '  <td>Vật lí (9.0)</td>' +
+          '  <td>Hoá học (8.0)</td>' +
+          '</tr>';
+        label.innerText = 'Trạng thái: ĐÃ GỘP 3 CỘT (colspan="3")';
+        label.style.color = '#059669';
+        explain.innerHTML = '🎉 <strong>Quan sát thấy:</strong> Vách ngăn giữa 3 ô đã tan biến, ô tiêu đề dãn rộng bao trùm cả 3 cột bên dưới! Ở hàng này chỉ còn lại DUY NHẤT 1 thẻ &lt;th&gt;.';
+      } else {
+        table.innerHTML = 
+          '<tr>' +
+          '  <th>Cột 1</th>' +
+          '  <th>Cột 2</th>' +
+          '  <th>Cột 3</th>' +
+          '</tr>' +
+          '<tr>' +
+          '  <td>Toán (8.5)</td>' +
+          '  <td>Vật lí (9.0)</td>' +
+          '  <td>Hoá học (8.0)</td>' +
+          '</tr>';
+        label.innerText = 'Trạng thái: 3 cột riêng lẻ bình thường';
+        label.style.color = '#0D7C86';
+        explain.innerHTML = 'Ở trạng thái bình thường, mỗi cột có 1 ô tiêu đề riêng biệt ứng với từng cột dữ liệu.';
+      }
+    }
+
+    /* ─── HOẠT HỌA CHUYỂN ĐỘNG ROWSPAN (SLIDE 10) ─── */
+    function animateRowspan(merged) {
+      playSound(merged ? 'success' : 'click');
+      const table = document.getElementById('rowspan-table');
+      const label = document.getElementById('rowspan-label');
+      const explain = document.getElementById('rowspan-explain');
+
+      document.querySelectorAll('#slide-10 .sim-btn').forEach(b => {
+        if (merged && b.innerText.includes('rowspan="2"')) b.classList.add('active');
+        else if (!merged && b.innerText.includes('Tách')) b.classList.add('active');
+        else b.classList.remove('active');
+      });
+
+      if (merged) {
+        table.innerHTML = 
+          '<tr>' +
+          '  <th rowspan="2" class="cell-merged">✨ Họ và tên<br><small>(rowspan="2" - Chiếm 2 hàng)</small></th>' +
+          '  <td>Sáng: Học Tin học 12</td>' +
+          '</tr>' +
+          '<tr>' +
+          '  <td>Chiều: Thực hành tạo Web</td>' +
+          '</tr>';
+        label.innerText = 'Trạng thái: ĐÃ GỘP 2 HÀNG (rowspan="2")';
+        label.style.color = '#059669';
+        explain.innerHTML = '🎉 <strong>Quan sát thấy:</strong> Ô Họ và tên ở hàng 1 đã vươn dài xuống hàng 2. Ở hàng thứ 2 chỉ cần viết DUY NHẤT 1 ô "Chiều: Thực hành tạo Web" vì cột đầu đã có ô chiếm chỗ!';
+      } else {
+        table.innerHTML = 
+          '<tr>' +
+          '  <th>Họ và tên (Hàng 1)</th>' +
+          '  <td>Sáng: Học Tin học 12</td>' +
+          '</tr>' +
+          '<tr>' +
+          '  <td class="cell-removed">Ô thừa ở Hàng 2</td>' +
+          '  <td>Chiều: Thực hành tạo Web</td>' +
+          '</tr>';
+        label.innerText = 'Trạng thái: 2 hàng riêng biệt';
+        label.style.color = '#0D7C86';
+        explain.innerHTML = 'Khi chưa gộp, mỗi hàng phải tự khai báo đủ 2 ô. Nếu gộp ô hàng 1 mà không xóa ô hàng 2 thì bảng sẽ bị phình ra!';
+      }
+    }
+
+    /* ─── QUIZ ENGINE ─── */
+    function checkQuiz(btn, isCorrect, qId, explanation) {
+      const parent = btn.parentElement;
+      const feedback = parent.querySelector('.quiz-feedback');
+      
+      parent.querySelectorAll('.quiz-btn').forEach(b => {
+        b.disabled = true;
+        b.style.pointerEvents = 'none';
+      });
+
+      if (isCorrect) {
+        btn.classList.add('correct');
+        playSound('success');
+        feedback.style.display = 'block';
+        feedback.style.background = 'rgba(16, 185, 129, 0.15)';
+        feedback.style.border = '1px solid #10B981';
+        feedback.style.color = '#34D399';
+        feedback.innerHTML = '🎉 <strong>Chính xác!</strong> ' + explanation;
+      } else {
+        btn.classList.add('wrong');
+        playSound('wrong');
+        feedback.style.display = 'block';
+        feedback.style.background = 'rgba(239, 68, 68, 0.15)';
+        feedback.style.border = '1px solid #EF4444';
+        feedback.style.color = '#FCA5A5';
+        feedback.innerHTML = '❌ <strong>Chưa đúng!</strong> ' + explanation;
+      }
+    }
+
+    /* ─── LIVE PLAYGROUND ─── */
+    function updateLivePlayground() {
+      const code = document.getElementById('playground-code').value;
+      const frame = document.getElementById('playground-frame');
+      const doc = frame.contentDocument || frame.contentWindow.document;
+      doc.open();
+      doc.write(code);
+      doc.close();
+    }
+
+    const templates = {
+      template1: \`<h3 style="color:#0D7C86;">Danh mục Đồ uống mùa hè</h3>
+<ol type="A">
+  <li>Trà trái cây nhiệt đới
+    <ul style="list-style-type: square; color: #475569;">
+      <li>Trà đào cam sả</li>
+      <li>Trà xoài chanh leo</li>
+    </ul>
+  </li>
+  <li>Cà phê pha máy
+    <ul style="list-style-type: circle; color: #475569;">
+      <li>Espresso đậm đà</li>
+      <li>Cappuccino béo ngậy</li>
+    </ul>
+  </li>
+</ol>\`,
+      template2: \`<table border="1" style="border-collapse: collapse; width: 100%; text-align: center;">
+  <caption style="font-weight: bold; margin-bottom: 6px;">BẢNG GIÁ ĐỒ ĂN VẶT</caption>
+  <tr style="background: #F1F5F9;">
+    <th>Món ăn</th>
+    <th>Cỡ phần</th>
+    <th>Đơn giá</th>
+  </tr>
+  <tr>
+    <td>Khoai tây chiên</td>
+    <td>Vừa (M)</td>
+    <td>20.000 đ</td>
+  </tr>
+  <tr>
+    <td>Gà lắc phô mai</td>
+    <td>Lớn (L)</td>
+    <td>35.000 đ</td>
+  </tr>
+</table>\`,
+      template3: \`<table border="1" style="border-collapse: collapse; width: 100%; text-align: center;">
+  <caption><b>KẾT QUẢ THI ĐẤU THỂ THAO</b></caption>
+  <tr style="background: #E2E8F0;">
+    <th rowspan="2">Đội tuyển</th>
+    <th colspan="2">Số huy chương</th>
+  </tr>
+  <tr style="background: #F8FAFC;">
+    <th>Vàng (Gold)</th>
+    <th>Bạc (Silver)</th>
+  </tr>
+  <tr>
+    <td>Lớp 12A1</td>
+    <td>3</td>
+    <td>1</td>
+  </tr>
+  <tr>
+    <td>Lớp 12A2</td>
+    <td>2</td>
+    <td>4</td>
+  </tr>
+</table>\`
+    };
+
+    function loadTemplate(key) {
+      playSound('click');
+      document.getElementById('playground-code').value = templates[key];
+      updateLivePlayground();
+    }
+
+    /* ─── PHÁO HOA CONFETTI ─── */
+    function fireConfetti() {
+      playSound('success');
+      const canvas = document.getElementById('confettiCanvas');
+      const ctx = canvas.getContext('2d');
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+
+      const particles = [];
+      const colors = ['#38E1F0', '#F2683C', '#F5A623', '#10B981', '#8B5CF6', '#EC4899'];
+
+      for (let i = 0; i < 90; i++) {
+        particles.push({
+          x: canvas.width / 2,
+          y: canvas.height * 0.45,
+          vx: (Math.random() - 0.5) * 16,
+          vy: (Math.random() - 0.7) * 16,
+          size: Math.random() * 8 + 4,
+          color: colors[Math.floor(Math.random() * colors.length)],
+          alpha: 1,
+          rot: Math.random() * 360,
+          vrot: (Math.random() - 0.5) * 12
+        });
+      }
+
+      function render() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        let alive = false;
+        particles.forEach(p => {
+          p.x += p.vx;
+          p.y += p.vy;
+          p.vy += 0.35; // trọng lực
+          p.alpha -= 0.012;
+          p.rot += p.vrot;
+
+          if (p.alpha > 0) {
+            alive = true;
+            ctx.save();
+            ctx.globalAlpha = p.alpha;
+            ctx.translate(p.x, p.y);
+            ctx.rotate(p.rot * Math.PI / 180);
+            ctx.fillStyle = p.color;
+            ctx.fillRect(-p.size / 2, -p.size / 2, p.size, p.size);
+            ctx.restore();
+          }
+        });
+
+        if (alive) requestAnimationFrame(render);
+        else ctx.clearRect(0, 0, canvas.width, canvas.height);
+      }
+      render();
+    }
+
+    // Khởi tạo trạng thái ban đầu
+    updateSlide();
+  </script>
+</body>
+</html>
+`;
+
+// Ghi ra 2 nơi: public/bai-09-trinh-chieu.html và bai-09-trinh-chieu.html
+const publicPath = path.resolve('public', 'bai-09-trinh-chieu.html');
+const rootPath = path.resolve('bai-09-trinh-chieu.html');
+
+fs.writeFileSync(publicPath, htmlContent, 'utf-8');
+fs.writeFileSync(rootPath, htmlContent, 'utf-8');
+
+console.log('Successfully generated Bai 09 Slide Deck:');
+console.log(' - ' + publicPath);
+console.log(' - ' + rootPath);
