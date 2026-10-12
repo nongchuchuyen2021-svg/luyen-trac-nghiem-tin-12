@@ -1597,6 +1597,7 @@ const htmlContent = `<!DOCTYPE html>
 
     function resetLiveCode() {
       const editor = document.getElementById('liveEditor');
+      if (editor) {
         editor.value = '<h1 style="color:#0D7C86">Chào mừng đến với Tin học 12!</h1>\\n' +
           '<p>Đây là <strong>đoạn văn</strong> có <em>chữ nghiêng</em> và <mark>bôi vàng</mark>.</p>\\n' +
           '<hr>\\n' +
