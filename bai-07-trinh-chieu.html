@@ -1,0 +1,1310 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bài 7: HTML và Cấu trúc trang web — Bài giảng điện tử Tin học 12</title>
+  <style>
+    /* ─── RESET & BIẾN MÀU SẮC CHUẨN 2026 ─── */
+    :root {
+      --bg: #0B131A;
+      --bg-card: rgba(18, 33, 43, 0.85);
+      --border-card: rgba(201, 221, 224, 0.15);
+      --ink: #FFFFFF;
+      --ink-soft: #A3B8C8;
+      --sea: #0D7C86;
+      --sea-light: #16A8B6;
+      --sea-glow: rgba(13, 124, 134, 0.4);
+      --coral: #F2683C;
+      --coral-light: #FF855D;
+      --gold: #F5A623;
+      --leaf: #10B981;
+      --leaf-dark: #065F46;
+      --radius-lg: 24px;
+      --radius-md: 16px;
+      --font-main: system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      --font-mono: 'Consolas', 'Fira Code', 'Courier New', monospace;
+      --transition-slide: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.5s ease;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: var(--font-main);
+      background-color: var(--bg);
+      color: var(--ink);
+      overflow: hidden;
+      width: 100vw;
+      height: 100vh;
+      user-select: none;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ─── NỀN GRADIENT HIỆU ỨNG VŨ TRỤ ─── */
+    .bg-mesh {
+      position: fixed;
+      top: 0; left: 0; width: 100vw; height: 100vh;
+      background: radial-gradient(circle at 15% 20%, rgba(13, 124, 134, 0.25) 0%, transparent 45%),
+                  radial-gradient(circle at 85% 80%, rgba(242, 104, 60, 0.2) 0%, transparent 40%),
+                  radial-gradient(circle at 50% 50%, rgba(16, 185, 129, 0.1) 0%, transparent 60%);
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    /* ─── CONTAINER TRÌNH CHIẾU ─── */
+    .deck-container {
+      position: relative;
+      width: 100vw;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 1;
+    }
+
+    /* ─── MỖI SLIDE ─── */
+    .slide {
+      position: absolute;
+      width: 92vw;
+      max-width: 1300px;
+      height: 86vh;
+      max-height: 820px;
+      background: var(--bg-card);
+      border: 1px solid var(--border-card);
+      border-radius: var(--radius-lg);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      box-shadow: 0 30px 60px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+      padding: 40px 50px;
+      display: flex;
+      flex-direction: column;
+      opacity: 0;
+      pointer-events: none;
+      transform: translateX(60px) scale(0.96);
+      transition: var(--transition-slide);
+      overflow-y: auto;
+    }
+
+    .slide::-webkit-scrollbar { width: 6px; }
+    .slide::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 4px; }
+
+    .slide.active {
+      opacity: 1;
+      pointer-events: auto;
+      transform: translateX(0) scale(1);
+      z-index: 2;
+    }
+
+    .slide.prev {
+      opacity: 0;
+      pointer-events: none;
+      transform: translateX(-60px) scale(0.96);
+    }
+
+    /* ─── TIÊU ĐỀ & ĐẦU TRANG SLIDE ─── */
+    .slide-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 24px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      padding-bottom: 16px;
+      flex-shrink: 0;
+    }
+
+    .slide-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 5px 14px;
+      border-radius: 20px;
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      background: rgba(13, 124, 134, 0.25);
+      color: #38E1F0;
+      border: 1px solid rgba(56, 225, 240, 0.3);
+      margin-bottom: 8px;
+    }
+
+    .slide-title {
+      font-size: 32px;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      background: linear-gradient(135deg, #FFFFFF 30%, #C9DDE0 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      line-height: 1.25;
+    }
+
+    .slide-subtitle {
+      font-size: 16px;
+      color: var(--ink-soft);
+      margin-top: 4px;
+    }
+
+    .slide-body {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: 20px;
+      position: relative;
+    }
+
+    /* ─── CÁC THÀNH PHẦN NỘI DUNG ─── */
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 28px;
+      align-items: center;
+      width: 100%;
+    }
+
+    .grid-3 {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+      width: 100%;
+    }
+
+    .card {
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: var(--radius-md);
+      padding: 24px;
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .card:hover {
+      background: rgba(255, 255, 255, 0.08);
+      border-color: rgba(56, 225, 240, 0.4);
+      transform: translateY(-4px);
+    }
+
+    .card-title {
+      font-size: 20px;
+      font-weight: 700;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .card p, .card li {
+      color: var(--ink-soft);
+      font-size: 16px;
+      line-height: 1.6;
+    }
+
+    .highlight {
+      color: #38E1F0;
+      font-weight: 700;
+    }
+
+    .coral-text {
+      color: var(--coral-light);
+      font-weight: 700;
+    }
+
+    .gold-text {
+      color: var(--gold);
+      font-weight: 700;
+    }
+
+    .leaf-text {
+      color: var(--leaf);
+      font-weight: 700;
+    }
+
+    /* ─── KHỐI CODE & PREVIEW ─── */
+    .code-box {
+      background: #060B0E;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      font-family: var(--font-mono);
+    }
+
+    .code-header {
+      background: rgba(255, 255, 255, 0.05);
+      padding: 8px 16px;
+      font-size: 12px;
+      color: var(--ink-soft);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .code-content {
+      padding: 16px;
+      font-size: 15px;
+      line-height: 1.65;
+      color: #7FE5FF;
+      overflow-x: auto;
+      white-space: pre-wrap;
+    }
+
+    .tag-kw { color: #F2683C; font-weight: bold; }
+    .tag-attr { color: #F5A623; }
+    .tag-str { color: #10B981; }
+    .tag-content { color: #FFFFFF; }
+    .tag-comment { color: #64748B; font-style: italic; }
+
+    /* ─── LIVE EDITOR PLAYGROUND ─── */
+    .playground-container {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+      height: 480px;
+      width: 100%;
+    }
+
+    .editor-pane, .preview-pane {
+      display: flex;
+      flex-direction: column;
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      background: #060B0E;
+    }
+
+    .pane-bar {
+      background: rgba(255, 255, 255, 0.06);
+      padding: 10px 16px;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--ink-soft);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .code-textarea {
+      flex: 1;
+      width: 100%;
+      background: transparent;
+      border: none;
+      color: #93E8FF;
+      font-family: var(--font-mono);
+      font-size: 15px;
+      line-height: 1.6;
+      padding: 16px;
+      resize: none;
+      outline: none;
+    }
+
+    .preview-iframe {
+      flex: 1;
+      width: 100%;
+      border: none;
+      background: #FFFFFF;
+    }
+
+    /* ─── INTERACTIVE QUIZ CARDS ─── */
+    .quiz-question {
+      font-size: 20px;
+      font-weight: 700;
+      color: #FFFFFF;
+      margin-bottom: 18px;
+      line-height: 1.4;
+    }
+
+    .quiz-options {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+    }
+
+    .quiz-btn {
+      padding: 16px 20px;
+      border-radius: var(--radius-md);
+      background: rgba(255, 255, 255, 0.05);
+      border: 2px solid rgba(255, 255, 255, 0.12);
+      color: #FFFFFF;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      text-align: left;
+      transition: all 0.25s ease;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .quiz-btn:hover {
+      background: rgba(255, 255, 255, 0.12);
+      border-color: #38E1F0;
+      transform: translateY(-2px);
+    }
+
+    .quiz-btn.correct {
+      background: rgba(16, 185, 129, 0.25) !important;
+      border-color: #10B981 !important;
+      color: #6EE7B7 !important;
+    }
+
+    .quiz-btn.wrong {
+      background: rgba(242, 104, 60, 0.25) !important;
+      border-color: #F2683C !important;
+      color: #FCA5A5 !important;
+    }
+
+    .quiz-feedback {
+      margin-top: 16px;
+      padding: 14px 20px;
+      border-radius: var(--radius-md);
+      font-size: 15px;
+      line-height: 1.5;
+      display: none;
+      animation: fadeIn 0.3s ease forwards;
+    }
+
+    /* ─── THANH ĐIỀU KHIỂN & TIẾN ĐỘ TRÌNH CHIẾU ─── */
+    .control-bar {
+      position: fixed;
+      bottom: 24px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background: rgba(18, 33, 43, 0.9);
+      border: 1px solid var(--border-card);
+      padding: 8px 20px;
+      border-radius: 40px;
+      backdrop-filter: blur(15px);
+      box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+      z-index: 100;
+    }
+
+    .nav-btn {
+      background: rgba(255, 255, 255, 0.08);
+      border: none;
+      color: #FFFFFF;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .nav-btn:hover {
+      background: var(--sea);
+      color: #FFFFFF;
+      transform: scale(1.1);
+    }
+
+    .slide-counter {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--ink-soft);
+      font-family: var(--font-mono);
+      min-width: 70px;
+      text-align: center;
+    }
+
+    .progress-line-container {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 5px;
+      background: rgba(255, 255, 255, 0.06);
+      z-index: 1000;
+    }
+
+    .progress-line {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, #0D7C86, #16A8B6, #F2683C);
+      transition: width 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    /* ─── NÚT FULLSCREEN & MENU NHANH ─── */
+    .top-action-bar {
+      position: fixed;
+      top: 20px;
+      right: 28px;
+      display: flex;
+      gap: 10px;
+      z-index: 100;
+    }
+
+    .action-btn {
+      background: rgba(18, 33, 43, 0.8);
+      border: 1px solid var(--border-card);
+      color: var(--ink-soft);
+      padding: 8px 14px;
+      border-radius: 20px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s ease;
+    }
+
+    .action-btn:hover {
+      background: rgba(255, 255, 255, 0.12);
+      color: #FFFFFF;
+      border-color: #38E1F0;
+    }
+
+    /* ─── ANIMATION CÁC PHẦN TỬ TRONG SLIDE ─── */
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes pulseGlow { 0%, 100% { box-shadow: 0 0 20px var(--sea-glow); } 50% { box-shadow: 0 0 40px var(--sea-glow); } }
+
+    .pulse { animation: pulseGlow 3s infinite; }
+
+    /* SVG DIAGRAM RESPONSIVE */
+    svg { max-width: 100%; height: auto; }
+  </style>
+</head>
+<body>
+
+  <div class="bg-mesh"></div>
+
+  <!-- Thanh tiến trình trên cùng -->
+  <div class="progress-line-container">
+    <div class="progress-line" id="progressBar"></div>
+  </div>
+
+  <!-- Nút góc trên -->
+  <div class="top-action-bar">
+    <button class="action-btn" onclick="toggleFullscreen()">⛶ Toàn màn hình (F)</button>
+    <button class="action-btn" onclick="showSlideIndexModal()">☰ Mục lục bài</button>
+  </div>
+
+  <!-- BỘ SLIDE -->
+  <div class="deck-container">
+
+    <!-- ════════ SLIDE 1: TRANG BÌA ════════ -->
+    <div class="slide active" id="slide-1">
+      <div class="slide-body" style="align-items: center; text-align: center; justify-content: center;">
+        <span class="slide-badge" style="font-size: 15px; padding: 6px 18px;">
+          📚 TIN HỌC 12 — ĐỊNH HƯỚNG ICT · KẾT NỐI TRI THỨC
+        </span>
+        <h1 style="font-size: 52px; font-weight: 900; line-height: 1.2; margin: 16px 0; background: linear-gradient(135deg, #FFFFFF 20%, #38E1F0 70%, #F2683C 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">
+          BÀI 7: HTML VÀ CẤU TRÚC TRANG WEB
+        </h1>
+        <p style="font-size: 20px; color: var(--ink-soft); max-width: 780px; margin-bottom: 30px; line-height: 1.6;">
+          Khám phá ngôn ngữ nền tảng của mọi website trên thế giới. Tự tay viết và giải phẫu những dòng mã HTML đầu tiên của em!
+        </p>
+
+        <div style="display: flex; gap: 16px; align-items: center;">
+          <button class="pulse" onclick="nextSlide()" style="background: linear-gradient(135deg, #0D7C86, #16A8B6); color: white; border: none; padding: 16px 36px; border-radius: 30px; font-size: 18px; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 10px; transition: transform 0.2s;">
+            🚀 Bắt đầu bài học →
+          </button>
+        </div>
+
+        <div style="margin-top: 40px; display: flex; gap: 32px; font-size: 14px; color: var(--ink-soft);">
+          <span>🏫 THPT Na Rì</span>
+          <span>•</span>
+          <span>👨‍🏫 Bài giảng tương tác số</span>
+          <span>•</span>
+          <span>🌐 Nhấn phím <b>Mũi tên phải</b> hoặc <b>Space</b> để lật trang</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ════════ SLIDE 2: MỤC TIÊU BÀI HỌC ════════ -->
+    <div class="slide" id="slide-2">
+      <div class="slide-header">
+        <div>
+          <span class="slide-badge">Mục tiêu</span>
+          <h2 class="slide-title">Học xong bài này, em sẽ:</h2>
+          <p class="slide-subtitle">Các yêu cầu cần đạt theo chuẩn chương trình GDPT 2018</p>
+        </div>
+      </div>
+      <div class="slide-body">
+        <div class="grid-3">
+          <div class="card" style="border-top: 4px solid #38E1F0;">
+            <div style="font-size: 40px; margin-bottom: 12px;">📄</div>
+            <div class="card-title">1. Hiểu bản chất HTML</div>
+            <p>Biết được trang web thực chất là <b>tệp văn bản mã nguồn</b> và hiểu định nghĩa ngôn ngữ đánh dấu siêu văn bản <b>HTML</b>.</p>
+          </div>
+          <div class="card" style="border-top: 4px solid var(--coral);">
+            <div style="font-size: 40px; margin-bottom: 12px;">🏷️</div>
+            <div class="card-title">2. Thẻ và Phần tử</div>
+            <p>Phân biệt chính xác giữa <b>thẻ (tag)</b> và <b>phần tử (element)</b>; nhận biết <b>thẻ đôi</b> và <b>thẻ đơn</b> trong HTML.</p>
+          </div>
+          <div class="card" style="border-top: 4px solid var(--leaf);">
+            <div style="font-size: 40px; margin-bottom: 12px;">🌳</div>
+            <div class="card-title">3. Cây cấu trúc tệp</div>
+            <p>Nắm vững khung sườn cơ bản của tệp HTML và biết biểu diễn quan hệ cha - con dưới dạng <b>Cây thông tin</b>.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ════════ SLIDE 3: BẢN CHẤT TRANG WEB ════════ -->
+    <div class="slide" id="slide-3">
+      <div class="slide-header">
+        <div>
+          <span class="slide-badge">Khám phá</span>
+          <h2 class="slide-title">1. Trang web thực chất là gì?</h2>
+          <p class="slide-subtitle">Giao diện bóng bẩy trên Chrome, Cốc Cốc được sinh ra từ đâu?</p>
+        </div>
+      </div>
+      <div class="slide-body">
+        <div class="grid-2">
+          <div>
+            <div class="card" style="margin-bottom: 16px;">
+              <div class="card-title">📄 Tệp văn bản mã nguồn</div>
+              <p>Mọi trang web trên mạng ban đầu chỉ là <b>các tệp văn bản thuần túy</b> có phần mở rộng là <span class="highlight">.html</span> hoặc <span class="highlight">.htm</span>. Tệp này gọi là <b>trang nguồn</b> hay <b>mã nguồn</b>.</p>
+            </div>
+            <div class="card">
+              <div class="card-title">🌐 Vai trò của Trình duyệt web</div>
+              <p><b>Trình duyệt</b> (Google Chrome, Cốc Cốc, Edge, FireFox) đóng vai trò là "người phiên dịch": đọc các thẻ đánh dấu trong tệp mã nguồn và hiển thị thành giao diện đồ họa đẹp mắt cho người dùng.</p>
+            </div>
+          </div>
+
+          <!-- Trực quan hóa 2 mặt của trang web -->
+          <div class="card" style="background: rgba(13, 124, 134, 0.12); border-color: rgba(56, 225, 240, 0.3); text-align: center;">
+            <p style="font-weight: 700; margin-bottom: 16px; color: #38E1F0;">🔍 Hai mặt của một trang web:</p>
+            <div style="display: flex; gap: 14px; justify-content: center; align-items: center;">
+              <div style="background: #060B0E; padding: 16px; border-radius: 12px; font-family: var(--font-mono); font-size: 13px; text-align: left; color: #7FE5FF; border: 1px solid rgba(255,255,255,0.1);">
+                &lt;h1&gt;Xin chào!&lt;/h1&gt;<br>
+                &lt;p&gt;Tôi yêu Tin học&lt;/p&gt;
+                <div style="margin-top: 8px; color: var(--coral); font-size: 11px;">Mã nguồn .html thô</div>
+              </div>
+              <div style="font-size: 28px;">➡️ 🌐 ➡️</div>
+              <div style="background: white; color: #111; padding: 16px; border-radius: 12px; text-align: left; box-shadow: 0 4px 14px rgba(0,0,0,0.3);">
+                <h3 style="font-size: 16px; margin: 0; color: #075B63;">Xin chào!</h3>
+                <p style="font-size: 12px; margin: 4px 0 0; color: #555;">Tôi yêu Tin học</p>
+                <div style="margin-top: 8px; color: var(--leaf-dark); font-size: 11px; font-weight: bold;">Giao diện hiển thị</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ════════ SLIDE 4: ĐỊNH NGHĨA HTML ════════ -->
+    <div class="slide" id="slide-4">
+      <div class="slide-header">
+        <div>
+          <span class="slide-badge">Khái niệm cốt lõi</span>
+          <h2 class="slide-title">HTML là gì?</h2>
+          <p class="slide-subtitle">HyperText Markup Language — Ngôn ngữ đánh dấu siêu văn bản</p>
+        </div>
+      </div>
+      <div class="slide-body">
+        <div class="grid-2">
+          <div>
+            <div class="card" style="border-left: 4px solid #38E1F0; margin-bottom: 18px;">
+              <p style="font-size: 18px; color: #FFFFFF; line-height: 1.6;">
+                <b class="highlight">HTML</b> là viết tắt của <b>HyperText Markup Language</b> (ngôn ngữ đánh dấu siêu văn bản).
+              </p>
+              <p style="margin-top: 10px;">
+                Đây là <b>một bộ quy tắc</b> dùng để thiết lập cấu trúc và hiển thị nội dung trang web.
+              </p>
+            </div>
+
+            <div class="card" style="border-left: 4px solid var(--gold);">
+              <div class="card-title">❓ "Đánh dấu" có nghĩa là gì?</div>
+              <p>
+                Nghĩa là dùng các <b>thẻ (tag)</b> nằm giữa hai dấu <span class="highlight">&lt;</span> và <span class="highlight">&gt;</span> để báo cho trình duyệt biết: văn bản này là tiêu đề, đoạn văn bản, hình ảnh, hay đường liên kết.
+              </p>
+            </div>
+          </div>
+
+          <div class="card" style="background: rgba(255, 255, 255, 0.03); text-align: center; padding: 30px;">
+            <div style="font-size: 56px; margin-bottom: 16px;">🏷️</div>
+            <h3 style="font-size: 22px; color: #38E1F0; margin-bottom: 12px;">Đặc điểm của thẻ HTML:</h3>
+            <ul style="list-style: none; text-align: left; display: flex; flex-direction: column; gap: 12px; font-size: 15px;">
+              <li>✔️ Được viết trong cặp dấu ngoặc nhọn: <code>&lt;tên thẻ&gt;</code></li>
+              <li>✔️ Mỗi thẻ có <b>một tên riêng</b> và <b>ý nghĩa định dạng riêng</b>.</li>
+              <li>✔️ Không phân biệt chữ hoa và chữ thường (ví dụ: <code>&lt;p&gt;</code> giống <code>&lt;P&gt;</code>). Tuy nhiên theo chuẩn, <b>luôn viết chữ thường</b>!</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ════════ SLIDE 5: GIẢI PHẪU PHẦN TỬ HTML ════════ -->
+    <div class="slide" id="slide-5">
+      <div class="slide-header">
+        <div>
+          <span class="slide-badge">Cực kỳ quan trọng</span>
+          <h2 class="slide-title">2. Giải phẫu một phần tử HTML (Element)</h2>
+          <p class="slide-subtitle">Phân biệt rạch ròi giữa THẺ (Tag) và PHẦN TỬ (Element)</p>
+        </div>
+      </div>
+      <div class="slide-body" style="align-items: center;">
+        
+        <!-- Sơ đồ SVG giải phẫu sinh động -->
+        <div style="background: rgba(0, 0, 0, 0.4); border: 1px solid rgba(255, 255, 255, 0.15); border-radius: 20px; padding: 24px; width: 100%; max-width: 900px;">
+          <svg viewBox="0 0 640 210" style="width: 100%; height: auto;">
+            <!-- Nhãn chỉ xuống -->
+            <g>
+              <text x="140" y="24" fill="#38E1F0" font-size="14" font-weight="bold" text-anchor="middle">Thẻ bắt đầu (Opening tag)</text>
+              <path d="M140 32 L140 68" stroke="#38E1F0" stroke-width="2" stroke-dasharray="4" />
+            </g>
+            <g>
+              <text x="320" y="24" fill="#F5A623" font-size="14" font-weight="bold" text-anchor="middle">Nội dung (Content)</text>
+              <path d="M320 32 L320 68" stroke="#F5A623" stroke-width="2" stroke-dasharray="4" />
+            </g>
+            <g>
+              <text x="500" y="24" fill="#F2683C" font-size="14" font-weight="bold" text-anchor="middle">Thẻ kết thúc (Closing tag)</text>
+              <path d="M500 32 L500 68" stroke="#F2683C" stroke-width="2" stroke-dasharray="4" />
+            </g>
+
+            <!-- Hộp mã HTML -->
+            <rect x="50" y="72" width="540" height="56" rx="14" fill="#060B0E" stroke="rgba(255,255,255,0.2)" stroke-width="2" />
+            
+            <!-- Opening tag -->
+            <rect x="65" y="80" width="150" height="40" rx="8" fill="rgba(13, 124, 134, 0.3)" />
+            <text x="140" y="106" fill="#38E1F0" font-size="18" font-family="monospace" font-weight="bold" text-anchor="middle">&lt;h1&gt;</text>
+
+            <!-- Content -->
+            <text x="320" y="106" fill="#FFFFFF" font-size="17" font-family="monospace" text-anchor="middle">Chào mừng bạn!</text>
+
+            <!-- Closing tag -->
+            <rect x="425" y="80" width="150" height="40" rx="8" fill="rgba(242, 104, 60, 0.3)" />
+            <text x="500" y="106" fill="#F2683C" font-size="18" font-family="monospace" font-weight="bold" text-anchor="middle">&lt;/h1&gt;</text>
+
+            <!-- Khung bao toàn bộ = Phần tử -->
+            <path d="M50 144 L50 156 L590 156 L590 144" stroke="#10B981" stroke-width="2.5" fill="none" />
+            <path d="M320 156 L320 170" stroke="#10B981" stroke-width="2.5" fill="none" />
+            <rect x="180" y="172" width="280" height="32" rx="16" fill="#10B981" />
+            <text x="320" y="193" fill="#FFFFFF" font-size="14" font-weight="bold" text-anchor="middle">PHẦN TỬ HTML (ELEMENT)</text>
+          </svg>
+        </div>
+
+        <div style="margin-top: 16px; background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.3); border-radius: 12px; padding: 14px 24px; text-align: center; max-width: 900px;">
+          💡 <span class="leaf-text">Công thức ghi nhớ:</span> <b>Phần tử HTML = Thẻ bắt đầu + Nội dung + Thẻ kết thúc</b>. Thẻ kết thúc luôn có thêm dấu gạch chéo <span class="coral-text">"/"</span> trước tên thẻ.
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ════════ SLIDE 6: THẺ ĐÔI VS THẺ ĐƠN ════════ -->
+    <div class="slide" id="slide-6">
+      <div class="slide-header">
+        <div>
+          <span class="slide-badge">Phân loại thẻ</span>
+          <h2 class="slide-title">Thẻ đôi và Thẻ đơn</h2>
+          <p class="slide-subtitle">Hầu hết các thẻ đều là thẻ đôi, nhưng có những thẻ đặc biệt không cần đóng</p>
+        </div>
+      </div>
+      <div class="slide-body">
+        <div class="grid-2">
+          
+          <div class="card" style="border-top: 4px solid #38E1F0;">
+            <div class="card-title">🔗 Thẻ đôi (Paired tags)</div>
+            <p>Chiếm <b>hơn 95%</b> số thẻ trong HTML.</p>
+            <ul style="margin: 14px 0 0 20px; line-height: 1.8;">
+              <li>Có đủ cả <b>thẻ bắt đầu</b> và <b>thẻ kết thúc</b>.</li>
+              <li>Thẻ kết thúc có dấu gạch chéo: <code>&lt;/tên thẻ&gt;</code>.</li>
+              <li>Ví dụ: <code>&lt;p&gt;...&lt;/p&gt;</code> (đoạn văn), <code>&lt;h1&gt;...&lt;/h1&gt;</code> (tiêu đề cấp 1), <code>&lt;em&gt;...&lt;/em&gt;</code> (chữ in nghiêng).</li>
+            </ul>
+          </div>
+
+          <div class="card" style="border-top: 4px solid var(--coral);">
+            <div class="card-title">➖ Thẻ đơn (Void / Self-closing tags)</div>
+            <p>Chỉ có <b>thẻ bắt đầu</b>, KHÔNG có thẻ kết thúc và không chứa văn bản con.</p>
+            <ul style="margin: 14px 0 0 20px; line-height: 1.8;">
+              <li>Viết dạng <code>&lt;tên thẻ&gt;</code> hoặc <code>&lt;tên thẻ /&gt;</code>.</li>
+              <li>Bản thân thẻ đơn cùng thuộc tính của nó cũng là một phần tử HTML.</li>
+              <li>Hai thẻ đơn kinh điển:
+                <div style="margin-top: 6px;">
+                  • <code class="coral-text">&lt;hr&gt;</code>: Kẻ một đường ngang phân cách.<br>
+                  • <code class="coral-text">&lt;br&gt;</code>: Buộc ngắt xuống dòng mới.
+                </div>
+              </li>
+            </ul>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <!-- ════════ SLIDE 7: BẪY HAY GẶP TRONG HTML ════════ -->
+    <div class="slide" id="slide-7">
+      <div class="slide-header">
+        <div>
+          <span class="slide-badge">Cảnh báo sư phạm</span>
+          <h2 class="slide-title">⚠️ Bẫy kinh điển cho người mới học HTML</h2>
+          <p class="slide-subtitle">Trình duyệt xử lý dấu cách và phím Enter như thế nào?</p>
+        </div>
+      </div>
+      <div class="slide-body">
+        <div class="grid-2">
+          
+          <div class="card" style="border: 1px solid rgba(242, 104, 60, 0.3); background: rgba(242, 104, 60, 0.05);">
+            <div class="card-title" style="color: var(--coral-light);">❌ Thói quen từ Microsoft Word:</div>
+            <p>Nhiều bạn nghĩ rằng cứ gõ <b>10 dấu cách</b> liền nhau hoặc nhấn phím <b>Enter</b> 5 lần là văn bản trên trang web sẽ tự cách ra hoặc nhảy xuống dòng.</p>
+            <div class="code-box" style="margin-top: 14px;">
+              <div class="code-header"><span>Mã nguồn học sinh gõ:</span></div>
+              <div class="code-content">&lt;p&gt;Học      rất          nhiều
+dấu cách và
+xuống dòng bằng phím Enter!&lt;/p&gt;</div>
+            </div>
+          </div>
+
+          <div class="card" style="border: 1px solid rgba(16, 185, 129, 0.3); background: rgba(16, 185, 129, 0.05);">
+            <div class="card-title" style="color: var(--leaf);">👀 Nhưng Trình duyệt web chỉ hiện:</div>
+            <div style="background: white; color: #111; padding: 20px; border-radius: 12px; font-size: 16px; margin: 14px 0;">
+              Học rất nhiều dấu cách và xuống dòng bằng phím Enter!
+            </div>
+            <p style="font-size: 15px; color: var(--ink);">
+              👉 <b>Quy tắc bất di bất dịch của HTML:</b> Mọi khoảng trắng liền nhau đều bị gom thành <b>1 dấu cách</b>. Phím Enter bị bỏ qua. Muốn xuống dòng <b>bắt buộc dùng thẻ &lt;br&gt;</b>!
+            </p>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <!-- ════════ SLIDE 8: CẤU TRÚC KHUNG SƯỜN TỆP HTML ════════ -->
+    <div class="slide" id="slide-8">
+      <div class="slide-header">
+        <div>
+          <span class="slide-badge">Khung sườn trang web</span>
+          <h2 class="slide-title">3. Cấu trúc chuẩn của một tệp HTML</h2>
+          <p class="slide-subtitle">Bộ khung bắt buộc của mọi tệp HTML từ đơn giản đến phức tạp</p>
+        </div>
+      </div>
+      <div class="slide-body">
+        <div class="grid-2">
+          
+          <!-- Khung code -->
+          <div class="code-box">
+            <div class="code-header"><span>newpage.html</span><span>UTF-8</span></div>
+            <div class="code-content"><span class="tag-comment">&lt;!DOCTYPE html&gt;</span>
+<span class="tag-kw">&lt;html&gt;</span>
+  <span class="tag-kw">&lt;head&gt;</span>
+    <span class="tag-kw">&lt;meta</span> <span class="tag-attr">charset</span>=<span class="tag-str">"utf-8"</span><span class="tag-kw">&gt;</span>
+    <span class="tag-kw">&lt;title&gt;</span>Tên trang Web<span class="tag-kw">&lt;/title&gt;</span>
+  <span class="tag-kw">&lt;/head&gt;</span>
+  <span class="tag-kw">&lt;body&gt;</span>
+    <span class="tag-kw">&lt;h1&gt;</span>Tiêu đề bài viết<span class="tag-kw">&lt;/h1&gt;</span>
+    <span class="tag-kw">&lt;p&gt;</span>Đoạn văn bản nội dung.<span class="tag-kw">&lt;/p&gt;</span>
+  <span class="tag-kw">&lt;/body&gt;</span>
+<span class="tag-kw">&lt;/html&gt;</span></div>
+          </div>
+
+          <!-- Giải thích chi tiết từng thẻ -->
+          <div style="display: flex; flex-direction: column; gap: 10px;">
+            <div class="card" style="padding: 12px 18px;">
+              <span class="highlight">&lt;!DOCTYPE html&gt;</span>
+              <p style="font-size: 14px; margin-top: 4px;">Khai báo chuẩn HTML5 cho trình duyệt. <b>Không được coi là phần tử HTML!</b></p>
+            </div>
+            <div class="card" style="padding: 12px 18px;">
+              <span class="coral-text">&lt;html&gt;</span>
+              <p style="font-size: 14px; margin-top: 4px;"><b>Phần tử gốc (root)</b>, bao bọc toàn bộ mã nguồn của trang web.</p>
+            </div>
+            <div class="card" style="padding: 12px 18px;">
+              <span class="gold-text">&lt;head&gt;</span>
+              <p style="font-size: 14px; margin-top: 4px;">Chứa thông tin cấu hình trang web: tiêu đề tab (<code>&lt;title&gt;</code>), bộ mã tiếng Việt (<code>&lt;meta charset="utf-8"&gt;</code>).</p>
+            </div>
+            <div class="card" style="padding: 12px 18px;">
+              <span class="leaf-text">&lt;body&gt;</span>
+              <p style="font-size: 14px; margin-top: 4px;">Chứa toàn bộ <b>nội dung hiển thị</b> trên màn hình (văn bản, hình ảnh, bảng, nút bấm...).</p>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <!-- ════════ SLIDE 9: CÂY THÔNG TIN CỦA TRANG WEB ════════ -->
+    <div class="slide" id="slide-9">
+      <div class="slide-header">
+        <div>
+          <span class="slide-badge">Mô hình phân cấp</span>
+          <h2 class="slide-title">4. Cây thông tin (HTML DOM Tree)</h2>
+          <p class="slide-subtitle">Quan hệ Cha - Con (lồng nhau) giữa các phần tử HTML</p>
+        </div>
+      </div>
+      <div class="slide-body" style="align-items: center;">
+        
+        <!-- Sơ đồ SVG Cây thông tin -->
+        <div style="background: rgba(0, 0, 0, 0.4); border: 1px solid rgba(255, 255, 255, 0.15); border-radius: 20px; padding: 20px; width: 100%; max-width: 860px;">
+          <svg viewBox="0 0 640 280" style="width: 100%; height: auto;">
+            <!-- Đường nối các nút -->
+            <path d="M320 40 L160 95" stroke="#C9DDE0" stroke-width="2" />
+            <path d="M320 40 L480 95" stroke="#C9DDE0" stroke-width="2" />
+            <path d="M160 125 L90 180" stroke="#C9DDE0" stroke-width="2" />
+            <path d="M160 125 L230 180" stroke="#C9DDE0" stroke-width="2" />
+            <path d="M480 125 L400 180" stroke="#C9DDE0" stroke-width="2" />
+            <path d="M480 125 L560 180" stroke="#C9DDE0" stroke-width="2" />
+            <path d="M400 210 L350 250" stroke="#C9DDE0" stroke-width="2" />
+            <path d="M400 210 L450 250" stroke="#C9DDE0" stroke-width="2" />
+
+            <!-- Nút Gốc: html -->
+            <rect x="270" y="15" width="100" height="36" rx="18" fill="#F2683C" />
+            <text x="320" y="38" fill="#FFFFFF" font-size="16" font-family="monospace" font-weight="bold" text-anchor="middle">&lt;html&gt; (Gốc)</text>
+
+            <!-- Tầng 1: head & body -->
+            <rect x="115" y="95" width="90" height="32" rx="16" fill="#0D7C86" />
+            <text x="160" y="116" fill="#FFFFFF" font-size="14" font-family="monospace" font-weight="bold" text-anchor="middle">&lt;head&gt;</text>
+
+            <rect x="435" y="95" width="90" height="32" rx="16" fill="#0D7C86" />
+            <text x="480" y="116" fill="#FFFFFF" font-size="14" font-family="monospace" font-weight="bold" text-anchor="middle">&lt;body&gt;</text>
+
+            <!-- Tầng 2 -->
+            <rect x="45" y="180" width="90" height="28" rx="8" fill="rgba(255,255,255,0.15)" stroke="#38E1F0" />
+            <text x="90" y="199" fill="#38E1F0" font-size="13" font-family="monospace" text-anchor="middle">&lt;meta&gt;</text>
+
+            <rect x="185" y="180" width="90" height="28" rx="8" fill="rgba(255,255,255,0.15)" stroke="#38E1F0" />
+            <text x="230" y="199" fill="#38E1F0" font-size="13" font-family="monospace" text-anchor="middle">&lt;title&gt;</text>
+
+            <rect x="355" y="180" width="90" height="28" rx="8" fill="rgba(255,255,255,0.15)" stroke="#F5A623" />
+            <text x="400" y="199" fill="#F5A623" font-size="13" font-family="monospace" text-anchor="middle">&lt;div&gt;</text>
+
+            <rect x="515" y="180" width="90" height="28" rx="8" fill="rgba(255,255,255,0.15)" stroke="#10B981" />
+            <text x="560" y="199" fill="#10B981" font-size="13" font-family="monospace" text-anchor="middle">&lt;p&gt;</text>
+
+            <!-- Tầng con của div -->
+            <rect x="310" y="245" width="80" height="26" rx="6" fill="#12212B" stroke="#F5A623" />
+            <text x="350" y="263" fill="#F5A623" font-size="12" font-family="monospace" text-anchor="middle">&lt;h1&gt;</text>
+
+            <rect x="410" y="245" width="80" height="26" rx="6" fill="#12212B" stroke="#F5A623" />
+            <text x="450" y="263" fill="#F5A623" font-size="12" font-family="monospace" text-anchor="middle">&lt;p&gt;</text>
+          </svg>
+        </div>
+
+        <p style="margin-top: 14px; text-align: center; color: var(--ink-soft); font-size: 15px;">
+          📌 <b>Đặc điểm cốt lõi:</b> Cấu trúc tệp HTML có dạng như một <b>cây thông tin</b>. Sự lồng nhau của các cặp thẻ chính là mối quan hệ <b>Cha – Con</b>. Gốc của cây luôn luôn là thẻ <span class="coral-text">&lt;html&gt;</span>.
+        </p>
+
+      </div>
+    </div>
+
+    <!-- ════════ SLIDE 10: CÁC CÔNG CỤ SOẠN THẢO HTML ════════ -->
+    <div class="slide" id="slide-10">
+      <div class="slide-header">
+        <div>
+          <span class="slide-badge">Công cụ học tập</span>
+          <h2 class="slide-title">5. Các phần mềm soạn thảo HTML</h2>
+          <p class="slide-subtitle">Vì tệp HTML là văn bản thuần túy nên có rất nhiều công cụ hỗ trợ</p>
+        </div>
+      </div>
+      <div class="slide-body">
+        <div class="grid-3">
+          <div class="card">
+            <div style="font-size: 36px; margin-bottom: 8px;">📝</div>
+            <div class="card-title">Notepad / TextEdit</div>
+            <p>Có sẵn trên hệ điều hành Windows và macOS. Đơn giản, nhẹ nhưng không hỗ trợ đổi màu mã lệnh và không tự động thụt dòng.</p>
+          </div>
+          <div class="card" style="border-color: rgba(56, 225, 240, 0.4);">
+            <div style="font-size: 36px; margin-bottom: 8px;">🧑‍💻</div>
+            <div class="card-title">Notepad++ & Sublime Text</div>
+            <p>Phần mềm mã nguồn mở miễn phí, chuyên nghiệp. Hỗ trợ <b>đổi màu cú pháp HTML</b>, đánh số dòng và tự động hoàn thành cặp thẻ.</p>
+          </div>
+          <div class="card" style="border-color: rgba(16, 185, 129, 0.4);">
+            <div style="font-size: 36px; margin-bottom: 8px;">🌐</div>
+            <div class="card-title">Trang soạn thảo trực tuyến</div>
+            <p>W3Schools, CodePen... Soạn mã khung bên trái, xem kết quả bên phải ngay lập tức mà không cần cài đặt phần mềm nào lên máy.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ════════ SLIDE 11: PHÒNG THỰC HÀNH TƯƠNG TÁC LIVE ════════ -->
+    <div class="slide" id="slide-11">
+      <div class="slide-header">
+        <div>
+          <span class="slide-badge">Thực hành tương tác</span>
+          <h2 class="slide-title">⚡ Phòng thử nghiệm mã HTML sống (Live Playground)</h2>
+          <p class="slide-subtitle">Thầy cô hoặc học sinh có thể gõ trực tiếp mã để xem trình duyệt hiển thị ngay lập tức!</p>
+        </div>
+      </div>
+      <div class="slide-body">
+        <div class="playground-container">
+          <!-- Editor -->
+          <div class="editor-pane">
+            <div class="pane-bar">
+              <span>⌨️ Ô soạn thảo HTML (Gõ thử vào đây)</span>
+              <button onclick="resetCode()" style="background: rgba(255,255,255,0.1); border:none; color:white; border-radius:6px; padding:3px 10px; cursor:pointer; font-size:12px;">↺ Đặt lại code mẫu</button>
+            </div>
+            <textarea id="liveCodeInput" class="code-textarea" oninput="updateLivePreview()" spellcheck="false">&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;head&gt;
+  &lt;style&gt;
+    body { font-family: sans-serif; padding: 20px; }
+    h1 { color: #0D7C86; }
+    p { color: #333; line-height: 1.6; }
+    .box { background: #E6F7F8; padding: 12px; border-left: 4px solid #0D7C86; }
+  &lt;/style&gt;
+&lt;/head&gt;
+&lt;body&gt;
+  &lt;h1&gt;Chào mừng đến với THPT Na Rì!&lt;/h1&gt;
+  &lt;p&gt;Em đang tự tay viết ra &lt;em&gt;trang web đầu tiên&lt;/em&gt; của mình.&lt;/p&gt;
+  &lt;hr&gt;
+  &lt;div class="box"&gt;
+    &lt;b&gt;Tin học 12:&lt;/b&gt; Thử sửa dòng chữ này xem bên phải thay đổi thế nào nhé!
+  &lt;/div&gt;
+&lt;/body&gt;
+&lt;/html&gt;</textarea>
+          </div>
+
+          <!-- Preview -->
+          <div class="preview-pane">
+            <div class="pane-bar">
+              <span>👀 Kết quả hiển thị của trình duyệt</span>
+              <span style="color:#10B981; font-size:12px;">● Tự động cập nhật tức thì</span>
+            </div>
+            <iframe id="livePreviewFrame" class="preview-iframe" sandbox="allow-scripts"></iframe>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ════════ SLIDE 12: ĐỐ VUI CÂU 1 ════════ -->
+    <div class="slide" id="slide-12">
+      <div class="slide-header">
+        <div>
+          <span class="slide-badge">Thử tài kiến thức · Câu 1</span>
+          <h2 class="slide-title">Câu hỏi kiểm tra nhanh</h2>
+          <p class="slide-subtitle">Chọn đáp án đúng nhất để kiểm tra độ hiểu bài của em</p>
+        </div>
+      </div>
+      <div class="slide-body">
+        <div class="card" style="max-width: 900px; margin: 0 auto; width: 100%;">
+          <div class="quiz-question">❓ Câu 1: Thẻ nào dưới đây là THẺ ĐƠN trong ngôn ngữ HTML?</div>
+          <div class="quiz-options">
+            <button class="quiz-btn" onclick="checkQuiz(this, false, 'q1', 'Sai rồi! Thẻ &lt;p&gt; là thẻ đôi, bắt buộc phải có thẻ đóng &lt;/p&gt;.')">A. &lt;p&gt;</button>
+            <button class="quiz-btn" onclick="checkQuiz(this, true, 'q1', 'Chính xác! Thẻ &lt;hr&gt; (dòng kẻ ngang) là thẻ đơn, chỉ có thẻ mở mà không cần thẻ đóng.')">B. &lt;hr&gt;</button>
+            <button class="quiz-btn" onclick="checkQuiz(this, false, 'q1', 'Sai rồi! Thẻ &lt;h1&gt; là thẻ tiêu đề đôi, có cặp &lt;h1&gt;...&lt;/h1&gt;.')">C. &lt;h1&gt;</button>
+            <button class="quiz-btn" onclick="checkQuiz(this, false, 'q1', 'Sai rồi! Thẻ &lt;em&gt; (in nghiêng) là thẻ đôi.')">D. &lt;em&gt;</button>
+          </div>
+          <div id="q1-feedback" class="quiz-feedback"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ════════ SLIDE 13: ĐỐ VUI CÂU 2 ════════ -->
+    <div class="slide" id="slide-13">
+      <div class="slide-header">
+        <div>
+          <span class="slide-badge">Thử tài kiến thức · Câu 2</span>
+          <h2 class="slide-title">Câu hỏi kiểm tra nhanh</h2>
+          <p class="slide-subtitle">Gốc của cây thông tin trang web</p>
+        </div>
+      </div>
+      <div class="slide-body">
+        <div class="card" style="max-width: 900px; margin: 0 auto; width: 100%;">
+          <div class="quiz-question">❓ Câu 2: Trong mô hình Cây thông tin của tệp HTML, phần tử nào đóng vai trò là PHẦN TỬ GỐC (ROOT)?</div>
+          <div class="quiz-options">
+            <button class="quiz-btn" onclick="checkQuiz(this, false, 'q2', 'Sai rồi! &lt;!DOCTYPE html&gt; chỉ là dòng khai báo định dạng, thậm chí không phải là phần tử HTML.')">A. &lt;!DOCTYPE html&gt;</button>
+            <button class="quiz-btn" onclick="checkQuiz(this, false, 'q2', 'Sai rồi! &lt;head&gt; chỉ là nhánh con chứa cấu hình trang.')">B. &lt;head&gt;</button>
+            <button class="quiz-btn" onclick="checkQuiz(this, true, 'q2', 'Chính xác! Phần tử &lt;html&gt; là gốc của cả cây, bao bọc toàn bộ các phần tử con khác.')">C. &lt;html&gt;</button>
+            <button class="quiz-btn" onclick="checkQuiz(this, false, 'q2', 'Sai rồi! &lt;body&gt; chỉ là nhánh con chứa phần thân hiển thị.')">D. &lt;body&gt;</button>
+          </div>
+          <div id="q2-feedback" class="quiz-feedback"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ════════ SLIDE 14: TỔNG KẾT BÀI HỌC ════════ -->
+    <div class="slide" id="slide-14">
+      <div class="slide-header">
+        <div>
+          <span class="slide-badge">Ghi nhớ cốt lõi</span>
+          <h2 class="slide-title">Tổng kết kiến thức Bài 7</h2>
+          <p class="slide-subtitle">4 điều quan trọng nhất cần mang theo sau bài học</p>
+        </div>
+      </div>
+      <div class="slide-body">
+        <div class="grid-2">
+          <div class="card" style="border-left: 4px solid #38E1F0;">
+            <div class="card-title">1. Ngôn ngữ HTML</div>
+            <p>Là ngôn ngữ đánh dấu siêu văn bản, gồm các thẻ trong cặp dấu <code>&lt; &gt;</code> dùng để xây dựng cấu trúc và định dạng nội dung trang web.</p>
+          </div>
+          <div class="card" style="border-left: 4px solid var(--coral);">
+            <div class="card-title">2. Phần tử & Thẻ</div>
+            <p>Phần tử = Thẻ mở + Nội dung + Thẻ đóng. Thẻ đơn (<code>&lt;hr&gt;</code>, <code>&lt;br&gt;</code>) không có thẻ đóng và không có nội dung con.</p>
+          </div>
+          <div class="card" style="border-left: 4px solid var(--gold);">
+            <div class="card-title">3. Khung sườn tệp</div>
+            <p><code>&lt;!DOCTYPE html&gt;</code> (khai báo) ➔ <code>&lt;html&gt;</code> (gốc) ➔ gồm <code>&lt;head&gt;</code> (cấu hình, tiêu đề tab) và <code>&lt;body&gt;</code> (nội dung hiển thị).</p>
+          </div>
+          <div class="card" style="border-left: 4px solid var(--leaf);">
+            <div class="card-title">4. Cây thông tin</div>
+            <p>Cấu trúc trang web là một cây phân cấp các phần tử. Quan hệ cha - con được biểu diễn thông qua sự lồng nhau giữa các cặp thẻ.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ════════ SLIDE 15: KẾT THÚC & DẶN DÒ ════════ -->
+    <div class="slide" id="slide-15">
+      <div class="slide-body" style="align-items: center; text-align: center; justify-content: center;">
+        <div style="font-size: 64px; margin-bottom: 16px;">🎉</div>
+        <h2 style="font-size: 44px; font-weight: 900; background: linear-gradient(135deg, #FFFFFF, #38E1F0); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">
+          CHÚC MỪNG CÁC EM ĐÃ HOÀN THÀNH BÀI HỌC!
+        </h2>
+        <p style="font-size: 18px; color: var(--ink-soft); max-width: 650px; margin: 16px 0 28px; line-height: 1.6;">
+          Hãy thực hành tự tạo tệp <b>gioithieu.html</b> trên máy tính tại nhà và chuẩn bị trước <b>Bài 8: Định dạng văn bản</b> nhé!
+        </p>
+
+        <div style="display: flex; gap: 16px;">
+          <button onclick="triggerConfetti()" style="background: linear-gradient(135deg, #F2683C, #FF855D); color: white; border: none; padding: 14px 28px; border-radius: 30px; font-size: 16px; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 8px;">
+            🎊 Bắn pháo hoa vinh danh!
+          </button>
+          <button onclick="goToSlide(0)" style="background: rgba(255,255,255,0.08); color: white; border: 1px solid rgba(255,255,255,0.2); padding: 14px 24px; border-radius: 30px; font-size: 16px; font-weight: 600; cursor: pointer;">
+            ↺ Xem lại từ đầu
+          </button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- THANH ĐIỀU HƯỚNG BÊN DƯỚI -->
+  <div class="control-bar">
+    <button class="nav-btn" onclick="prevSlide()" title="Slide trước (Mũi tên trái)">‹</button>
+    <div class="slide-counter" id="slideCounter">1 / 15</div>
+    <button class="nav-btn" onclick="nextSlide()" title="Slide sau (Mũi tên phải)">›</button>
+  </div>
+
+  <!-- MODAL MỤC LỤC BÀI -->
+  <div id="indexModal" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(0,0,0,0.85); z-index:1000; align-items:center; justify-content:center; backdrop-filter:blur(10px);">
+    <div style="background:#12212B; border:1px solid rgba(255,255,255,0.15); border-radius:24px; width:90%; max-width:650px; max-height:80vh; overflow-y:auto; padding:32px;">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px; border-bottom:1px solid rgba(255,255,255,0.1); padding-bottom:14px;">
+        <h3 style="font-size:22px; color:#38E1F0;">📑 Mục lục bài học Bài 7</h3>
+        <button onclick="closeSlideIndexModal()" style="background:none; border:none; color:white; font-size:24px; cursor:pointer;">✕</button>
+      </div>
+      <div id="indexList" style="display:flex; flex-direction:column; gap:8px;"></div>
+    </div>
+  </div>
+
+  <!-- CANVAS PHÁO HOA -->
+  <canvas id="confettiCanvas" style="position:fixed; top:0; left:0; width:100vw; height:100vh; pointer-events:none; z-index:9999;"></canvas>
+
+  <script>
+    /* ─── DỮ LIỆU CÁC SLIDE & ĐIỀU HƯỚNG ─── */
+    const slides = document.querySelectorAll('.slide');
+    const totalSlides = slides.length;
+    let currentSlide = 0;
+
+    const titles = [
+      "1. Trang bìa",
+      "2. Mục tiêu bài học",
+      "3. Bản chất trang web",
+      "4. HTML là gì?",
+      "5. Giải phẫu phần tử HTML",
+      "6. Thẻ đôi vs Thẻ đơn",
+      "7. Bẫy hay gặp khi viết HTML",
+      "8. Cấu trúc chuẩn tệp HTML",
+      "9. Cây thông tin (HTML DOM Tree)",
+      "10. Công cụ soạn thảo HTML",
+      "11. Live Code Playground",
+      "12. Đố vui nhanh: Câu 1",
+      "13. Đố vui nhanh: Câu 2",
+      "14. Tổng kết cốt lõi",
+      "15. Kết thúc bài học"
+    ];
+
+    function updateSlide() {
+      slides.forEach((s, idx) => {
+        s.classList.remove('active', 'prev');
+        if (idx === currentSlide) {
+          s.classList.add('active');
+        } else if (idx < currentSlide) {
+          s.classList.add('prev');
+        }
+      });
+
+      document.getElementById('slideCounter').innerText = `${currentSlide + 1} / ${totalSlides}`;
+      document.getElementById('progressBar').style.width = `${((currentSlide + 1) / totalSlides) * 100}%`;
+
+      if (currentSlide === 10) {
+        updateLivePreview();
+      }
+    }
+
+    function nextSlide() {
+      if (currentSlide < totalSlides - 1) {
+        currentSlide++;
+        updateSlide();
+      }
+    }
+
+    function prevSlide() {
+      if (currentSlide > 0) {
+        currentSlide--;
+        updateSlide();
+      }
+    }
+
+    function goToSlide(index) {
+      if (index >= 0 && index < totalSlides) {
+        currentSlide = index;
+        updateSlide();
+        closeSlideIndexModal();
+      }
+    }
+
+    // Điều khiển bàn phím
+    document.addEventListener('keydown', (e) => {
+      // Bỏ qua nếu đang gõ trong khung soạn code live
+      if (document.activeElement && document.activeElement.id === 'liveCodeInput') return;
+
+      if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown') {
+        nextSlide();
+      } else if (e.key === 'ArrowLeft' || e.key === 'PageUp') {
+        prevSlide();
+      } else if (e.key === 'f' || e.key === 'F') {
+        toggleFullscreen();
+      }
+    });
+
+    // Toàn màn hình
+    function toggleFullscreen() {
+      if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen().catch(err => console.log(err));
+      } else {
+        if (document.exitFullscreen) document.exitFullscreen();
+      }
+    }
+
+    // Modal Mục Lục
+    function showSlideIndexModal() {
+      const list = document.getElementById('indexList');
+      list.innerHTML = '';
+      titles.forEach((t, i) => {
+        const item = document.createElement('div');
+        item.style.padding = '12px 16px';
+        item.style.borderRadius = '10px';
+        item.style.background = i === currentSlide ? 'rgba(13, 124, 134, 0.4)' : 'rgba(255,255,255,0.05)';
+        item.style.border = i === currentSlide ? '1px solid #38E1F0' : '1px solid transparent';
+        item.style.cursor = 'pointer';
+        item.style.color = '#FFFFFF';
+        item.style.fontSize = '15px';
+        item.innerText = t;
+        item.onclick = () => goToSlide(i);
+        list.appendChild(item);
+      });
+      document.getElementById('indexModal').style.display = 'flex';
+    }
+
+    function closeSlideIndexModal() {
+      document.getElementById('indexModal').style.display = 'none';
+    }
+
+    /* ─── LIVE EDITOR LOGIC ─── */
+    function updateLivePreview() {
+      const code = document.getElementById('liveCodeInput').value;
+      const frame = document.getElementById('livePreviewFrame');
+      frame.srcdoc = code;
+    }
+
+    function resetCode() {
+      document.getElementById('liveCodeInput').value = `<!DOCTYPE html>
+<html>
+<head>
+  <style>
+    body { font-family: sans-serif; padding: 20px; }
+    h1 { color: #0D7C86; }
+    p { color: #333; line-height: 1.6; }
+    .box { background: #E6F7F8; padding: 12px; border-left: 4px solid #0D7C86; }
+  </style>
+</head>
+<body>
+  <h1>Chào mừng đến với THPT Na Rì!</h1>
+  <p>Em đang tự tay viết ra <em>trang web đầu tiên</em> của mình.</p>
+  <hr>
+  <div class="box">
+    <b>Tin học 12:</b> Thử sửa dòng chữ này xem bên phải thay đổi thế nào nhé!
+  </div>
+</body>
+</html>`;
+      updateLivePreview();
+    }
+
+    /* ─── QUIZ LOGIC ─── */
+    function checkQuiz(btn, isCorrect, qId, msg) {
+      const parent = btn.parentElement;
+      const buttons = parent.querySelectorAll('.quiz-btn');
+      buttons.forEach(b => b.classList.remove('correct', 'wrong'));
+
+      const feedback = document.getElementById(qId + '-feedback');
+      feedback.style.display = 'block';
+
+      if (isCorrect) {
+        btn.classList.add('correct');
+        feedback.style.background = 'rgba(16, 185, 129, 0.2)';
+        feedback.style.border = '1px solid #10B981';
+        feedback.style.color = '#6EE7B7';
+        feedback.innerHTML = '🎉 ' + msg;
+        triggerConfetti();
+      } else {
+        btn.classList.add('wrong');
+        feedback.style.background = 'rgba(242, 104, 60, 0.2)';
+        feedback.style.border = '1px solid #F2683C';
+        feedback.style.color = '#FCA5A5';
+        feedback.innerHTML = '❌ ' + msg;
+      }
+    }
+
+    /* ─── CONFETTI CANVASH (PHÁO HOA) ─── */
+    function triggerConfetti() {
+      const canvas = document.getElementById('confettiCanvas');
+      const ctx = canvas.getContext('2d');
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+
+      const particles = [];
+      const colors = ['#38E1F0', '#F2683C', '#F5A623', '#10B981', '#FFFFFF'];
+
+      for (let i = 0; i < 90; i++) {
+        particles.push({
+          x: canvas.width / 2,
+          y: canvas.height / 2,
+          r: Math.random() * 6 + 3,
+          color: colors[Math.floor(Math.random() * colors.length)],
+          vx: (Math.random() - 0.5) * 16,
+          vy: (Math.random() - 0.5) * 16 - 3,
+          alpha: 1,
+          gravity: 0.25
+        });
+      }
+
+      function render() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        let alive = false;
+        particles.forEach(p => {
+          p.x += p.vx;
+          p.y += p.vy;
+          p.vy += p.gravity;
+          p.alpha -= 0.015;
+
+          if (p.alpha > 0) {
+            alive = true;
+            ctx.save();
+            ctx.globalAlpha = p.alpha;
+            ctx.fillStyle = p.color;
+            ctx.beginPath();
+            ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.restore();
+          }
+        });
+
+        if (alive) {
+          requestAnimationFrame(render);
+        } else {
+          ctx.clearRect(0, 0, canvas.width, canvas.height);
+        }
+      }
+      render();
+    }
+
+    // Khởi tạo
+    updateSlide();
+  </script>
+</body>
+</html>
