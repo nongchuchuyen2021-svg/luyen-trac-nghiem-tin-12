@@ -186,6 +186,78 @@ const classifyGameKhiaCanh: ClassifyGame = {
   ],
 };
 
-const games: LessonGame[] = [sortGameNhanVan, classifyGameKhiaCanh];
+// Game 3: Phân loại Ưu điểm hay Nhược điểm của giao tiếp trên không gian mạng
+const sortGameUuNhuocMang: SortGame = {
+  kind: "sort",
+  id: "uu-diem-hay-nhuoc-diem-mang",
+  title: "Ưu điểm hay Hạn chế của giao tiếp qua mạng?",
+  emoji: "⚖️",
+  instructions:
+    "Kéo từng đặc điểm sang đúng khay: đây là ƯU ĐIỂM nổi trội của giao tiếp trên mạng, hay là HẠN CHẾ / NGUY CƠ cần lưu ý so với giao tiếp trực tiếp?",
+  matchLabel: "Hạn chế / Nguy cơ",
+  matchEmoji: "⚠️",
+  noMatchLabel: "Ưu điểm nổi trội",
+  noMatchEmoji: "🌟",
+  items: [
+    {
+      id: "un-khong-gian",
+      emoji: "🌏",
+      label: "Kết nối tức thời bất chấp khoảng cách địa lý giữa các quốc gia và châu lục",
+      isMatch: false,
+      explain: "Ưu điểm — không gian mạng xoá nhòa khoảng cách địa lí, giúp kết nối toàn cầu dễ dàng.",
+    },
+    {
+      id: "un-hieu-nham",
+      emoji: "😕",
+      label: "Dễ gây hiểu nhầm do thiếu ngữ điệu giọng nói, ánh mắt và cử chỉ nét mặt",
+      isMatch: true,
+      explain: "Hạn chế — văn bản thuần tuý không truyền tải trọn vẹn cảm xúc, dễ gây xung đột hoặc hiểu nhầm ý định.",
+    },
+    {
+      id: "un-tiet-kiem",
+      emoji: "💰",
+      label: "Tiết kiệm đáng kể thời gian và chi phí đi lại, tổ chức hội họp",
+      isMatch: false,
+      explain: "Ưu điểm — họp trực tuyến và gửi tin nhắn tức thời giúp tiết kiệm chi phí di chuyển.",
+    },
+    {
+      id: "un-lo-lot-rieng-tu",
+      emoji: "🔓",
+      label: "Nguy cơ bị lộ lọt, sao chép hoặc phát tán trái phép dữ liệu cá nhân nhạy cảm",
+      isMatch: true,
+      explain: "Hạn chế/Nguy cơ — dữ liệu gửi lên mạng có thể bị chụp màn hình hoặc đánh cắp nếu không bảo mật cẩn thận.",
+    },
+    {
+      id: "un-luu-tru-tra-cuu",
+      emoji: "📚",
+      label: "Nội dung trao đổi dễ dàng được lưu trữ, tìm kiếm và tra cứu lại sau này",
+      isMatch: false,
+      explain: "Ưu điểm — lịch sử tin nhắn và email lưu vết rõ ràng, thuận tiện cho học tập và công việc.",
+    },
+    {
+      id: "un-danh-tinh-ao",
+      emoji: "🎭",
+      label: "Khó xác minh chính xác danh tính thật của đối tượng đang trò chuyện cùng mình",
+      isMatch: true,
+      explain: "Hạn chế/Nguy cơ — kẻ gian có thể giả mạo tài khoản hoặc dùng danh tính ảo để lừa đảo.",
+    },
+    {
+      id: "un-da-phuong-tien",
+      emoji: "🎨",
+      label: "Dễ dàng đính kèm hình ảnh, âm thanh, video minh hoạ sinh động vào cuộc hội thoại",
+      isMatch: false,
+      explain: "Ưu điểm — đa phương tiện làm phong phú nội dung trao đổi mà gặp mặt thoại thuần không có.",
+    },
+    {
+      id: "un-le-thuoc-mang",
+      emoji: "📱",
+      label: "Dễ dẫn tới phụ thuộc, giảm giao tiếp ngoài đời thực và phân tâm học tập",
+      isMatch: true,
+      explain: "Hạn chế/Nguy cơ — việc lạm dụng giao tiếp ảo có thể làm suy giảm kĩ năng giao tiếp trực tiếp ngoài đời.",
+    },
+  ],
+};
+
+const games: LessonGame[] = [sortGameNhanVan, classifyGameKhiaCanh, sortGameUuNhuocMang];
 
 export default games;

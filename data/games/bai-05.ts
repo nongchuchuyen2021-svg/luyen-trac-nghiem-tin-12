@@ -173,6 +173,78 @@ const menuPathGame: MenuPathGame = {
   ],
 };
 
-const games: LessonGame[] = [sortGameBayDeThi, menuPathGame];
+// Game 3: Phân loại quyền truy cập "Read (Chỉ đọc) hay Read/Write (Đọc và ghi)?"
+const sortGameQuyenTruyCap: SortGame = {
+  kind: "sort",
+  id: "quyen-read-hay-read-write",
+  title: "Quyền Read (Chỉ đọc) hay Read/Write (Đọc & Ghi)?",
+  emoji: "🔐",
+  instructions:
+    "Kéo từng tình huống sang đúng mức quyền tương ứng trong Windows: Người dùng chỉ có quyền Xem (Read), hay có toàn quyền Chỉnh sửa / Tạo mới / Xoá (Read/Write)?",
+  matchLabel: "Read/Write (Đọc & Ghi)",
+  matchEmoji: "✍️",
+  noMatchLabel: "Read (Chỉ đọc)",
+  noMatchEmoji: "👁️",
+  items: [
+    {
+      id: "rw-default-everyone",
+      emoji: "👁️",
+      label: "Mức quyền mặc định tự động gán cho nhóm Everyone khi mới thêm vào chia sẻ",
+      isMatch: false,
+      explain: "Mặc định Windows chỉ gán quyền Read cho Everyone để đảm bảo an toàn, tránh bị người khác sửa hoặc xoá nhầm dữ liệu.",
+    },
+    {
+      id: "rw-sua-tep",
+      emoji: "✍️",
+      label: "Người dùng mở tệp tài liệu, chỉnh sửa nội dung và bấm Lưu (Save) đè lên tệp gốc",
+      isMatch: true,
+      explain: "Chỉnh sửa và lưu thay đổi lên tệp có sẵn bắt buộc phải có quyền Write (Ghi).",
+    },
+    {
+      id: "rw-tao-tep-moi",
+      emoji: "📁",
+      label: "Người dùng tạo thêm một thư mục con hoặc tệp mới trong thư mục chia sẻ",
+      isMatch: true,
+      explain: "Tạo thêm tệp hoặc thư mục mới là thao tác ghi dữ liệu, cần quyền Read/Write.",
+    },
+    {
+      id: "rw-xoa-tep",
+      emoji: "🗑️",
+      label: "Người dùng xoá vĩnh viễn một tệp văn bản trong thư mục được chia sẻ",
+      isMatch: true,
+      explain: "Xoá tệp là thay đổi cấu trúc thư mục, đòi hỏi quyền Write.",
+    },
+    {
+      id: "rw-xem-video",
+      emoji: "🎬",
+      label: "Mở xem video bài giảng hoặc nghe file ghi âm từ máy tính khác trong mạng LAN",
+      isMatch: false,
+      explain: "Chỉ mở đọc và phát lại nội dung, không sửa tệp nên chỉ cần quyền Read.",
+    },
+    {
+      id: "rw-chep-ve-may",
+      emoji: "💾",
+      label: "Sao chép tệp từ máy chủ về máy tính cá nhân để tự xem (không sửa trên máy chủ)",
+      isMatch: false,
+      explain: "Sao chép tệp về máy cá nhân chỉ là thao tác đọc dữ liệu nguồn, chỉ cần quyền Read.",
+    },
+    {
+      id: "rw-nhom-truong-tong-hop",
+      emoji: "📝",
+      label: "Trưởng nhóm bổ sung các phần bài tập của thành viên vào file Word báo cáo chung",
+      isMatch: true,
+      explain: "Thao tác cập nhật và lưu bài báo cáo chung đòi hỏi quyền Read/Write.",
+    },
+    {
+      id: "rw-muc-an-toan",
+      emoji: "🛡️",
+      label: "Mức quyền nên cấp cho người lạ để ngăn chặn nguy cơ làm hỏng hoặc mất dữ liệu",
+      isMatch: false,
+      explain: "Chỉ cấp quyền Read là nguyên tắc bảo mật tối quan trọng khi chia sẻ tài nguyên trong mạng LAN.",
+    },
+  ],
+};
+
+const games: LessonGame[] = [sortGameBayDeThi, menuPathGame, sortGameQuyenTruyCap];
 
 export default games;

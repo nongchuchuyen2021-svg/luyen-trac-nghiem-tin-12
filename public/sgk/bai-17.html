@@ -1,0 +1,584 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Nhóm nghề Phát triển phần mềm – Tin học 12 KNTT (SGK Điện tử)</title>
+<meta name="description" content="SGK Tin học 12 Kết nối tri thức – Nhóm nghề Phát triển phần mềm. Chủ đề 5. Hướng nghiệp với Tin học.">
+<style>
+:root {
+  --bg: #070b14; --bg2: #0d1423; --panel: #111a2e; --panel2: #162035; --border: #1e2f4d;
+  --text: #e8eef8; --muted: #8899b8; --orange: #ff6b35; --orange2: #ff9a64;
+  --cyan: #38d9f5; --cyan2: #7ce8fa; --yellow: #ffd060; --green: #56e39f; --pink: #f06dba; --purple: #a78bfa;
+  --fs: 18px;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  background: radial-gradient(ellipse at 20% 10%, #0d1f3c 0%, #070b14 50%);
+  color: var(--text); font-family: 'Inter','Segoe UI',-apple-system,BlinkMacSystemFont,'Roboto',Arial,sans-serif;
+  font-size: var(--fs); line-height: 1.75; min-height: 100vh;
+}
+.app { display: grid; grid-template-columns: 280px 1fr; min-height: 100vh; }
+.sidebar { position:sticky; top:0; height:100vh; overflow-y:auto; background:rgba(7,11,20,.97); border-right:1px solid var(--border); padding:24px 16px; backdrop-filter:blur(20px); }
+.brand-box { margin-bottom:24px; }
+.series-label { font-size:11px; letter-spacing:2px; text-transform:uppercase; color:var(--cyan); font-weight:700; margin-bottom:6px; }
+.brand-title { font-size:20px; font-weight:900; color:#fff; line-height:1.2; }
+.brand-title span { color:var(--orange); }
+.brand-sub { color:var(--muted); font-size:12px; margin-top:5px; }
+.toc-title { font-size:11px; letter-spacing:1.5px; text-transform:uppercase; color:var(--muted); font-weight:700; margin:20px 0 8px; padding:0 8px; }
+.toc a { display:block; color:#9aaec8; text-decoration:none; padding:9px 12px; border-radius:10px; margin:2px 0; font-size:13.5px; font-weight:500; transition:all .2s; border-left:3px solid transparent; }
+.toc a:hover { background:rgba(56,217,245,.07); color:var(--cyan); border-left-color:var(--cyan); }
+.toc a.active { background:rgba(255,107,53,.1); color:var(--orange); border-left-color:var(--orange); }
+.ctrl-box { margin-top:24px; padding:14px; border:1px solid var(--border); border-radius:14px; background:rgba(255,255,255,.03); }
+.ctrl-box h4 { font-size:11px; letter-spacing:1px; text-transform:uppercase; color:var(--muted); margin-bottom:10px; }
+.ctrl-row { display:flex; gap:8px; margin-bottom:8px; }
+.ctrl-btn { flex:1; background:var(--panel2); border:1px solid var(--border); color:var(--text); border-radius:9px; padding:8px 6px; cursor:pointer; font-size:13px; font-weight:600; transition:all .2s; text-align:center; text-decoration:none; display:inline-block; }
+.ctrl-btn:hover { background:var(--border); color:#fff; }
+.progress-bar { height:4px; background:var(--panel2); border-radius:4px; overflow:hidden; margin-top:10px; }
+.progress-fill { height:100%; width:0%; background:linear-gradient(90deg,var(--cyan),var(--orange)); transition:width .3s; border-radius:4px; }
+.main { max-width:860px; margin:0 auto; padding:32px 28px 80px; }
+.hero { background:linear-gradient(135deg,#0f2040 0%,#0a1628 60%,#131020 100%); border:1px solid var(--border); border-radius:24px; padding:36px 40px; margin-bottom:28px; box-shadow:0 24px 80px rgba(0,0,0,.5); position:relative; overflow:hidden; }
+.hero::before { content:'17'; position:absolute; right:30px; top:20px; font-size:120px; font-weight:900; color:rgba(56,217,245,.05); line-height:1; user-select:none; }
+.chu-de-tag { display:inline-flex; align-items:center; gap:8px; background:rgba(56,217,245,.12); border:1px solid rgba(56,217,245,.3); color:var(--cyan); font-size:13px; font-weight:700; padding:6px 14px; border-radius:20px; margin-bottom:16px; letter-spacing:.5px; }
+.hero h1 { font-size:clamp(26px,4vw,38px); font-weight:900; line-height:1.2; background:linear-gradient(90deg,#fff 0%,var(--cyan2) 50%,var(--orange2) 100%); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; margin-bottom:14px; }
+.hero-desc { color:#b0c4de; font-size:15.5px; line-height:1.6; }
+.section { background:rgba(11,17,30,.9); border:1px solid var(--border); border-radius:20px; padding:28px 32px 36px; margin-bottom:24px; scroll-margin-top:20px; position:relative; transition:border-color .3s; }
+.section:hover { border-color:rgba(56,217,245,.2); }
+.page-num { position:absolute; right:20px; bottom:14px; color:var(--muted); font-size:12px; font-weight:600; background:var(--panel2); padding:3px 10px; border-radius:10px; }
+h2 { font-size:clamp(20px,2.5vw,26px); font-weight:800; color:#fff; margin:28px 0 14px; display:flex; align-items:center; gap:10px; }
+h2::before { content:''; display:inline-block; width:4px; height:24px; background:linear-gradient(var(--orange),var(--cyan)); border-radius:2px; flex-shrink:0; }
+p { color:#d0dcea; margin-bottom:14px; }
+p:last-child { margin-bottom:0; }
+strong { color:#fff; }
+em { color:var(--cyan2); font-style:italic; }
+code { background:rgba(255,255,255,0.08); color:var(--orange2); padding:2px 6px; border-radius:4px; font-size:0.9em; font-family:monospace; }
+ul, ol { padding-left:22px; margin:12px 0; }
+li { color:#c8d8ec; margin-bottom:8px; }
+li::marker { color:var(--cyan); }
+.info-box { background:linear-gradient(135deg,#071e2e,#071828); border:1px dashed rgba(56,217,245,.4); border-radius:14px; padding:18px 22px; margin:20px 0; }
+.info-box p, .info-box li { color:#b8d8f0; }
+.activity { background:linear-gradient(135deg,#1a120a,#130f0a); border:1px solid rgba(255,160,60,.3); border-left:4px solid var(--orange); border-radius:14px; padding:18px 22px; margin:20px 0; }
+.activity-badge { display:inline-flex; align-items:center; gap:6px; background:var(--orange); color:#1a0a00; font-size:12px; font-weight:800; padding:4px 12px; border-radius:6px; margin-bottom:10px; letter-spacing:.5px; text-transform:uppercase; }
+.ghi-nho { background:linear-gradient(135deg,#1a2a10,#0f1e0a); border:1px solid rgba(86,227,159,.3); border-left:4px solid var(--green); border-radius:14px; padding:20px 24px; margin:24px 0; }
+.ghi-nho-title { color:var(--green); font-weight:800; font-size:15px; text-transform:uppercase; letter-spacing:1px; margin-bottom:10px; display:flex; align-items:center; gap:8px; }
+.ghi-nho p, .ghi-nho li { color:#c8f0d8; }
+.nav-btns { display:flex; gap:12px; margin:20px 0; }
+.nav-btn { background:var(--panel); border:1px solid var(--border); color:var(--text); border-radius:10px; padding:10px 18px; text-decoration:none; font-size:14px; font-weight:600; transition:all .2s; flex:1; text-align:center; }
+.nav-btn:hover { background:var(--panel2); border-color:var(--cyan); color:#fff; }
+.field-grid { display:grid; grid-template-columns:1fr 1fr; gap:14px; margin:18px 0; }
+.field-card { background:var(--panel2); border:1px solid var(--border); border-radius:14px; padding:16px 18px; }
+.img-side { display:grid; grid-template-columns:1fr 1fr; gap:14px; margin:18px 0; }
+.img-half { border-radius:12px; border:1px solid var(--border); }
+@media (max-width: 860px) {
+  .app { grid-template-columns: 1fr; }
+  .sidebar { display: none; }
+  .main { padding: 20px 16px 60px; }
+  .field-grid, .img-side { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+
+<div class="app">
+
+<!-- SIDEBAR -->
+<aside class="sidebar">
+  <div class="brand-box">
+    <div class="series-label">KẾT NỐI TRI THỨC</div>
+    <div class="brand-title">TIN HỌC <span>12</span></div>
+    <div class="brand-sub">Sách Giáo Khoa Điện Tử (ICT)</div>
+  </div>
+
+  <div class="ctrl-box">
+    <h4>Cỡ chữ & Giao diện</h4>
+    <div class="ctrl-row">
+      <button class="ctrl-btn" onclick="changeFont(-1)">A -</button>
+      <button class="ctrl-btn" onclick="changeFont(1)">A +</button>
+      <button class="ctrl-btn" onclick="toggleTheme()">🌓 Nền</button>
+    </div>
+    <div style="font-size:12px; color:var(--muted); margin-top:8px;" id="prog-label">Tiến độ đọc: 0%</div>
+    <div class="progress-bar"><div class="progress-fill" id="prog"></div></div>
+  </div>
+
+  <div class="toc-title">Mục lục bài học</div>
+  <nav class="toc">
+    
+      <a href="#sec-1">1. Bộ chọn pseudo-class và pseudo-element</a>
+    
+      <a href="#sec-2">2. Mức độ ưu tiên khi áp dụng CSS</a>
+    
+      <a href="#sec-3">3. Mẹo nhớ & Cảnh báo bẫy</a>
+    
+    <a href="#ghi-nho">📌 Ghi nhớ cốt lõi</a>
+  </nav>
+
+  <div class="ctrl-box" style="margin-top:20px;">
+    <h4>Luyện tập</h4>
+    <a href="/luyen/bai-17" class="ctrl-btn" style="background:var(--cyan); color:#000; font-weight:700;">🎯 Vào Luyện Trắc Nghiệm</a>
+  </div>
+</aside>
+
+<!-- MAIN CONTENT -->
+<main class="main">
+  <!-- HERO BANNER -->
+  <div class="hero">
+    <div class="chu-de-tag">Chủ đề 5. Hướng nghiệp với Tin học</div>
+    <h1>Nhóm nghề Phát triển phần mềm</h1>
+    <div class="hero-desc">Bài này học hai kiểu bộ chọn mô tả <strong>trạng thái tương tác</strong>: pseudo-class và pseudo-element; và quy tắc quan trọng nhất khi nhiều mẫu CSS cùng tranh nhau áp dụng cho một phần tử — <strong>bảy mức ưu tiên</strong> và cách tính <strong>trọng số bộ chọn</strong>.</div>
+  </div>
+
+  <!-- NÚT CHUYỂN BÀI -->
+  <div class="nav-btns">
+    <a href="/sgk/bai-16.html" class="nav-btn">← Dự án: Xây dựng trang web bằng HTML và CSS</a>
+    <a href="/sgk/bai-18.html" class="nav-btn">Nhóm nghề Quản trị hệ thống và Mạng →</a>
+  </div>
+
+  <!-- CÁC MỤC NỘI DUNG -->
+  
+    <section class="section" id="sec-1">
+      <h2 id="heading-1">👻 1. Bộ chọn pseudo-class và pseudo-element</h2>
+      <p>Các lệnh CSS đã học đều chỉ áp dụng cho các phần tử <strong>tĩnh</strong>, không phụ thuộc vào tương tác với người dùng. CSS còn cung cấp cách định dạng cho các <strong>trạng thái tương tác</strong>, ví dụ khi người dùng di chuyển hay nháy chuột lên phần tử.</p>
+<p><strong>a) Pseudo-class (lớp giả)</strong> là khái niệm chỉ các trạng thái đặc biệt của phần tử HTML — không cần định nghĩa, được coi như lớp có sẵn của CSS. Cú pháp viết sau dấu <strong>một dấu hai chấm</strong> <code>:</code> — <code>:pseudo-class {thuộc tính: giá trị;}</code>.</p>
+
+        <div class="field-grid">
+          
+            <div class="field-card">
+              <div class="icon">🔗</div>
+              <h4 style="margin:0 0 6px; color:var(--cyan2);">:link</h4>
+              <p style="margin:0; font-size:14px; color:#b0c4de;">Tất cả các liên kết khi chưa được kích hoạt. Ví dụ: a:link {color: blue;}</p>
+            </div>
+          
+
+            <div class="field-card">
+              <div class="icon">✅</div>
+              <h4 style="margin:0 0 6px; color:var(--cyan2);">:visited</h4>
+              <p style="margin:0; font-size:14px; color:#b0c4de;">Tất cả các liên kết sau khi đã được kích hoạt một lần. Ví dụ: a:visited {color: gray;}</p>
+            </div>
+          
+
+            <div class="field-card">
+              <div class="icon">🖱️</div>
+              <h4 style="margin:0 0 6px; color:var(--cyan2);">:hover</h4>
+              <p style="margin:0; font-size:14px; color:#b0c4de;">Tất cả các phần tử, khi người dùng di chuyển con trỏ chuột lên đối tượng. Ví dụ: #home:hover {font-size: 150%;}</p>
+            </div>
+          
+        </div>
+
+        <div style="background:#060b14; border:1px solid var(--border); border-radius:12px; overflow:hidden; margin:16px 0; font-family:monospace;">
+          <div style="background:rgba(255,255,255,0.05); padding:6px 14px; font-size:12px; color:var(--muted); border-bottom:1px solid var(--border);">💻 Hình 17.1 SGK — liên kết đỏ mặc định, xanh lá sau khi đã bấm, hồng khi rê chuột (thử di chuột vào liên kết)</div>
+          <pre style="padding:14px 16px; margin:0; font-size:14px; line-height:1.6; color:#7ce8fa; overflow-x:auto;"><code>&lt;style&gt;
+a:link {color: red;}
+a:visited {color: green;}
+a:hover {color: magenta;}
+h1 {color: blue;}
+&lt;/style&gt;
+&lt;h1&gt;CSS là gì&lt;/h1&gt;
+&lt;p&gt;&lt;a href="#p1"&gt;Tự học nhanh CSS&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;CSS (Cascading Style Sheets) là ngôn ngữ định dạng đặc biệt được dùng để mô tả cách thể hiện của văn bản HTML trong trang web.&lt;/p&gt;</code></pre>
+        </div>
+<p><strong>b) Pseudo-element (phần tử giả)</strong> là khái niệm chỉ <strong>một phần hoặc một thành phần</strong> của các phần tử bình thường — được coi là một phần tử giả và có thể thiết lập mẫu định dạng CSS riêng. Cú pháp viết sau <strong>hai dấu hai chấm</strong> <code>::</code> — <code>::pseudo-element {thuộc tính: giá trị;}</code>.</p>
+
+        <div class="field-grid">
+          
+            <div class="field-card">
+              <div class="icon">1️⃣</div>
+              <h4 style="margin:0 0 6px; color:var(--cyan2);">::first-line</h4>
+              <p style="margin:0; font-size:14px; color:#b0c4de;">Dòng đầu tiên của đối tượng. Ví dụ: p.test::first-line {font-family: monospace;}</p>
+            </div>
+          
+
+            <div class="field-card">
+              <div class="icon">🔤</div>
+              <h4 style="margin:0 0 6px; color:var(--cyan2);">::first-letter</h4>
+              <p style="margin:0; font-size:14px; color:#b0c4de;">Kí tự đầu tiên của đối tượng. Ví dụ: p#first::first-letter {font-size: 200%;}</p>
+            </div>
+          
+
+            <div class="field-card">
+              <div class="icon">🖍️</div>
+              <h4 style="margin:0 0 6px; color:var(--cyan2);">::selection</h4>
+              <p style="margin:0; font-size:14px; color:#b0c4de;">Phần được chọn bằng cách kéo thả chuột. Ví dụ: ::selection {background-color: lime;}</p>
+            </div>
+          
+        </div>
+
+        <div style="background:#060b14; border:1px solid var(--border); border-radius:12px; overflow:hidden; margin:16px 0; font-family:monospace;">
+          <div style="background:rgba(255,255,255,0.05); padding:6px 14px; font-size:12px; color:var(--muted); border-bottom:1px solid var(--border);">💻 Hình 17.2 SGK — dòng đầu tiên của mỗi đoạn p hiển thị đỏ, phông đều, cỡ chữ lớn hơn 1,2 lần</div>
+          <pre style="padding:14px 16px; margin:0; font-size:14px; line-height:1.6; color:#7ce8fa; overflow-x:auto;"><code>&lt;style&gt;
+p::first-line {
+  color: red;
+  font-family: monospace;
+  font-size: 120%;
+}
+&lt;/style&gt;
+&lt;p&gt;HTML là ngôn ngữ đánh dấu siêu văn bản, là ngôn ngữ đặc biệt dùng để thiết kế nội dung các trang web và được thể hiện bằng trình duyệt.&lt;/p&gt;
+&lt;p&gt;CSS là ngôn ngữ định dạng đặc biệt được dùng để mô tả cách thể hiện của văn bản HTML trong trang web.&lt;/p&gt;</code></pre>
+        </div>
+
+        <div class="info-box">
+          <p>CSS hỗ trợ thiết lập định dạng cho các <strong>lớp giả (pseudo-class)</strong> và <strong>phần tử giả (pseudo-element)</strong>. Lớp giả mô tả các trạng thái được định nghĩa trước của phần tử. Phần tử giả mô tả các thành phần (nhỏ hơn) của phần tử.</p>
+        </div>
+
+        <div class="cau-hoi" style="margin:16px 0; border:1px solid rgba(56,217,245,0.3); background:rgba(56,217,245,0.04); border-radius:14px; padding:16px 20px;">
+          <div class="q-num" style="background:var(--cyan); color:#000; font-weight:800; border-radius:50%; width:28px; height:28px; display:flex; align-items:center; justify-content:center; flex-shrink:0;">?</div>
+          <div style="flex:1;">
+            <div class="q-text" style="font-weight:600; color:#fff; font-size:15.5px; margin-bottom:10px;">Muốn đổi màu chữ một đoạn văn bản khi người dùng di chuyển chuột qua đoạn đó, cần dùng lớp giả nào?</div>
+            <div style="display:grid; grid-template-columns:1fr; gap:6px; margin-bottom:10px;">
+              
+                <div style="background:rgba(255,255,255,0.04); border:1px solid var(--border); border-radius:8px; padding:6px 12px; font-size:14px; color:#c8d8ec;">
+                  <b>A.</b> :hover
+                </div>
+              
+                <div style="background:rgba(255,255,255,0.04); border:1px solid var(--border); border-radius:8px; padding:6px 12px; font-size:14px; color:#c8d8ec;">
+                  <b>B.</b> :link
+                </div>
+              
+                <div style="background:rgba(255,255,255,0.04); border:1px solid var(--border); border-radius:8px; padding:6px 12px; font-size:14px; color:#c8d8ec;">
+                  <b>C.</b> :visited
+                </div>
+              
+                <div style="background:rgba(255,255,255,0.04); border:1px solid var(--border); border-radius:8px; padding:6px 12px; font-size:14px; color:#c8d8ec;">
+                  <b>D.</b> ::selection
+                </div>
+              
+            </div>
+            <details style="margin-top:8px;">
+              <summary style="cursor:pointer; color:var(--cyan); font-size:13px; font-weight:600;">👉 Xem đáp án & giải thích</summary>
+              <div style="margin-top:6px; padding:8px 12px; background:rgba(86,227,159,0.1); border-left:3px solid var(--green); border-radius:6px; font-size:13.5px; color:#a3e635;">
+                <strong>Đáp án đúng: A</strong><br>
+                <span>:hover áp dụng cho phần tử khi người dùng di chuyển con trỏ chuột lên đối tượng — đây cũng là câu hỏi 2 phần Luyện tập của SGK.</span>
+              </div>
+            </details>
+          </div>
+        </div>
+
+        <div class="cau-hoi" style="margin:16px 0; border:1px solid rgba(56,217,245,0.3); background:rgba(56,217,245,0.04); border-radius:14px; padding:16px 20px;">
+          <div class="q-num" style="background:var(--cyan); color:#000; font-weight:800; border-radius:50%; width:28px; height:28px; display:flex; align-items:center; justify-content:center; flex-shrink:0;">?</div>
+          <div style="flex:1;">
+            <div class="q-text" style="font-weight:600; color:#fff; font-size:15.5px; margin-bottom:10px;">Sự khác biệt cơ bản giữa pseudo-class và pseudo-element là gì?</div>
+            <div style="display:grid; grid-template-columns:1fr; gap:6px; margin-bottom:10px;">
+              
+                <div style="background:rgba(255,255,255,0.04); border:1px solid var(--border); border-radius:8px; padding:6px 12px; font-size:14px; color:#c8d8ec;">
+                  <b>A.</b> Pseudo-class mô tả trạng thái; pseudo-element mô tả thành phần nhỏ hơn
+                </div>
+              
+                <div style="background:rgba(255,255,255,0.04); border:1px solid var(--border); border-radius:8px; padding:6px 12px; font-size:14px; color:#c8d8ec;">
+                  <b>B.</b> Pseudo-class chỉ dùng cho a; pseudo-element chỉ dùng riêng cho p
+                </div>
+              
+                <div style="background:rgba(255,255,255,0.04); border:1px solid var(--border); border-radius:8px; padding:6px 12px; font-size:14px; color:#c8d8ec;">
+                  <b>C.</b> Pseudo-class viết bằng ::, còn pseudo-element viết bằng dấu :
+                </div>
+              
+                <div style="background:rgba(255,255,255,0.04); border:1px solid var(--border); border-radius:8px; padding:6px 12px; font-size:14px; color:#c8d8ec;">
+                  <b>D.</b> Hai khái niệm hoàn toàn giống hệt nhau, chỉ khác mỗi tên gọi
+                </div>
+              
+            </div>
+            <details style="margin-top:8px;">
+              <summary style="cursor:pointer; color:var(--cyan); font-size:13px; font-weight:600;">👉 Xem đáp án & giải thích</summary>
+              <div style="margin-top:6px; padding:8px 12px; background:rgba(86,227,159,0.1); border-left:3px solid var(--green); border-radius:6px; font-size:13.5px; color:#a3e635;">
+                <strong>Đáp án đúng: A</strong><br>
+                <span>Pseudo-class (viết với 1 dấu :) mô tả trạng thái đặc biệt của phần tử (như :hover); pseudo-element (viết với 2 dấu ::) mô tả một phần/thành phần nhỏ hơn của phần tử (như ::first-letter).</span>
+              </div>
+            </details>
+          </div>
+        </div>
+      <div class="page-num">Trang 113-118</div>
+    </section>
+  
+
+    <section class="section" id="sec-2">
+      <h2 id="heading-2">⚖️ 2. Mức độ ưu tiên khi áp dụng CSS</h2>
+      <p>Khi có <strong>nhiều mẫu định dạng</strong> có thể áp dụng cho cùng một phần tử HTML, CSS sẽ áp dụng định dạng theo <strong>thứ tự ưu tiên</strong>. Ở các bài trước, ta đã biết hai quy tắc: <strong>tính kế thừa</strong> và <strong>quy định thứ tự cuối cùng</strong> (cascading). Trên thực tế, quy định chọn mẫu định dạng ưu tiên từ cao xuống thấp của CSS gồm <strong>bảy mức</strong>.</p>
+
+<p>Mức 3 (CSS theo kích thước thiết bị) dùng chỉ thị <strong>@media</strong> để điều khiển cách hiển thị tuỳ theo kích thước màn hình thiết bị. Ví dụ, mẫu sau tăng cỡ chữ lên 150% nếu chiều ngang màn hình nhỏ hơn 600px:</p>
+
+        <div style="background:#060b14; border:1px solid var(--border); border-radius:12px; overflow:hidden; margin:16px 0; font-family:monospace;">
+          <div style="background:rgba(255,255,255,0.05); padding:6px 14px; font-size:12px; color:var(--muted); border-bottom:1px solid var(--border);">💻 Ví dụ SGK — định dạng theo kích thước thiết bị bằng @media</div>
+          <pre style="padding:14px 16px; margin:0; font-size:14px; line-height:1.6; color:#7ce8fa; overflow-x:auto;"><code>@media only screen and (max-width: 600px) {
+  body {font-size: 150%;}
+}</code></pre>
+        </div>
+<p>Nếu tính kế thừa và nguyên tắc thứ tự cuối cùng đã xếp dưới <strong>trọng số CSS</strong>, thì khi có một dãy mẫu CSS cùng có thể áp dụng cho một phần tử, CSS sẽ tính <strong>trọng số (specificity)</strong> của từng mẫu — mẫu nào có trọng số <strong>lớn hơn</strong> sẽ được áp dụng. Cách tính: trọng số của bộ chọn bằng <strong>tổng giá trị đóng góp</strong> của từng thành phần trong bộ chọn.</p>
+
+        <div class="field-grid">
+          
+            <div class="field-card">
+              <div class="icon">🆔</div>
+              <h4 style="margin:0 0 6px; color:var(--cyan2);">Mã định danh (ID)</h4>
+              <p style="margin:0; font-size:14px; color:#b0c4de;">Đóng góp 100 điểm vào trọng số.</p>
+            </div>
+          
+
+            <div class="field-card">
+              <div class="icon">🏷️</div>
+              <h4 style="margin:0 0 6px; color:var(--cyan2);">Lớp, lớp giả, thuộc tính</h4>
+              <p style="margin:0; font-size:14px; color:#b0c4de;">Class, pseudo-class, attribute selector — mỗi cái đóng góp 10 điểm.</p>
+            </div>
+          
+
+            <div class="field-card">
+              <div class="icon">🔤</div>
+              <h4 style="margin:0 0 6px; color:var(--cyan2);">Phần tử, phần tử giả</h4>
+              <p style="margin:0; font-size:14px; color:#b0c4de;">Element, pseudo-element — mỗi cái đóng góp 1 điểm.</p>
+            </div>
+          
+
+            <div class="field-card">
+              <div class="icon">⭐</div>
+              <h4 style="margin:0 0 6px; color:var(--cyan2);">Bộ chọn *</h4>
+              <p style="margin:0; font-size:14px; color:#b0c4de;">Bộ chọn mọi phần tử (universal selector) đóng góp 0 điểm.</p>
+            </div>
+          
+        </div>
+
+
+        <div class="activity">
+          <div class="activity-badge">💡 Trở lại ví dụ Hoạt động 2</div>
+          <p>Với <code><p class="test">Tin học 12</p></code> và hai mẫu <code>.test {color: green;}</code> (trọng số 10, vì là class) cùng <code>p {color: red;}</code> (trọng số 1, vì là phần tử) — mẫu <code>.test</code> có trọng số cao hơn nên cụm từ <strong>“Tin học 12” sẽ có màu xanh lá cây</strong>.</p>
+        </div>
+
+        <div class="info-box">
+          <p>Nếu có nhiều mẫu định dạng CSS <strong>cùng mức ưu tiên</strong> áp dụng cho một phần tử HTML thì mẫu CSS nào có <strong>trọng số cao nhất</strong> sẽ được áp dụng.</p>
+        </div>
+
+        <div class="cau-hoi" style="margin:16px 0; border:1px solid rgba(56,217,245,0.3); background:rgba(56,217,245,0.04); border-radius:14px; padding:16px 20px;">
+          <div class="q-num" style="background:var(--cyan); color:#000; font-weight:800; border-radius:50%; width:28px; height:28px; display:flex; align-items:center; justify-content:center; flex-shrink:0;">?</div>
+          <div style="flex:1;">
+            <div class="q-text" style="font-weight:600; color:#fff; font-size:15.5px; margin-bottom:10px;">Tính trọng số của bộ chọn h1, h2, h3, h4 > #new (câu hỏi 1b Luyện tập SGK, coi dấu phẩy tách các bộ chọn độc lập — tính riêng nhánh h4 > #new).</div>
+            <div style="display:grid; grid-template-columns:1fr; gap:6px; margin-bottom:10px;">
+              
+                <div style="background:rgba(255,255,255,0.04); border:1px solid var(--border); border-radius:8px; padding:6px 12px; font-size:14px; color:#c8d8ec;">
+                  <b>A.</b> 101 (h4 = 1 điểm, cộng ID #new = 100 điểm)
+                </div>
+              
+                <div style="background:rgba(255,255,255,0.04); border:1px solid var(--border); border-radius:8px; padding:6px 12px; font-size:14px; color:#c8d8ec;">
+                  <b>B.</b> 11 (h4 tính là 1 điểm, cộng thêm lớp new = 10 điểm)
+                </div>
+              
+                <div style="background:rgba(255,255,255,0.04); border:1px solid var(--border); border-radius:8px; padding:6px 12px; font-size:14px; color:#c8d8ec;">
+                  <b>C.</b> 4 (đếm đủ bốn phần tử h1 h2 h3 h4, mỗi cái 1 điểm)
+                </div>
+              
+                <div style="background:rgba(255,255,255,0.04); border:1px solid var(--border); border-radius:8px; padding:6px 12px; font-size:14px; color:#c8d8ec;">
+                  <b>D.</b> 100 (chỉ tính riêng mã ID, bỏ hẳn phần tử h4 đi)
+                </div>
+              
+            </div>
+            <details style="margin-top:8px;">
+              <summary style="cursor:pointer; color:var(--cyan); font-size:13px; font-weight:600;">👉 Xem đáp án & giải thích</summary>
+              <div style="margin-top:6px; padding:8px 12px; background:rgba(86,227,159,0.1); border-left:3px solid var(--green); border-radius:6px; font-size:13.5px; color:#a3e635;">
+                <strong>Đáp án đúng: A</strong><br>
+                <span>Nhánh h4 > #new gồm 1 phần tử (h4, đóng góp 1) và 1 mã định danh (#new, đóng góp 100) — tổng trọng số = 1 + 100 = 101.</span>
+              </div>
+            </details>
+          </div>
+        </div>
+
+        <div class="cau-hoi" style="margin:16px 0; border:1px solid rgba(56,217,245,0.3); background:rgba(56,217,245,0.04); border-radius:14px; padding:16px 20px;">
+          <div class="q-num" style="background:var(--cyan); color:#000; font-weight:800; border-radius:50%; width:28px; height:28px; display:flex; align-items:center; justify-content:center; flex-shrink:0;">?</div>
+          <div style="flex:1;">
+            <div class="q-text" style="font-weight:600; color:#fff; font-size:15.5px; margin-bottom:10px;">Bộ chọn p.test em.more (theo Bảng 17.5 SGK) có trọng số bằng bao nhiêu?</div>
+            <div style="display:grid; grid-template-columns:1fr; gap:6px; margin-bottom:10px;">
+              
+                <div style="background:rgba(255,255,255,0.04); border:1px solid var(--border); border-radius:8px; padding:6px 12px; font-size:14px; color:#c8d8ec;">
+                  <b>A.</b> 22 (hai phần tử p, em: 1+1, cộng hai lớp test, more: 10+10)
+                </div>
+              
+                <div style="background:rgba(255,255,255,0.04); border:1px solid var(--border); border-radius:8px; padding:6px 12px; font-size:14px; color:#c8d8ec;">
+                  <b>B.</b> 20 (chỉ tính hai lớp test và more, bỏ qua hai phần tử p, em)
+                </div>
+              
+                <div style="background:rgba(255,255,255,0.04); border:1px solid var(--border); border-radius:8px; padding:6px 12px; font-size:14px; color:#c8d8ec;">
+                  <b>C.</b> 2 (chỉ tính hai phần tử p và em, bỏ qua hai lớp test, more)
+                </div>
+              
+                <div style="background:rgba(255,255,255,0.04); border:1px solid var(--border); border-radius:8px; padding:6px 12px; font-size:14px; color:#c8d8ec;">
+                  <b>D.</b> 112 (nhầm lẫn hai lớp test và more thành hai mã định danh)
+                </div>
+              
+            </div>
+            <details style="margin-top:8px;">
+              <summary style="cursor:pointer; color:var(--cyan); font-size:13px; font-weight:600;">👉 Xem đáp án & giải thích</summary>
+              <div style="margin-top:6px; padding:8px 12px; background:rgba(86,227,159,0.1); border-left:3px solid var(--green); border-radius:6px; font-size:13.5px; color:#a3e635;">
+                <strong>Đáp án đúng: A</strong><br>
+                <span>Bộ chọn có hai phần tử (p, em: 1+1=2) và hai lớp (test, more: 10+10=20), tổng trọng số = 2 + 20 = 22 — đúng như Bảng 17.5 SGK.</span>
+              </div>
+            </details>
+          </div>
+        </div>
+
+        <div class="cau-hoi" style="margin:16px 0; border:1px solid rgba(56,217,245,0.3); background:rgba(56,217,245,0.04); border-radius:14px; padding:16px 20px;">
+          <div class="q-num" style="background:var(--cyan); color:#000; font-weight:800; border-radius:50%; width:28px; height:28px; display:flex; align-items:center; justify-content:center; flex-shrink:0;">?</div>
+          <div style="flex:1;">
+            <div class="q-text" style="font-weight:600; color:#fff; font-size:15.5px; margin-bottom:10px;">Hai mẫu CSS cùng bộ chọn (cùng trọng số) áp dụng được cho một phần tử — mẫu nào sẽ thắng?</div>
+            <div style="display:grid; grid-template-columns:1fr; gap:6px; margin-bottom:10px;">
+              
+                <div style="background:rgba(255,255,255,0.04); border:1px solid var(--border); border-radius:8px; padding:6px 12px; font-size:14px; color:#c8d8ec;">
+                  <b>A.</b> Mẫu được viết ở vị trí sau cùng trong tệp CSS
+                </div>
+              
+                <div style="background:rgba(255,255,255,0.04); border:1px solid var(--border); border-radius:8px; padding:6px 12px; font-size:14px; color:#c8d8ec;">
+                  <b>B.</b> Mẫu được viết ở vị trí đầu tiên trong tệp CSS
+                </div>
+              
+                <div style="background:rgba(255,255,255,0.04); border:1px solid var(--border); border-radius:8px; padding:6px 12px; font-size:14px; color:#c8d8ec;">
+                  <b>C.</b> Trình duyệt chọn ngẫu nhiên một trong hai mẫu
+                </div>
+              
+                <div style="background:rgba(255,255,255,0.04); border:1px solid var(--border); border-radius:8px; padding:6px 12px; font-size:14px; color:#c8d8ec;">
+                  <b>D.</b> Cả hai mẫu đều bị bỏ qua, dùng định dạng mặc định
+                </div>
+              
+            </div>
+            <details style="margin-top:8px;">
+              <summary style="cursor:pointer; color:var(--cyan); font-size:13px; font-weight:600;">👉 Xem đáp án & giải thích</summary>
+              <div style="margin-top:6px; padding:8px 12px; background:rgba(86,227,159,0.1); border-left:3px solid var(--green); border-radius:6px; font-size:13.5px; color:#a3e635;">
+                <strong>Đáp án đúng: A</strong><br>
+                <span>Theo mức ưu tiên 5 (nguyên tắc thứ tự cuối cùng — cascading): nếu nhiều mẫu định dạng có cùng trọng số thì mẫu ở vị trí cuối cùng sẽ được áp dụng.</span>
+              </div>
+            </details>
+          </div>
+        </div>
+      <div class="page-num">Trang 113-118</div>
+    </section>
+  
+
+    <section class="section" id="sec-3">
+      <h2 id="heading-3">💡 3. Mẹo nhớ & Cảnh báo bẫy</h2>
+      <p>Bài 17 là bài có độ phân hoá cao nhất trong học kì 1 vì quy tắc ưu tiên và tính trọng số rất dễ bị nhầm. Hãy lưu lại các mẹo và bẫy kinh điển dưới đây:</p>
+
+        <div class="field-grid">
+          
+            <div class="field-card">
+              <div class="icon">🎯</div>
+              <h4 style="margin:0 0 6px; color:var(--cyan2);">Thang điểm trọng số (100 - 10 - 1)</h4>
+              <p style="margin:0; font-size:14px; color:#b0c4de;"><strong>ID (#)</strong> = 100 điểm > <strong>Class (.) / Pseudo-class (:)</strong> = 10 điểm > <strong>Tag (p, h1...) / Pseudo-element (::)</strong> = 1 điểm. Dù có 9 class cộng lại (90 điểm) vẫn thua 1 ID (100 điểm).</p>
+            </div>
+          
+
+            <div class="field-card">
+              <div class="icon">👑</div>
+              <h4 style="margin:0 0 6px; color:var(--cyan2);">Thần chú thứ tự 7 mức ưu tiên</h4>
+              <p style="margin:0; font-size:14px; color:#b0c4de;"><strong>Quan trọng (!important)</strong> > <strong>Trực tiếp (inline style)</strong> > <strong>Thiết bị (@media)</strong> > <strong>Trọng số (ID/Class/Tag)</strong> > <strong>Thứ tự cuối (viết sau đè trước)</strong> > <strong>Kế thừa cha</strong> > <strong>Mặc định trình duyệt</strong>.</p>
+            </div>
+          
+
+            <div class="field-card">
+              <div class="icon">👻</div>
+              <h4 style="margin:0 0 6px; color:var(--cyan2);">Phân biệt 1 dấu (:) và 2 dấu (::)</h4>
+              <p style="margin:0; font-size:14px; color:#b0c4de;"><strong>Một dấu hai chấm (<code>:</code>)</strong> = Trạng thái hành động (<em>:hover, :link</em>); <strong>Hai dấu hai chấm (<code>::</code>)</strong> = Một mẩu/bộ phận của phần tử (<em>::first-letter, ::first-line</em>).</p>
+            </div>
+          
+
+            <div class="field-card">
+              <div class="icon">✍️</div>
+              <h4 style="margin:0 0 6px; color:var(--cyan2);">Quy tắc Viết sau đè viết trước</h4>
+              <p style="margin:0; font-size:14px; color:#b0c4de;">Khi hai mẫu CSS có <strong>cùng điểm trọng số</strong> cùng áp dụng cho một phần tử, mẫu nào được viết ở <strong>vị trí sau cùng (ở dưới)</strong> trong tệp CSS sẽ giành chiến thắng.</p>
+            </div>
+          
+        </div>
+
+        <div class="img-side">
+          <div class="img-half" style="background:rgba(242,104,60,0.08); border-color:rgba(242,104,60,0.3); padding:16px;">
+            <div style="font-weight:700; color:var(--orange); font-size:15px; margin-bottom:10px;">❌ Bẫy câu chữ đề thi hay gài</div>
+            <ul style="padding-left:18px;">
+              <li style="font-size:14px; margin-bottom:6px;">Cộng dồn nhiều thẻ HTML sẽ thắng được 1 class</li><li style="font-size:14px; margin-bottom:6px;">:hover là pseudo-element vì có trạng thái</li><li style="font-size:14px; margin-bottom:6px;">Mẫu CSS viết ở trên đầu luôn được ưu tiên trước</li><li style="font-size:14px; margin-bottom:6px;">Thuộc tính kế thừa từ thẻ cha sẽ đè được thẻ con</li><li style="font-size:14px; margin-bottom:6px;">Bộ chọn * có trọng số bằng 1 điểm như thẻ p</li>
+            </ul>
+          </div>
+          <div class="img-half" style="background:rgba(56,217,245,0.08); border-color:rgba(56,217,245,0.3); padding:16px;">
+            <div style="font-weight:700; color:var(--cyan); font-size:15px; margin-bottom:10px;">✅ Bản chất chính xác cần chọn</div>
+            <ul style="padding-left:18px;">
+              <li style="font-size:14px; margin-bottom:6px;">1 Class = 10 điểm, luôn thắng dù có bao nhiêu thẻ (1đ)</li><li style="font-size:14px; margin-bottom:6px;">:hover là <strong>pseudo-class</strong> (trạng thái, 1 dấu hai chấm)</li><li style="font-size:14px; margin-bottom:6px;">Cùng trọng số thì <strong>mẫu viết sau cùng</strong> mới áp dụng</li><li style="font-size:14px; margin-bottom:6px;">Định dạng <strong>trực tiếp cho con</strong> luôn thắng kế thừa</li><li style="font-size:14px; margin-bottom:6px;">Bộ chọn * có <strong>trọng số = 0 điểm</strong> (thấp nhất)</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="cau-hoi" style="margin:16px 0; border:1px solid rgba(56,217,245,0.3); background:rgba(56,217,245,0.04); border-radius:14px; padding:16px 20px;">
+          <div class="q-num" style="background:var(--cyan); color:#000; font-weight:800; border-radius:50%; width:28px; height:28px; display:flex; align-items:center; justify-content:center; flex-shrink:0;">?</div>
+          <div style="flex:1;">
+            <div class="q-text" style="font-weight:600; color:#fff; font-size:15.5px; margin-bottom:10px;">Cho đoạn HTML: <p id="title" class="highlight">Chào bạn</p>. Mẫu CSS nào sau đây sẽ quyết định màu chữ của thẻ p?</div>
+            <div style="display:grid; grid-template-columns:1fr; gap:6px; margin-bottom:10px;">
+              
+                <div style="background:rgba(255,255,255,0.04); border:1px solid var(--border); border-radius:8px; padding:6px 12px; font-size:14px; color:#c8d8ec;">
+                  <b>A.</b> #title {color: red;} (vì có trọng số ID = 100 điểm)
+                </div>
+              
+                <div style="background:rgba(255,255,255,0.04); border:1px solid var(--border); border-radius:8px; padding:6px 12px; font-size:14px; color:#c8d8ec;">
+                  <b>B.</b> .highlight {color: blue;} (vì đứng gần thẻ p hơn)
+                </div>
+              
+                <div style="background:rgba(255,255,255,0.04); border:1px solid var(--border); border-radius:8px; padding:6px 12px; font-size:14px; color:#c8d8ec;">
+                  <b>C.</b> p {color: green;} (vì định dạng trực tiếp tên thẻ p)
+                </div>
+              
+                <div style="background:rgba(255,255,255,0.04); border:1px solid var(--border); border-radius:8px; padding:6px 12px; font-size:14px; color:#c8d8ec;">
+                  <b>D.</b> Trình duyệt trộn cả ba màu lại thành màu tổng hợp
+                </div>
+              
+            </div>
+            <details style="margin-top:8px;">
+              <summary style="cursor:pointer; color:var(--cyan); font-size:13px; font-weight:600;">👉 Xem đáp án & giải thích</summary>
+              <div style="margin-top:6px; padding:8px 12px; background:rgba(86,227,159,0.1); border-left:3px solid var(--green); border-radius:6px; font-size:13.5px; color:#a3e635;">
+                <strong>Đáp án đúng: A</strong><br>
+                <span>Mã định danh #title có trọng số cao nhất (100 điểm), vượt trội so với class .highlight (10 điểm) và thẻ p (1 điểm). Do đó màu đỏ sẽ được áp dụng.</span>
+              </div>
+            </details>
+          </div>
+        </div>
+      <div class="page-num">Trang 113-118</div>
+    </section>
+  
+
+  <!-- HỘP GHI NHỚ CUỐI BÀI -->
+  <section class="section" id="ghi-nho">
+    <div class="ghi-nho">
+      <div class="ghi-nho-title">📌 Em cần ghi nhớ</div>
+      <ul style="padding-left:20px;">
+        <li style="font-size:15.5px; line-height:1.7; margin-bottom:10px;"><strong>Pseudo-class</strong> (<code>:tên</code>) mô tả trạng thái đặc biệt của phần tử (:link, :visited, :hover). <strong>Pseudo-element</strong> (<code>::tên</code>) mô tả một thành phần nhỏ hơn của phần tử (::first-line, ::first-letter, ::selection).</li>
+<li style="font-size:15.5px; line-height:1.7; margin-bottom:10px;">CSS áp dụng theo <strong>7 mức ưu tiên</strong> từ cao xuống thấp: !important → CSS trực tiếp (inline) → CSS theo thiết bị (@media) → trọng số CSS → thứ tự cuối cùng → kế thừa từ cha → mặc định trình duyệt.</li>
+<li style="font-size:15.5px; line-height:1.7; margin-bottom:10px;"><strong>Trọng số</strong> bộ chọn = tổng đóng góp của từng thành phần: *<em>ID = 100, class/pseudo-class/thuộc tính = 10, phần tử/pseudo-element = 1, </em> = 0**. Trọng số cao hơn được ưu tiên áp dụng.</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- NÚT CHUYỂN BÀI DƯỚI CÙNG -->
+  <div class="nav-btns" style="margin-top:32px;">
+    <a href="/sgk/bai-16.html" class="nav-btn">← Dự án: Xây dựng trang web bằng HTML và CSS</a>
+    <a href="/luyen/bai-17" class="nav-btn" style="background:linear-gradient(90deg, var(--cyan), var(--orange)); color:#fff; border:none;">🎯 Luyện trắc nghiệm ngay</a>
+    <a href="/sgk/bai-18.html" class="nav-btn">Nhóm nghề Quản trị hệ thống và Mạng →</a>
+  </div>
+</main>
+
+</div>
+
+<script>
+let fs = 18;
+function changeFont(d) { fs = Math.min(28, Math.max(14, fs + d)); document.body.style.fontSize = fs + 'px'; }
+let light = false;
+function toggleTheme() {
+  light = !light;
+  document.documentElement.style.setProperty('--bg', light ? '#f0f4f8' : '#070b14');
+  document.documentElement.style.setProperty('--text', light ? '#1a2540' : '#e8eef8');
+  document.documentElement.style.setProperty('--panel', light ? '#fff' : '#111a2e');
+  document.documentElement.style.setProperty('--panel2', light ? '#f5f8fc' : '#162035');
+  document.documentElement.style.setProperty('--border', light ? '#d0daea' : '#1e2f4d');
+  document.body.style.background = light
+    ? 'radial-gradient(ellipse at 20% 10%, #d8e8f8 0%, #f0f4f8 60%)'
+    : 'radial-gradient(ellipse at 20% 10%, #0d1f3c 0%, #070b14 50%)';
+}
+window.addEventListener('scroll', () => {
+  const doc = document.documentElement;
+  const scrolled = doc.scrollTop || document.body.scrollTop;
+  const total = doc.scrollHeight - doc.clientHeight;
+  const pct = total > 0 ? Math.round((scrolled / total) * 100) : 0;
+  const p = document.getElementById('prog');
+  const pl = document.getElementById('prog-label');
+  if (p) p.style.width = pct + '%';
+  if (pl) pl.textContent = 'Tiến độ đọc: ' + pct + '%';
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,753 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Biểu mẫu trong trang web – Tin học 12 KNTT (SGK Điện tử)</title>
+<meta name="description" content="SGK Tin học 12 Kết nối tri thức – Biểu mẫu trong trang web. Chủ đề 4. Thiết kế trang web (HTML & CSS).">
+<style>
+:root {
+  --bg: #070b14; --bg2: #0d1423; --panel: #111a2e; --panel2: #162035; --border: #1e2f4d;
+  --text: #e8eef8; --muted: #8899b8; --orange: #ff6b35; --orange2: #ff9a64;
+  --cyan: #38d9f5; --cyan2: #7ce8fa; --yellow: #ffd060; --green: #56e39f; --pink: #f06dba; --purple: #a78bfa;
+  --fs: 18px;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  background: radial-gradient(ellipse at 20% 10%, #0d1f3c 0%, #070b14 50%);
+  color: var(--text); font-family: 'Inter','Segoe UI',-apple-system,BlinkMacSystemFont,'Roboto',Arial,sans-serif;
+  font-size: var(--fs); line-height: 1.75; min-height: 100vh;
+}
+.app { display: grid; grid-template-columns: 280px 1fr; min-height: 100vh; }
+.sidebar { position:sticky; top:0; height:100vh; overflow-y:auto; background:rgba(7,11,20,.97); border-right:1px solid var(--border); padding:24px 16px; backdrop-filter:blur(20px); }
+.brand-box { margin-bottom:24px; }
+.series-label { font-size:11px; letter-spacing:2px; text-transform:uppercase; color:var(--cyan); font-weight:700; margin-bottom:6px; }
+.brand-title { font-size:20px; font-weight:900; color:#fff; line-height:1.2; }
+.brand-title span { color:var(--orange); }
+.brand-sub { color:var(--muted); font-size:12px; margin-top:5px; }
+.toc-title { font-size:11px; letter-spacing:1.5px; text-transform:uppercase; color:var(--muted); font-weight:700; margin:20px 0 8px; padding:0 8px; }
+.toc a { display:block; color:#9aaec8; text-decoration:none; padding:9px 12px; border-radius:10px; margin:2px 0; font-size:13.5px; font-weight:500; transition:all .2s; border-left:3px solid transparent; }
+.toc a:hover { background:rgba(56,217,245,.07); color:var(--cyan); border-left-color:var(--cyan); }
+.toc a.active { background:rgba(255,107,53,.1); color:var(--orange); border-left-color:var(--orange); }
+.ctrl-box { margin-top:24px; padding:14px; border:1px solid var(--border); border-radius:14px; background:rgba(255,255,255,.03); }
+.ctrl-box h4 { font-size:11px; letter-spacing:1px; text-transform:uppercase; color:var(--muted); margin-bottom:10px; }
+.ctrl-row { display:flex; gap:8px; margin-bottom:8px; }
+.ctrl-btn { flex:1; background:var(--panel2); border:1px solid var(--border); color:var(--text); border-radius:9px; padding:8px 6px; cursor:pointer; font-size:13px; font-weight:600; transition:all .2s; text-align:center; text-decoration:none; display:inline-block; }
+.ctrl-btn:hover { background:var(--border); color:#fff; }
+.progress-bar { height:4px; background:var(--panel2); border-radius:4px; overflow:hidden; margin-top:10px; }
+.progress-fill { height:100%; width:0%; background:linear-gradient(90deg,var(--cyan),var(--orange)); transition:width .3s; border-radius:4px; }
+.main { max-width:860px; margin:0 auto; padding:32px 28px 80px; }
+.hero { background:linear-gradient(135deg,#0f2040 0%,#0a1628 60%,#131020 100%); border:1px solid var(--border); border-radius:24px; padding:36px 40px; margin-bottom:28px; box-shadow:0 24px 80px rgba(0,0,0,.5); position:relative; overflow:hidden; }
+.hero::before { content:'12'; position:absolute; right:30px; top:20px; font-size:120px; font-weight:900; color:rgba(56,217,245,.05); line-height:1; user-select:none; }
+.chu-de-tag { display:inline-flex; align-items:center; gap:8px; background:rgba(56,217,245,.12); border:1px solid rgba(56,217,245,.3); color:var(--cyan); font-size:13px; font-weight:700; padding:6px 14px; border-radius:20px; margin-bottom:16px; letter-spacing:.5px; }
+.hero h1 { font-size:clamp(26px,4vw,38px); font-weight:900; line-height:1.2; background:linear-gradient(90deg,#fff 0%,var(--cyan2) 50%,var(--orange2) 100%); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; margin-bottom:14px; }
+.hero-desc { color:#b0c4de; font-size:15.5px; line-height:1.6; }
+.section { background:rgba(11,17,30,.9); border:1px solid var(--border); border-radius:20px; padding:28px 32px 36px; margin-bottom:24px; scroll-margin-top:20px; position:relative; transition:border-color .3s; }
+.section:hover { border-color:rgba(56,217,245,.2); }
+.page-num { position:absolute; right:20px; bottom:14px; color:var(--muted); font-size:12px; font-weight:600; background:var(--panel2); padding:3px 10px; border-radius:10px; }
+h2 { font-size:clamp(20px,2.5vw,26px); font-weight:800; color:#fff; margin:28px 0 14px; display:flex; align-items:center; gap:10px; }
+h2::before { content:''; display:inline-block; width:4px; height:24px; background:linear-gradient(var(--orange),var(--cyan)); border-radius:2px; flex-shrink:0; }
+p { color:#d0dcea; margin-bottom:14px; }
+p:last-child { margin-bottom:0; }
+strong { color:#fff; }
+em { color:var(--cyan2); font-style:italic; }
+code { background:rgba(255,255,255,0.08); color:var(--orange2); padding:2px 6px; border-radius:4px; font-size:0.9em; font-family:monospace; }
+ul, ol { padding-left:22px; margin:12px 0; }
+li { color:#c8d8ec; margin-bottom:8px; }
+li::marker { color:var(--cyan); }
+.info-box { background:linear-gradient(135deg,#071e2e,#071828); border:1px dashed rgba(56,217,245,.4); border-radius:14px; padding:18px 22px; margin:20px 0; }
+.info-box p, .info-box li { color:#b8d8f0; }
+.activity { background:linear-gradient(135deg,#1a120a,#130f0a); border:1px solid rgba(255,160,60,.3); border-left:4px solid var(--orange); border-radius:14px; padding:18px 22px; margin:20px 0; }
+.activity-badge { display:inline-flex; align-items:center; gap:6px; background:var(--orange); color:#1a0a00; font-size:12px; font-weight:800; padding:4px 12px; border-radius:6px; margin-bottom:10px; letter-spacing:.5px; text-transform:uppercase; }
+.ghi-nho { background:linear-gradient(135deg,#1a2a10,#0f1e0a); border:1px solid rgba(86,227,159,.3); border-left:4px solid var(--green); border-radius:14px; padding:20px 24px; margin:24px 0; }
+.ghi-nho-title { color:var(--green); font-weight:800; font-size:15px; text-transform:uppercase; letter-spacing:1px; margin-bottom:10px; display:flex; align-items:center; gap:8px; }
+.ghi-nho p, .ghi-nho li { color:#c8f0d8; }
+.nav-btns { display:flex; gap:12px; margin:20px 0; }
+.nav-btn { background:var(--panel); border:1px solid var(--border); color:var(--text); border-radius:10px; padding:10px 18px; text-decoration:none; font-size:14px; font-weight:600; transition:all .2s; flex:1; text-align:center; }
+.nav-btn:hover { background:var(--panel2); border-color:var(--cyan); color:#fff; }
+.field-grid { display:grid; grid-template-columns:1fr 1fr; gap:14px; margin:18px 0; }
+.field-card { background:var(--panel2); border:1px solid var(--border); border-radius:14px; padding:16px 18px; }
+.img-side { display:grid; grid-template-columns:1fr 1fr; gap:14px; margin:18px 0; }
+.img-half { border-radius:12px; border:1px solid var(--border); }
+@media (max-width: 860px) {
+  .app { grid-template-columns: 1fr; }
+  .sidebar { display: none; }
+  .main { padding: 20px 16px 60px; }
+  .field-grid, .img-side { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+
+<div class="app">
+
+<!-- SIDEBAR -->
+<aside class="sidebar">
+  <div class="brand-box">
+    <div class="series-label">KẾT NỐI TRI THỨC</div>
+    <div class="brand-title">TIN HỌC <span>12</span></div>
+    <div class="brand-sub">Sách Giáo Khoa Điện Tử (ICT)</div>
+  </div>
+
+  <div class="ctrl-box">
+    <h4>Cỡ chữ & Giao diện</h4>
+    <div class="ctrl-row">
+      <button class="ctrl-btn" onclick="changeFont(-1)">A -</button>
+      <button class="ctrl-btn" onclick="changeFont(1)">A +</button>
+      <button class="ctrl-btn" onclick="toggleTheme()">🌓 Nền</button>
+    </div>
+    <div style="font-size:12px; color:var(--muted); margin-top:8px;" id="prog-label">Tiến độ đọc: 0%</div>
+    <div class="progress-bar"><div class="progress-fill" id="prog"></div></div>
+  </div>
+
+  <div class="toc-title">Mục lục bài học</div>
+  <nav class="toc">
+    
+      <a href="#sec-1">1. Biểu mẫu web là gì</a>
+    
+      <a href="#sec-2">2. Nhãn và vùng nhập: label với input</a>
+    
+      <a href="#sec-3">3. Các loại dữ liệu (type) thông dụng</a>
+    
+      <a href="#sec-4">4. Danh sách chọn, vùng nhập nhiều dòng và nhóm phần tử</a>
+    
+      <a href="#sec-5">5. Thực hành: dựng một biểu mẫu hoàn chỉnh</a>
+    
+    <a href="#ghi-nho">📌 Ghi nhớ cốt lõi</a>
+  </nav>
+
+  <div class="ctrl-box" style="margin-top:20px;">
+    <h4>Luyện tập</h4>
+    <a href="/luyen/bai-12" class="ctrl-btn" style="background:var(--cyan); color:#000; font-weight:700;">🎯 Vào Luyện Trắc Nghiệm</a>
+  </div>
+</aside>
+
+<!-- MAIN CONTENT -->
+<main class="main">
+  <!-- HERO BANNER -->
+  <div class="hero">
+    <div class="chu-de-tag">Chủ đề 4. Thiết kế trang web (HTML & CSS)</div>
+    <h1>Biểu mẫu trong trang web</h1>
+    <div class="hero-desc">Từ Bài 7 đến Bài 11, trang web của em mới chỉ <strong>đưa thông tin ra</strong> cho người đọc xem. Bài này học chiều ngược lại: <strong>thu thập thông tin từ người dùng</strong> — ô đăng nhập, phiếu đăng kí, giỏ hàng… tất cả đều là <strong>biểu mẫu web</strong>.</div>
+  </div>
+
+  <!-- NÚT CHUYỂN BÀI -->
+  <div class="nav-btns">
+    <a href="/sgk/bai-11.html" class="nav-btn">← Chèn tệp đa phương tiện và khung nội tuyến</a>
+    <a href="/sgk/bai-13.html" class="nav-btn">CSS và định dạng trang web →</a>
+  </div>
+
+  <!-- CÁC MỤC NỘI DUNG -->
+  
+    <section class="section" id="sec-1">
+      <h2 id="heading-1">📋 1. Biểu mẫu web là gì</h2>
+      <p><strong>Biểu mẫu web</strong> hay <strong>phần tử <code>form</code></strong> của HTML là một công cụ dùng để <strong>thu thập dữ liệu</strong>. Dữ liệu được người dùng nhập vào form và <strong>xử lí tại chỗ hoặc gửi về máy chủ</strong>. Ta thường xuyên gặp các biểu mẫu (form) khi <strong>đăng kí tài khoản, mua hàng, tìm kiếm thông tin,…</strong></p>
+<p>Biểu mẫu web đầy đủ có <strong>hai thành phần</strong>:</p>
+
+        <div class="img-side">
+          <div class="img-half" style="background:rgba(242,104,60,0.08); border-color:rgba(242,104,60,0.3); padding:16px;">
+            <div style="font-weight:700; color:var(--orange); font-size:15px; margin-bottom:10px;">🖥️ Phần nhìn thấy</div>
+            <ul style="padding-left:18px;">
+              <li style="font-size:14px; margin-bottom:6px;">Là <strong>biểu mẫu hiển thị trên web</strong>, được tạo thành bởi các đoạn mã HTML.</li><li style="font-size:14px; margin-bottom:6px;">Dùng để người dùng <strong>nhập và gửi thông tin</strong>.</li><li style="font-size:14px; margin-bottom:6px;"><strong>Đây là phần Bài 12 học.</strong></li>
+            </ul>
+          </div>
+          <div class="img-half" style="background:rgba(56,217,245,0.08); border-color:rgba(56,217,245,0.3); padding:16px;">
+            <div style="font-weight:700; color:var(--cyan); font-size:15px; margin-bottom:10px;">⚙️ Phần xử lí</div>
+            <ul style="padding-left:18px;">
+              <li style="font-size:14px; margin-bottom:6px;">Là các <strong>ứng dụng hoặc script xử lí dữ liệu</strong>, thường nằm trên máy chủ.</li><li style="font-size:14px; margin-bottom:6px;"><strong>Không thuộc phạm vi ngôn ngữ HTML</strong> nên SGK không đề cập.</li><li style="font-size:14px; margin-bottom:6px;">Nhờ nó, dữ liệu em gõ mới được lưu lại và dùng tiếp.</li>
+            </ul>
+          </div>
+        </div>
+<p>Biểu mẫu web được tạo bởi <strong>thẻ <code><form></code></strong>, có cấu trúc chung như sau:</p>
+
+        <div style="background:#060b14; border:1px solid var(--border); border-radius:12px; overflow:hidden; margin:16px 0; font-family:monospace;">
+          <div style="background:rgba(255,255,255,0.05); padding:6px 14px; font-size:12px; color:var(--muted); border-bottom:1px solid var(--border);">💻 Cấu trúc chung của biểu mẫu</div>
+          <pre style="padding:14px 16px; margin:0; font-size:14px; line-height:1.6; color:#7ce8fa; overflow-x:auto;"><code>&lt;form&gt;
+các phần tử của biểu mẫu
+&lt;/form&gt;</code></pre>
+        </div>
+<p>Các phần tử của biểu mẫu thường dùng là: <strong><code>input</code>, <code>label</code>, <code>select</code>, <code>textarea</code></strong>; ngoài ra còn có các phần tử khác như <strong><code>fieldset</code>, <code>legend</code>, <code>datalist</code>,…</strong></p>
+
+        <div class="info-box">
+          <p>Người dùng web cung cấp thông tin cho trang web thông qua <strong>biểu mẫu</strong>. Biểu mẫu được định nghĩa bởi thẻ chứa nhiều loại phần tử tuỳ theo yêu cầu về thông tin cần thu thập, trong đó loại phần tử <strong>quan trọng nhất là <code>input</code></strong>.</p>
+        </div>
+      <div class="page-num">Trang 78-84</div>
+    </section>
+  
+
+    <section class="section" id="sec-2">
+      <h2 id="heading-2">🏷️ 2. Nhãn và vùng nhập: label với input</h2>
+      <p>Phần tử <strong><code>label</code></strong> định nghĩa <strong>nhãn</strong> — dòng chữ cho người dùng biết ô bên cạnh dùng để nhập cái gì. Cấu trúc:</p>
+
+        <div style="background:#060b14; border:1px solid var(--border); border-radius:12px; overflow:hidden; margin:16px 0; font-family:monospace;">
+          <div style="background:rgba(255,255,255,0.05); padding:6px 14px; font-size:12px; color:var(--muted); border-bottom:1px solid var(--border);">💻 Cú pháp thẻ label</div>
+          <pre style="padding:14px 16px; margin:0; font-size:14px; line-height:1.6; color:#7ce8fa; overflow-x:auto;"><code>&lt;label for="mã_định_danh_của_input_tương_ứng"&gt;Tên_nhãn&lt;/label&gt;</code></pre>
+        </div>
+<p><em>Đối chiếu với sách: dòng cú pháp này trong SGK in thiếu dấu <code>/</code> ở thẻ đóng. Chính ví dụ Hình 12.1 của sách viết đúng là <code></label></code> — em cứ viết có dấu <code>/</code> như trên.</em></p>
+<p>Về mặt hiển thị thì nhãn <strong>không có gì đặc biệt</strong>, tuy nhiên khi <strong>nháy chuột vào Tên_nhãn</strong>, con trỏ chuột sẽ <strong>được đưa vào vùng của phần tử <code>input</code></strong> được xác định bởi thuộc tính <strong><code>for</code></strong> tương ứng.</p>
+
+
+        <div style="background:#060b14; border:1px solid var(--border); border-radius:12px; overflow:hidden; margin:16px 0; font-family:monospace;">
+          <div style="background:rgba(255,255,255,0.05); padding:6px 14px; font-size:12px; color:var(--muted); border-bottom:1px solid var(--border);">💻 Thử ngay: nháy chuột vào chữ “Tên món ăn” trong khung bên — con trỏ tự nhảy vào ô nhập, dù em không bấm trúng ô</div>
+          <pre style="padding:14px 16px; margin:0; font-size:14px; line-height:1.6; color:#7ce8fa; overflow-x:auto;"><code>&lt;label for="monan"&gt;Tên món ăn&lt;/label&gt;
+&lt;input id="monan" type="text"&gt;</code></pre>
+        </div>
+<p>Phần tử <strong><code>input</code></strong> xác định <strong>vùng nhập dữ liệu</strong>. <code>input</code> xác định bởi <strong>thẻ đơn, không cần thẻ kết thúc</strong>. Cấu trúc:</p>
+
+        <div style="background:#060b14; border:1px solid var(--border); border-radius:12px; overflow:hidden; margin:16px 0; font-family:monospace;">
+          <div style="background:rgba(255,255,255,0.05); padding:6px 14px; font-size:12px; color:var(--muted); border-bottom:1px solid var(--border);">💻 Cú pháp thẻ input</div>
+          <pre style="padding:14px 16px; margin:0; font-size:14px; line-height:1.6; color:#7ce8fa; overflow-x:auto;"><code>&lt;input id="mã_định_danh" type="loại_input" name="tên_input"&gt;</code></pre>
+        </div>
+
+        <div class="field-grid">
+          
+            <div class="field-card">
+              <div class="icon">🔖</div>
+              <h4 style="margin:0 0 6px; color:var(--cyan2);">id — mã định danh</h4>
+              <p style="margin:0; font-size:14px; color:#b0c4de;">Dùng để <strong>thẻ <code>label</code> trỏ tới</strong> qua thuộc tính <code>for</code>. Giống như đặt tên riêng cho ô nhập để gọi đúng nó.</p>
+            </div>
+          
+
+            <div class="field-card">
+              <div class="icon">📮</div>
+              <h4 style="margin:0 0 6px; color:var(--cyan2);">name — tên input</h4>
+              <p style="margin:0; font-size:14px; color:#b0c4de;">Được sử dụng cho <code>input</code> khi <strong>thực hiện xử lí</strong>: <code>tên_input</code> dùng để <strong>tham chiếu tới dữ liệu đã nhập</strong> khi tính toán hay gửi tới máy chủ.</p>
+            </div>
+          
+
+            <div class="field-card">
+              <div class="icon">🎛️</div>
+              <h4 style="margin:0 0 6px; color:var(--cyan2);">type — loại dữ liệu</h4>
+              <p style="margin:0; font-size:14px; color:#b0c4de;">Xác định <strong>loại dữ liệu mà phần tử <code>input</code> chứa</strong> — chữ, mật khẩu, ô tích, nút bấm… Xem Bảng 12.1 ở mục sau.</p>
+            </div>
+          
+        </div>
+
+        <div class="info-box">
+          <p><em>Lưu ý:</em> Phần tử <strong><code>input</code> chỉ dùng để nhập dữ liệu</strong>, muốn có thông tin về nội dung nhập <strong>phải tạo kèm <code>label</code></strong>.</p>
+        </div>
+
+        <div class="cau-hoi" style="margin:16px 0; border:1px solid rgba(56,217,245,0.3); background:rgba(56,217,245,0.04); border-radius:14px; padding:16px 20px;">
+          <div class="q-num" style="background:var(--cyan); color:#000; font-weight:800; border-radius:50%; width:28px; height:28px; display:flex; align-items:center; justify-content:center; flex-shrink:0;">?</div>
+          <div style="flex:1;">
+            <div class="q-text" style="font-weight:600; color:#fff; font-size:15.5px; margin-bottom:10px;">Thuộc tính for của thẻ label phải được gán bằng giá trị nào?</div>
+            <div style="display:grid; grid-template-columns:1fr; gap:6px; margin-bottom:10px;">
+              
+                <div style="background:rgba(255,255,255,0.04); border:1px solid var(--border); border-radius:8px; padding:6px 12px; font-size:14px; color:#c8d8ec;">
+                  <b>A.</b> Tên hiển thị của nhãn trên trang web
+                </div>
+              
+                <div style="background:rgba(255,255,255,0.04); border:1px solid var(--border); border-radius:8px; padding:6px 12px; font-size:14px; color:#c8d8ec;">
+                  <b>B.</b> Giá trị thuộc tính id của thẻ input tương ứng
+                </div>
+              
+                <div style="background:rgba(255,255,255,0.04); border:1px solid var(--border); border-radius:8px; padding:6px 12px; font-size:14px; color:#c8d8ec;">
+                  <b>C.</b> Giá trị thuộc tính type của thẻ input đó
+                </div>
+              
+                <div style="background:rgba(255,255,255,0.04); border:1px solid var(--border); border-radius:8px; padding:6px 12px; font-size:14px; color:#c8d8ec;">
+                  <b>D.</b> Địa chỉ trang web sẽ nhận dữ liệu gửi đi
+                </div>
+              
+            </div>
+            <details style="margin-top:8px;">
+              <summary style="cursor:pointer; color:var(--cyan); font-size:13px; font-weight:600;">👉 Xem đáp án & giải thích</summary>
+              <div style="margin-top:6px; padding:8px 12px; background:rgba(86,227,159,0.1); border-left:3px solid var(--green); border-radius:6px; font-size:13.5px; color:#a3e635;">
+                <strong>Đáp án đúng: B</strong><br>
+                <span><code>for</code> của <code>label</code> phải trùng <strong><code>id</code></strong> của <code>input</code> tương ứng — đó là sợi dây nối nhãn với ô nhập. Nhờ vậy khi nháy chuột vào nhãn, con trỏ được đưa thẳng vào vùng nhập. Đừng nhầm với <code>name</code>: <code>name</code> dùng khi <strong>xử lí và gửi dữ liệu</strong>, còn <code>for</code> bắt cặp với <code>id</code>.</span>
+              </div>
+            </details>
+          </div>
+        </div>
+      <div class="page-num">Trang 78-84</div>
+    </section>
+  
+
+    <section class="section" id="sec-3">
+      <h2 id="heading-3">🎚️ 3. Các loại dữ liệu (type) thông dụng</h2>
+      <p>Thuộc tính <strong><code>type</code></strong> quyết định <code>input</code> hiện ra thành cái gì. Bảng 12.1 của SGK nêu <strong>bảy loại thông dụng</strong>:</p>
+
+        <div class="field-grid">
+          
+            <div class="field-card">
+              <div class="icon">🔤</div>
+              <h4 style="margin:0 0 6px; color:var(--cyan2);">text</h4>
+              <p style="margin:0; font-size:14px; color:#b0c4de;"><code>type="text"</code> — tạo ra <strong>trường nhập văn bản</strong>.</p>
+            </div>
+          
+
+            <div class="field-card">
+              <div class="icon">🔒</div>
+              <h4 style="margin:0 0 6px; color:var(--cyan2);">password</h4>
+              <p style="margin:0; font-size:14px; color:#b0c4de;"><code>type="password"</code> — tạo ra <strong>trường nhập mật khẩu</strong>, dùng để nhập văn bản nhưng <strong>bị che thông tin</strong>.</p>
+            </div>
+          
+
+            <div class="field-card">
+              <div class="icon">🔘</div>
+              <h4 style="margin:0 0 6px; color:var(--cyan2);">radio</h4>
+              <p style="margin:0; font-size:14px; color:#b0c4de;"><code>type="radio"</code> kèm <code>value="Nam"</code> — tạo ra ô <strong>chọn 1 giá trị duy nhất</strong> trong nhóm các ô <strong>cùng tên (<code>name</code>)</strong>.</p>
+            </div>
+          
+
+            <div class="field-card">
+              <div class="icon">☑️</div>
+              <h4 style="margin:0 0 6px; color:var(--cyan2);">checkbox</h4>
+              <p style="margin:0; font-size:14px; color:#b0c4de;"><code>type="checkbox"</code> kèm <code>value="Toán"</code> — tạo ra ô lựa chọn <strong>giá trị có hoặc không</strong>. Mỗi ô <code>radio</code> và <code>checkbox</code> <strong>cần thêm thuộc tính <code>value</code></strong> để ghi nhận giá trị.</p>
+            </div>
+          
+
+            <div class="field-card">
+              <div class="icon">🔲</div>
+              <h4 style="margin:0 0 6px; color:var(--cyan2);">button</h4>
+              <p style="margin:0; font-size:14px; color:#b0c4de;"><code>type="button"</code> — tạo <strong>một nút bấm</strong>. Cần thêm thuộc tính <code>value="tên hiện trên nút"</code>.</p>
+            </div>
+          
+
+            <div class="field-card">
+              <div class="icon">📎</div>
+              <h4 style="margin:0 0 6px; color:var(--cyan2);">file</h4>
+              <p style="margin:0; font-size:14px; color:#b0c4de;"><code>type="file"</code> — tạo ra nút để <strong>chọn một tệp tin và tải lên máy chủ</strong>.</p>
+            </div>
+          
+
+            <div class="field-card">
+              <div class="icon">📤</div>
+              <h4 style="margin:0 0 6px; color:var(--cyan2);">submit</h4>
+              <p style="margin:0; font-size:14px; color:#b0c4de;"><code>type="submit"</code> — tạo nút <strong>gửi thông tin đến máy chủ</strong>; trình duyệt sẽ gọi tới đường dẫn chỉ định tại thuộc tính <strong><code>action</code></strong> của thẻ <code><form></code>. Cần thêm <code>value</code> như <code>button</code>.</p>
+            </div>
+          
+        </div>
+
+        <div style="background:#060b14; border:1px solid var(--border); border-radius:12px; overflow:hidden; margin:16px 0; font-family:monospace;">
+          <div style="background:rgba(255,255,255,0.05); padding:6px 14px; font-size:12px; color:var(--muted); border-bottom:1px solid var(--border);">💻 Thử ngay cả bảy loại: gõ thử vào hai ô đầu, tích thử ô tròn và ô vuông để thấy chúng hoạt động khác nhau</div>
+          <pre style="padding:14px 16px; margin:0; font-size:14px; line-height:1.6; color:#7ce8fa; overflow-x:auto;"><code>&lt;label for="ten"&gt;Họ và tên&lt;/label&gt;
+&lt;input id="ten" type="text" name="hoten"&gt;&lt;br&gt;
+
+&lt;label for="mk"&gt;Mật khẩu&lt;/label&gt;
+&lt;input id="mk" type="password" name="matkhau"&gt;&lt;br&gt;&lt;br&gt;
+
+Giới tính:
+&lt;input type="radio" name="gt" value="Nam"&gt; Nam
+&lt;input type="radio" name="gt" value="Nữ"&gt; Nữ &lt;br&gt;
+
+Môn thi:
+&lt;input type="checkbox" name="mon" value="Toán"&gt; Toán
+&lt;input type="checkbox" name="mon" value="Văn"&gt; Văn &lt;br&gt;&lt;br&gt;
+
+&lt;input type="file"&gt;
+&lt;input type="button" value="Nút"&gt;
+&lt;input type="submit" value="Gửi thông tin"&gt;</code></pre>
+        </div>
+
+
+        <div class="activity">
+          <div class="activity-badge">💡 Vì sao hai ô radio phải cùng name?</div>
+          <p>Trong khung thử ở trên, hai ô <strong>Nam / Nữ</strong> cùng <code>name="gt"</code> nên <strong>chọn ô này thì ô kia tự bỏ</strong> — đúng nghĩa "chọn một giá trị duy nhất". Còn hai ô <strong>Toán / Văn</strong> là <code>checkbox</code>, mỗi ô là một câu hỏi riêng <strong>có hoặc không</strong>, nên <strong>tích cả hai cũng được</strong>. Nếu em đặt hai ô radio khác <code>name</code> nhau, chúng sẽ <strong>không loại trừ nhau nữa</strong> — tích được cả hai, sai ý đồ.</p>
+        </div>
+
+        <div class="cau-hoi" style="margin:16px 0; border:1px solid rgba(56,217,245,0.3); background:rgba(56,217,245,0.04); border-radius:14px; padding:16px 20px;">
+          <div class="q-num" style="background:var(--cyan); color:#000; font-weight:800; border-radius:50%; width:28px; height:28px; display:flex; align-items:center; justify-content:center; flex-shrink:0;">?</div>
+          <div style="flex:1;">
+            <div class="q-text" style="font-weight:600; color:#fff; font-size:15.5px; margin-bottom:10px;">Muốn người dùng chọn được nhiều môn học cùng lúc (Toán, Văn, Ngoại ngữ) thì dùng loại input nào?</div>
+            <div style="display:grid; grid-template-columns:1fr; gap:6px; margin-bottom:10px;">
+              
+                <div style="background:rgba(255,255,255,0.04); border:1px solid var(--border); border-radius:8px; padding:6px 12px; font-size:14px; color:#c8d8ec;">
+                  <b>A.</b> type="radio" và đặt cùng một name
+                </div>
+              
+                <div style="background:rgba(255,255,255,0.04); border:1px solid var(--border); border-radius:8px; padding:6px 12px; font-size:14px; color:#c8d8ec;">
+                  <b>B.</b> type="checkbox" cho mỗi môn học
+                </div>
+              
+                <div style="background:rgba(255,255,255,0.04); border:1px solid var(--border); border-radius:8px; padding:6px 12px; font-size:14px; color:#c8d8ec;">
+                  <b>C.</b> type="password" để che bớt thông tin
+                </div>
+              
+                <div style="background:rgba(255,255,255,0.04); border:1px solid var(--border); border-radius:8px; padding:6px 12px; font-size:14px; color:#c8d8ec;">
+                  <b>D.</b> type="submit" rồi bấm nhiều lần liên tiếp
+                </div>
+              
+            </div>
+            <details style="margin-top:8px;">
+              <summary style="cursor:pointer; color:var(--cyan); font-size:13px; font-weight:600;">👉 Xem đáp án & giải thích</summary>
+              <div style="margin-top:6px; padding:8px 12px; background:rgba(86,227,159,0.1); border-left:3px solid var(--green); border-radius:6px; font-size:13.5px; color:#a3e635;">
+                <strong>Đáp án đúng: B</strong><br>
+                <span><strong><code>checkbox</code></strong> tạo ô lựa chọn <strong>giá trị có hoặc không</strong>, mỗi ô độc lập nên tích được nhiều môn cùng lúc. <code>radio</code> cùng <code>name</code> thì ngược lại — <strong>chỉ chọn được một</strong>, chọn ô này ô kia tự bỏ, nên không dùng cho trường hợp nhiều lựa chọn.</span>
+              </div>
+            </details>
+          </div>
+        </div>
+
+        <div class="cau-hoi" style="margin:16px 0; border:1px solid rgba(56,217,245,0.3); background:rgba(56,217,245,0.04); border-radius:14px; padding:16px 20px;">
+          <div class="q-num" style="background:var(--cyan); color:#000; font-weight:800; border-radius:50%; width:28px; height:28px; display:flex; align-items:center; justify-content:center; flex-shrink:0;">?</div>
+          <div style="flex:1;">
+            <div class="q-text" style="font-weight:600; color:#fff; font-size:15.5px; margin-bottom:10px;">Ô radio và ô checkbox bắt buộc phải thêm thuộc tính nào để ghi nhận giá trị?</div>
+            <div style="display:grid; grid-template-columns:1fr; gap:6px; margin-bottom:10px;">
+              
+                <div style="background:rgba(255,255,255,0.04); border:1px solid var(--border); border-radius:8px; padding:6px 12px; font-size:14px; color:#c8d8ec;">
+                  <b>A.</b> value
+                </div>
+              
+                <div style="background:rgba(255,255,255,0.04); border:1px solid var(--border); border-radius:8px; padding:6px 12px; font-size:14px; color:#c8d8ec;">
+                  <b>B.</b> for
+                </div>
+              
+                <div style="background:rgba(255,255,255,0.04); border:1px solid var(--border); border-radius:8px; padding:6px 12px; font-size:14px; color:#c8d8ec;">
+                  <b>C.</b> rows
+                </div>
+              
+                <div style="background:rgba(255,255,255,0.04); border:1px solid var(--border); border-radius:8px; padding:6px 12px; font-size:14px; color:#c8d8ec;">
+                  <b>D.</b> action
+                </div>
+              
+            </div>
+            <details style="margin-top:8px;">
+              <summary style="cursor:pointer; color:var(--cyan); font-size:13px; font-weight:600;">👉 Xem đáp án & giải thích</summary>
+              <div style="margin-top:6px; padding:8px 12px; background:rgba(86,227,159,0.1); border-left:3px solid var(--green); border-radius:6px; font-size:13.5px; color:#a3e635;">
+                <strong>Đáp án đúng: A</strong><br>
+                <span>SGK ghi rõ trong Bảng 12.1: mỗi ô <code>radio</code> và ô <code>checkbox</code> <strong>cần thêm thuộc tính <code>value</code></strong> để ghi nhận giá trị — nếu không, máy chủ biết ô được tích nhưng không biết nó mang giá trị gì. <code>for</code> là của <code>label</code>, <code>rows</code> là của <code>textarea</code>, <code>action</code> là của <code>form</code>.</span>
+              </div>
+            </details>
+          </div>
+        </div>
+      <div class="page-num">Trang 78-84</div>
+    </section>
+  
+
+    <section class="section" id="sec-4">
+      <h2 id="heading-4">🗂️ 4. Danh sách chọn, vùng nhập nhiều dòng và nhóm phần tử</h2>
+      <p>Phần tử <strong><code>select</code></strong> có tác dụng cho phép người dùng <strong>chọn một trong các lựa chọn trong danh sách thả xuống</strong>. Phần tử <code>select</code> chứa nhiều thẻ <strong><code>option</code></strong>, mỗi cặp định nghĩa một lựa chọn trong danh sách.</p>
+
+        <div style="background:#060b14; border:1px solid var(--border); border-radius:12px; overflow:hidden; margin:16px 0; font-family:monospace;">
+          <div style="background:rgba(255,255,255,0.05); padding:6px 14px; font-size:12px; color:var(--muted); border-bottom:1px solid var(--border);">💻 Cú pháp phần tử select</div>
+          <pre style="padding:14px 16px; margin:0; font-size:14px; line-height:1.6; color:#7ce8fa; overflow-x:auto;"><code>&lt;select id="mã_định_danh" name="tên_select"&gt;
+   &lt;option value="giá_trị"&gt;giá_trị_lựa_chọn&lt;/option&gt;
+   …
+&lt;/select&gt;</code></pre>
+        </div>
+
+        <div style="background:#060b14; border:1px solid var(--border); border-radius:12px; overflow:hidden; margin:16px 0; font-family:monospace;">
+          <div style="background:rgba(255,255,255,0.05); padding:6px 14px; font-size:12px; color:var(--muted); border-bottom:1px solid var(--border);">💻 Hình 12.1 SGK — thử bấm vào danh sách trong khung bên để thả xuống chọn lớp</div>
+          <pre style="padding:14px 16px; margin:0; font-size:14px; line-height:1.6; color:#7ce8fa; overflow-x:auto;"><code>&lt;label for="class"&gt;Lớp:&lt;/label&gt;
+&lt;select id="class" name="class"&gt;
+    &lt;option value="10"&gt;10&lt;/option&gt;
+    &lt;option value="11"&gt;11&lt;/option&gt;
+    &lt;option value="12"&gt;12&lt;/option&gt;
+&lt;/select&gt;</code></pre>
+        </div>
+<p>Phần tử <strong><code>textarea</code></strong> xác định một <strong>vùng nhập văn bản có nhiều dòng và cột</strong>. Cấu trúc:</p>
+
+        <div style="background:#060b14; border:1px solid var(--border); border-radius:12px; overflow:hidden; margin:16px 0; font-family:monospace;">
+          <div style="background:rgba(255,255,255,0.05); padding:6px 14px; font-size:12px; color:var(--muted); border-bottom:1px solid var(--border);">💻 Cú pháp phần tử textarea</div>
+          <pre style="padding:14px 16px; margin:0; font-size:14px; line-height:1.6; color:#7ce8fa; overflow-x:auto;"><code>&lt;textarea id="mã_định_danh" name="tên_textarea" rows="số_dòng" cols="số_cột"&gt;Nội_dung&lt;/textarea&gt;</code></pre>
+        </div>
+
+        <div class="info-box">
+          <p><em>Lưu ý:</em> Phần <strong><code>Nội_dung</code></strong> được <strong>hiển thị sẵn trong vùng nhập</strong>; nếu không để <code>Nội_dung</code> trong thẻ thì vùng nhập văn bản là <strong>vùng trắng</strong>.</p>
+        </div>
+
+        <div style="background:#060b14; border:1px solid var(--border); border-radius:12px; overflow:hidden; margin:16px 0; font-family:monospace;">
+          <div style="background:rgba(255,255,255,0.05); padding:6px 14px; font-size:12px; color:var(--muted); border-bottom:1px solid var(--border);">💻 Thử ngay: khung dưới có hai vùng nhập — vùng trái có sẵn chữ, vùng phải để trắng. Em gõ thử vào cả hai và kéo góc dưới bên phải để đổi kích thước</div>
+          <pre style="padding:14px 16px; margin:0; font-size:14px; line-height:1.6; color:#7ce8fa; overflow-x:auto;"><code>&lt;textarea rows="3" cols="22"&gt;Món ăn rất ngon!&lt;/textarea&gt;
+&lt;textarea rows="3" cols="22"&gt;&lt;/textarea&gt;</code></pre>
+        </div>
+<p>Phần tử <strong><code>fieldset</code></strong> được dùng để <strong>nhóm các phần tử có liên quan</strong> trong biểu mẫu bằng cách <strong>vẽ một hình chữ nhật bao quanh</strong> các phần tử đặt trong cặp thẻ <code><fieldset>…</fieldset></code>. Ta có thể <strong>thêm tên cho nhóm</strong> bằng cách đặt phần tử <strong><code>legend</code></strong> trong phần tử <code>fieldset</code> tương ứng.</p>
+
+        <div style="background:#060b14; border:1px solid var(--border); border-radius:12px; overflow:hidden; margin:16px 0; font-family:monospace;">
+          <div style="background:rgba(255,255,255,0.05); padding:6px 14px; font-size:12px; color:var(--muted); border-bottom:1px solid var(--border);">💻 Thử ngay: khung viền và dòng chữ “Thông tin thí sinh” nằm trên viền chính là fieldset và legend</div>
+          <pre style="padding:14px 16px; margin:0; font-size:14px; line-height:1.6; color:#7ce8fa; overflow-x:auto;"><code>&lt;fieldset&gt;
+  &lt;legend&gt;Thông tin thí sinh&lt;/legend&gt;
+  &lt;label for="ht"&gt;Họ và tên&lt;/label&gt;
+  &lt;input id="ht" type="text"&gt;&lt;br&gt;
+  &lt;label for="ns"&gt;Ngày sinh&lt;/label&gt;
+  &lt;input id="ns" type="date"&gt;
+&lt;/fieldset&gt;</code></pre>
+        </div>
+
+        <div class="cau-hoi" style="margin:16px 0; border:1px solid rgba(56,217,245,0.3); background:rgba(56,217,245,0.04); border-radius:14px; padding:16px 20px;">
+          <div class="q-num" style="background:var(--cyan); color:#000; font-weight:800; border-radius:50%; width:28px; height:28px; display:flex; align-items:center; justify-content:center; flex-shrink:0;">?</div>
+          <div style="flex:1;">
+            <div class="q-text" style="font-weight:600; color:#fff; font-size:15.5px; margin-bottom:10px;">Phần nội dung viết giữa cặp thẻ textarea có tác dụng gì?</div>
+            <div style="display:grid; grid-template-columns:1fr; gap:6px; margin-bottom:10px;">
+              
+                <div style="background:rgba(255,255,255,0.04); border:1px solid var(--border); border-radius:8px; padding:6px 12px; font-size:14px; color:#c8d8ec;">
+                  <b>A.</b> Đặt tên nhóm hiển thị ngay trên đường viền
+                </div>
+              
+                <div style="background:rgba(255,255,255,0.04); border:1px solid var(--border); border-radius:8px; padding:6px 12px; font-size:14px; color:#c8d8ec;">
+                  <b>B.</b> Hiển thị sẵn trong vùng nhập văn bản đó
+                </div>
+              
+                <div style="background:rgba(255,255,255,0.04); border:1px solid var(--border); border-radius:8px; padding:6px 12px; font-size:14px; color:#c8d8ec;">
+                  <b>C.</b> Quy định số dòng và số cột của vùng nhập
+                </div>
+              
+                <div style="background:rgba(255,255,255,0.04); border:1px solid var(--border); border-radius:8px; padding:6px 12px; font-size:14px; color:#c8d8ec;">
+                  <b>D.</b> Gán nhãn cho vùng nhập giống thẻ label
+                </div>
+              
+            </div>
+            <details style="margin-top:8px;">
+              <summary style="cursor:pointer; color:var(--cyan); font-size:13px; font-weight:600;">👉 Xem đáp án & giải thích</summary>
+              <div style="margin-top:6px; padding:8px 12px; background:rgba(86,227,159,0.1); border-left:3px solid var(--green); border-radius:6px; font-size:13.5px; color:#a3e635;">
+                <strong>Đáp án đúng: B</strong><br>
+                <span>SGK lưu ý: phần <code>Nội_dung</code> <strong>được hiển thị trong vùng nhập</strong>; nếu không để <code>Nội_dung</code> trong thẻ thì vùng nhập là <strong>vùng trắng</strong>. Số dòng và số cột do <code>rows</code> và <code>cols</code> quy định; đặt tên nhóm trên đường viền là việc của <code>legend</code>.</span>
+              </div>
+            </details>
+          </div>
+        </div>
+
+        <div class="cau-hoi" style="margin:16px 0; border:1px solid rgba(56,217,245,0.3); background:rgba(56,217,245,0.04); border-radius:14px; padding:16px 20px;">
+          <div class="q-num" style="background:var(--cyan); color:#000; font-weight:800; border-radius:50%; width:28px; height:28px; display:flex; align-items:center; justify-content:center; flex-shrink:0;">?</div>
+          <div style="flex:1;">
+            <div class="q-text" style="font-weight:600; color:#fff; font-size:15.5px; margin-bottom:10px;">Muốn vẽ một khung bao quanh nhóm phần tử liên quan trong biểu mẫu, ta dùng cặp thẻ nào?</div>
+            <div style="display:grid; grid-template-columns:1fr; gap:6px; margin-bottom:10px;">
+              
+                <div style="background:rgba(255,255,255,0.04); border:1px solid var(--border); border-radius:8px; padding:6px 12px; font-size:14px; color:#c8d8ec;">
+                  <b>A.</b> <select> và <option>
+                </div>
+              
+                <div style="background:rgba(255,255,255,0.04); border:1px solid var(--border); border-radius:8px; padding:6px 12px; font-size:14px; color:#c8d8ec;">
+                  <b>B.</b> <fieldset> và <legend>
+                </div>
+              
+                <div style="background:rgba(255,255,255,0.04); border:1px solid var(--border); border-radius:8px; padding:6px 12px; font-size:14px; color:#c8d8ec;">
+                  <b>C.</b> <form> và <label>
+                </div>
+              
+                <div style="background:rgba(255,255,255,0.04); border:1px solid var(--border); border-radius:8px; padding:6px 12px; font-size:14px; color:#c8d8ec;">
+                  <b>D.</b> <textarea> và <input>
+                </div>
+              
+            </div>
+            <details style="margin-top:8px;">
+              <summary style="cursor:pointer; color:var(--cyan); font-size:13px; font-weight:600;">👉 Xem đáp án & giải thích</summary>
+              <div style="margin-top:6px; padding:8px 12px; background:rgba(86,227,159,0.1); border-left:3px solid var(--green); border-radius:6px; font-size:13.5px; color:#a3e635;">
+                <strong>Đáp án đúng: B</strong><br>
+                <span><strong><code>fieldset</code></strong> vẽ hình chữ nhật bao quanh các phần tử đặt trong cặp thẻ <code><fieldset>…</fieldset></code>, còn <strong><code>legend</code></strong> đặt bên trong <code>fieldset</code> để <strong>thêm tên cho nhóm</strong> — tên này hiện ngay trên đường viền.</span>
+              </div>
+            </details>
+          </div>
+        </div>
+      <div class="page-num">Trang 78-84</div>
+    </section>
+  
+
+    <section class="section" id="sec-5">
+      <h2 id="heading-5">🧑‍🍳 5. Thực hành: dựng một biểu mẫu hoàn chỉnh</h2>
+      <p><strong>Nhiệm vụ 1 của SGK:</strong> tạo biểu mẫu để nhập thông tin các món ăn (Hình 12.2). Làm theo ba bước:</p>
+
+        <div class="steps-container" style="display:flex; flex-direction:column; gap:12px; margin:16px 0;">
+          
+            <div style="background:var(--panel2); border-left:4px solid var(--cyan); border-radius:10px; padding:12px 16px;">
+              <div style="display:flex; gap:8px; align-items:center; margin-bottom:4px;">
+                <span style="background:var(--cyan); color:#000; font-weight:800; font-size:11px; padding:2px 8px; border-radius:12px;">1</span>
+                <strong style="color:var(--text); font-size:15px;">Tạo tiêu đề cho biểu mẫu</strong>
+              </div>
+              <p style="margin:0; font-size:14.5px; color:#b0c4de;">Dùng thẻ heading: <code><h2>Thông tin món ăn</h2></code>.</p>
+            </div>
+          
+
+            <div style="background:var(--panel2); border-left:4px solid var(--cyan); border-radius:10px; padding:12px 16px;">
+              <div style="display:flex; gap:8px; align-items:center; margin-bottom:4px;">
+                <span style="background:var(--cyan); color:#000; font-weight:800; font-size:11px; padding:2px 8px; border-radius:12px;">2</span>
+                <strong style="color:var(--text); font-size:15px;">Tạo biểu mẫu</strong>
+              </div>
+              <p style="margin:0; font-size:14.5px; color:#b0c4de;">Tạo một biểu mẫu bằng cặp thẻ <code><form></form></code>.</p>
+            </div>
+          
+
+            <div style="background:var(--panel2); border-left:4px solid var(--cyan); border-radius:10px; padding:12px 16px;">
+              <div style="display:flex; gap:8px; align-items:center; margin-bottom:4px;">
+                <span style="background:var(--cyan); color:#000; font-weight:800; font-size:11px; padding:2px 8px; border-radius:12px;">3</span>
+                <strong style="color:var(--text); font-size:15px;">Tạo ba cặp label và input</strong>
+              </div>
+              <p style="margin:0; font-size:14.5px; color:#b0c4de;">Trong cặp thẻ <code><form></code>, lần lượt tạo ba cặp <code>label</code> và <code>input</code>. Mỗi thẻ <code><input></code>, ngoài <code>type</code> để xác định kiểu dữ liệu, <strong>cần thiết lập mã định danh bằng <code>id</code></strong> để liên kết với thẻ <code><label></code> tương ứng. Muốn mỗi <code>label</code> xuống dòng mới thì <strong>thêm thẻ <code><br></code> vào trước thẻ <code><label></code></strong> tương ứng.</p>
+            </div>
+          
+        </div>
+
+        <div style="background:#060b14; border:1px solid var(--border); border-radius:12px; overflow:hidden; margin:16px 0; font-family:monospace;">
+          <div style="background:rgba(255,255,255,0.05); padding:6px 14px; font-size:12px; color:var(--muted); border-bottom:1px solid var(--border);">💻 Hình 12.2 SGK — biểu mẫu Thông tin món ăn. Thử gõ vào cả ba ô trong khung bên</div>
+          <pre style="padding:14px 16px; margin:0; font-size:14px; line-height:1.6; color:#7ce8fa; overflow-x:auto;"><code>&lt;h2&gt;Thông tin món ăn&lt;/h2&gt;
+&lt;form&gt;
+  &lt;label for="monan"&gt;Tên món ăn&lt;/label&gt;
+  &lt;input id="monan" type="text"&gt;
+  &lt;br&gt;&lt;label for="gia"&gt;Đơn giá&lt;/label&gt;
+  &lt;input id="gia" type="number"&gt;
+  &lt;br&gt;&lt;label for="sl"&gt;Số lượng&lt;/label&gt;
+  &lt;input id="sl" type="number"&gt;
+&lt;/form&gt;</code></pre>
+        </div>
+<p><strong>Nhiệm vụ 2 của SGK:</strong> tạo biểu mẫu đăng kí môn thi tốt nghiệp (Hình 12.3). <strong>Bước 1</strong> là xác định thông tin cần cung cấp và chọn đúng loại <code>input</code> cho từng thứ:</p>
+
+        <ul>
+          <li><strong>Họ và tên</strong>: <code>type="text"</code></li>
+<li><strong>Số căn cước công dân</strong>: <code>type="number"</code></li>
+<li><strong>Ngày sinh</strong>: <code>type="date"</code></li>
+<li><strong>Giới tính</strong>: chọn một trong hai giá trị → <code>type="radio"</code> (hoặc phần tử <code>select</code>)</li>
+<li><strong>Các môn Toán, Văn, Ngoại ngữ</strong>: giá trị có hoặc không → <code>type="checkbox"</code></li>
+<li><strong>Tổ hợp môn Khoa học tự nhiên hoặc Khoa học xã hội</strong>: chọn một trong hai → <code>type="radio"</code> (hoặc phần tử <code>select</code>)</li>
+<li><strong>Nút gửi thông tin</strong>: <code>type="submit" value="Gửi thông tin"</code></li>
+        </ul>
+<p><strong>Bước 2:</strong> lần lượt tạo các phần tử đã phân tích ở trên theo cấu trúc đã học. <strong>Bước 3:</strong> để biểu mẫu dễ nhìn, bổ sung thêm <strong>tiêu đề bằng thẻ <code><h1></code></strong> và <strong>nhóm các thông tin bằng thẻ <code><fieldset></code></strong> — đặt tất cả các câu lệnh hiển thị các phần tử nằm trong khung vào giữa cặp thẻ <code><fieldset>…</fieldset></code>.</p>
+
+        <div style="background:#060b14; border:1px solid var(--border); border-radius:12px; overflow:hidden; margin:16px 0; font-family:monospace;">
+          <div style="background:rgba(255,255,255,0.05); padding:6px 14px; font-size:12px; color:var(--muted); border-bottom:1px solid var(--border);">💻 Hình 12.3 SGK — biểu mẫu đăng kí môn thi tốt nghiệp, ghép đủ cả sáu loại phần tử đã học. Khung bên chạy thật: gõ, tích ô, chọn ngày, thả danh sách đều được</div>
+          <pre style="padding:14px 16px; margin:0; font-size:14px; line-height:1.6; color:#7ce8fa; overflow-x:auto;"><code>&lt;h1&gt;Đăng kí môn thi tốt nghiệp&lt;/h1&gt;
+&lt;form&gt;
+&lt;fieldset&gt;
+  &lt;label for="ht"&gt;Họ và tên:&lt;/label&gt;
+  &lt;input id="ht" type="text" name="hoten"&gt;
+
+  &lt;br&gt;&lt;label for="cccd"&gt;CCCD:&lt;/label&gt;
+  &lt;input id="cccd" type="number" name="cccd"&gt;
+
+  &lt;br&gt;&lt;label for="ns"&gt;Ngày sinh:&lt;/label&gt;
+  &lt;input id="ns" type="date" name="ngaysinh"&gt;
+
+  &lt;br&gt;&lt;br&gt;Giới tính:
+  &lt;input type="radio" name="gt" value="Nam"&gt; Nam
+  &lt;input type="radio" name="gt" value="Nữ"&gt; Nữ
+
+  &lt;br&gt;&lt;br&gt;Môn thi:
+  &lt;br&gt;&lt;input type="checkbox" name="mon" value="Toán"&gt; Toán
+  &lt;input type="checkbox" name="mon" value="Văn"&gt; Văn
+  &lt;input type="checkbox" name="mon" value="Ngoại ngữ"&gt; Ngoại ngữ
+
+  &lt;br&gt;&lt;br&gt;&lt;label for="th"&gt;Tổ hợp&lt;/label&gt;
+  &lt;select id="th" name="tohop"&gt;
+    &lt;option value="KHTN"&gt;Khoa học tự nhiên&lt;/option&gt;
+    &lt;option value="KHXH"&gt;Khoa học xã hội&lt;/option&gt;
+  &lt;/select&gt;
+
+  &lt;br&gt;&lt;br&gt;&lt;input type="submit" value="Gửi thông tin"&gt;
+&lt;/fieldset&gt;
+&lt;/form&gt;</code></pre>
+        </div>
+
+
+        <div class="cau-hoi" style="margin:16px 0; border:1px solid rgba(56,217,245,0.3); background:rgba(56,217,245,0.04); border-radius:14px; padding:16px 20px;">
+          <div class="q-num" style="background:var(--cyan); color:#000; font-weight:800; border-radius:50%; width:28px; height:28px; display:flex; align-items:center; justify-content:center; flex-shrink:0;">?</div>
+          <div style="flex:1;">
+            <div class="q-text" style="font-weight:600; color:#fff; font-size:15.5px; margin-bottom:10px;">Trong biểu mẫu đăng kí môn thi, vì sao Ngày sinh nên dùng type="date" thay vì type="text"?</div>
+            <div style="display:grid; grid-template-columns:1fr; gap:6px; margin-bottom:10px;">
+              
+                <div style="background:rgba(255,255,255,0.04); border:1px solid var(--border); border-radius:8px; padding:6px 12px; font-size:14px; color:#c8d8ec;">
+                  <b>A.</b> Vì type="text" không cho gõ chữ số vào trong ô
+                </div>
+              
+                <div style="background:rgba(255,255,255,0.04); border:1px solid var(--border); border-radius:8px; padding:6px 12px; font-size:14px; color:#c8d8ec;">
+                  <b>B.</b> Vì date cho chọn ngày trên lịch, đỡ nhập sai định dạng
+                </div>
+              
+                <div style="background:rgba(255,255,255,0.04); border:1px solid var(--border); border-radius:8px; padding:6px 12px; font-size:14px; color:#c8d8ec;">
+                  <b>C.</b> Vì thẻ input bắt buộc phải khai báo type là date
+                </div>
+              
+                <div style="background:rgba(255,255,255,0.04); border:1px solid var(--border); border-radius:8px; padding:6px 12px; font-size:14px; color:#c8d8ec;">
+                  <b>D.</b> Vì chỉ có type="date" mới gửi được về máy chủ
+                </div>
+              
+            </div>
+            <details style="margin-top:8px;">
+              <summary style="cursor:pointer; color:var(--cyan); font-size:13px; font-weight:600;">👉 Xem đáp án & giải thích</summary>
+              <div style="margin-top:6px; padding:8px 12px; background:rgba(86,227,159,0.1); border-left:3px solid var(--green); border-radius:6px; font-size:13.5px; color:#a3e635;">
+                <strong>Đáp án đúng: B</strong><br>
+                <span><code>type="date"</code> hiện sẵn <strong>ô chọn ngày theo lịch</strong> nên người dùng khó nhập sai định dạng, và dữ liệu gửi đi thống nhất. <code>type="text"</code> vẫn gõ được chữ số bình thường và vẫn gửi được, chỉ là mỗi người viết ngày một kiểu (1/2, 01-02, 2 tháng 1…) rất khó xử lí.</span>
+              </div>
+            </details>
+          </div>
+        </div>
+
+        <div class="cau-hoi" style="margin:16px 0; border:1px solid rgba(56,217,245,0.3); background:rgba(56,217,245,0.04); border-radius:14px; padding:16px 20px;">
+          <div class="q-num" style="background:var(--cyan); color:#000; font-weight:800; border-radius:50%; width:28px; height:28px; display:flex; align-items:center; justify-content:center; flex-shrink:0;">?</div>
+          <div style="flex:1;">
+            <div class="q-text" style="font-weight:600; color:#fff; font-size:15.5px; margin-bottom:10px;">Khi người dùng bấm nút type="submit", trình duyệt gửi dữ liệu tới đâu?</div>
+            <div style="display:grid; grid-template-columns:1fr; gap:6px; margin-bottom:10px;">
+              
+                <div style="background:rgba(255,255,255,0.04); border:1px solid var(--border); border-radius:8px; padding:6px 12px; font-size:14px; color:#c8d8ec;">
+                  <b>A.</b> Tới địa chỉ ghi ở thuộc tính action của thẻ form
+                </div>
+              
+                <div style="background:rgba(255,255,255,0.04); border:1px solid var(--border); border-radius:8px; padding:6px 12px; font-size:14px; color:#c8d8ec;">
+                  <b>B.</b> Tới địa chỉ ghi ở thuộc tính name của nút submit
+                </div>
+              
+                <div style="background:rgba(255,255,255,0.04); border:1px solid var(--border); border-radius:8px; padding:6px 12px; font-size:14px; color:#c8d8ec;">
+                  <b>C.</b> Tới chính trang web đang mở, không thể đổi khác
+                </div>
+              
+                <div style="background:rgba(255,255,255,0.04); border:1px solid var(--border); border-radius:8px; padding:6px 12px; font-size:14px; color:#c8d8ec;">
+                  <b>D.</b> Tới thư mục chứa tệp HTML ở trên máy của mình
+                </div>
+              
+            </div>
+            <details style="margin-top:8px;">
+              <summary style="cursor:pointer; color:var(--cyan); font-size:13px; font-weight:600;">👉 Xem đáp án & giải thích</summary>
+              <div style="margin-top:6px; padding:8px 12px; background:rgba(86,227,159,0.1); border-left:3px solid var(--green); border-radius:6px; font-size:13.5px; color:#a3e635;">
+                <strong>Đáp án đúng: A</strong><br>
+                <span>SGK ghi trong Bảng 12.1: nút <code>submit</code> gửi thông tin đến máy chủ, <strong>trình duyệt sẽ gọi tới đường dẫn chỉ định tại thuộc tính <code>action</code> của thẻ <code><form></code></strong>. Việc nhận và xử lí dữ liệu ở đầu kia là do ứng dụng/script trên máy chủ đảm nhiệm — phần này không thuộc HTML.</span>
+              </div>
+            </details>
+          </div>
+        </div>
+      <div class="page-num">Trang 78-84</div>
+    </section>
+  
+
+  <!-- HỘP GHI NHỚ CUỐI BÀI -->
+  <section class="section" id="ghi-nho">
+    <div class="ghi-nho">
+      <div class="ghi-nho-title">📌 Em cần ghi nhớ</div>
+      <ul style="padding-left:20px;">
+        <li style="font-size:15.5px; line-height:1.7; margin-bottom:10px;"><strong>Biểu mẫu web</strong> (<code><form></code>) dùng để <strong>thu thập dữ liệu</strong> từ người dùng; phần xử lí dữ liệu nằm trên máy chủ, không thuộc HTML.</li>
+<li style="font-size:15.5px; line-height:1.7; margin-bottom:10px;"><strong><code>label</code></strong> tạo nhãn, <strong><code>for</code> của label phải trùng <code>id</code> của input</strong> thì nháy vào nhãn mới nhảy được vào ô nhập.</li>
+<li style="font-size:15.5px; line-height:1.7; margin-bottom:10px;"><strong><code>input</code></strong> là thẻ đơn, quan trọng nhất trong biểu mẫu: <code>id</code> để label trỏ tới, <strong><code>name</code> để xử lí và gửi dữ liệu</strong>, <code>type</code> quyết định loại dữ liệu.</li>
+<li style="font-size:15.5px; line-height:1.7; margin-bottom:10px;">Bảy <code>type</code> thông dụng: <strong>text, password, radio, checkbox, button, file, submit</strong>. Ô <code>radio</code> và <code>checkbox</code> <strong>phải có <code>value</code></strong>.</li>
+<li style="font-size:15.5px; line-height:1.7; margin-bottom:10px;"><strong><code>radio</code> cùng <code>name</code></strong> thì chỉ chọn được một; <strong><code>checkbox</code></strong> mỗi ô độc lập có/không; <strong><code>select</code></strong> là danh sách thả xuống chọn một.</li>
+<li style="font-size:15.5px; line-height:1.7; margin-bottom:10px;"><strong><code>textarea</code></strong> là vùng nhập nhiều dòng (<code>rows</code>, <code>cols</code>); <strong><code>fieldset</code></strong> vẽ khung nhóm các phần tử, <strong><code>legend</code></strong> đặt tên cho nhóm.</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- NÚT CHUYỂN BÀI DƯỚI CÙNG -->
+  <div class="nav-btns" style="margin-top:32px;">
+    <a href="/sgk/bai-11.html" class="nav-btn">← Chèn tệp đa phương tiện và khung nội tuyến</a>
+    <a href="/luyen/bai-12" class="nav-btn" style="background:linear-gradient(90deg, var(--cyan), var(--orange)); color:#fff; border:none;">🎯 Luyện trắc nghiệm ngay</a>
+    <a href="/sgk/bai-13.html" class="nav-btn">CSS và định dạng trang web →</a>
+  </div>
+</main>
+
+</div>
+
+<script>
+let fs = 18;
+function changeFont(d) { fs = Math.min(28, Math.max(14, fs + d)); document.body.style.fontSize = fs + 'px'; }
+let light = false;
+function toggleTheme() {
+  light = !light;
+  document.documentElement.style.setProperty('--bg', light ? '#f0f4f8' : '#070b14');
+  document.documentElement.style.setProperty('--text', light ? '#1a2540' : '#e8eef8');
+  document.documentElement.style.setProperty('--panel', light ? '#fff' : '#111a2e');
+  document.documentElement.style.setProperty('--panel2', light ? '#f5f8fc' : '#162035');
+  document.documentElement.style.setProperty('--border', light ? '#d0daea' : '#1e2f4d');
+  document.body.style.background = light
+    ? 'radial-gradient(ellipse at 20% 10%, #d8e8f8 0%, #f0f4f8 60%)'
+    : 'radial-gradient(ellipse at 20% 10%, #0d1f3c 0%, #070b14 50%)';
+}
+window.addEventListener('scroll', () => {
+  const doc = document.documentElement;
+  const scrolled = doc.scrollTop || document.body.scrollTop;
+  const total = doc.scrollHeight - doc.clientHeight;
+  const pct = total > 0 ? Math.round((scrolled / total) * 100) : 0;
+  const p = document.getElementById('prog');
+  const pl = document.getElementById('prog-label');
+  if (p) p.style.width = pct + '%';
+  if (pl) pl.textContent = 'Tiến độ đọc: ' + pct + '%';
+});
+</script>
+</body>
+</html>

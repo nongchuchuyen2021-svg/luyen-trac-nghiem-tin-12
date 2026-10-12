@@ -1,0 +1,644 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dự án: Xây dựng trang web bằng HTML và CSS – Tin học 12 KNTT (SGK Điện tử)</title>
+<meta name="description" content="SGK Tin học 12 Kết nối tri thức – Dự án: Xây dựng trang web bằng HTML và CSS. Chủ đề 4. Thiết kế trang web (HTML & CSS).">
+<style>
+:root {
+  --bg: #070b14; --bg2: #0d1423; --panel: #111a2e; --panel2: #162035; --border: #1e2f4d;
+  --text: #e8eef8; --muted: #8899b8; --orange: #ff6b35; --orange2: #ff9a64;
+  --cyan: #38d9f5; --cyan2: #7ce8fa; --yellow: #ffd060; --green: #56e39f; --pink: #f06dba; --purple: #a78bfa;
+  --fs: 18px;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  background: radial-gradient(ellipse at 20% 10%, #0d1f3c 0%, #070b14 50%);
+  color: var(--text); font-family: 'Inter','Segoe UI',-apple-system,BlinkMacSystemFont,'Roboto',Arial,sans-serif;
+  font-size: var(--fs); line-height: 1.75; min-height: 100vh;
+}
+.app { display: grid; grid-template-columns: 280px 1fr; min-height: 100vh; }
+.sidebar { position:sticky; top:0; height:100vh; overflow-y:auto; background:rgba(7,11,20,.97); border-right:1px solid var(--border); padding:24px 16px; backdrop-filter:blur(20px); }
+.brand-box { margin-bottom:24px; }
+.series-label { font-size:11px; letter-spacing:2px; text-transform:uppercase; color:var(--cyan); font-weight:700; margin-bottom:6px; }
+.brand-title { font-size:20px; font-weight:900; color:#fff; line-height:1.2; }
+.brand-title span { color:var(--orange); }
+.brand-sub { color:var(--muted); font-size:12px; margin-top:5px; }
+.toc-title { font-size:11px; letter-spacing:1.5px; text-transform:uppercase; color:var(--muted); font-weight:700; margin:20px 0 8px; padding:0 8px; }
+.toc a { display:block; color:#9aaec8; text-decoration:none; padding:9px 12px; border-radius:10px; margin:2px 0; font-size:13.5px; font-weight:500; transition:all .2s; border-left:3px solid transparent; }
+.toc a:hover { background:rgba(56,217,245,.07); color:var(--cyan); border-left-color:var(--cyan); }
+.toc a.active { background:rgba(255,107,53,.1); color:var(--orange); border-left-color:var(--orange); }
+.ctrl-box { margin-top:24px; padding:14px; border:1px solid var(--border); border-radius:14px; background:rgba(255,255,255,.03); }
+.ctrl-box h4 { font-size:11px; letter-spacing:1px; text-transform:uppercase; color:var(--muted); margin-bottom:10px; }
+.ctrl-row { display:flex; gap:8px; margin-bottom:8px; }
+.ctrl-btn { flex:1; background:var(--panel2); border:1px solid var(--border); color:var(--text); border-radius:9px; padding:8px 6px; cursor:pointer; font-size:13px; font-weight:600; transition:all .2s; text-align:center; text-decoration:none; display:inline-block; }
+.ctrl-btn:hover { background:var(--border); color:#fff; }
+.progress-bar { height:4px; background:var(--panel2); border-radius:4px; overflow:hidden; margin-top:10px; }
+.progress-fill { height:100%; width:0%; background:linear-gradient(90deg,var(--cyan),var(--orange)); transition:width .3s; border-radius:4px; }
+.main { max-width:860px; margin:0 auto; padding:32px 28px 80px; }
+.hero { background:linear-gradient(135deg,#0f2040 0%,#0a1628 60%,#131020 100%); border:1px solid var(--border); border-radius:24px; padding:36px 40px; margin-bottom:28px; box-shadow:0 24px 80px rgba(0,0,0,.5); position:relative; overflow:hidden; }
+.hero::before { content:'16'; position:absolute; right:30px; top:20px; font-size:120px; font-weight:900; color:rgba(56,217,245,.05); line-height:1; user-select:none; }
+.chu-de-tag { display:inline-flex; align-items:center; gap:8px; background:rgba(56,217,245,.12); border:1px solid rgba(56,217,245,.3); color:var(--cyan); font-size:13px; font-weight:700; padding:6px 14px; border-radius:20px; margin-bottom:16px; letter-spacing:.5px; }
+.hero h1 { font-size:clamp(26px,4vw,38px); font-weight:900; line-height:1.2; background:linear-gradient(90deg,#fff 0%,var(--cyan2) 50%,var(--orange2) 100%); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; margin-bottom:14px; }
+.hero-desc { color:#b0c4de; font-size:15.5px; line-height:1.6; }
+.section { background:rgba(11,17,30,.9); border:1px solid var(--border); border-radius:20px; padding:28px 32px 36px; margin-bottom:24px; scroll-margin-top:20px; position:relative; transition:border-color .3s; }
+.section:hover { border-color:rgba(56,217,245,.2); }
+.page-num { position:absolute; right:20px; bottom:14px; color:var(--muted); font-size:12px; font-weight:600; background:var(--panel2); padding:3px 10px; border-radius:10px; }
+h2 { font-size:clamp(20px,2.5vw,26px); font-weight:800; color:#fff; margin:28px 0 14px; display:flex; align-items:center; gap:10px; }
+h2::before { content:''; display:inline-block; width:4px; height:24px; background:linear-gradient(var(--orange),var(--cyan)); border-radius:2px; flex-shrink:0; }
+p { color:#d0dcea; margin-bottom:14px; }
+p:last-child { margin-bottom:0; }
+strong { color:#fff; }
+em { color:var(--cyan2); font-style:italic; }
+code { background:rgba(255,255,255,0.08); color:var(--orange2); padding:2px 6px; border-radius:4px; font-size:0.9em; font-family:monospace; }
+ul, ol { padding-left:22px; margin:12px 0; }
+li { color:#c8d8ec; margin-bottom:8px; }
+li::marker { color:var(--cyan); }
+.info-box { background:linear-gradient(135deg,#071e2e,#071828); border:1px dashed rgba(56,217,245,.4); border-radius:14px; padding:18px 22px; margin:20px 0; }
+.info-box p, .info-box li { color:#b8d8f0; }
+.activity { background:linear-gradient(135deg,#1a120a,#130f0a); border:1px solid rgba(255,160,60,.3); border-left:4px solid var(--orange); border-radius:14px; padding:18px 22px; margin:20px 0; }
+.activity-badge { display:inline-flex; align-items:center; gap:6px; background:var(--orange); color:#1a0a00; font-size:12px; font-weight:800; padding:4px 12px; border-radius:6px; margin-bottom:10px; letter-spacing:.5px; text-transform:uppercase; }
+.ghi-nho { background:linear-gradient(135deg,#1a2a10,#0f1e0a); border:1px solid rgba(86,227,159,.3); border-left:4px solid var(--green); border-radius:14px; padding:20px 24px; margin:24px 0; }
+.ghi-nho-title { color:var(--green); font-weight:800; font-size:15px; text-transform:uppercase; letter-spacing:1px; margin-bottom:10px; display:flex; align-items:center; gap:8px; }
+.ghi-nho p, .ghi-nho li { color:#c8f0d8; }
+.nav-btns { display:flex; gap:12px; margin:20px 0; }
+.nav-btn { background:var(--panel); border:1px solid var(--border); color:var(--text); border-radius:10px; padding:10px 18px; text-decoration:none; font-size:14px; font-weight:600; transition:all .2s; flex:1; text-align:center; }
+.nav-btn:hover { background:var(--panel2); border-color:var(--cyan); color:#fff; }
+.field-grid { display:grid; grid-template-columns:1fr 1fr; gap:14px; margin:18px 0; }
+.field-card { background:var(--panel2); border:1px solid var(--border); border-radius:14px; padding:16px 18px; }
+.img-side { display:grid; grid-template-columns:1fr 1fr; gap:14px; margin:18px 0; }
+.img-half { border-radius:12px; border:1px solid var(--border); }
+@media (max-width: 860px) {
+  .app { grid-template-columns: 1fr; }
+  .sidebar { display: none; }
+  .main { padding: 20px 16px 60px; }
+  .field-grid, .img-side { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+
+<div class="app">
+
+<!-- SIDEBAR -->
+<aside class="sidebar">
+  <div class="brand-box">
+    <div class="series-label">KẾT NỐI TRI THỨC</div>
+    <div class="brand-title">TIN HỌC <span>12</span></div>
+    <div class="brand-sub">Sách Giáo Khoa Điện Tử (ICT)</div>
+  </div>
+
+  <div class="ctrl-box">
+    <h4>Cỡ chữ & Giao diện</h4>
+    <div class="ctrl-row">
+      <button class="ctrl-btn" onclick="changeFont(-1)">A -</button>
+      <button class="ctrl-btn" onclick="changeFont(1)">A +</button>
+      <button class="ctrl-btn" onclick="toggleTheme()">🌓 Nền</button>
+    </div>
+    <div style="font-size:12px; color:var(--muted); margin-top:8px;" id="prog-label">Tiến độ đọc: 0%</div>
+    <div class="progress-bar"><div class="progress-fill" id="prog"></div></div>
+  </div>
+
+  <div class="toc-title">Mục lục bài học</div>
+  <nav class="toc">
+    
+      <a href="#sec-1">1. Phân loại phần tử khối và nội tuyến</a>
+    
+      <a href="#sec-2">2. Thiết lập định dạng khung bằng CSS</a>
+    
+      <a href="#sec-3">3. Một số bộ chọn đặc biệt của CSS</a>
+    
+      <a href="#sec-4">4. Mẹo nhớ & Cảnh báo bẫy</a>
+    
+    <a href="#ghi-nho">📌 Ghi nhớ cốt lõi</a>
+  </nav>
+
+  <div class="ctrl-box" style="margin-top:20px;">
+    <h4>Luyện tập</h4>
+    <a href="/luyen/bai-16" class="ctrl-btn" style="background:var(--cyan); color:#000; font-weight:700;">🎯 Vào Luyện Trắc Nghiệm</a>
+  </div>
+</aside>
+
+<!-- MAIN CONTENT -->
+<main class="main">
+  <!-- HERO BANNER -->
+  <div class="hero">
+    <div class="chu-de-tag">Chủ đề 4. Thiết kế trang web (HTML & CSS)</div>
+    <h1>Dự án: Xây dựng trang web bằng HTML và CSS</h1>
+    <div class="hero-desc">Bài này học cách phân biệt <strong>phần tử khối và nội tuyến</strong>, cách dùng CSS để định dạng <strong>khung</strong> (kích thước, lề, viền, vùng đệm) cho phần tử, và ba kiểu <strong>bộ chọn đặc biệt</strong>: lớp (class), mã định danh (id) và thuộc tính.</div>
+  </div>
+
+  <!-- NÚT CHUYỂN BÀI -->
+  <div class="nav-btns">
+    <a href="/sgk/bai-15.html" class="nav-btn">← Mô hình hộp và bố cục trong CSS</a>
+    <a href="/sgk/bai-17.html" class="nav-btn">Nhóm nghề Phát triển phần mềm →</a>
+  </div>
+
+  <!-- CÁC MỤC NỘI DUNG -->
+  
+    <section class="section" id="sec-1">
+      <h2 id="heading-1">📦 1. Phân loại phần tử khối và nội tuyến</h2>
+      <p>Các thẻ (phần tử) HTML được chia làm hai loại: <strong>khối</strong> (block level) và <strong>nội tuyến</strong> (inline level). Phần tử khối thường bắt đầu từ đầu hàng và kéo dài suốt chiều rộng của trang web. Phần tử nội tuyến là các phần tử nhúng bên trong một phần tử khác, không tự xuống hàng.</p>
+
+        <div class="img-side">
+          <div class="img-half" style="background:rgba(242,104,60,0.08); border-color:rgba(242,104,60,0.3); padding:16px;">
+            <div style="font-weight:700; color:var(--orange); font-size:15px; margin-bottom:10px;">🧱 Phần tử khối (block)</div>
+            <ul style="padding-left:18px;">
+              <li style="font-size:14px; margin-bottom:6px;">h1 – h6, p, div, address, nav, article, section, aside</li><li style="font-size:14px; margin-bottom:6px;">form, header, footer, table, hr, ol, ul, li, canvas</li>
+            </ul>
+          </div>
+          <div class="img-half" style="background:rgba(56,217,245,0.08); border-color:rgba(56,217,245,0.3); padding:16px;">
+            <div style="font-weight:700; color:var(--cyan); font-size:15px; margin-bottom:10px;">🔤 Phần tử nội tuyến (inline)</div>
+            <ul style="padding-left:18px;">
+              <li style="font-size:14px; margin-bottom:6px;">b, span, a, img, em, strong, sub, sup, var, samp</li><li style="font-size:14px; margin-bottom:6px;">cite, dfn, kbd, pre, code, q, i, u, del, ins, mark, br, label, textarea, input, script</li>
+            </ul>
+          </div>
+        </div>
+<p>Có thể thay đổi loại phần tử HTML bằng thuộc tính <strong>display</strong>. Các giá trị của thuộc tính này gồm <strong>block, inline, none</strong>. Giá trị <strong>none</strong> sẽ làm ẩn (không hiển thị) phần tử trên trang web.</p>
+
+        <div style="background:#060b14; border:1px solid var(--border); border-radius:12px; overflow:hidden; margin:16px 0; font-family:monospace;">
+          <div style="background:rgba(255,255,255,0.05); padding:6px 14px; font-size:12px; color:var(--muted); border-bottom:1px solid var(--border);">💻 Hình 16.2 SGK — đổi phần tử span từ nội tuyến (mặc định) sang khối</div>
+          <pre style="padding:14px 16px; margin:0; font-size:14px; line-height:1.6; color:#7ce8fa; overflow-x:auto;"><code>&lt;style&gt;
+span {display: block; text-indent: 2em; color: red;}
+p {color: blue;}
+&lt;/style&gt;
+&lt;h1&gt;Kiểu thể hiện&lt;/h1&gt;
+&lt;p&gt; Đây là phần đầu...
+&lt;span&gt;dòng thứ nhất&lt;/span&gt;
+&lt;span&gt;dòng tiếp theo&lt;/span&gt;
+&lt;span&gt;dòng tiếp theo nữa...&lt;/span&gt;
+đây là phần cuối của đoạn &lt;/p&gt;</code></pre>
+        </div>
+
+        <div class="info-box">
+          <p>Các phần tử HTML đều thuộc một trong hai loại khối (block) hoặc nội tuyến (inline). Có thể dùng thuộc tính <strong>display</strong> để thay đổi loại phần tử — với ba giá trị thường dùng: <strong>block, inline, none</strong>.</p>
+        </div>
+
+        <div class="cau-hoi" style="margin:16px 0; border:1px solid rgba(56,217,245,0.3); background:rgba(56,217,245,0.04); border-radius:14px; padding:16px 20px;">
+          <div class="q-num" style="background:var(--cyan); color:#000; font-weight:800; border-radius:50%; width:28px; height:28px; display:flex; align-items:center; justify-content:center; flex-shrink:0;">?</div>
+          <div style="flex:1;">
+            <div class="q-text" style="font-weight:600; color:#fff; font-size:15.5px; margin-bottom:10px;">Thuộc tính CSS nào dùng để ẩn hoàn toàn một phần tử khỏi trang web?</div>
+            <div style="display:grid; grid-template-columns:1fr; gap:6px; margin-bottom:10px;">
+              
+                <div style="background:rgba(255,255,255,0.04); border:1px solid var(--border); border-radius:8px; padding:6px 12px; font-size:14px; color:#c8d8ec;">
+                  <b>A.</b> display: none;
+                </div>
+              
+                <div style="background:rgba(255,255,255,0.04); border:1px solid var(--border); border-radius:8px; padding:6px 12px; font-size:14px; color:#c8d8ec;">
+                  <b>B.</b> display: block;
+                </div>
+              
+                <div style="background:rgba(255,255,255,0.04); border:1px solid var(--border); border-radius:8px; padding:6px 12px; font-size:14px; color:#c8d8ec;">
+                  <b>C.</b> display: inline;
+                </div>
+              
+                <div style="background:rgba(255,255,255,0.04); border:1px solid var(--border); border-radius:8px; padding:6px 12px; font-size:14px; color:#c8d8ec;">
+                  <b>D.</b> color: none;
+                </div>
+              
+            </div>
+            <details style="margin-top:8px;">
+              <summary style="cursor:pointer; color:var(--cyan); font-size:13px; font-weight:600;">👉 Xem đáp án & giải thích</summary>
+              <div style="margin-top:6px; padding:8px 12px; background:rgba(86,227,159,0.1); border-left:3px solid var(--green); border-radius:6px; font-size:13.5px; color:#a3e635;">
+                <strong>Đáp án đúng: A</strong><br>
+                <span>Giá trị none của thuộc tính display sẽ làm ẩn (không hiển thị) phần tử trên trang web — đây cũng là đáp án cho câu hỏi Luyện tập 1 của SGK.</span>
+              </div>
+            </details>
+          </div>
+        </div>
+
+        <div class="cau-hoi" style="margin:16px 0; border:1px solid rgba(56,217,245,0.3); background:rgba(56,217,245,0.04); border-radius:14px; padding:16px 20px;">
+          <div class="q-num" style="background:var(--cyan); color:#000; font-weight:800; border-radius:50%; width:28px; height:28px; display:flex; align-items:center; justify-content:center; flex-shrink:0;">?</div>
+          <div style="flex:1;">
+            <div class="q-text" style="font-weight:600; color:#fff; font-size:15.5px; margin-bottom:10px;">Trong các phần tử sau, phần tử nào thuộc loại NỘI TUYẾN (inline)?</div>
+            <div style="display:grid; grid-template-columns:1fr; gap:6px; margin-bottom:10px;">
+              
+                <div style="background:rgba(255,255,255,0.04); border:1px solid var(--border); border-radius:8px; padding:6px 12px; font-size:14px; color:#c8d8ec;">
+                  <b>A.</b> span
+                </div>
+              
+                <div style="background:rgba(255,255,255,0.04); border:1px solid var(--border); border-radius:8px; padding:6px 12px; font-size:14px; color:#c8d8ec;">
+                  <b>B.</b> div
+                </div>
+              
+                <div style="background:rgba(255,255,255,0.04); border:1px solid var(--border); border-radius:8px; padding:6px 12px; font-size:14px; color:#c8d8ec;">
+                  <b>C.</b> p
+                </div>
+              
+                <div style="background:rgba(255,255,255,0.04); border:1px solid var(--border); border-radius:8px; padding:6px 12px; font-size:14px; color:#c8d8ec;">
+                  <b>D.</b> table
+                </div>
+              
+            </div>
+            <details style="margin-top:8px;">
+              <summary style="cursor:pointer; color:var(--cyan); font-size:13px; font-weight:600;">👉 Xem đáp án & giải thích</summary>
+              <div style="margin-top:6px; padding:8px 12px; background:rgba(86,227,159,0.1); border-left:3px solid var(--green); border-radius:6px; font-size:13.5px; color:#a3e635;">
+                <strong>Đáp án đúng: A</strong><br>
+                <span>span là phần tử nội tuyến theo Bảng 16.1 SGK. div, p, table đều là phần tử khối (block).</span>
+              </div>
+            </details>
+          </div>
+        </div>
+      <div class="page-num">Trang 106-112</div>
+    </section>
+  
+
+    <section class="section" id="sec-2">
+      <h2 id="heading-2">📐 2. Thiết lập định dạng khung bằng CSS</h2>
+      <p>Với phần tử dạng khối, khung được xác định với đầy đủ tính chất; còn với phần tử nội tuyến, khung chỉ có thể thiết lập viền và vùng đệm, <strong>không có</strong> các thông số chiều cao, chiều rộng.</p>
+
+
+        <div class="field-grid">
+          
+            <div class="field-card">
+              <div class="icon">↔️</div>
+              <h4 style="margin:0 0 6px; color:var(--cyan2);">width / height</h4>
+              <p style="margin:0; font-size:14px; color:#b0c4de;">Chiều rộng / chiều cao của khung. Chỉ áp dụng cho phần tử dạng khối.</p>
+            </div>
+          
+
+            <div class="field-card">
+              <div class="icon">🧊</div>
+              <h4 style="margin:0 0 6px; color:var(--cyan2);">padding</h4>
+              <p style="margin:0; font-size:14px; color:#b0c4de;">Vùng đệm — khoảng cách từ vùng text đến đường viền ngoài của khung.</p>
+            </div>
+          
+
+            <div class="field-card">
+              <div class="icon">🖼️</div>
+              <h4 style="margin:0 0 6px; color:var(--cyan2);">margin</h4>
+              <p style="margin:0; font-size:14px; color:#b0c4de;">Lề khung — khoảng cách từ đường viền ngoài của khung đến văn bản xung quanh (nếu có).</p>
+            </div>
+          
+
+            <div class="field-card">
+              <div class="icon">🎨</div>
+              <h4 style="margin:0 0 6px; color:var(--cyan2);">border-color / border-width / border-style</h4>
+              <p style="margin:0; font-size:14px; color:#b0c4de;">Màu, độ dày và kiểu đường viền khung (kiểu: none, solid, dotted, dashed, double, inset, outset, ridge, groove).</p>
+            </div>
+          
+        </div>
+<p>Thuộc tính <strong>border</strong> có thể gán đồng thời cả ba thuộc tính border-width, border-style, border-color, ví dụ: <code>{border: 2px solid red;}</code>. Lưu ý: <strong>tất cả các thuộc tính khung ở trên đều KHÔNG có tính kế thừa</strong> — khác với color/background-color đã học ở Bài 15.</p>
+
+        <div style="background:#060b14; border:1px solid var(--border); border-radius:12px; overflow:hidden; margin:16px 0; font-family:monospace;">
+          <div style="background:rgba(255,255,255,0.05); padding:6px 14px; font-size:12px; color:var(--muted); border-bottom:1px solid var(--border);">💻 Hình 16.4 SGK — định dạng khung viền cho h1 và em</div>
+          <pre style="padding:14px 16px; margin:0; font-size:14px; line-height:1.6; color:#7ce8fa; overflow-x:auto;"><code>&lt;style&gt;
+h1 {
+  border: 5px ridge blue;
+  margin: 20px;
+  width: 200px;
+  padding: 10px;
+}
+em {border: 2px double red;}
+&lt;/style&gt;
+&lt;h1&gt; Lịch sử CSS &lt;/h1&gt;
+&lt;p&gt;Ý tưởng của CSS do kĩ sư &lt;em&gt;Håkon Wium Lie&lt;/em&gt;, người Na Uy, thiết lập năm 1994 trong khi làm việc với Tim Berners-Lee tại viện hạt nhân CERN.&lt;/p&gt;</code></pre>
+        </div>
+
+        <div class="info-box">
+          <p>Có thể thiết lập định dạng khung cho các phần tử bằng CSS. Cần phân biệt hai loại phần tử khối và phần tử nội tuyến với các thông số khác nhau — phần tử nội tuyến không có width, height.</p>
+        </div>
+
+        <div class="cau-hoi" style="margin:16px 0; border:1px solid rgba(56,217,245,0.3); background:rgba(56,217,245,0.04); border-radius:14px; padding:16px 20px;">
+          <div class="q-num" style="background:var(--cyan); color:#000; font-weight:800; border-radius:50%; width:28px; height:28px; display:flex; align-items:center; justify-content:center; flex-shrink:0;">?</div>
+          <div style="flex:1;">
+            <div class="q-text" style="font-weight:600; color:#fff; font-size:15.5px; margin-bottom:10px;">Trong các thuộc tính khung của một phần tử HTML, khoảng cách từ vùng văn bản đến đường viền khung được gọi là gì?</div>
+            <div style="display:grid; grid-template-columns:1fr; gap:6px; margin-bottom:10px;">
+              
+                <div style="background:rgba(255,255,255,0.04); border:1px solid var(--border); border-radius:8px; padding:6px 12px; font-size:14px; color:#c8d8ec;">
+                  <b>A.</b> padding (vùng đệm)
+                </div>
+              
+                <div style="background:rgba(255,255,255,0.04); border:1px solid var(--border); border-radius:8px; padding:6px 12px; font-size:14px; color:#c8d8ec;">
+                  <b>B.</b> margin (lề khung)
+                </div>
+              
+                <div style="background:rgba(255,255,255,0.04); border:1px solid var(--border); border-radius:8px; padding:6px 12px; font-size:14px; color:#c8d8ec;">
+                  <b>C.</b> border (khung viền)
+                </div>
+              
+                <div style="background:rgba(255,255,255,0.04); border:1px solid var(--border); border-radius:8px; padding:6px 12px; font-size:14px; color:#c8d8ec;">
+                  <b>D.</b> width (chiều rộng)
+                </div>
+              
+            </div>
+            <details style="margin-top:8px;">
+              <summary style="cursor:pointer; color:var(--cyan); font-size:13px; font-weight:600;">👉 Xem đáp án & giải thích</summary>
+              <div style="margin-top:6px; padding:8px 12px; background:rgba(86,227,159,0.1); border-left:3px solid var(--green); border-radius:6px; font-size:13.5px; color:#a3e635;">
+                <strong>Đáp án đúng: A</strong><br>
+                <span>padding là khoảng cách từ vùng text đến đường viền ngoài của khung. margin là khoảng cách từ viền ngoài khung ra văn bản xung quanh, tính từ phía ngoài border.</span>
+              </div>
+            </details>
+          </div>
+        </div>
+
+        <div class="cau-hoi" style="margin:16px 0; border:1px solid rgba(56,217,245,0.3); background:rgba(56,217,245,0.04); border-radius:14px; padding:16px 20px;">
+          <div class="q-num" style="background:var(--cyan); color:#000; font-weight:800; border-radius:50%; width:28px; height:28px; display:flex; align-items:center; justify-content:center; flex-shrink:0;">?</div>
+          <div style="flex:1;">
+            <div class="q-text" style="font-weight:600; color:#fff; font-size:15.5px; margin-bottom:10px;">Thuộc tính width (chiều rộng khung) có thể áp dụng cho loại phần tử nào?</div>
+            <div style="display:grid; grid-template-columns:1fr; gap:6px; margin-bottom:10px;">
+              
+                <div style="background:rgba(255,255,255,0.04); border:1px solid var(--border); border-radius:8px; padding:6px 12px; font-size:14px; color:#c8d8ec;">
+                  <b>A.</b> Chỉ phần tử dạng khối (block)
+                </div>
+              
+                <div style="background:rgba(255,255,255,0.04); border:1px solid var(--border); border-radius:8px; padding:6px 12px; font-size:14px; color:#c8d8ec;">
+                  <b>B.</b> Chỉ phần tử dạng nội tuyến (inline)
+                </div>
+              
+                <div style="background:rgba(255,255,255,0.04); border:1px solid var(--border); border-radius:8px; padding:6px 12px; font-size:14px; color:#c8d8ec;">
+                  <b>C.</b> Cả hai loại như nhau
+                </div>
+              
+                <div style="background:rgba(255,255,255,0.04); border:1px solid var(--border); border-radius:8px; padding:6px 12px; font-size:14px; color:#c8d8ec;">
+                  <b>D.</b> Không phần tử nào dùng được
+                </div>
+              
+            </div>
+            <details style="margin-top:8px;">
+              <summary style="cursor:pointer; color:var(--cyan); font-size:13px; font-weight:600;">👉 Xem đáp án & giải thích</summary>
+              <div style="margin-top:6px; padding:8px 12px; background:rgba(86,227,159,0.1); border-left:3px solid var(--green); border-radius:6px; font-size:13.5px; color:#a3e635;">
+                <strong>Đáp án đúng: A</strong><br>
+                <span>Theo Bảng 16.2 SGK, width và height chỉ áp dụng cho phần tử dạng khối; phần tử nội tuyến chỉ có thể thiết lập viền và vùng đệm.</span>
+              </div>
+            </details>
+          </div>
+        </div>
+      <div class="page-num">Trang 106-112</div>
+    </section>
+  
+
+    <section class="section" id="sec-3">
+      <h2 id="heading-3">🎯 3. Một số bộ chọn đặc biệt của CSS</h2>
+      <p>Trên một trang web thường có rất nhiều phần tử cùng loại — một định dạng với bộ chọn là tên thẻ (ví dụ p) sẽ áp dụng cho TẤT CẢ các thẻ đó. Muốn phân biệt và định dạng riêng cho từng nhóm hoặc từng phần tử cụ thể, CSS cung cấp ba kiểu bộ chọn đặc biệt: <strong>lớp (class), mã định danh (id)</strong> và <strong>thuộc tính</strong>.</p>
+<p><strong>a) Bộ chọn lớp (class).</strong> Cấu trúc chung: <code>.class {thuộc tính: giá trị;}</code>. Một phần tử có thể thuộc nhiều lớp cùng lúc, khai báo cách nhau bởi dấu cách, ví dụ <code><p class="test more once"></code>.</p>
+
+        <div style="background:#060b14; border:1px solid var(--border); border-radius:12px; overflow:hidden; margin:16px 0; font-family:monospace;">
+          <div style="background:rgba(255,255,255,0.05); padding:6px 14px; font-size:12px; color:var(--muted); border-bottom:1px solid var(--border);">💻 Ví dụ bộ chọn lớp — đoạn có class="test" chữ xanh đậm, đoạn có class="warning" chữ đỏ</div>
+          <pre style="padding:14px 16px; margin:0; font-size:14px; line-height:1.6; color:#7ce8fa; overflow-x:auto;"><code>&lt;style&gt;
+.warning {color: red;}
+.test {
+  color: blue;
+  font-weight: bold;
+}
+&lt;/style&gt;
+&lt;p class="test"&gt; Thông tin đang test &lt;/p&gt;
+&lt;p class="warning"&gt; Thông tin cần warning. &lt;/p&gt;</code></pre>
+        </div>
+
+        <div class="activity">
+          <div class="activity-badge">💡 Đối chiếu với sách</div>
+          <p>Bản in SGK trang 92 gõ luật này là <code>.waring</code> (thiếu chữ “n”) — đây là lỗi in, vì đoạn chú thích ngay bên cạnh và ví dụ HTML phía dưới đều dùng đúng chính tả <strong>warning</strong>. Khung xem trước ở trên đã sửa lại đúng chính tả để chạy ra kết quả giống mô tả của sách.</p>
+        </div>
+<p><strong>b) Bộ chọn mã định danh (id).</strong> Mỗi phần tử chỉ có <strong>một</strong> id duy nhất trong toàn trang. Cấu trúc chung: <code>#idname {thuộc tính: giá trị;}</code>. Ví dụ: <code>#home {color: red;}</code> áp dụng cho phần tử có id="home"; <code>p#home {font-size: 150%;}</code> áp dụng riêng cho phần tử <strong>p</strong> có id="home".</p>
+<p><strong>c) Bộ chọn thuộc tính.</strong> Áp dụng cho các phần tử được gắn với một thuộc tính cụ thể. Ví dụ: <code>[href] {border: 1px solid blue;}</code> áp dụng cho mọi phần tử có thuộc tính href; <code>a[target="_blank"] {color: red; font-weight: bold;}</code> áp dụng riêng cho thẻ a có target="_blank".</p>
+
+        <ul>
+          <li>Tên id và class <strong>phân biệt chữ in hoa, in thường</strong>.</li>
+<li>Tên bắt buộc phải có ít nhất một kí tự không phải số, <strong>không bắt đầu bằng số</strong>, không chứa dấu cách và kí tự đặc biệt.</li>
+        </ul>
+
+        <div class="info-box">
+          <p>Có thể thiết lập các mẫu định dạng với bộ chọn là <strong>class, ID hoặc thuộc tính</strong>.</p>
+        </div>
+
+        <div class="cau-hoi" style="margin:16px 0; border:1px solid rgba(56,217,245,0.3); background:rgba(56,217,245,0.04); border-radius:14px; padding:16px 20px;">
+          <div class="q-num" style="background:var(--cyan); color:#000; font-weight:800; border-radius:50%; width:28px; height:28px; display:flex; align-items:center; justify-content:center; flex-shrink:0;">?</div>
+          <div style="flex:1;">
+            <div class="q-text" style="font-weight:600; color:#fff; font-size:15.5px; margin-bottom:10px;">Khác biệt cơ bản nhất giữa thuộc tính id và class của phần tử HTML là gì?</div>
+            <div style="display:grid; grid-template-columns:1fr; gap:6px; margin-bottom:10px;">
+              
+                <div style="background:rgba(255,255,255,0.04); border:1px solid var(--border); border-radius:8px; padding:6px 12px; font-size:14px; color:#c8d8ec;">
+                  <b>A.</b> id chỉ gắn cho một phần tử duy nhất, class dùng chung nhiều phần tử
+                </div>
+              
+                <div style="background:rgba(255,255,255,0.04); border:1px solid var(--border); border-radius:8px; padding:6px 12px; font-size:14px; color:#c8d8ec;">
+                  <b>B.</b> id chỉ dùng được cho thẻ p, còn class dùng được cho mọi thẻ khác
+                </div>
+              
+                <div style="background:rgba(255,255,255,0.04); border:1px solid var(--border); border-radius:8px; padding:6px 12px; font-size:14px; color:#c8d8ec;">
+                  <b>C.</b> class phân biệt chữ hoa/thường, còn id thì không hề phân biệt
+                </div>
+              
+                <div style="background:rgba(255,255,255,0.04); border:1px solid var(--border); border-radius:8px; padding:6px 12px; font-size:14px; color:#c8d8ec;">
+                  <b>D.</b> id không thể kết hợp với tên thẻ, class thì bắt buộc phải kèm
+                </div>
+              
+            </div>
+            <details style="margin-top:8px;">
+              <summary style="cursor:pointer; color:var(--cyan); font-size:13px; font-weight:600;">👉 Xem đáp án & giải thích</summary>
+              <div style="margin-top:6px; padding:8px 12px; background:rgba(86,227,159,0.1); border-left:3px solid var(--green); border-radius:6px; font-size:13.5px; color:#a3e635;">
+                <strong>Đáp án đúng: A</strong><br>
+                <span>Mỗi phần tử chỉ có một id duy nhất trong toàn trang web; còn một lớp (class) có thể được gán cho nhiều phần tử khác nhau để áp dụng định dạng chung.</span>
+              </div>
+            </details>
+          </div>
+        </div>
+
+        <div class="cau-hoi" style="margin:16px 0; border:1px solid rgba(56,217,245,0.3); background:rgba(56,217,245,0.04); border-radius:14px; padding:16px 20px;">
+          <div class="q-num" style="background:var(--cyan); color:#000; font-weight:800; border-radius:50%; width:28px; height:28px; display:flex; align-items:center; justify-content:center; flex-shrink:0;">?</div>
+          <div style="flex:1;">
+            <div class="q-text" style="font-weight:600; color:#fff; font-size:15.5px; margin-bottom:10px;">Bộ chọn div#bat_dau > p áp dụng cho phần tử nào?</div>
+            <div style="display:grid; grid-template-columns:1fr; gap:6px; margin-bottom:10px;">
+              
+                <div style="background:rgba(255,255,255,0.04); border:1px solid var(--border); border-radius:8px; padding:6px 12px; font-size:14px; color:#c8d8ec;">
+                  <b>A.</b> Phần tử p là con trực tiếp của div có id="bat_dau"
+                </div>
+              
+                <div style="background:rgba(255,255,255,0.04); border:1px solid var(--border); border-radius:8px; padding:6px 12px; font-size:14px; color:#c8d8ec;">
+                  <b>B.</b> Mọi phần tử p bất kì trong trang, không cần điều kiện
+                </div>
+              
+                <div style="background:rgba(255,255,255,0.04); border:1px solid var(--border); border-radius:8px; padding:6px 12px; font-size:14px; color:#c8d8ec;">
+                  <b>C.</b> Phần tử div có id="bat_dau", gắn thêm lớp tên là p
+                </div>
+              
+                <div style="background:rgba(255,255,255,0.04); border:1px solid var(--border); border-radius:8px; padding:6px 12px; font-size:14px; color:#c8d8ec;">
+                  <b>D.</b> Phần tử p đứng ngay trước div có id="bat_dau"
+                </div>
+              
+            </div>
+            <details style="margin-top:8px;">
+              <summary style="cursor:pointer; color:var(--cyan); font-size:13px; font-weight:600;">👉 Xem đáp án & giải thích</summary>
+              <div style="margin-top:6px; padding:8px 12px; background:rgba(86,227,159,0.1); border-left:3px solid var(--green); border-radius:6px; font-size:13.5px; color:#a3e635;">
+                <strong>Đáp án đúng: A</strong><br>
+                <span>div#bat_dau chọn phần tử div có id="bat_dau"; kết hợp với > p (bộ chọn con trực tiếp đã học ở Bài 15) nghĩa là áp dụng cho p là con trực tiếp của div đó — đây chính là câu hỏi 2a trong SGK.</span>
+              </div>
+            </details>
+          </div>
+        </div>
+
+        <div class="cau-hoi" style="margin:16px 0; border:1px solid rgba(56,217,245,0.3); background:rgba(56,217,245,0.04); border-radius:14px; padding:16px 20px;">
+          <div class="q-num" style="background:var(--cyan); color:#000; font-weight:800; border-radius:50%; width:28px; height:28px; display:flex; align-items:center; justify-content:center; flex-shrink:0;">?</div>
+          <div style="flex:1;">
+            <div class="q-text" style="font-weight:600; color:#fff; font-size:15.5px; margin-bottom:10px;">Bộ chọn .test .test_more {background-color: red;} (câu Luyện tập 2 SGK) áp dụng cho phần tử nào?</div>
+            <div style="display:grid; grid-template-columns:1fr; gap:6px; margin-bottom:10px;">
+              
+                <div style="background:rgba(255,255,255,0.04); border:1px solid var(--border); border-radius:8px; padding:6px 12px; font-size:14px; color:#c8d8ec;">
+                  <b>A.</b> Phần tử có lớp test_more, với điều kiện nó là con/cháu của một phần tử có lớp test
+                </div>
+              
+                <div style="background:rgba(255,255,255,0.04); border:1px solid var(--border); border-radius:8px; padding:6px 12px; font-size:14px; color:#c8d8ec;">
+                  <b>B.</b> Phần tử vừa có lớp test vừa có lớp test_more gán cùng lúc trên một thẻ duy nhất
+                </div>
+              
+                <div style="background:rgba(255,255,255,0.04); border:1px solid var(--border); border-radius:8px; padding:6px 12px; font-size:14px; color:#c8d8ec;">
+                  <b>C.</b> Chỉ áp dụng cho phần tử là con trực tiếp của lớp test, không tính tới các cháu xa hơn
+                </div>
+              
+                <div style="background:rgba(255,255,255,0.04); border:1px solid var(--border); border-radius:8px; padding:6px 12px; font-size:14px; color:#c8d8ec;">
+                  <b>D.</b> Mọi phần tử có lớp test hoặc có lớp test_more, không đòi hỏi quan hệ gì giữa chúng
+                </div>
+              
+            </div>
+            <details style="margin-top:8px;">
+              <summary style="cursor:pointer; color:var(--cyan); font-size:13px; font-weight:600;">👉 Xem đáp án & giải thích</summary>
+              <div style="margin-top:6px; padding:8px 12px; background:rgba(86,227,159,0.1); border-left:3px solid var(--green); border-radius:6px; font-size:13.5px; color:#a3e635;">
+                <strong>Đáp án đúng: A</strong><br>
+                <span>.test .test_more là bộ chọn quan hệ con cháu (E F, học ở Bài 15) áp dụng cho .test và .test_more — tức phần tử mang lớp test_more phải nằm trong (là con/cháu của) một phần tử mang lớp test.</span>
+              </div>
+            </details>
+          </div>
+        </div>
+      <div class="page-num">Trang 106-112</div>
+    </section>
+  
+
+    <section class="section" id="sec-4">
+      <h2 id="heading-4">💡 4. Mẹo nhớ & Cảnh báo bẫy</h2>
+      <p>Định dạng khung (Box Model) và các bộ chọn đặc biệt là nội dung thực hành rất trọng tâm. Hãy ghi nhớ các mẹo phân biệt và bẫy trắc nghiệm dưới đây:</p>
+
+        <div class="field-grid">
+          
+            <div class="field-card">
+              <div class="icon">📦</div>
+              <h4 style="margin:0 0 6px; color:var(--cyan2);">Thứ tự 4 lớp mô hình hộp (Box Model)</h4>
+              <p style="margin:0; font-size:14px; color:#b0c4de;">Từ trong ra ngoài: <strong>Nội dung (Content)</strong> → <strong>Đệm (Padding)</strong> → <strong>Viền (Border)</strong> → <strong>Lề (Margin)</strong>. Nhớ từ khoá: <em>Padding là đệm bên trong viền, Margin là khoảng cách bên ngoài viền</em>.</p>
+            </div>
+          
+
+            <div class="field-card">
+              <div class="icon">⏰</div>
+              <h4 style="margin:0 0 6px; color:var(--cyan2);">Quy tắc kim đồng hồ: TRÊN - PHẢI - DƯỚI - TRÁI</h4>
+              <p style="margin:0; font-size:14px; color:#b0c4de;">Khi viết 4 giá trị ngắn gọn: <code>margin: 10px 20px 30px 40px;</code> tương ứng với <strong>Top (Trên) → Right (Phải) → Bottom (Dưới) → Left (Trái)</strong> (theo chiều kim đồng hồ bắt đầu từ 12 giờ).</p>
+            </div>
+          
+
+            <div class="field-card">
+              <div class="icon">🎯</div>
+              <h4 style="margin:0 0 6px; color:var(--cyan2);">Dấu chấm (.) vs Dấu thăng (#)</h4>
+              <p style="margin:0; font-size:14px; color:#b0c4de;"><strong>.class</strong> (dấu chấm): giống như <em>tên lớp học</em>, nhiều phần tử có thể cùng chung một lớp. <strong>#id</strong> (dấu thăng): giống như <em>số CCCD</em>, mỗi phần tử chỉ có đúng 1 mã duy nhất trong toàn trang web.</p>
+            </div>
+          
+
+            <div class="field-card">
+              <div class="icon">🧱</div>
+              <h4 style="margin:0 0 6px; color:var(--cyan2);">Khối vs Nội tuyến: width và height</h4>
+              <p style="margin:0; font-size:14px; color:#b0c4de;">Chỉ có <strong>phần tử khối (block)</strong> mới chỉnh được <code>width</code> và <code>height</code>. Phần tử <strong>nội tuyến (inline)</strong> không nhận <code>width/height</code> (muốn nhận phải đổi sang <code>display: block</code>).</p>
+            </div>
+          
+        </div>
+
+        <div class="img-side">
+          <div class="img-half" style="background:rgba(242,104,60,0.08); border-color:rgba(242,104,60,0.3); padding:16px;">
+            <div style="font-weight:700; color:var(--orange); font-size:15px; margin-bottom:10px;">❌ Bẫy câu chữ đề thi hay gài</div>
+            <ul style="padding-left:18px;">
+              <li style="font-size:14px; margin-bottom:6px;">Padding là khoảng cách bên ngoài đường viền</li><li style="font-size:14px; margin-bottom:6px;">Thẻ span hay a có thể đặt thuộc tính width</li><li style="font-size:14px; margin-bottom:6px;">Tên ID và Class được phép bắt đầu bằng chữ số</li><li style="font-size:14px; margin-bottom:6px;">Thuộc tính khung (margin, border) có tính kế thừa</li><li style="font-size:14px; margin-bottom:6px;">display: none; chỉ làm mờ đi chứ không ẩn phần tử</li>
+            </ul>
+          </div>
+          <div class="img-half" style="background:rgba(56,217,245,0.08); border-color:rgba(56,217,245,0.3); padding:16px;">
+            <div style="font-weight:700; color:var(--cyan); font-size:15px; margin-bottom:10px;">✅ Bản chất chính xác cần chọn</div>
+            <ul style="padding-left:18px;">
+              <li style="font-size:14px; margin-bottom:6px;"><strong>Margin</strong> mới là ngoài viền; <strong>Padding</strong> là đệm bên trong</li><li style="font-size:14px; margin-bottom:6px;">Thẻ nội tuyến (span, a) <strong>không có width/height</strong></li><li style="font-size:14px; margin-bottom:6px;">Tên ID/Class <strong>bắt buộc không được bắt đầu bằng số</strong></li><li style="font-size:14px; margin-bottom:6px;">Mọi thuộc tính khung đều <strong>KHÔNG có tính kế thừa</strong></li><li style="font-size:14px; margin-bottom:6px;">display: none; <strong>làm ẩn hoàn toàn</strong> khỏi trang web</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="cau-hoi" style="margin:16px 0; border:1px solid rgba(56,217,245,0.3); background:rgba(56,217,245,0.04); border-radius:14px; padding:16px 20px;">
+          <div class="q-num" style="background:var(--cyan); color:#000; font-weight:800; border-radius:50%; width:28px; height:28px; display:flex; align-items:center; justify-content:center; flex-shrink:0;">?</div>
+          <div style="flex:1;">
+            <div class="q-text" style="font-weight:600; color:#fff; font-size:15.5px; margin-bottom:10px;">Khai báo CSS nào sau đây sẽ thiết lập lề trên và lề dưới là 10px, lề trái và lề phải là 20px?</div>
+            <div style="display:grid; grid-template-columns:1fr; gap:6px; margin-bottom:10px;">
+              
+                <div style="background:rgba(255,255,255,0.04); border:1px solid var(--border); border-radius:8px; padding:6px 12px; font-size:14px; color:#c8d8ec;">
+                  <b>A.</b> margin: 10px 20px; (giá trị 1: trên/dưới, giá trị 2: trái/phải)
+                </div>
+              
+                <div style="background:rgba(255,255,255,0.04); border:1px solid var(--border); border-radius:8px; padding:6px 12px; font-size:14px; color:#c8d8ec;">
+                  <b>B.</b> margin: 20px 10px; (giá trị 1: trái/phải, giá trị 2: trên/dưới)
+                </div>
+              
+                <div style="background:rgba(255,255,255,0.04); border:1px solid var(--border); border-radius:8px; padding:6px 12px; font-size:14px; color:#c8d8ec;">
+                  <b>C.</b> padding: 10px 20px; (vì khoảng cách lề được gọi là padding)
+                </div>
+              
+                <div style="background:rgba(255,255,255,0.04); border:1px solid var(--border); border-radius:8px; padding:6px 12px; font-size:14px; color:#c8d8ec;">
+                  <b>D.</b> border: 10px 20px; (vì đường bao quanh phần tử là border)
+                </div>
+              
+            </div>
+            <details style="margin-top:8px;">
+              <summary style="cursor:pointer; color:var(--cyan); font-size:13px; font-weight:600;">👉 Xem đáp án & giải thích</summary>
+              <div style="margin-top:6px; padding:8px 12px; background:rgba(86,227,159,0.1); border-left:3px solid var(--green); border-radius:6px; font-size:13.5px; color:#a3e635;">
+                <strong>Đáp án đúng: A</strong><br>
+                <span>margin: 10px 20px; viết theo dạng 2 giá trị rút gọn: giá trị thứ nhất (10px) cho trên/dưới (Top/Bottom), giá trị thứ hai (20px) cho trái/phải (Left/Right).</span>
+              </div>
+            </details>
+          </div>
+        </div>
+      <div class="page-num">Trang 106-112</div>
+    </section>
+  
+
+  <!-- HỘP GHI NHỚ CUỐI BÀI -->
+  <section class="section" id="ghi-nho">
+    <div class="ghi-nho">
+      <div class="ghi-nho-title">📌 Em cần ghi nhớ</div>
+      <ul style="padding-left:20px;">
+        <li style="font-size:15.5px; line-height:1.7; margin-bottom:10px;">Phần tử HTML chia hai loại: <strong>khối</strong> (bắt đầu từ đầu hàng, chiếm hết chiều rộng) và <strong>nội tuyến</strong> (nhúng trong phần tử khác). Đổi loại bằng thuộc tính <strong>display: block/inline/none</strong>.</li>
+<li style="font-size:15.5px; line-height:1.7; margin-bottom:10px;">Khung của phần tử gồm 4 lớp lồng nhau: <strong>nội dung → padding (vùng đệm) → border (viền) → margin (lề)</strong>. width/height chỉ áp dụng cho phần tử khối. Mọi thuộc tính khung đều <strong>không có tính kế thừa</strong>.</li>
+<li style="font-size:15.5px; line-height:1.7; margin-bottom:10px;">Ba kiểu bộ chọn đặc biệt: <strong>.class</strong> (nhiều phần tử cùng lớp), <strong>#id</strong> (một phần tử duy nhất trong trang), <strong>[thuộc tính]</strong> (phần tử có gắn thuộc tính cụ thể).</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- NÚT CHUYỂN BÀI DƯỚI CÙNG -->
+  <div class="nav-btns" style="margin-top:32px;">
+    <a href="/sgk/bai-15.html" class="nav-btn">← Mô hình hộp và bố cục trong CSS</a>
+    <a href="/luyen/bai-16" class="nav-btn" style="background:linear-gradient(90deg, var(--cyan), var(--orange)); color:#fff; border:none;">🎯 Luyện trắc nghiệm ngay</a>
+    <a href="/sgk/bai-17.html" class="nav-btn">Nhóm nghề Phát triển phần mềm →</a>
+  </div>
+</main>
+
+</div>
+
+<script>
+let fs = 18;
+function changeFont(d) { fs = Math.min(28, Math.max(14, fs + d)); document.body.style.fontSize = fs + 'px'; }
+let light = false;
+function toggleTheme() {
+  light = !light;
+  document.documentElement.style.setProperty('--bg', light ? '#f0f4f8' : '#070b14');
+  document.documentElement.style.setProperty('--text', light ? '#1a2540' : '#e8eef8');
+  document.documentElement.style.setProperty('--panel', light ? '#fff' : '#111a2e');
+  document.documentElement.style.setProperty('--panel2', light ? '#f5f8fc' : '#162035');
+  document.documentElement.style.setProperty('--border', light ? '#d0daea' : '#1e2f4d');
+  document.body.style.background = light
+    ? 'radial-gradient(ellipse at 20% 10%, #d8e8f8 0%, #f0f4f8 60%)'
+    : 'radial-gradient(ellipse at 20% 10%, #0d1f3c 0%, #070b14 50%)';
+}
+window.addEventListener('scroll', () => {
+  const doc = document.documentElement;
+  const scrolled = doc.scrollTop || document.body.scrollTop;
+  const total = doc.scrollHeight - doc.clientHeight;
+  const pct = total > 0 ? Math.round((scrolled / total) * 100) : 0;
+  const p = document.getElementById('prog');
+  const pl = document.getElementById('prog-label');
+  if (p) p.style.width = pct + '%';
+  if (pl) pl.textContent = 'Tiến độ đọc: ' + pct + '%';
+});
+</script>
+</body>
+</html>

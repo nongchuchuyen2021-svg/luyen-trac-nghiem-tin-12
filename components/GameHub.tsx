@@ -20,42 +20,13 @@ import type { TeamBattleGame, GroupBattleGame } from "@/lib/types";
 
 export default function GameHub({
   lessonId,
-  games: initialGames,
+  games,
   onBack,
 }: {
   lessonId: string;
   games: LessonGame[];
   onBack?: () => void;
 }) {
-  // Ensure every lesson with questions has access to the Team Battle Arena!
-  const games = [...initialGames];
-  if (!games.some((g) => g.kind === "team-battle")) {
-    const mcqs = getQuestions(lessonId);
-    if (mcqs.length >= 4) {
-      const autoTeamGame: TeamBattleGame = {
-        kind: "team-battle",
-        id: `team-battle-${lessonId}`,
-        title: "Đấu trường Đại chiến Các Nhóm",
-        emoji: "⚔️",
-        instructions:
-          "Chia lớp thành 2 - 4 nhóm đối kháng trực tiếp trên màn hình máy chiếu! Bấm chuông cướp quyền, rinh cúp vô địch môn Tin học 12!",
-        questions: mcqs.map((q) => {
-          const order = [0, 1, 2, 3].sort(() => Math.random() - 0.5);
-          return {
-            id: q.id,
-            q: q.q,
-            options: order.map((i) => q.options[i]),
-            answer: order.indexOf(q.answer),
-            explain: q.explain,
-            score: 100,
-            damage: 25,
-          };
-        }),
-      };
-      games.unshift(autoTeamGame);
-    }
-  }
-
   const [active, setActive] = useState<LessonGame | null>(games.length === 1 ? games[0] : null);
   const [bestByGame, setBestByGame] = useState<Record<string, number | null>>({});
 

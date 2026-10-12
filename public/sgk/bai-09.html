@@ -1,0 +1,576 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tạo danh sách, bảng – Tin học 12 KNTT (SGK Điện tử)</title>
+<meta name="description" content="SGK Tin học 12 Kết nối tri thức – Tạo danh sách, bảng. Chủ đề 4. Thiết kế trang web (HTML & CSS).">
+<style>
+:root {
+  --bg: #070b14; --bg2: #0d1423; --panel: #111a2e; --panel2: #162035; --border: #1e2f4d;
+  --text: #e8eef8; --muted: #8899b8; --orange: #ff6b35; --orange2: #ff9a64;
+  --cyan: #38d9f5; --cyan2: #7ce8fa; --yellow: #ffd060; --green: #56e39f; --pink: #f06dba; --purple: #a78bfa;
+  --fs: 18px;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  background: radial-gradient(ellipse at 20% 10%, #0d1f3c 0%, #070b14 50%);
+  color: var(--text); font-family: 'Inter','Segoe UI',-apple-system,BlinkMacSystemFont,'Roboto',Arial,sans-serif;
+  font-size: var(--fs); line-height: 1.75; min-height: 100vh;
+}
+.app { display: grid; grid-template-columns: 280px 1fr; min-height: 100vh; }
+.sidebar { position:sticky; top:0; height:100vh; overflow-y:auto; background:rgba(7,11,20,.97); border-right:1px solid var(--border); padding:24px 16px; backdrop-filter:blur(20px); }
+.brand-box { margin-bottom:24px; }
+.series-label { font-size:11px; letter-spacing:2px; text-transform:uppercase; color:var(--cyan); font-weight:700; margin-bottom:6px; }
+.brand-title { font-size:20px; font-weight:900; color:#fff; line-height:1.2; }
+.brand-title span { color:var(--orange); }
+.brand-sub { color:var(--muted); font-size:12px; margin-top:5px; }
+.toc-title { font-size:11px; letter-spacing:1.5px; text-transform:uppercase; color:var(--muted); font-weight:700; margin:20px 0 8px; padding:0 8px; }
+.toc a { display:block; color:#9aaec8; text-decoration:none; padding:9px 12px; border-radius:10px; margin:2px 0; font-size:13.5px; font-weight:500; transition:all .2s; border-left:3px solid transparent; }
+.toc a:hover { background:rgba(56,217,245,.07); color:var(--cyan); border-left-color:var(--cyan); }
+.toc a.active { background:rgba(255,107,53,.1); color:var(--orange); border-left-color:var(--orange); }
+.ctrl-box { margin-top:24px; padding:14px; border:1px solid var(--border); border-radius:14px; background:rgba(255,255,255,.03); }
+.ctrl-box h4 { font-size:11px; letter-spacing:1px; text-transform:uppercase; color:var(--muted); margin-bottom:10px; }
+.ctrl-row { display:flex; gap:8px; margin-bottom:8px; }
+.ctrl-btn { flex:1; background:var(--panel2); border:1px solid var(--border); color:var(--text); border-radius:9px; padding:8px 6px; cursor:pointer; font-size:13px; font-weight:600; transition:all .2s; text-align:center; text-decoration:none; display:inline-block; }
+.ctrl-btn:hover { background:var(--border); color:#fff; }
+.progress-bar { height:4px; background:var(--panel2); border-radius:4px; overflow:hidden; margin-top:10px; }
+.progress-fill { height:100%; width:0%; background:linear-gradient(90deg,var(--cyan),var(--orange)); transition:width .3s; border-radius:4px; }
+.main { max-width:860px; margin:0 auto; padding:32px 28px 80px; }
+.hero { background:linear-gradient(135deg,#0f2040 0%,#0a1628 60%,#131020 100%); border:1px solid var(--border); border-radius:24px; padding:36px 40px; margin-bottom:28px; box-shadow:0 24px 80px rgba(0,0,0,.5); position:relative; overflow:hidden; }
+.hero::before { content:'9'; position:absolute; right:30px; top:20px; font-size:120px; font-weight:900; color:rgba(56,217,245,.05); line-height:1; user-select:none; }
+.chu-de-tag { display:inline-flex; align-items:center; gap:8px; background:rgba(56,217,245,.12); border:1px solid rgba(56,217,245,.3); color:var(--cyan); font-size:13px; font-weight:700; padding:6px 14px; border-radius:20px; margin-bottom:16px; letter-spacing:.5px; }
+.hero h1 { font-size:clamp(26px,4vw,38px); font-weight:900; line-height:1.2; background:linear-gradient(90deg,#fff 0%,var(--cyan2) 50%,var(--orange2) 100%); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; margin-bottom:14px; }
+.hero-desc { color:#b0c4de; font-size:15.5px; line-height:1.6; }
+.section { background:rgba(11,17,30,.9); border:1px solid var(--border); border-radius:20px; padding:28px 32px 36px; margin-bottom:24px; scroll-margin-top:20px; position:relative; transition:border-color .3s; }
+.section:hover { border-color:rgba(56,217,245,.2); }
+.page-num { position:absolute; right:20px; bottom:14px; color:var(--muted); font-size:12px; font-weight:600; background:var(--panel2); padding:3px 10px; border-radius:10px; }
+h2 { font-size:clamp(20px,2.5vw,26px); font-weight:800; color:#fff; margin:28px 0 14px; display:flex; align-items:center; gap:10px; }
+h2::before { content:''; display:inline-block; width:4px; height:24px; background:linear-gradient(var(--orange),var(--cyan)); border-radius:2px; flex-shrink:0; }
+p { color:#d0dcea; margin-bottom:14px; }
+p:last-child { margin-bottom:0; }
+strong { color:#fff; }
+em { color:var(--cyan2); font-style:italic; }
+code { background:rgba(255,255,255,0.08); color:var(--orange2); padding:2px 6px; border-radius:4px; font-size:0.9em; font-family:monospace; }
+ul, ol { padding-left:22px; margin:12px 0; }
+li { color:#c8d8ec; margin-bottom:8px; }
+li::marker { color:var(--cyan); }
+.info-box { background:linear-gradient(135deg,#071e2e,#071828); border:1px dashed rgba(56,217,245,.4); border-radius:14px; padding:18px 22px; margin:20px 0; }
+.info-box p, .info-box li { color:#b8d8f0; }
+.activity { background:linear-gradient(135deg,#1a120a,#130f0a); border:1px solid rgba(255,160,60,.3); border-left:4px solid var(--orange); border-radius:14px; padding:18px 22px; margin:20px 0; }
+.activity-badge { display:inline-flex; align-items:center; gap:6px; background:var(--orange); color:#1a0a00; font-size:12px; font-weight:800; padding:4px 12px; border-radius:6px; margin-bottom:10px; letter-spacing:.5px; text-transform:uppercase; }
+.ghi-nho { background:linear-gradient(135deg,#1a2a10,#0f1e0a); border:1px solid rgba(86,227,159,.3); border-left:4px solid var(--green); border-radius:14px; padding:20px 24px; margin:24px 0; }
+.ghi-nho-title { color:var(--green); font-weight:800; font-size:15px; text-transform:uppercase; letter-spacing:1px; margin-bottom:10px; display:flex; align-items:center; gap:8px; }
+.ghi-nho p, .ghi-nho li { color:#c8f0d8; }
+.nav-btns { display:flex; gap:12px; margin:20px 0; }
+.nav-btn { background:var(--panel); border:1px solid var(--border); color:var(--text); border-radius:10px; padding:10px 18px; text-decoration:none; font-size:14px; font-weight:600; transition:all .2s; flex:1; text-align:center; }
+.nav-btn:hover { background:var(--panel2); border-color:var(--cyan); color:#fff; }
+.field-grid { display:grid; grid-template-columns:1fr 1fr; gap:14px; margin:18px 0; }
+.field-card { background:var(--panel2); border:1px solid var(--border); border-radius:14px; padding:16px 18px; }
+.img-side { display:grid; grid-template-columns:1fr 1fr; gap:14px; margin:18px 0; }
+.img-half { border-radius:12px; border:1px solid var(--border); }
+@media (max-width: 860px) {
+  .app { grid-template-columns: 1fr; }
+  .sidebar { display: none; }
+  .main { padding: 20px 16px 60px; }
+  .field-grid, .img-side { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+
+<div class="app">
+
+<!-- SIDEBAR -->
+<aside class="sidebar">
+  <div class="brand-box">
+    <div class="series-label">KẾT NỐI TRI THỨC</div>
+    <div class="brand-title">TIN HỌC <span>12</span></div>
+    <div class="brand-sub">Sách Giáo Khoa Điện Tử (ICT)</div>
+  </div>
+
+  <div class="ctrl-box">
+    <h4>Cỡ chữ & Giao diện</h4>
+    <div class="ctrl-row">
+      <button class="ctrl-btn" onclick="changeFont(-1)">A -</button>
+      <button class="ctrl-btn" onclick="changeFont(1)">A +</button>
+      <button class="ctrl-btn" onclick="toggleTheme()">🌓 Nền</button>
+    </div>
+    <div style="font-size:12px; color:var(--muted); margin-top:8px;" id="prog-label">Tiến độ đọc: 0%</div>
+    <div class="progress-bar"><div class="progress-fill" id="prog"></div></div>
+  </div>
+
+  <div class="toc-title">Mục lục bài học</div>
+  <nav class="toc">
+    
+      <a href="#sec-1">1. Tạo danh sách</a>
+    
+      <a href="#sec-2">2. Danh sách có hoặc không có thứ tự</a>
+    
+      <a href="#sec-3">3. Danh sách mô tả</a>
+    
+      <a href="#sec-4">4. Thiết lập bảng</a>
+    
+      <a href="#sec-5">5. Định dạng bảng</a>
+    
+      <a href="#sec-6">6. Gộp hàng và cột</a>
+    
+    <a href="#ghi-nho">📌 Ghi nhớ cốt lõi</a>
+  </nav>
+
+  <div class="ctrl-box" style="margin-top:20px;">
+    <h4>Luyện tập</h4>
+    <a href="/luyen/bai-09" class="ctrl-btn" style="background:var(--cyan); color:#000; font-weight:700;">🎯 Vào Luyện Trắc Nghiệm</a>
+  </div>
+</aside>
+
+<!-- MAIN CONTENT -->
+<main class="main">
+  <!-- HERO BANNER -->
+  <div class="hero">
+    <div class="chu-de-tag">Chủ đề 4. Thiết kế trang web (HTML & CSS)</div>
+    <h1>Tạo danh sách, bảng</h1>
+    <div class="hero-desc">Bài 8 em đã biết định dạng chữ đẹp, nhưng dữ liệu thực tế không chỉ toàn chữ — có khi cần liệt kê từng bước, có khi cần xếp thành hàng cột. Bài này dạy hai công cụ trình bày phổ biến nhất: <strong>danh sách</strong> (list) và <strong>bảng</strong> (table).</div>
+  </div>
+
+  <!-- NÚT CHUYỂN BÀI -->
+  <div class="nav-btns">
+    <a href="/sgk/bai-08.html" class="nav-btn">← Định dạng văn bản</a>
+    <a href="/sgk/bai-10.html" class="nav-btn">Tạo liên kết →</a>
+  </div>
+
+  <!-- CÁC MỤC NỘI DUNG -->
+  
+    <section class="section" id="sec-1">
+      <h2 id="heading-1">📋 1. Tạo danh sách</h2>
+      <p>Danh sách trong HTML cho phép <strong>nhóm và liệt kê các mục tương tự nhau</strong> thành một danh sách để hiển thị. Các dạng danh sách trong HTML cơ bản gồm: <strong>danh sách không có thứ tự</strong>, <strong>danh sách có thứ tự</strong> và <strong>danh sách mô tả</strong>. Có thể tạo danh sách <strong>lồng nhau</strong>.</p>
+<p>Trong danh sách, các mục được hiển thị tuần tự, kí tự đầu dòng có thể là một số, chữ, dấu, kí hiệu hoặc hình ảnh. Cấu trúc chung:</p>
+
+        <div style="background:#060b14; border:1px solid var(--border); border-radius:12px; overflow:hidden; margin:16px 0; font-family:monospace;">
+          <div style="background:rgba(255,255,255,0.05); padding:6px 14px; font-size:12px; color:var(--muted); border-bottom:1px solid var(--border);">💻 Cấu trúc đoạn mã HTML tạo danh sách</div>
+          <pre style="padding:14px 16px; margin:0; font-size:14px; line-height:1.6; color:#7ce8fa; overflow-x:auto;"><code>&lt;thẻ bắt đầu&gt;
+  &lt;li&gt; mục thứ 1 &lt;/li&gt;
+  ...
+  &lt;li&gt; mục thứ n &lt;/li&gt;
+&lt;/thẻ kết thúc&gt;</code></pre>
+        </div>
+      <div class="page-num">Trang 58-64</div>
+    </section>
+  
+
+    <section class="section" id="sec-2">
+      <h2 id="heading-2">🔢 2. Danh sách có hoặc không có thứ tự</h2>
+      <p>Để tạo <strong>danh sách có thứ tự</strong>, dùng cặp thẻ <strong><code><ol>…</ol></code></strong>. Để chọn kiểu đánh thứ tự và giá trị bắt đầu, dùng thuộc tính <strong><code>type</code></strong> và <strong><code>start</code></strong>.</p>
+
+        <ul>
+          <li><strong><code>type</code></strong>: xác định kiểu đánh số. Các kiểu đánh số là: <code>"1"</code>, <code>"A"</code>, <code>"a"</code>, <code>"I"</code> và <code>"i"</code>.</li>
+<li><strong><code>start</code></strong>: xác định giá trị bắt đầu đánh số, nhận giá trị là các số thực.</li>
+        </ul>
+
+        <div style="background:#060b14; border:1px solid var(--border); border-radius:12px; overflow:hidden; margin:16px 0; font-family:monospace;">
+          <div style="background:rgba(255,255,255,0.05); padding:6px 14px; font-size:12px; color:var(--muted); border-bottom:1px solid var(--border);">💻 Hình 9.1 trong SGK — danh sách có thứ tự kiểu chữ La Mã thường</div>
+          <pre style="padding:14px 16px; margin:0; font-size:14px; line-height:1.6; color:#7ce8fa; overflow-x:auto;"><code>&lt;ol type="i"&gt;
+&lt;li&gt;Nếu &lt;b&gt;delta&lt;/b&gt; &lt; 0: ...&lt;/li&gt;
+&lt;li&gt;Nếu &lt;b&gt;delta&lt;/b&gt; = 0: ...&lt;/li&gt;
+&lt;li&gt;Nếu &lt;b&gt;delta&lt;/b&gt; &gt; 0: ...&lt;/li&gt;
+&lt;/ol&gt;</code></pre>
+        </div>
+<p>Để tạo <strong>danh sách không có thứ tự</strong>, dùng cặp thẻ <strong><code><ul>…</ul></code></strong>. Để chọn kí tự đầu dòng, ta thiết lập giá trị của đặc tính <strong><code>list-style-type</code></strong> trong thuộc tính <strong><code>style</code></strong> bằng một trong 4 giá trị: <strong><code>disc</code></strong>, <strong><code>circle</code></strong>, <strong><code>square</code></strong> và <strong><code>none</code></strong>.</p>
+
+        <div style="background:#060b14; border:1px solid var(--border); border-radius:12px; overflow:hidden; margin:16px 0; font-family:monospace;">
+          <div style="background:rgba(255,255,255,0.05); padding:6px 14px; font-size:12px; color:var(--muted); border-bottom:1px solid var(--border);">💻 Hình 9.2 trong SGK — danh sách không có thứ tự dùng hình vuông</div>
+          <pre style="padding:14px 16px; margin:0; font-size:14px; line-height:1.6; color:#7ce8fa; overflow-x:auto;"><code>&lt;ul style="list-style-type:square"&gt;
+&lt;li&gt;Nếu &lt;b&gt;delta&lt;/b&gt; &amp;lt; 0: ...&lt;/li&gt;
+&lt;li&gt;Nếu &lt;b&gt;delta&lt;/b&gt; = 0: ...&lt;/li&gt;
+&lt;li&gt;Nếu &lt;b&gt;delta&lt;/b&gt; &amp;gt; 0: ...&lt;/li&gt;
+&lt;/ul&gt;</code></pre>
+        </div>
+
+        <div class="field-grid">
+          
+            <div class="field-card">
+              <div class="icon">🔢</div>
+              <h4 style="margin:0 0 6px; color:var(--cyan2);"><ol></h4>
+              <p style="margin:0; font-size:14px; color:#b0c4de;">Danh sách <strong>có thứ tự</strong> — đánh số / chữ tự động</p>
+            </div>
+          
+
+            <div class="field-card">
+              <div class="icon">⚫</div>
+              <h4 style="margin:0 0 6px; color:var(--cyan2);"><ul></h4>
+              <p style="margin:0; font-size:14px; color:#b0c4de;">Danh sách <strong>không có thứ tự</strong> — kí tự đầu dòng</p>
+            </div>
+          
+
+            <div class="field-card">
+              <div class="icon">📝</div>
+              <h4 style="margin:0 0 6px; color:var(--cyan2);"><li></h4>
+              <p style="margin:0; font-size:14px; color:#b0c4de;">Mỗi <strong>mục</strong> trong danh sách (dùng cho cả ol và ul)</p>
+            </div>
+          
+        </div>
+
+        <div class="cau-hoi" style="margin:16px 0; border:1px solid rgba(56,217,245,0.3); background:rgba(56,217,245,0.04); border-radius:14px; padding:16px 20px;">
+          <div class="q-num" style="background:var(--cyan); color:#000; font-weight:800; border-radius:50%; width:28px; height:28px; display:flex; align-items:center; justify-content:center; flex-shrink:0;">?</div>
+          <div style="flex:1;">
+            <div class="q-text" style="font-weight:600; color:#fff; font-size:15.5px; margin-bottom:10px;">Muốn tạo danh sách đánh số kiểu chữ cái viết hoa (A, B, C…) thì dùng thuộc tính nào?</div>
+            <div style="display:grid; grid-template-columns:1fr; gap:6px; margin-bottom:10px;">
+              
+                <div style="background:rgba(255,255,255,0.04); border:1px solid var(--border); border-radius:8px; padding:6px 12px; font-size:14px; color:#c8d8ec;">
+                  <b>A.</b> <ol type="A">
+                </div>
+              
+                <div style="background:rgba(255,255,255,0.04); border:1px solid var(--border); border-radius:8px; padding:6px 12px; font-size:14px; color:#c8d8ec;">
+                  <b>B.</b> <ol type="a">
+                </div>
+              
+                <div style="background:rgba(255,255,255,0.04); border:1px solid var(--border); border-radius:8px; padding:6px 12px; font-size:14px; color:#c8d8ec;">
+                  <b>C.</b> <ul type="A">
+                </div>
+              
+                <div style="background:rgba(255,255,255,0.04); border:1px solid var(--border); border-radius:8px; padding:6px 12px; font-size:14px; color:#c8d8ec;">
+                  <b>D.</b> <ol start="A">
+                </div>
+              
+            </div>
+            <details style="margin-top:8px;">
+              <summary style="cursor:pointer; color:var(--cyan); font-size:13px; font-weight:600;">👉 Xem đáp án & giải thích</summary>
+              <div style="margin-top:6px; padding:8px 12px; background:rgba(86,227,159,0.1); border-left:3px solid var(--green); border-radius:6px; font-size:13.5px; color:#a3e635;">
+                <strong>Đáp án đúng: A</strong><br>
+                <span>Dùng <strong><code><ol type="A"></code></strong> để đánh thứ tự bằng chữ cái viết hoa. <code>type="a"</code> là chữ thường, còn <code><ul></code> là danh sách <strong>không</strong> có thứ tự. <code>start</code> nhận <strong>số</strong> chứ không nhận chữ.</span>
+              </div>
+            </details>
+          </div>
+        </div>
+      <div class="page-num">Trang 58-64</div>
+    </section>
+  
+
+    <section class="section" id="sec-3">
+      <h2 id="heading-3">📖 3. Danh sách mô tả</h2>
+      <p><strong>Danh sách mô tả</strong> dùng để liệt kê các mục kèm với <strong>mô tả cho từng mục</strong>. Cấu trúc của đoạn mã tạo danh sách mô tả <strong>khác</strong> với đoạn mã tạo danh sách có hoặc không có thứ tự. Để tạo danh sách mô tả, em dùng <strong>ba thẻ <code><dl></code>, <code><dt></code> và <code><dd></code></strong>:</p>
+
+        <ul>
+          <li><strong><code><dl>…</dl></code></strong>: bao bọc toàn bộ danh sách mô tả (definition list).</li>
+<li><strong><code><dt>…</dt></code></strong>: tên mục (chẳng hạn như một thuật ngữ hoặc một nhãn).</li>
+<li><strong><code><dd>…</dd></code></strong>: mô tả của mục (định nghĩa của thuật ngữ hoặc mô tả cho nhãn tương ứng).</li>
+        </ul>
+
+        <div style="background:#060b14; border:1px solid var(--border); border-radius:12px; overflow:hidden; margin:16px 0; font-family:monospace;">
+          <div style="background:rgba(255,255,255,0.05); padding:6px 14px; font-size:12px; color:var(--muted); border-bottom:1px solid var(--border);">💻 Hình 9.3 trong SGK — danh sách mô tả hai mục Kem và Trà sữa</div>
+          <pre style="padding:14px 16px; margin:0; font-size:14px; line-height:1.6; color:#7ce8fa; overflow-x:auto;"><code>&lt;dl&gt;
+  &lt;dt&gt;&lt;b&gt;Kem&lt;/b&gt;&lt;/dt&gt;
+  &lt;dd&gt;Món ăn ngọt, ở dạng đông lạnh.&lt;/dd&gt;
+  &lt;dt&gt;&lt;b&gt;Trà sữa&lt;/b&gt;&lt;/dt&gt;
+  &lt;dd&gt;Là đồ uống làm từ hai nguyên liệu trà và sữa.&lt;/dd&gt;
+&lt;/dl&gt;</code></pre>
+        </div>
+
+        <div class="info-box">
+          <p>Trong HTML, ta có thể định nghĩa các kiểu danh sách có thứ tự, không có thứ tự và danh sách mô tả bằng các thẻ <strong><code><ol></code></strong>, <strong><code><ul></code></strong> và <strong><code><dl></code></strong>.</p>
+        </div>
+
+        <div class="activity">
+          <div class="activity-badge">💡 Danh sách lồng nhau</div>
+          <p>Ta có thể tạo ra các danh sách <strong>lồng nhau</strong> bằng cách để một danh sách là <strong>một mục</strong> của một danh sách khác (bằng cách đặt danh sách đó bên trong cụm thẻ <code><li>…</li></code> của mục tương ứng). Ví dụ: danh sách mức 1 đánh số 1, 2, 3,… và danh sách mức 2 đánh số dạng a, b, c.</p>
+        </div>
+
+        <div class="cau-hoi" style="margin:16px 0; border:1px solid rgba(56,217,245,0.3); background:rgba(56,217,245,0.04); border-radius:14px; padding:16px 20px;">
+          <div class="q-num" style="background:var(--cyan); color:#000; font-weight:800; border-radius:50%; width:28px; height:28px; display:flex; align-items:center; justify-content:center; flex-shrink:0;">?</div>
+          <div style="flex:1;">
+            <div class="q-text" style="font-weight:600; color:#fff; font-size:15.5px; margin-bottom:10px;">Trong danh sách mô tả, thẻ nào chứa phần giải thích / mô tả cho từng mục?</div>
+            <div style="display:grid; grid-template-columns:1fr; gap:6px; margin-bottom:10px;">
+              
+                <div style="background:rgba(255,255,255,0.04); border:1px solid var(--border); border-radius:8px; padding:6px 12px; font-size:14px; color:#c8d8ec;">
+                  <b>A.</b> <dl>
+                </div>
+              
+                <div style="background:rgba(255,255,255,0.04); border:1px solid var(--border); border-radius:8px; padding:6px 12px; font-size:14px; color:#c8d8ec;">
+                  <b>B.</b> <dt>
+                </div>
+              
+                <div style="background:rgba(255,255,255,0.04); border:1px solid var(--border); border-radius:8px; padding:6px 12px; font-size:14px; color:#c8d8ec;">
+                  <b>C.</b> <dd>
+                </div>
+              
+                <div style="background:rgba(255,255,255,0.04); border:1px solid var(--border); border-radius:8px; padding:6px 12px; font-size:14px; color:#c8d8ec;">
+                  <b>D.</b> <li>
+                </div>
+              
+            </div>
+            <details style="margin-top:8px;">
+              <summary style="cursor:pointer; color:var(--cyan); font-size:13px; font-weight:600;">👉 Xem đáp án & giải thích</summary>
+              <div style="margin-top:6px; padding:8px 12px; background:rgba(86,227,159,0.1); border-left:3px solid var(--green); border-radius:6px; font-size:13.5px; color:#a3e635;">
+                <strong>Đáp án đúng: C</strong><br>
+                <span><strong><code><dd></code></strong> chứa phần mô tả (definition description). <code><dt></code> chứa tên mục (thuật ngữ), <code><dl></code> bao bọc toàn bộ danh sách, còn <code><li></code> dùng cho danh sách <code><ol></code> và <code><ul></code>.</span>
+              </div>
+            </details>
+          </div>
+        </div>
+      <div class="page-num">Trang 58-64</div>
+    </section>
+  
+
+    <section class="section" id="sec-4">
+      <h2 id="heading-4">📊 4. Thiết lập bảng</h2>
+      <p>Phần tử bảng được dùng khi ta cần thêm dữ liệu có thể <strong>sắp xếp dưới dạng hàng và cột</strong> vào trang web. Dữ liệu trong bảng có thể là <strong>bất kì loại thông tin nào, không nhất thiết là dạng số</strong>. Bảng là công cụ để tạo ra các bố cục nhiều cột hoặc phân bố nội dung và các khoảng trắng.</p>
+<p>Bảng được tạo từ các <strong>hàng</strong>, mỗi hàng gồm các <strong>ô dữ liệu</strong>. Hàng đầu tiên có thể là hàng <strong>tiêu đề</strong>. Ngôn ngữ HTML xây dựng bảng từ các thành phần tương ứng như trên. Các thành phần lần lượt được định nghĩa bởi các thẻ:</p>
+
+        <div class="field-grid">
+          
+            <div class="field-card">
+              <div class="icon">📦</div>
+              <h4 style="margin:0 0 6px; color:var(--cyan2);"><table></h4>
+              <p style="margin:0; font-size:14px; color:#b0c4de;">Tạo <strong>bảng</strong> — bao bọc toàn bộ bảng</p>
+            </div>
+          
+
+            <div class="field-card">
+              <div class="icon">➡️</div>
+              <h4 style="margin:0 0 6px; color:var(--cyan2);"><tr></h4>
+              <p style="margin:0; font-size:14px; color:#b0c4de;">Tạo <strong>hàng</strong> (table row)</p>
+            </div>
+          
+
+            <div class="field-card">
+              <div class="icon">📝</div>
+              <h4 style="margin:0 0 6px; color:var(--cyan2);"><td></h4>
+              <p style="margin:0; font-size:14px; color:#b0c4de;">Tạo <strong>ô dữ liệu</strong> (table data)</p>
+            </div>
+          
+
+            <div class="field-card">
+              <div class="icon">🏷️</div>
+              <h4 style="margin:0 0 6px; color:var(--cyan2);"><th></h4>
+              <p style="margin:0; font-size:14px; color:#b0c4de;">Tạo <strong>ô tiêu đề</strong> (table header) — chữ đậm, căn giữa</p>
+            </div>
+          
+        </div>
+
+        <div style="background:#060b14; border:1px solid var(--border); border-radius:12px; overflow:hidden; margin:16px 0; font-family:monospace;">
+          <div style="background:rgba(255,255,255,0.05); padding:6px 14px; font-size:12px; color:var(--muted); border-bottom:1px solid var(--border);">💻 Hình 9.4 trong SGK — bảng Món ăn, Đơn giá, SL, Thành tiền</div>
+          <pre style="padding:14px 16px; margin:0; font-size:14px; line-height:1.6; color:#7ce8fa; overflow-x:auto;"><code>&lt;table&gt;
+&lt;tr&gt;
+  &lt;th&gt;Món ăn&lt;/th&gt; &lt;th&gt;Đơn giá&lt;/th&gt; &lt;th&gt;SL&lt;/th&gt; &lt;th&gt;Thành tiền&lt;/th&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+  &lt;td&gt;Thịt xiên&lt;/td&gt; &lt;td&gt;10K&lt;/td&gt; &lt;td&gt;3&lt;/td&gt; &lt;td&gt;30&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+  &lt;td&gt;Cá viên&lt;/td&gt; &lt;td&gt;5K&lt;/td&gt; &lt;td&gt;6&lt;/td&gt; &lt;td&gt;30&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/table&gt;</code></pre>
+        </div>
+
+        <div class="cau-hoi" style="margin:16px 0; border:1px solid rgba(56,217,245,0.3); background:rgba(56,217,245,0.04); border-radius:14px; padding:16px 20px;">
+          <div class="q-num" style="background:var(--cyan); color:#000; font-weight:800; border-radius:50%; width:28px; height:28px; display:flex; align-items:center; justify-content:center; flex-shrink:0;">?</div>
+          <div style="flex:1;">
+            <div class="q-text" style="font-weight:600; color:#fff; font-size:15.5px; margin-bottom:10px;">Thẻ nào dùng để tạo một hàng trong bảng HTML?</div>
+            <div style="display:grid; grid-template-columns:1fr; gap:6px; margin-bottom:10px;">
+              
+                <div style="background:rgba(255,255,255,0.04); border:1px solid var(--border); border-radius:8px; padding:6px 12px; font-size:14px; color:#c8d8ec;">
+                  <b>A.</b> <table>
+                </div>
+              
+                <div style="background:rgba(255,255,255,0.04); border:1px solid var(--border); border-radius:8px; padding:6px 12px; font-size:14px; color:#c8d8ec;">
+                  <b>B.</b> <tr>
+                </div>
+              
+                <div style="background:rgba(255,255,255,0.04); border:1px solid var(--border); border-radius:8px; padding:6px 12px; font-size:14px; color:#c8d8ec;">
+                  <b>C.</b> <td>
+                </div>
+              
+                <div style="background:rgba(255,255,255,0.04); border:1px solid var(--border); border-radius:8px; padding:6px 12px; font-size:14px; color:#c8d8ec;">
+                  <b>D.</b> <th>
+                </div>
+              
+            </div>
+            <details style="margin-top:8px;">
+              <summary style="cursor:pointer; color:var(--cyan); font-size:13px; font-weight:600;">👉 Xem đáp án & giải thích</summary>
+              <div style="margin-top:6px; padding:8px 12px; background:rgba(86,227,159,0.1); border-left:3px solid var(--green); border-radius:6px; font-size:13.5px; color:#a3e635;">
+                <strong>Đáp án đúng: B</strong><br>
+                <span><strong><code><tr></code></strong> (table row) tạo một hàng. <code><table></code> tạo cả bảng, <code><td></code> tạo ô dữ liệu, <code><th></code> tạo ô tiêu đề.</span>
+              </div>
+            </details>
+          </div>
+        </div>
+      <div class="page-num">Trang 58-64</div>
+    </section>
+  
+
+    <section class="section" id="sec-5">
+      <h2 id="heading-5">🎨 5. Định dạng bảng</h2>
+      <p>Bảng trong Hình 9.4 có thể được <strong>định dạng thêm</strong> để đẹp và dễ đọc hơn. Các định dạng cơ bản gồm: <strong>thêm tiêu đề cho bảng</strong>, <strong>tạo khung bảng</strong>, <strong>điều chỉnh kích thước hàng/cột/ô</strong> và <strong>gộp ô</strong>.</p>
+
+        <div class="steps-container" style="display:flex; flex-direction:column; gap:12px; margin:16px 0;">
+          
+            <div style="background:var(--panel2); border-left:4px solid var(--cyan); border-radius:10px; padding:12px 16px;">
+              <div style="display:flex; gap:8px; align-items:center; margin-bottom:4px;">
+                <span style="background:var(--cyan); color:#000; font-weight:800; font-size:11px; padding:2px 8px; border-radius:12px;">1</span>
+                <strong style="color:var(--text); font-size:15px;">Thêm tiêu đề</strong>
+              </div>
+              <p style="margin:0; font-size:14.5px; color:#b0c4de;">Sử dụng thẻ <strong><code><caption></code></strong>, ngay sau thẻ <code><table></code> và trước thẻ <code><tr></code> đầu tiên.</p>
+            </div>
+          
+
+            <div style="background:var(--panel2); border-left:4px solid var(--cyan); border-radius:10px; padding:12px 16px;">
+              <div style="display:flex; gap:8px; align-items:center; margin-bottom:4px;">
+                <span style="background:var(--cyan); color:#000; font-weight:800; font-size:11px; padding:2px 8px; border-radius:12px;">2</span>
+                <strong style="color:var(--text); font-size:15px;">Tạo khung bảng</strong>
+              </div>
+              <p style="margin:0; font-size:14.5px; color:#b0c4de;">Trong HTML5, độ dày khung được thiết lập cho viền khung bảng hoặc khung của từng ô bằng thuộc tính con <strong><code>border</code></strong> của thuộc tính <code>style</code>. Cú pháp: <strong><code>"độ_dày_theo_px kiểu_viền [màu_viền]"</code></strong>. Kiểu viền: <strong>solid, dotted, double, none</strong>. Màu viền mặc định là đen.</p>
+            </div>
+          
+
+            <div style="background:var(--panel2); border-left:4px solid var(--cyan); border-radius:10px; padding:12px 16px;">
+              <div style="display:flex; gap:8px; align-items:center; margin-bottom:4px;">
+                <span style="background:var(--cyan); color:#000; font-weight:800; font-size:11px; padding:2px 8px; border-radius:12px;">3</span>
+                <strong style="color:var(--text); font-size:15px;">Điều chỉnh kích thước</strong>
+              </div>
+              <p style="margin:0; font-size:14.5px; color:#b0c4de;">Sử dụng đặc tính con <strong><code>width</code></strong> và <strong><code>height</code></strong> của thuộc tính <code>style</code>. Kích thước được đặt có thể là theo <strong>tỉ lệ (%)</strong> với khối bao ngoài đối tượng hoặc theo <strong>số điểm ảnh (px)</strong>.</p>
+            </div>
+          
+
+            <div style="background:var(--panel2); border-left:4px solid var(--cyan); border-radius:10px; padding:12px 16px;">
+              <div style="display:flex; gap:8px; align-items:center; margin-bottom:4px;">
+                <span style="background:var(--cyan); color:#000; font-weight:800; font-size:11px; padding:2px 8px; border-radius:12px;">4</span>
+                <strong style="color:var(--text); font-size:15px;">Gộp ô</strong>
+              </div>
+              <p style="margin:0; font-size:14.5px; color:#b0c4de;">Sử dụng thuộc tính <strong><code>rowspan</code></strong> (gộp theo hàng) và <strong><code>colspan</code></strong> (gộp theo cột). Bản chất là <strong>mở rộng một ô</strong> bằng cách thêm một số hàng hoặc một số cột lân cận có cùng nội dung.</p>
+            </div>
+          
+        </div>
+
+        <div style="background:#060b14; border:1px solid var(--border); border-radius:12px; overflow:hidden; margin:16px 0; font-family:monospace;">
+          <div style="background:rgba(255,255,255,0.05); padding:6px 14px; font-size:12px; color:var(--muted); border-bottom:1px solid var(--border);">💻 Hình 9.5 trong SGK — ví dụ thuộc tính kích thước của bảng</div>
+          <pre style="padding:14px 16px; margin:0; font-size:14px; line-height:1.6; color:#7ce8fa; overflow-x:auto;"><code>&lt;table style="width:80%;height:400px"&gt;
+  &lt;tr style="height:15%"&gt;...&lt;/tr&gt;
+  &lt;td style="width:10%"&gt;...&lt;/td&gt;
+&lt;/table&gt;</code></pre>
+        </div>
+
+        <div class="info-box">
+          <p>Không nên sử dụng kích thước theo px do các thiết bị hiển thị có sự khác nhau về kích thước và số điểm ảnh, có thể dẫn đến bảng <strong>không hiển thị đúng như mong đợi</strong>.</p>
+        </div>
+      <div class="page-num">Trang 58-64</div>
+    </section>
+  
+
+    <section class="section" id="sec-6">
+      <h2 id="heading-6">🔗 6. Gộp hàng và cột</h2>
+      <p>Việc gộp ô giúp tạo ra được bảng có <strong>cấu trúc phức tạp</strong> nhưng cũng làm cho việc đánh dấu, theo dõi và kiểm soát số lượng ô trở nên <strong>khó khăn hơn</strong>.</p>
+<p>Để gộp ô trên hàng, sử dụng thuộc tính <strong><code>colspan</code></strong> — tương tự đối với cột, sử dụng <strong><code>rowspan</code></strong>:</p>
+
+        <ul>
+          <li>Thêm <strong><code>rowspan="số_hàng_muốn_ghép"</code></strong> cho phần tử <code><th></code> hoặc <code><td></code> thuộc hàng đầu tiên cần ghép.</li>
+<li>Đối với các hàng tiếp theo: <strong>bỏ qua</strong> cặp thẻ <code><th></code> hoặc <code><td></code> tại vị trí tương ứng (nếu bước trên đặt <code>rowspan="3"</code> thì bỏ qua hai hàng tiếp theo).</li>
+        </ul>
+
+        <div style="background:#060b14; border:1px solid var(--border); border-radius:12px; overflow:hidden; margin:16px 0; font-family:monospace;">
+          <div style="background:rgba(255,255,255,0.05); padding:6px 14px; font-size:12px; color:var(--muted); border-bottom:1px solid var(--border);">💻 Hình 9.6 trong SGK — bảng điểm thi gộp hàng và cột</div>
+          <pre style="padding:14px 16px; margin:0; font-size:14px; line-height:1.6; color:#7ce8fa; overflow-x:auto;"><code>&lt;table border="1"&gt;
+&lt;tr&gt;
+  &lt;th rowspan="2"&gt;Họ và tên&lt;/th&gt;
+  &lt;th colspan="3"&gt;Điểm thi&lt;/th&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+  &lt;td&gt;Toán&lt;/td&gt;
+  &lt;td&gt;Vật lí&lt;/td&gt;
+  &lt;td&gt;Hoá học&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/table&gt;</code></pre>
+        </div>
+
+        <div class="info-box">
+          <p>Phần tử bảng dùng để biểu diễn dữ liệu có cấu trúc dạng bảng. Phần tử bảng được tạo bởi các thẻ chính là <strong><code><table></code></strong>, <strong><code><tr></code></strong>, <strong><code><td></code></strong> và <strong><code><th></code></strong>; trình bày bảng bằng thuộc tính <strong><code>style</code></strong>.</p>
+        </div>
+
+        <div class="cau-hoi" style="margin:16px 0; border:1px solid rgba(56,217,245,0.3); background:rgba(56,217,245,0.04); border-radius:14px; padding:16px 20px;">
+          <div class="q-num" style="background:var(--cyan); color:#000; font-weight:800; border-radius:50%; width:28px; height:28px; display:flex; align-items:center; justify-content:center; flex-shrink:0;">?</div>
+          <div style="flex:1;">
+            <div class="q-text" style="font-weight:600; color:#fff; font-size:15.5px; margin-bottom:10px;">Muốn ô tiêu đề "Điểm thi" trải rộng chiếm 3 cột, ta viết thuộc tính gì?</div>
+            <div style="display:grid; grid-template-columns:1fr; gap:6px; margin-bottom:10px;">
+              
+                <div style="background:rgba(255,255,255,0.04); border:1px solid var(--border); border-radius:8px; padding:6px 12px; font-size:14px; color:#c8d8ec;">
+                  <b>A.</b> rowspan="3"
+                </div>
+              
+                <div style="background:rgba(255,255,255,0.04); border:1px solid var(--border); border-radius:8px; padding:6px 12px; font-size:14px; color:#c8d8ec;">
+                  <b>B.</b> colspan="3"
+                </div>
+              
+                <div style="background:rgba(255,255,255,0.04); border:1px solid var(--border); border-radius:8px; padding:6px 12px; font-size:14px; color:#c8d8ec;">
+                  <b>C.</b> span="3"
+                </div>
+              
+                <div style="background:rgba(255,255,255,0.04); border:1px solid var(--border); border-radius:8px; padding:6px 12px; font-size:14px; color:#c8d8ec;">
+                  <b>D.</b> width="3"
+                </div>
+              
+            </div>
+            <details style="margin-top:8px;">
+              <summary style="cursor:pointer; color:var(--cyan); font-size:13px; font-weight:600;">👉 Xem đáp án & giải thích</summary>
+              <div style="margin-top:6px; padding:8px 12px; background:rgba(86,227,159,0.1); border-left:3px solid var(--green); border-radius:6px; font-size:13.5px; color:#a3e635;">
+                <strong>Đáp án đúng: B</strong><br>
+                <span>Gộp theo cột dùng <strong><code>colspan</code></strong> — <code>colspan="3"</code> nghĩa là ô đó mở rộng chiếm 3 cột. <code>rowspan</code> gộp theo hàng, còn <code>span</code> và <code>width</code> không dùng cho mục đích gộp ô.</span>
+              </div>
+            </details>
+          </div>
+        </div>
+      <div class="page-num">Trang 58-64</div>
+    </section>
+  
+
+  <!-- HỘP GHI NHỚ CUỐI BÀI -->
+  <section class="section" id="ghi-nho">
+    <div class="ghi-nho">
+      <div class="ghi-nho-title">📌 Em cần ghi nhớ</div>
+      <ul style="padding-left:20px;">
+        <li style="font-size:15.5px; line-height:1.7; margin-bottom:10px;">Ba dạng danh sách: <strong><code><ol></code></strong> có thứ tự (thuộc tính <code>type</code> và <code>start</code>), <strong><code><ul></code></strong> không có thứ tự (đặc tính <code>list-style-type</code>: disc, circle, square, none), <strong><code><dl></code></strong> mô tả (kèm <code><dt></code> tên mục và <code><dd></code> mô tả).</li>
+<li style="font-size:15.5px; line-height:1.7; margin-bottom:10px;">Có thể tạo <strong>danh sách lồng nhau</strong> bằng cách đặt một danh sách bên trong cụm thẻ <code><li>…</li></code> của mục tương ứng.</li>
+<li style="font-size:15.5px; line-height:1.7; margin-bottom:10px;">Bảng HTML gồm: <strong><code><table></code></strong> tạo bảng, <strong><code><tr></code></strong> tạo hàng, <strong><code><td></code></strong> tạo ô dữ liệu, <strong><code><th></code></strong> tạo ô tiêu đề. Thêm <strong><code><caption></code></strong> sau <code><table></code> để đặt tiêu đề bảng.</li>
+<li style="font-size:15.5px; line-height:1.7; margin-bottom:10px;">Định dạng bảng bằng thuộc tính <strong><code>style</code></strong>: <strong><code>border</code></strong> tạo viền (cú pháp: "độ_dày kiểu_viền màu_viền"), <strong><code>width</code></strong> / <strong><code>height</code></strong> điều chỉnh kích thước (dùng <strong>%</strong> ưu tiên hơn px).</li>
+<li style="font-size:15.5px; line-height:1.7; margin-bottom:10px;">Gộp ô bằng <strong><code>colspan</code></strong> (theo cột) và <strong><code>rowspan</code></strong> (theo hàng) — bản chất là mở rộng một ô rồi <strong>bỏ qua</strong> các ô tương ứng ở hàng/cột tiếp theo.</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- NÚT CHUYỂN BÀI DƯỚI CÙNG -->
+  <div class="nav-btns" style="margin-top:32px;">
+    <a href="/sgk/bai-08.html" class="nav-btn">← Định dạng văn bản</a>
+    <a href="/luyen/bai-09" class="nav-btn" style="background:linear-gradient(90deg, var(--cyan), var(--orange)); color:#fff; border:none;">🎯 Luyện trắc nghiệm ngay</a>
+    <a href="/sgk/bai-10.html" class="nav-btn">Tạo liên kết →</a>
+  </div>
+</main>
+
+</div>
+
+<script>
+let fs = 18;
+function changeFont(d) { fs = Math.min(28, Math.max(14, fs + d)); document.body.style.fontSize = fs + 'px'; }
+let light = false;
+function toggleTheme() {
+  light = !light;
+  document.documentElement.style.setProperty('--bg', light ? '#f0f4f8' : '#070b14');
+  document.documentElement.style.setProperty('--text', light ? '#1a2540' : '#e8eef8');
+  document.documentElement.style.setProperty('--panel', light ? '#fff' : '#111a2e');
+  document.documentElement.style.setProperty('--panel2', light ? '#f5f8fc' : '#162035');
+  document.documentElement.style.setProperty('--border', light ? '#d0daea' : '#1e2f4d');
+  document.body.style.background = light
+    ? 'radial-gradient(ellipse at 20% 10%, #d8e8f8 0%, #f0f4f8 60%)'
+    : 'radial-gradient(ellipse at 20% 10%, #0d1f3c 0%, #070b14 50%)';
+}
+window.addEventListener('scroll', () => {
+  const doc = document.documentElement;
+  const scrolled = doc.scrollTop || document.body.scrollTop;
+  const total = doc.scrollHeight - doc.clientHeight;
+  const pct = total > 0 ? Math.round((scrolled / total) * 100) : 0;
+  const p = document.getElementById('prog');
+  const pl = document.getElementById('prog-label');
+  if (p) p.style.width = pct + '%';
+  if (pl) pl.textContent = 'Tiến độ đọc: ' + pct + '%';
+});
+</script>
+</body>
+</html>

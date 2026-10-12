@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Biểu mẫu thu thập ý kiến và tạo tương tác – Tin học 12 KNTT (SGK Điện tử)</title>
+<meta name="description" content="SGK Tin học 12 Kết nối tri thức – Biểu mẫu thu thập ý kiến và tạo tương tác. Chủ đề 7. Tạo trang web với Google Sites.">
+<style>
+:root {
+  --bg: #070b14; --bg2: #0d1423; --panel: #111a2e; --panel2: #162035; --border: #1e2f4d;
+  --text: #e8eef8; --muted: #8899b8; --orange: #ff6b35; --orange2: #ff9a64;
+  --cyan: #38d9f5; --cyan2: #7ce8fa; --yellow: #ffd060; --green: #56e39f; --pink: #f06dba; --purple: #a78bfa;
+  --fs: 18px;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  background: radial-gradient(ellipse at 20% 10%, #0d1f3c 0%, #070b14 50%);
+  color: var(--text); font-family: 'Inter','Segoe UI',-apple-system,BlinkMacSystemFont,'Roboto',Arial,sans-serif;
+  font-size: var(--fs); line-height: 1.75; min-height: 100vh;
+}
+.app { display: grid; grid-template-columns: 280px 1fr; min-height: 100vh; }
+.sidebar { position:sticky; top:0; height:100vh; overflow-y:auto; background:rgba(7,11,20,.97); border-right:1px solid var(--border); padding:24px 16px; backdrop-filter:blur(20px); }
+.brand-box { margin-bottom:24px; }
+.series-label { font-size:11px; letter-spacing:2px; text-transform:uppercase; color:var(--cyan); font-weight:700; margin-bottom:6px; }
+.brand-title { font-size:20px; font-weight:900; color:#fff; line-height:1.2; }
+.brand-title span { color:var(--orange); }
+.brand-sub { color:var(--muted); font-size:12px; margin-top:5px; }
+.toc-title { font-size:11px; letter-spacing:1.5px; text-transform:uppercase; color:var(--muted); font-weight:700; margin:20px 0 8px; padding:0 8px; }
+.toc a { display:block; color:#9aaec8; text-decoration:none; padding:9px 12px; border-radius:10px; margin:2px 0; font-size:13.5px; font-weight:500; transition:all .2s; border-left:3px solid transparent; }
+.toc a:hover { background:rgba(56,217,245,.07); color:var(--cyan); border-left-color:var(--cyan); }
+.toc a.active { background:rgba(255,107,53,.1); color:var(--orange); border-left-color:var(--orange); }
+.ctrl-box { margin-top:24px; padding:14px; border:1px solid var(--border); border-radius:14px; background:rgba(255,255,255,.03); }
+.ctrl-box h4 { font-size:11px; letter-spacing:1px; text-transform:uppercase; color:var(--muted); margin-bottom:10px; }
+.ctrl-row { display:flex; gap:8px; margin-bottom:8px; }
+.ctrl-btn { flex:1; background:var(--panel2); border:1px solid var(--border); color:var(--text); border-radius:9px; padding:8px 6px; cursor:pointer; font-size:13px; font-weight:600; transition:all .2s; text-align:center; text-decoration:none; display:inline-block; }
+.ctrl-btn:hover { background:var(--border); color:#fff; }
+.progress-bar { height:4px; background:var(--panel2); border-radius:4px; overflow:hidden; margin-top:10px; }
+.progress-fill { height:100%; width:0%; background:linear-gradient(90deg,var(--cyan),var(--orange)); transition:width .3s; border-radius:4px; }
+.main { max-width:860px; margin:0 auto; padding:32px 28px 80px; }
+.hero { background:linear-gradient(135deg,#0f2040 0%,#0a1628 60%,#131020 100%); border:1px solid var(--border); border-radius:24px; padding:36px 40px; margin-bottom:28px; box-shadow:0 24px 80px rgba(0,0,0,.5); position:relative; overflow:hidden; }
+.hero::before { content:'27'; position:absolute; right:30px; top:20px; font-size:120px; font-weight:900; color:rgba(56,217,245,.05); line-height:1; user-select:none; }
+.chu-de-tag { display:inline-flex; align-items:center; gap:8px; background:rgba(56,217,245,.12); border:1px solid rgba(56,217,245,.3); color:var(--cyan); font-size:13px; font-weight:700; padding:6px 14px; border-radius:20px; margin-bottom:16px; letter-spacing:.5px; }
+.hero h1 { font-size:clamp(26px,4vw,38px); font-weight:900; line-height:1.2; background:linear-gradient(90deg,#fff 0%,var(--cyan2) 50%,var(--orange2) 100%); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; margin-bottom:14px; }
+.hero-desc { color:#b0c4de; font-size:15.5px; line-height:1.6; }
+.section { background:rgba(11,17,30,.9); border:1px solid var(--border); border-radius:20px; padding:28px 32px 36px; margin-bottom:24px; scroll-margin-top:20px; position:relative; transition:border-color .3s; }
+.section:hover { border-color:rgba(56,217,245,.2); }
+.page-num { position:absolute; right:20px; bottom:14px; color:var(--muted); font-size:12px; font-weight:600; background:var(--panel2); padding:3px 10px; border-radius:10px; }
+h2 { font-size:clamp(20px,2.5vw,26px); font-weight:800; color:#fff; margin:28px 0 14px; display:flex; align-items:center; gap:10px; }
+h2::before { content:''; display:inline-block; width:4px; height:24px; background:linear-gradient(var(--orange),var(--cyan)); border-radius:2px; flex-shrink:0; }
+p { color:#d0dcea; margin-bottom:14px; }
+p:last-child { margin-bottom:0; }
+strong { color:#fff; }
+em { color:var(--cyan2); font-style:italic; }
+code { background:rgba(255,255,255,0.08); color:var(--orange2); padding:2px 6px; border-radius:4px; font-size:0.9em; font-family:monospace; }
+ul, ol { padding-left:22px; margin:12px 0; }
+li { color:#c8d8ec; margin-bottom:8px; }
+li::marker { color:var(--cyan); }
+.info-box { background:linear-gradient(135deg,#071e2e,#071828); border:1px dashed rgba(56,217,245,.4); border-radius:14px; padding:18px 22px; margin:20px 0; }
+.info-box p, .info-box li { color:#b8d8f0; }
+.activity { background:linear-gradient(135deg,#1a120a,#130f0a); border:1px solid rgba(255,160,60,.3); border-left:4px solid var(--orange); border-radius:14px; padding:18px 22px; margin:20px 0; }
+.activity-badge { display:inline-flex; align-items:center; gap:6px; background:var(--orange); color:#1a0a00; font-size:12px; font-weight:800; padding:4px 12px; border-radius:6px; margin-bottom:10px; letter-spacing:.5px; text-transform:uppercase; }
+.ghi-nho { background:linear-gradient(135deg,#1a2a10,#0f1e0a); border:1px solid rgba(86,227,159,.3); border-left:4px solid var(--green); border-radius:14px; padding:20px 24px; margin:24px 0; }
+.ghi-nho-title { color:var(--green); font-weight:800; font-size:15px; text-transform:uppercase; letter-spacing:1px; margin-bottom:10px; display:flex; align-items:center; gap:8px; }
+.ghi-nho p, .ghi-nho li { color:#c8f0d8; }
+.nav-btns { display:flex; gap:12px; margin:20px 0; }
+.nav-btn { background:var(--panel); border:1px solid var(--border); color:var(--text); border-radius:10px; padding:10px 18px; text-decoration:none; font-size:14px; font-weight:600; transition:all .2s; flex:1; text-align:center; }
+.nav-btn:hover { background:var(--panel2); border-color:var(--cyan); color:#fff; }
+.field-grid { display:grid; grid-template-columns:1fr 1fr; gap:14px; margin:18px 0; }
+.field-card { background:var(--panel2); border:1px solid var(--border); border-radius:14px; padding:16px 18px; }
+.img-side { display:grid; grid-template-columns:1fr 1fr; gap:14px; margin:18px 0; }
+.img-half { border-radius:12px; border:1px solid var(--border); }
+@media (max-width: 860px) {
+  .app { grid-template-columns: 1fr; }
+  .sidebar { display: none; }
+  .main { padding: 20px 16px 60px; }
+  .field-grid, .img-side { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+
+<div class="app">
+
+<!-- SIDEBAR -->
+<aside class="sidebar">
+  <div class="brand-box">
+    <div class="series-label">KẾT NỐI TRI THỨC</div>
+    <div class="brand-title">TIN HỌC <span>12</span></div>
+    <div class="brand-sub">Sách Giáo Khoa Điện Tử (ICT)</div>
+  </div>
+
+  <div class="ctrl-box">
+    <h4>Cỡ chữ & Giao diện</h4>
+    <div class="ctrl-row">
+      <button class="ctrl-btn" onclick="changeFont(-1)">A -</button>
+      <button class="ctrl-btn" onclick="changeFont(1)">A +</button>
+      <button class="ctrl-btn" onclick="toggleTheme()">🌓 Nền</button>
+    </div>
+    <div style="font-size:12px; color:var(--muted); margin-top:8px;" id="prog-label">Tiến độ đọc: 0%</div>
+    <div class="progress-bar"><div class="progress-fill" id="prog"></div></div>
+  </div>
+
+  <div class="toc-title">Mục lục bài học</div>
+  <nav class="toc">
+    
+      <a href="#sec-1">1. Vai trò của biểu mẫu trực tuyến và giải pháp nhúng</a>
+    
+      <a href="#sec-2">2. Quy trình thiết kế biểu mẫu với Google Forms</a>
+    
+      <a href="#sec-3">3. Nhúng biểu mẫu vào Google Sites và thu thập kết quả</a>
+    
+    <a href="#ghi-nho">📌 Ghi nhớ cốt lõi</a>
+  </nav>
+
+  <div class="ctrl-box" style="margin-top:20px;">
+    <h4>Luyện tập</h4>
+    <a href="/luyen/bai-27" class="ctrl-btn" style="background:var(--cyan); color:#000; font-weight:700;">🎯 Vào Luyện Trắc Nghiệm</a>
+  </div>
+</aside>
+
+<!-- MAIN CONTENT -->
+<main class="main">
+  <!-- HERO BANNER -->
+  <div class="hero">
+    <div class="chu-de-tag">Chủ đề 7. Tạo trang web với Google Sites</div>
+    <h1>Biểu mẫu thu thập ý kiến và tạo tương tác</h1>
+    <div class="hero-desc">Biểu mẫu trực tuyến là công cụ quan trọng giúp website tương tác hai chiều với người truy cập. Bài học hướng dẫn bạn quy trình chuẩn bị và thiết kế biểu mẫu khảo sát, đăng kí bằng <strong>Google Forms</strong>, sau đó <strong>nhúng trực tiếp biểu mẫu vào Google Sites</strong> để thu thập phản hồi của người xem.</div>
+  </div>
+
+  <!-- NÚT CHUYỂN BÀI -->
+  <div class="nav-btns">
+    <a href="/sgk/bai-26.html" class="nav-btn">← Xây dựng cấu trúc điều hướng website</a>
+    <a href="/sgk/bai-28.html" class="nav-btn">Dự án: Hoàn thiện website với Google Sites →</a>
+  </div>
+
+  <!-- CÁC MỤC NỘI DUNG -->
+  
+    <section class="section" id="sec-1">
+      <h2 id="heading-1">📋 1. Vai trò của biểu mẫu trực tuyến và giải pháp nhúng</h2>
+      <p>Một trang web thông thường chỉ truyền đạt thông tin một chiều từ người tạo tới người đọc. Để website có tính tương tác, người ta sử dụng <strong>biểu mẫu (form)</strong> nhằm thu thập ý kiến đánh giá, phiếu đăng kí thành viên câu lạc bộ, đăng kí tham gia sự kiện hay đơn liên hệ phản hồi.</p>
+<p>Trong Google Sites, việc tạo biểu mẫu trên trang web về bản chất là <strong>tạo biểu mẫu bằng ứng dụng Google Forms rồi nhúng trực tiếp vào trang web Google Sites</strong>:</p>
+
+        <ul>
+          <li>Người dùng không cần viết mã lệnh thẻ <code><form></code> phức tạp của HTML.</li>
+<li>Giao diện biểu mẫu hiển thị mượt mà ngay trong thân trang web.</li>
+<li>Mọi câu trả lời của người xem được tự động lưu trữ an toàn trên Google Drive và có thể kết nối thẳng sang Google Sheets để xử lí số liệu.</li>
+        </ul>
+
+        <div class="cau-hoi" style="margin:16px 0; border:1px solid rgba(56,217,245,0.3); background:rgba(56,217,245,0.04); border-radius:14px; padding:16px 20px;">
+          <div class="q-num" style="background:var(--cyan); color:#000; font-weight:800; border-radius:50%; width:28px; height:28px; display:flex; align-items:center; justify-content:center; flex-shrink:0;">?</div>
+          <div style="flex:1;">
+            <div class="q-text" style="font-weight:600; color:#fff; font-size:15.5px; margin-bottom:10px;">Bản chất của việc tạo biểu mẫu lấy ý kiến trên trang web Google Sites theo hướng dẫn của SGK là gì?</div>
+            <div style="display:grid; grid-template-columns:1fr; gap:6px; margin-bottom:10px;">
+              
+                <div style="background:rgba(255,255,255,0.04); border:1px solid var(--border); border-radius:8px; padding:6px 12px; font-size:14px; color:#c8d8ec;">
+                  <b>A.</b> Tạo biểu mẫu bằng Google Forms rồi nhúng vào trang web Google Sites
+                </div>
+              
+                <div style="background:rgba(255,255,255,0.04); border:1px solid var(--border); border-radius:8px; padding:6px 12px; font-size:14px; color:#c8d8ec;">
+                  <b>B.</b> Tự viết mã nguồn thẻ form bằng ngôn ngữ lập trình HTML truyền thống
+                </div>
+              
+                <div style="background:rgba(255,255,255,0.04); border:1px solid var(--border); border-radius:8px; padding:6px 12px; font-size:14px; color:#c8d8ec;">
+                  <b>C.</b> Gửi thư điện tử hàng loạt tới từng người dùng để nhận phản hồi giấy
+                </div>
+              
+                <div style="background:rgba(255,255,255,0.04); border:1px solid var(--border); border-radius:8px; padding:6px 12px; font-size:14px; color:#c8d8ec;">
+                  <b>D.</b> Tạo một bảng tính Excel trống và yêu cầu người dùng tự tải tệp về
+                </div>
+              
+            </div>
+            <details style="margin-top:8px;">
+              <summary style="cursor:pointer; color:var(--cyan); font-size:13px; font-weight:600;">👉 Xem đáp án & giải thích</summary>
+              <div style="margin-top:6px; padding:8px 12px; background:rgba(86,227,159,0.1); border-left:3px solid var(--green); border-radius:6px; font-size:13.5px; color:#a3e635;">
+                <strong>Đáp án đúng: A</strong><br>
+                <span>SGK nêu rõ: việc tạo biểu mẫu trên trang web để lấy ý kiến phản hồi của người dùng, về bản chất là tạo biểu mẫu bằng ứng dụng Forms của Google rồi nhúng vào trang web được thiết kế bằng Google Sites.</span>
+              </div>
+            </details>
+          </div>
+        </div>
+      <div class="page-num">Trang 180-186</div>
+    </section>
+  
+
+    <section class="section" id="sec-2">
+      <h2 id="heading-2">✍️ 2. Quy trình thiết kế biểu mẫu với Google Forms</h2>
+      <p>Quy trình tạo một biểu mẫu thu thập thông tin trực tuyến gồm các bước cơ bản:</p>
+
+        <ul>
+          <li><strong>Bước 1 — Chuẩn bị câu hỏi:</strong> Xác định mục đích khảo sát và chuẩn bị danh sách câu hỏi ngắn gọn, rõ ràng (câu hỏi trắc nghiệm hoặc câu trả lời văn bản ngắn).</li>
+<li><strong>Bước 2 — Mở Google Forms:</strong> Vào <code>forms.google.com</code> (hoặc biểu tượng Forms trong kho ứng dụng Google). Có thể chọn biểu mẫu trống (<em>Blank</em>) hoặc các mẫu có sẵn như <em>Thông tin liên hệ</em>, <em>Trả lời sự kiện</em>, <em>Yêu cầu đặt hàng</em>.</li>
+<li><strong>Bước 3 — Soạn thảo biểu mẫu:</strong> Đặt tiêu đề cho biểu mẫu và viết lời giới thiệu ngắn.</li>
+<li><strong>Bước 4 — Thiết lập câu hỏi:</strong> Nhấn nút dấu cộng <code>+</code> để thêm câu hỏi mới. Chọn loại câu hỏi thích hợp (<em>Trắc nghiệm / Multiple choice</em>, <em>Hộp kiểm / Checkboxes</em>, <em>Trả lời ngắn / Short answer</em>, <em>Đoạn / Paragraph</em>).</li>
+<li><strong>Bật tùy chọn 'Bắt buộc' (Required):</strong> Với những thông tin thiết yếu không được phép bỏ trống (như Họ và tên, Lớp, Số điện thoại), bật công tắc <strong>Bắt buộc</strong> ở góc dưới mỗi câu hỏi.</li>
+        </ul>
+
+        <div class="cau-hoi" style="margin:16px 0; border:1px solid rgba(56,217,245,0.3); background:rgba(56,217,245,0.04); border-radius:14px; padding:16px 20px;">
+          <div class="q-num" style="background:var(--cyan); color:#000; font-weight:800; border-radius:50%; width:28px; height:28px; display:flex; align-items:center; justify-content:center; flex-shrink:0;">?</div>
+          <div style="flex:1;">
+            <div class="q-text" style="font-weight:600; color:#fff; font-size:15.5px; margin-bottom:10px;">Khi soạn thảo câu hỏi trong Google Forms, muốn người trả lời không được bỏ qua câu hỏi đó thì người tạo cần bật tuỳ chọn nào?</div>
+            <div style="display:grid; grid-template-columns:1fr; gap:6px; margin-bottom:10px;">
+              
+                <div style="background:rgba(255,255,255,0.04); border:1px solid var(--border); border-radius:8px; padding:6px 12px; font-size:14px; color:#c8d8ec;">
+                  <b>A.</b> Bật tuỳ chọn Bắt buộc (Required)
+                </div>
+              
+                <div style="background:rgba(255,255,255,0.04); border:1px solid var(--border); border-radius:8px; padding:6px 12px; font-size:14px; color:#c8d8ec;">
+                  <b>B.</b> Tắt hoàn toàn thông báo phản hồi
+                </div>
+              
+                <div style="background:rgba(255,255,255,0.04); border:1px solid var(--border); border-radius:8px; padding:6px 12px; font-size:14px; color:#c8d8ec;">
+                  <b>C.</b> Bấm vào biểu tượng xoá câu hỏi đó
+                </div>
+              
+                <div style="background:rgba(255,255,255,0.04); border:1px solid var(--border); border-radius:8px; padding:6px 12px; font-size:14px; color:#c8d8ec;">
+                  <b>D.</b> Khoá biểu mẫu lại không cho gửi đi
+                </div>
+              
+            </div>
+            <details style="margin-top:8px;">
+              <summary style="cursor:pointer; color:var(--cyan); font-size:13px; font-weight:600;">👉 Xem đáp án & giải thích</summary>
+              <div style="margin-top:6px; padding:8px 12px; background:rgba(86,227,159,0.1); border-left:3px solid var(--green); border-radius:6px; font-size:13.5px; color:#a3e635;">
+                <strong>Đáp án đúng: A</strong><br>
+                <span>Tùy chọn 'Bắt buộc' (Required) yêu cầu người điền phải trả lời câu hỏi đó thì mới gửi được biểu mẫu thành công.</span>
+              </div>
+            </details>
+          </div>
+        </div>
+      <div class="page-num">Trang 180-186</div>
+    </section>
+  
+
+    <section class="section" id="sec-3">
+      <h2 id="heading-3">📥 3. Nhúng biểu mẫu vào Google Sites và thu thập kết quả</h2>
+      <p>Sau khi biểu mẫu Forms đã được soạn thảo xong, thực hiện nhúng vào website Google Sites:</p>
+
+        <ul>
+          <li>Mở website trên Google Sites, chuyển đến trang con cần đặt biểu mẫu (ví dụ trang <em>'Liên hệ'</em> hoặc <em>'Khảo sát ý kiến'</em>).</li>
+<li>Tại khung bên phải, chọn bảng chọn <strong>Chèn (Insert)</strong>, cuộn xuống nhóm đối tượng bên dưới và bấm vào mục <strong>Biểu mẫu (Forms)</strong>.</li>
+<li>Một cửa sổ mở ra danh sách các biểu mẫu trong Google Drive cá nhân; chọn đúng biểu mẫu vừa tạo rồi bấm nút <strong>Chèn (Insert)</strong>.</li>
+<li>Biểu mẫu sẽ hiển thị trực quan ngay giữa phần thân trang. Bạn có thể kéo các nút tròn ở góc khung để điều chỉnh chiều cao và chiều rộng của biểu mẫu cho vừa vặn, đẹp mắt.</li>
+        </ul>
+<p><strong>Thu thập và xử lí câu trả lời:</strong> Khi người xem điền biểu mẫu và bấm <em>Gửi</em>, kết quả được ghi nhận ngay lập tức tại thẻ <strong>Câu trả lời (Responses)</strong> của Google Forms. Người quản trị có thể nhấp vào biểu tượng trang tính màu xanh để liên kết xuất toàn bộ số liệu sang <strong>Google Sheets</strong>, giúp lọc và thống kê điểm số, danh sách học sinh một cách chuyên nghiệp.</p>
+
+        <div class="cau-hoi" style="margin:16px 0; border:1px solid rgba(56,217,245,0.3); background:rgba(56,217,245,0.04); border-radius:14px; padding:16px 20px;">
+          <div class="q-num" style="background:var(--cyan); color:#000; font-weight:800; border-radius:50%; width:28px; height:28px; display:flex; align-items:center; justify-content:center; flex-shrink:0;">?</div>
+          <div style="flex:1;">
+            <div class="q-text" style="font-weight:600; color:#fff; font-size:15.5px; margin-bottom:10px;">Để nhúng một biểu mẫu đã tạo sẵn từ Google Forms vào trang web Google Sites, ta thực hiện thao tác nào?</div>
+            <div style="display:grid; grid-template-columns:1fr; gap:6px; margin-bottom:10px;">
+              
+                <div style="background:rgba(255,255,255,0.04); border:1px solid var(--border); border-radius:8px; padding:6px 12px; font-size:14px; color:#c8d8ec;">
+                  <b>A.</b> Vào bảng chọn Chèn, cuộn xuống chọn mục Biểu mẫu rồi chọn tệp form từ Drive
+                </div>
+              
+                <div style="background:rgba(255,255,255,0.04); border:1px solid var(--border); border-radius:8px; padding:6px 12px; font-size:14px; color:#c8d8ec;">
+                  <b>B.</b> Chụp ảnh màn hình biểu mẫu rồi chèn dưới dạng một tệp hình ảnh tĩnh duy nhất
+                </div>
+              
+                <div style="background:rgba(255,255,255,0.04); border:1px solid var(--border); border-radius:8px; padding:6px 12px; font-size:14px; color:#c8d8ec;">
+                  <b>C.</b> Gõ lại từng câu hỏi một vào trong ô Hộp văn bản ở phần chân trang web
+                </div>
+              
+                <div style="background:rgba(255,255,255,0.04); border:1px solid var(--border); border-radius:8px; padding:6px 12px; font-size:14px; color:#c8d8ec;">
+                  <b>D.</b> Sao chép toàn bộ mã nguồn của trang web sang ứng dụng Google Trang tính
+                </div>
+              
+            </div>
+            <details style="margin-top:8px;">
+              <summary style="cursor:pointer; color:var(--cyan); font-size:13px; font-weight:600;">👉 Xem đáp án & giải thích</summary>
+              <div style="margin-top:6px; padding:8px 12px; background:rgba(86,227,159,0.1); border-left:3px solid var(--green); border-radius:6px; font-size:13.5px; color:#a3e635;">
+                <strong>Đáp án đúng: A</strong><br>
+                <span>SGK hướng dẫn: trong bảng chọn Chèn (Insert), cuộn xuống chọn 'Biểu mẫu' (Forms) rồi chọn biểu mẫu tương ứng đã lưu trên Google Drive để chèn vào trang.</span>
+              </div>
+            </details>
+          </div>
+        </div>
+      <div class="page-num">Trang 180-186</div>
+    </section>
+  
+
+  <!-- HỘP GHI NHỚ CUỐI BÀI -->
+  <section class="section" id="ghi-nho">
+    <div class="ghi-nho">
+      <div class="ghi-nho-title">📌 Em cần ghi nhớ</div>
+      <ul style="padding-left:20px;">
+        <li style="font-size:15.5px; line-height:1.7; margin-bottom:10px;">Biểu mẫu (Forms) giúp website tương tác 2 chiều để thu thập thông tin, đăng kí hoặc khảo sát ý kiến người dùng.</li>
+<li style="font-size:15.5px; line-height:1.7; margin-bottom:10px;">Bản chất trong Google Sites là thiết kế biểu mẫu trên <strong>Google Forms</strong> rồi <strong>nhúng (Embed)</strong> trực tiếp vào trang web.</li>
+<li style="font-size:15.5px; line-height:1.7; margin-bottom:10px;">Google Forms hỗ trợ đa dạng kiểu câu hỏi (Trắc nghiệm, Hộp kiểm, Trả lời ngắn...); bật tùy chọn <strong>Bắt buộc (Required)</strong> cho các trường thông tin quan trọng.</li>
+<li style="font-size:15.5px; line-height:1.7; margin-bottom:10px;">Chèn biểu mẫu từ Drive qua bảng chọn Chèn -> Biểu mẫu; kết quả phản hồi được lưu tự động và có thể liên kết sang <strong>Google Sheets</strong> để xử lí số liệu.</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- NÚT CHUYỂN BÀI DƯỚI CÙNG -->
+  <div class="nav-btns" style="margin-top:32px;">
+    <a href="/sgk/bai-26.html" class="nav-btn">← Xây dựng cấu trúc điều hướng website</a>
+    <a href="/luyen/bai-27" class="nav-btn" style="background:linear-gradient(90deg, var(--cyan), var(--orange)); color:#fff; border:none;">🎯 Luyện trắc nghiệm ngay</a>
+    <a href="/sgk/bai-28.html" class="nav-btn">Dự án: Hoàn thiện website với Google Sites →</a>
+  </div>
+</main>
+
+</div>
+
+<script>
+let fs = 18;
+function changeFont(d) { fs = Math.min(28, Math.max(14, fs + d)); document.body.style.fontSize = fs + 'px'; }
+let light = false;
+function toggleTheme() {
+  light = !light;
+  document.documentElement.style.setProperty('--bg', light ? '#f0f4f8' : '#070b14');
+  document.documentElement.style.setProperty('--text', light ? '#1a2540' : '#e8eef8');
+  document.documentElement.style.setProperty('--panel', light ? '#fff' : '#111a2e');
+  document.documentElement.style.setProperty('--panel2', light ? '#f5f8fc' : '#162035');
+  document.documentElement.style.setProperty('--border', light ? '#d0daea' : '#1e2f4d');
+  document.body.style.background = light
+    ? 'radial-gradient(ellipse at 20% 10%, #d8e8f8 0%, #f0f4f8 60%)'
+    : 'radial-gradient(ellipse at 20% 10%, #0d1f3c 0%, #070b14 50%)';
+}
+window.addEventListener('scroll', () => {
+  const doc = document.documentElement;
+  const scrolled = doc.scrollTop || document.body.scrollTop;
+  const total = doc.scrollHeight - doc.clientHeight;
+  const pct = total > 0 ? Math.round((scrolled / total) * 100) : 0;
+  const p = document.getElementById('prog');
+  const pl = document.getElementById('prog-label');
+  if (p) p.style.width = pct + '%';
+  if (pl) pl.textContent = 'Tiến độ đọc: ' + pct + '%';
+});
+</script>
+</body>
+</html>

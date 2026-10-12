@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Nhóm nghề Quản trị hệ thống và Mạng – Tin học 12 KNTT (SGK Điện tử)</title>
+<meta name="description" content="SGK Tin học 12 Kết nối tri thức – Nhóm nghề Quản trị hệ thống và Mạng. Chủ đề 5. Hướng nghiệp với Tin học.">
+<style>
+:root {
+  --bg: #070b14; --bg2: #0d1423; --panel: #111a2e; --panel2: #162035; --border: #1e2f4d;
+  --text: #e8eef8; --muted: #8899b8; --orange: #ff6b35; --orange2: #ff9a64;
+  --cyan: #38d9f5; --cyan2: #7ce8fa; --yellow: #ffd060; --green: #56e39f; --pink: #f06dba; --purple: #a78bfa;
+  --fs: 18px;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  background: radial-gradient(ellipse at 20% 10%, #0d1f3c 0%, #070b14 50%);
+  color: var(--text); font-family: 'Inter','Segoe UI',-apple-system,BlinkMacSystemFont,'Roboto',Arial,sans-serif;
+  font-size: var(--fs); line-height: 1.75; min-height: 100vh;
+}
+.app { display: grid; grid-template-columns: 280px 1fr; min-height: 100vh; }
+.sidebar { position:sticky; top:0; height:100vh; overflow-y:auto; background:rgba(7,11,20,.97); border-right:1px solid var(--border); padding:24px 16px; backdrop-filter:blur(20px); }
+.brand-box { margin-bottom:24px; }
+.series-label { font-size:11px; letter-spacing:2px; text-transform:uppercase; color:var(--cyan); font-weight:700; margin-bottom:6px; }
+.brand-title { font-size:20px; font-weight:900; color:#fff; line-height:1.2; }
+.brand-title span { color:var(--orange); }
+.brand-sub { color:var(--muted); font-size:12px; margin-top:5px; }
+.toc-title { font-size:11px; letter-spacing:1.5px; text-transform:uppercase; color:var(--muted); font-weight:700; margin:20px 0 8px; padding:0 8px; }
+.toc a { display:block; color:#9aaec8; text-decoration:none; padding:9px 12px; border-radius:10px; margin:2px 0; font-size:13.5px; font-weight:500; transition:all .2s; border-left:3px solid transparent; }
+.toc a:hover { background:rgba(56,217,245,.07); color:var(--cyan); border-left-color:var(--cyan); }
+.toc a.active { background:rgba(255,107,53,.1); color:var(--orange); border-left-color:var(--orange); }
+.ctrl-box { margin-top:24px; padding:14px; border:1px solid var(--border); border-radius:14px; background:rgba(255,255,255,.03); }
+.ctrl-box h4 { font-size:11px; letter-spacing:1px; text-transform:uppercase; color:var(--muted); margin-bottom:10px; }
+.ctrl-row { display:flex; gap:8px; margin-bottom:8px; }
+.ctrl-btn { flex:1; background:var(--panel2); border:1px solid var(--border); color:var(--text); border-radius:9px; padding:8px 6px; cursor:pointer; font-size:13px; font-weight:600; transition:all .2s; text-align:center; text-decoration:none; display:inline-block; }
+.ctrl-btn:hover { background:var(--border); color:#fff; }
+.progress-bar { height:4px; background:var(--panel2); border-radius:4px; overflow:hidden; margin-top:10px; }
+.progress-fill { height:100%; width:0%; background:linear-gradient(90deg,var(--cyan),var(--orange)); transition:width .3s; border-radius:4px; }
+.main { max-width:860px; margin:0 auto; padding:32px 28px 80px; }
+.hero { background:linear-gradient(135deg,#0f2040 0%,#0a1628 60%,#131020 100%); border:1px solid var(--border); border-radius:24px; padding:36px 40px; margin-bottom:28px; box-shadow:0 24px 80px rgba(0,0,0,.5); position:relative; overflow:hidden; }
+.hero::before { content:'18'; position:absolute; right:30px; top:20px; font-size:120px; font-weight:900; color:rgba(56,217,245,.05); line-height:1; user-select:none; }
+.chu-de-tag { display:inline-flex; align-items:center; gap:8px; background:rgba(56,217,245,.12); border:1px solid rgba(56,217,245,.3); color:var(--cyan); font-size:13px; font-weight:700; padding:6px 14px; border-radius:20px; margin-bottom:16px; letter-spacing:.5px; }
+.hero h1 { font-size:clamp(26px,4vw,38px); font-weight:900; line-height:1.2; background:linear-gradient(90deg,#fff 0%,var(--cyan2) 50%,var(--orange2) 100%); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; margin-bottom:14px; }
+.hero-desc { color:#b0c4de; font-size:15.5px; line-height:1.6; }
+.section { background:rgba(11,17,30,.9); border:1px solid var(--border); border-radius:20px; padding:28px 32px 36px; margin-bottom:24px; scroll-margin-top:20px; position:relative; transition:border-color .3s; }
+.section:hover { border-color:rgba(56,217,245,.2); }
+.page-num { position:absolute; right:20px; bottom:14px; color:var(--muted); font-size:12px; font-weight:600; background:var(--panel2); padding:3px 10px; border-radius:10px; }
+h2 { font-size:clamp(20px,2.5vw,26px); font-weight:800; color:#fff; margin:28px 0 14px; display:flex; align-items:center; gap:10px; }
+h2::before { content:''; display:inline-block; width:4px; height:24px; background:linear-gradient(var(--orange),var(--cyan)); border-radius:2px; flex-shrink:0; }
+p { color:#d0dcea; margin-bottom:14px; }
+p:last-child { margin-bottom:0; }
+strong { color:#fff; }
+em { color:var(--cyan2); font-style:italic; }
+code { background:rgba(255,255,255,0.08); color:var(--orange2); padding:2px 6px; border-radius:4px; font-size:0.9em; font-family:monospace; }
+ul, ol { padding-left:22px; margin:12px 0; }
+li { color:#c8d8ec; margin-bottom:8px; }
+li::marker { color:var(--cyan); }
+.info-box { background:linear-gradient(135deg,#071e2e,#071828); border:1px dashed rgba(56,217,245,.4); border-radius:14px; padding:18px 22px; margin:20px 0; }
+.info-box p, .info-box li { color:#b8d8f0; }
+.activity { background:linear-gradient(135deg,#1a120a,#130f0a); border:1px solid rgba(255,160,60,.3); border-left:4px solid var(--orange); border-radius:14px; padding:18px 22px; margin:20px 0; }
+.activity-badge { display:inline-flex; align-items:center; gap:6px; background:var(--orange); color:#1a0a00; font-size:12px; font-weight:800; padding:4px 12px; border-radius:6px; margin-bottom:10px; letter-spacing:.5px; text-transform:uppercase; }
+.ghi-nho { background:linear-gradient(135deg,#1a2a10,#0f1e0a); border:1px solid rgba(86,227,159,.3); border-left:4px solid var(--green); border-radius:14px; padding:20px 24px; margin:24px 0; }
+.ghi-nho-title { color:var(--green); font-weight:800; font-size:15px; text-transform:uppercase; letter-spacing:1px; margin-bottom:10px; display:flex; align-items:center; gap:8px; }
+.ghi-nho p, .ghi-nho li { color:#c8f0d8; }
+.nav-btns { display:flex; gap:12px; margin:20px 0; }
+.nav-btn { background:var(--panel); border:1px solid var(--border); color:var(--text); border-radius:10px; padding:10px 18px; text-decoration:none; font-size:14px; font-weight:600; transition:all .2s; flex:1; text-align:center; }
+.nav-btn:hover { background:var(--panel2); border-color:var(--cyan); color:#fff; }
+.field-grid { display:grid; grid-template-columns:1fr 1fr; gap:14px; margin:18px 0; }
+.field-card { background:var(--panel2); border:1px solid var(--border); border-radius:14px; padding:16px 18px; }
+.img-side { display:grid; grid-template-columns:1fr 1fr; gap:14px; margin:18px 0; }
+.img-half { border-radius:12px; border:1px solid var(--border); }
+@media (max-width: 860px) {
+  .app { grid-template-columns: 1fr; }
+  .sidebar { display: none; }
+  .main { padding: 20px 16px 60px; }
+  .field-grid, .img-side { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+
+<div class="app">
+
+<!-- SIDEBAR -->
+<aside class="sidebar">
+  <div class="brand-box">
+    <div class="series-label">KẾT NỐI TRI THỨC</div>
+    <div class="brand-title">TIN HỌC <span>12</span></div>
+    <div class="brand-sub">Sách Giáo Khoa Điện Tử (ICT)</div>
+  </div>
+
+  <div class="ctrl-box">
+    <h4>Cỡ chữ & Giao diện</h4>
+    <div class="ctrl-row">
+      <button class="ctrl-btn" onclick="changeFont(-1)">A -</button>
+      <button class="ctrl-btn" onclick="changeFont(1)">A +</button>
+      <button class="ctrl-btn" onclick="toggleTheme()">🌓 Nền</button>
+    </div>
+    <div style="font-size:12px; color:var(--muted); margin-top:8px;" id="prog-label">Tiến độ đọc: 0%</div>
+    <div class="progress-bar"><div class="progress-fill" id="prog"></div></div>
+  </div>
+
+  <div class="toc-title">Mục lục bài học</div>
+  <nav class="toc">
+    
+      <a href="#sec-1">1. Dự án: Website giới thiệu câu lạc bộ ngoại khoá</a>
+    
+      <a href="#sec-2">2. Nhiệm vụ 1: Tạo tệp CSS</a>
+    
+      <a href="#sec-3">3. Nhiệm vụ 2: Tạo các tệp HTML</a>
+    
+    <a href="#ghi-nho">📌 Ghi nhớ cốt lõi</a>
+  </nav>
+
+  <div class="ctrl-box" style="margin-top:20px;">
+    <h4>Luyện tập</h4>
+    <a href="/luyen/bai-18" class="ctrl-btn" style="background:var(--cyan); color:#000; font-weight:700;">🎯 Vào Luyện Trắc Nghiệm</a>
+  </div>
+</aside>
+
+<!-- MAIN CONTENT -->
+<main class="main">
+  <!-- HERO BANNER -->
+  <div class="hero">
+    <div class="chu-de-tag">Chủ đề 5. Hướng nghiệp với Tin học</div>
+    <h1>Nhóm nghề Quản trị hệ thống và Mạng</h1>
+    <div class="hero-desc">Bài này vận dụng tổng hợp HTML và CSS đã học ở Chủ đề 4 để xây dựng một <strong>website nhiều trang</strong> có phong cách trình bày thống nhất — qua dự án thực hành: website giới thiệu các câu lạc bộ ngoại khoá của trường.</div>
+  </div>
+
+  <!-- NÚT CHUYỂN BÀI -->
+  <div class="nav-btns">
+    <a href="/sgk/bai-17.html" class="nav-btn">← Nhóm nghề Phát triển phần mềm</a>
+    <a href="/sgk/bai-19.html" class="nav-btn">Dịch vụ công nghệ thông tin và nghề liên quan →</a>
+  </div>
+
+  <!-- CÁC MỤC NỘI DUNG -->
+  
+    <section class="section" id="sec-1">
+      <h2 id="heading-1">🏫 1. Dự án: Website giới thiệu câu lạc bộ ngoại khoá</h2>
+      <p>Giả sử website của em có nhiều tệp HTML. Có thể chỉ dùng <strong>một tệp CSS duy nhất</strong> để định dạng cho toàn bộ các trang web hay không?</p>
+<p>Website cần một trang chủ và các trang riêng cho từng nhóm hoặc từng câu lạc bộ, tuỳ theo số lượng và thông tin hoạt động chi tiết. Ở mức đơn giản, có thể thiết kế website với <strong>ba thành viên trang</strong>:</p>
+
+        <div class="field-grid">
+          
+            <div class="field-card">
+              <div class="icon">🏠</div>
+              <h4 style="margin:0 0 6px; color:var(--cyan2);">Trang chủ</h4>
+              <p style="margin:0; font-size:14px; color:#b0c4de;">Chứa các thông tin chung nhất về các câu lạc bộ và liên kết tới các trang thành viên.</p>
+            </div>
+          
+
+            <div class="field-card">
+              <div class="icon">⚽</div>
+              <h4 style="margin:0 0 6px; color:var(--cyan2);">Trang CLB Thể thao</h4>
+              <p style="margin:0; font-size:14px; color:#b0c4de;">Đăng thông tin chi tiết, lịch hoạt động, thành tích… tuỳ nhu cầu.</p>
+            </div>
+          
+
+            <div class="field-card">
+              <div class="icon">🎨</div>
+              <h4 style="margin:0 0 6px; color:var(--cyan2);">Trang CLB Nghệ thuật</h4>
+              <p style="margin:0; font-size:14px; color:#b0c4de;">Đăng thông tin chi tiết, lịch hoạt động, thành tích… tuỳ nhu cầu.</p>
+            </div>
+          
+        </div>
+<p>Minh hoạ có thể tuỳ chọn vào các tài nguyên sẵn có — thường là ảnh và video. Ngoài ra, có thể tạo thêm một trang chứa biểu mẫu để các bạn đăng kí tham gia.</p>
+
+        <div class="info-box">
+          <p>Các trang nên tuân theo <strong>phong cách trình bày chung</strong> bằng cách sử dụng liên kết tới <strong>cùng một tệp CSS</strong>. Để thực hiện ý tưởng này, trước hết cần lên ý tưởng về bố cục của từng phần trong một trang web, rồi dùng CSS để định dạng (kích thước, vị trí, màu sắc, cỡ chữ…) cho mỗi phần.</p>
+        </div>
+
+        <div class="cau-hoi" style="margin:16px 0; border:1px solid rgba(56,217,245,0.3); background:rgba(56,217,245,0.04); border-radius:14px; padding:16px 20px;">
+          <div class="q-num" style="background:var(--cyan); color:#000; font-weight:800; border-radius:50%; width:28px; height:28px; display:flex; align-items:center; justify-content:center; flex-shrink:0;">?</div>
+          <div style="flex:1;">
+            <div class="q-text" style="font-weight:600; color:#fff; font-size:15.5px; margin-bottom:10px;">Muốn nhiều tệp HTML của cùng một website có phong cách trình bày thống nhất, cách làm được SGK khuyến nghị là gì?</div>
+            <div style="display:grid; grid-template-columns:1fr; gap:6px; margin-bottom:10px;">
+              
+                <div style="background:rgba(255,255,255,0.04); border:1px solid var(--border); border-radius:8px; padding:6px 12px; font-size:14px; color:#c8d8ec;">
+                  <b>A.</b> Cho các trang cùng liên kết tới một tệp CSS duy nhất
+                </div>
+              
+                <div style="background:rgba(255,255,255,0.04); border:1px solid var(--border); border-radius:8px; padding:6px 12px; font-size:14px; color:#c8d8ec;">
+                  <b>B.</b> Chép nguyên văn cùng một đoạn style vào từng tệp HTML
+                </div>
+              
+                <div style="background:rgba(255,255,255,0.04); border:1px solid var(--border); border-radius:8px; padding:6px 12px; font-size:14px; color:#c8d8ec;">
+                  <b>C.</b> Không dùng CSS, chỉ canh chỉnh bằng mắt cho các trang giống nhau
+                </div>
+              
+                <div style="background:rgba(255,255,255,0.04); border:1px solid var(--border); border-radius:8px; padding:6px 12px; font-size:14px; color:#c8d8ec;">
+                  <b>D.</b> Mỗi trang tự thiết kế một bảng màu và cỡ chữ khác nhau
+                </div>
+              
+            </div>
+            <details style="margin-top:8px;">
+              <summary style="cursor:pointer; color:var(--cyan); font-size:13px; font-weight:600;">👉 Xem đáp án & giải thích</summary>
+              <div style="margin-top:6px; padding:8px 12px; background:rgba(86,227,159,0.1); border-left:3px solid var(--green); border-radius:6px; font-size:13.5px; color:#a3e635;">
+                <strong>Đáp án đúng: A</strong><br>
+                <span>SGK nêu: các trang nên tuân theo phong cách trình bày chung bằng cách sử dụng liên kết tới cùng một tệp CSS — đây cũng chính là mục tiêu của Nhiệm vụ 1.</span>
+              </div>
+            </details>
+          </div>
+        </div>
+      <div class="page-num">Trang 119-124</div>
+    </section>
+  
+
+    <section class="section" id="sec-2">
+      <h2 id="heading-2">🎨 2. Nhiệm vụ 1: Tạo tệp CSS</h2>
+      <p>Với bố cục website như Hình 18.2, mỗi thành phần (đầu trang, nội dung chính, cuối trang, banner, slogan, ảnh/nội dung) được định nghĩa bằng <strong>một lớp riêng</strong>, hoặc <strong>dùng chung một lớp</strong> nếu cùng định dạng.</p>
+
+<p><strong>Phần đầu trang gồm hai phần nhỏ.</strong> Banner: có thể dùng một ảnh làm nền và tiêu đề là tiêu đề trang web, cỡ chữ to, màu sắc nổi bật. Ví dụ, CSS cho banner được thiết lập như sau:</p>
+
+        <div style="background:#060b14; border:1px solid var(--border); border-radius:12px; overflow:hidden; margin:16px 0; font-family:monospace;">
+          <div style="background:rgba(255,255,255,0.05); padding:6px 14px; font-size:12px; color:var(--muted); border-bottom:1px solid var(--border);">💻 Ví dụ SGK — CSS cho banner (ảnh nền không tồn tại trong khung xem trước nên chỉ hiện màu chữ và bố cục)</div>
+          <pre style="padding:14px 16px; margin:0; font-size:14px; line-height:1.6; color:#7ce8fa; overflow-x:auto;"><code>&lt;style&gt;
+.banner {
+  background: url("../assets/img/bg-masthead.jpg") no-repeat center center;
+  background-size: cover;
+  padding-top: 4rem;
+  padding-bottom: 4rem;
+  text-align: center !important;
+  color: darkred !important;
+}
+&lt;/style&gt;
+&lt;div class="banner"&gt;
+  &lt;h2&gt;CLB ngoại khoá trường THPT Nguyễn Bỉnh Khiêm&lt;/h2&gt;
+&lt;/div&gt;</code></pre>
+        </div>
+
+        <div class="info-box">
+          <p>Hai thuộc tính <code>text-align</code> và <code>color</code> được thêm <strong><code>!important</code></strong> để đảm bảo luôn được áp dụng, không bị mẫu CSS khác (ví dụ định dạng mặc định của trình duyệt cho thẻ <code><h2></code>) ghi đè — đúng mức ưu tiên cao nhất đã học ở Bài 17.</p>
+        </div>
+
+        <div class="cau-hoi" style="margin:16px 0; border:1px solid rgba(56,217,245,0.3); background:rgba(56,217,245,0.04); border-radius:14px; padding:16px 20px;">
+          <div class="q-num" style="background:var(--cyan); color:#000; font-weight:800; border-radius:50%; width:28px; height:28px; display:flex; align-items:center; justify-content:center; flex-shrink:0;">?</div>
+          <div style="flex:1;">
+            <div class="q-text" style="font-weight:600; color:#fff; font-size:15.5px; margin-bottom:10px;">Vì sao CSS của banner thêm !important vào text-align và color?</div>
+            <div style="display:grid; grid-template-columns:1fr; gap:6px; margin-bottom:10px;">
+              
+                <div style="background:rgba(255,255,255,0.04); border:1px solid var(--border); border-radius:8px; padding:6px 12px; font-size:14px; color:#c8d8ec;">
+                  <b>A.</b> Để đảm bảo hai thuộc tính này luôn được áp dụng, không bị mẫu CSS khác ghi đè
+                </div>
+              
+                <div style="background:rgba(255,255,255,0.04); border:1px solid var(--border); border-radius:8px; padding:6px 12px; font-size:14px; color:#c8d8ec;">
+                  <b>B.</b> Vì cú pháp CSS bắt buộc mọi thuộc tính trong lớp .banner phải có !important
+                </div>
+              
+                <div style="background:rgba(255,255,255,0.04); border:1px solid var(--border); border-radius:8px; padding:6px 12px; font-size:14px; color:#c8d8ec;">
+                  <b>C.</b> Để trình duyệt tải ảnh nền nhanh hơn, giảm dung lượng tệp CSS
+                </div>
+              
+                <div style="background:rgba(255,255,255,0.04); border:1px solid var(--border); border-radius:8px; padding:6px 12px; font-size:14px; color:#c8d8ec;">
+                  <b>D.</b> Vì nếu thiếu !important thì trình duyệt sẽ báo lỗi và từ chối hiển thị trang
+                </div>
+              
+            </div>
+            <details style="margin-top:8px;">
+              <summary style="cursor:pointer; color:var(--cyan); font-size:13px; font-weight:600;">👉 Xem đáp án & giải thích</summary>
+              <div style="margin-top:6px; padding:8px 12px; background:rgba(86,227,159,0.1); border-left:3px solid var(--green); border-radius:6px; font-size:13.5px; color:#a3e635;">
+                <strong>Đáp án đúng: A</strong><br>
+                <span>!important có mức ưu tiên cao nhất trong bảy mức ưu tiên CSS (Bài 17), giúp đảm bảo text-align và color của .banner luôn thắng, dù có mẫu CSS khác cùng áp dụng cho phần tử.</span>
+              </div>
+            </details>
+          </div>
+        </div>
+<p><strong>Slogan:</strong> trong Hình 18.1, slogan gồm <strong>3 ô trên hàng ngang</strong> có định dạng giống nhau, mỗi ô rộng bằng <strong>1/3 độ rộng trang</strong>. Vì các ô giống nhau nên chỉ cần tạo một lớp CSS (đặt tên <code>block_3</code>). Tuy nhiên, khi dùng thẻ <code><div></code>, các ô sẽ tự <strong>xếp theo chiều dọc</strong> (vì div là phần tử khối). Để hiển thị theo phương ngang, cần tạo thêm một lớp <code>Row</code> chứa 3 ô.</p>
+
+
+        <div style="background:#060b14; border:1px solid var(--border); border-radius:12px; overflow:hidden; margin:16px 0; font-family:monospace;">
+          <div style="background:rgba(255,255,255,0.05); padding:6px 14px; font-size:12px; color:var(--muted); border-bottom:1px solid var(--border);">💻 Ví dụ SGK — CSS và HTML cho slogan 3 ô nằm ngang (đã rút gọn), xem khung dưới chạy thật</div>
+          <pre style="padding:14px 16px; margin:0; font-size:14px; line-height:1.6; color:#7ce8fa; overflow-x:auto;"><code>&lt;style&gt;
+.slogan {
+  background-color: rgb(248, 249, 250) !important;
+  text-align: center !important;
+  padding: 2rem;
+}
+.row {
+  display: flex;
+  flex-wrap: wrap;
+}
+.block_3 {
+  flex: 0 0 auto;
+  width: 33.33333333%;
+}
+&lt;/style&gt;
+&lt;div class="slogan"&gt;
+  &lt;div class="row"&gt;
+    &lt;div class="block_3"&gt;
+      &lt;h3&gt;Năng động&lt;/h3&gt;
+      &lt;p&gt;Hoạt động năng nổ và hiệu quả&lt;/p&gt;
+    &lt;/div&gt;
+    &lt;div class="block_3"&gt;
+      &lt;h3&gt;Đam mê&lt;/h3&gt;
+      &lt;p&gt;Cháy hết mình trong các cuộc chơi&lt;/p&gt;
+    &lt;/div&gt;
+    &lt;div class="block_3"&gt;
+      &lt;h3&gt;Toả sáng&lt;/h3&gt;
+      &lt;p&gt;Giành những giải thưởng cao nhất&lt;/p&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
+&lt;/div&gt;</code></pre>
+        </div>
+
+        <div class="info-box">
+          <p>Cách trình bày nhiều ô trong cùng một hàng (dùng <code>display: flex</code> + <code>width</code> tính theo %) được dùng <strong>phổ biến</strong> trong các trang web, tạo sự cân đối và hài hoà khi hiển thị. Cách thiết lập này áp dụng <strong>hoàn toàn tương tự</strong> cho phần nội dung chính (chia hai cột bằng nhau trên mỗi hàng) và phần cuối trang.</p>
+        </div>
+
+        <div class="cau-hoi" style="margin:16px 0; border:1px solid rgba(56,217,245,0.3); background:rgba(56,217,245,0.04); border-radius:14px; padding:16px 20px;">
+          <div class="q-num" style="background:var(--cyan); color:#000; font-weight:800; border-radius:50%; width:28px; height:28px; display:flex; align-items:center; justify-content:center; flex-shrink:0;">?</div>
+          <div style="flex:1;">
+            <div class="q-text" style="font-weight:600; color:#fff; font-size:15.5px; margin-bottom:10px;">Nếu chỉ dùng thẻ <div> để tạo 3 ô của slogan mà không thêm CSS gì khác, các ô sẽ hiển thị theo phương nào? Vì sao?</div>
+            <div style="display:grid; grid-template-columns:1fr; gap:6px; margin-bottom:10px;">
+              
+                <div style="background:rgba(255,255,255,0.04); border:1px solid var(--border); border-radius:8px; padding:6px 12px; font-size:14px; color:#c8d8ec;">
+                  <b>A.</b> Theo chiều dọc, vì div là phần tử khối, mặc định chiếm hết chiều ngang nên tự xuống dòng
+                </div>
+              
+                <div style="background:rgba(255,255,255,0.04); border:1px solid var(--border); border-radius:8px; padding:6px 12px; font-size:14px; color:#c8d8ec;">
+                  <b>B.</b> Theo chiều ngang, vì div luôn tự động xếp cạnh nhau khi có từ 2 phần tử trở lên
+                </div>
+              
+                <div style="background:rgba(255,255,255,0.04); border:1px solid var(--border); border-radius:8px; padding:6px 12px; font-size:14px; color:#c8d8ec;">
+                  <b>C.</b> Xen kẽ ngang rồi dọc luân phiên, tuỳ theo thứ tự khai báo trong tệp HTML
+                </div>
+              
+                <div style="background:rgba(255,255,255,0.04); border:1px solid var(--border); border-radius:8px; padding:6px 12px; font-size:14px; color:#c8d8ec;">
+                  <b>D.</b> Chồng lên nhau tại đúng một vị trí, che khuất lẫn nhau hoàn toàn
+                </div>
+              
+            </div>
+            <details style="margin-top:8px;">
+              <summary style="cursor:pointer; color:var(--cyan); font-size:13px; font-weight:600;">👉 Xem đáp án & giải thích</summary>
+              <div style="margin-top:6px; padding:8px 12px; background:rgba(86,227,159,0.1); border-left:3px solid var(--green); border-radius:6px; font-size:13.5px; color:#a3e635;">
+                <strong>Đáp án đúng: A</strong><br>
+                <span>SGK giải thích: div là phần tử khối (block), mặc định chiếm hết chiều ngang khung chứa nên phần tử sau tự xuống dòng — phải thêm lớp .row với display: flex mới xếp được theo hàng ngang.</span>
+              </div>
+            </details>
+          </div>
+        </div>
+<p>Với phần nội dung chính và cuối trang, thực hiện việc phân tích bố cục và thiết lập CSS <strong>hoàn toàn tương tự</strong>. Sau khi hoàn thành, lưu tệp với tên <strong><code>style.css</code></strong>.</p>
+      <div class="page-num">Trang 119-124</div>
+    </section>
+  
+
+    <section class="section" id="sec-3">
+      <h2 id="heading-3">🧩 3. Nhiệm vụ 2: Tạo các tệp HTML</h2>
+      <p>Tạo các tệp <code>index.html</code>, <code>thethao.html</code> và <code>nghethuat.html</code> để dựng trang web theo phân tích ở Nhiệm vụ 1. Để dùng được các thiết lập CSS đã tạo, cần tạo các khối bằng thẻ <code><div></code> với đúng tên lớp CSS đã định nghĩa. Ví dụ, để tạo khối banner cho trang chủ:</p>
+
+        <div style="background:#060b14; border:1px solid var(--border); border-radius:12px; overflow:hidden; margin:16px 0; font-family:monospace;">
+          <div style="background:rgba(255,255,255,0.05); padding:6px 14px; font-size:12px; color:var(--muted); border-bottom:1px solid var(--border);">💻 Ví dụ SGK — khối banner nhận đúng định dạng của lớp .banner nhờ trùng tên class</div>
+          <pre style="padding:14px 16px; margin:0; font-size:14px; line-height:1.6; color:#7ce8fa; overflow-x:auto;"><code>&lt;div class="banner"&gt;
+  &lt;h2&gt;CLB ngoại khoá trường THPT Nguyễn Bỉnh Khiêm&lt;/h2&gt;
+&lt;/div&gt;</code></pre>
+        </div>
+<p>Với khối slogan, cần tạo đúng <strong>ba lớp thẻ div lồng nhau</strong> như đã phân tích ở Hình 18.3: <code>div.slogan</code> bọc ngoài, bên trong là <code>div.row</code>, bên trong <code>row</code> là ba <code>div.block_3</code> — nội dung hiển thị của từng ô nằm trong khối <code>div</code> trong cùng. Thực hiện tương tự cho cả ba tệp.</p>
+
+        <ul>
+          <li>Chuẩn bị một số hình ảnh và video các hoạt động tại lớp/trường để sử dụng trong mỗi trang web.</li>
+<li>Tạo các liên kết từ trang chủ đến hai trang còn lại.</li>
+<li>Đặt liên kết tới các trang khác ở <strong>phần cuối trang</strong> (footer) — để trang nào cũng dễ dàng điều hướng.</li>
+        </ul>
+
+        <div class="info-box">
+          <p>Muốn một khối HTML nhận đúng định dạng đã khai báo trong CSS, chỉ cần đặt thuộc tính <code>class</code> của thẻ <code><div></code> <strong>trùng tên</strong> với lớp CSS tương ứng (ví dụ <code>.banner</code>, <code>.slogan</code>, <code>.row</code>, <code>.block_3</code>) — không cần sửa gì thêm trong components hay lặp lại CSS.</p>
+        </div>
+
+        <div class="cau-hoi" style="margin:16px 0; border:1px solid rgba(56,217,245,0.3); background:rgba(56,217,245,0.04); border-radius:14px; padding:16px 20px;">
+          <div class="q-num" style="background:var(--cyan); color:#000; font-weight:800; border-radius:50%; width:28px; height:28px; display:flex; align-items:center; justify-content:center; flex-shrink:0;">?</div>
+          <div style="flex:1;">
+            <div class="q-text" style="font-weight:600; color:#fff; font-size:15.5px; margin-bottom:10px;">Luyện tập của Bài 18 yêu cầu bổ sung trang dang_ki.html, và đặt liên kết tới trang này ở đâu trên các trang?</div>
+            <div style="display:grid; grid-template-columns:1fr; gap:6px; margin-bottom:10px;">
+              
+                <div style="background:rgba(255,255,255,0.04); border:1px solid var(--border); border-radius:8px; padding:6px 12px; font-size:14px; color:#c8d8ec;">
+                  <b>A.</b> Ở phần cuối trang (footer) của tất cả các trang trong website
+                </div>
+              
+                <div style="background:rgba(255,255,255,0.04); border:1px solid var(--border); border-radius:8px; padding:6px 12px; font-size:14px; color:#c8d8ec;">
+                  <b>B.</b> Chỉ ở phần đầu trang (banner) của riêng trang chủ, các trang khác không cần
+                </div>
+              
+                <div style="background:rgba(255,255,255,0.04); border:1px solid var(--border); border-radius:8px; padding:6px 12px; font-size:14px; color:#c8d8ec;">
+                  <b>C.</b> Không cần đặt liên kết, học sinh tự gõ địa chỉ URL để truy cập
+                </div>
+              
+                <div style="background:rgba(255,255,255,0.04); border:1px solid var(--border); border-radius:8px; padding:6px 12px; font-size:14px; color:#c8d8ec;">
+                  <b>D.</b> Chỉ đặt bên trong tệp CSS, không chèn liên kết trực tiếp vào HTML
+                </div>
+              
+            </div>
+            <details style="margin-top:8px;">
+              <summary style="cursor:pointer; color:var(--cyan); font-size:13px; font-weight:600;">👉 Xem đáp án & giải thích</summary>
+              <div style="margin-top:6px; padding:8px 12px; background:rgba(86,227,159,0.1); border-left:3px solid var(--green); border-radius:6px; font-size:13.5px; color:#a3e635;">
+                <strong>Đáp án đúng: A</strong><br>
+                <span>SGK yêu cầu: tạo trang dang_ki.html chứa biểu mẫu đăng kí câu lạc bộ, và bổ sung liên kết tới trang đăng kí trong phần cuối trang của TẤT CẢ các trang.</span>
+              </div>
+            </details>
+          </div>
+        </div>
+      <div class="page-num">Trang 119-124</div>
+    </section>
+  
+
+  <!-- HỘP GHI NHỚ CUỐI BÀI -->
+  <section class="section" id="ghi-nho">
+    <div class="ghi-nho">
+      <div class="ghi-nho-title">📌 Em cần ghi nhớ</div>
+      <ul style="padding-left:20px;">
+        <li style="font-size:15.5px; line-height:1.7; margin-bottom:10px;">Nhiều tệp HTML của cùng một website nên <strong>liên kết tới cùng một tệp CSS</strong> (<code>style.css</code>) để có phong cách trình bày thống nhất.</li>
+<li style="font-size:15.5px; line-height:1.7; margin-bottom:10px;">Bố cục website gồm ba phần: <strong>đầu trang</strong> (banner + slogan), <strong>nội dung chính</strong>, <strong>cuối trang</strong> — mỗi phần một lớp CSS riêng, hoặc dùng chung nếu cùng định dạng.</li>
+<li style="font-size:15.5px; line-height:1.7; margin-bottom:10px;"><code>div</code> là phần tử khối nên mặc định xếp dọc. Muốn nhiều ô nằm ngang: tạo lớp bọc ngoài với <strong><code>display: flex; flex-wrap: wrap;</code></strong>, mỗi ô có <strong><code>width</code> tính theo %</strong> (ví dụ <code>33.33333333%</code> cho 3 ô bằng nhau).</li>
+<li style="font-size:15.5px; line-height:1.7; margin-bottom:10px;"><code>!important</code> dùng để đảm bảo thuộc tính CSS luôn được áp dụng, không bị mẫu khác ghi đè — mức ưu tiên cao nhất trong 7 mức đã học ở Bài 17.</li>
+<li style="font-size:15.5px; line-height:1.7; margin-bottom:10px;">Một khối <code><div></code> nhận đúng định dạng CSS khi thuộc tính <code>class</code> <strong>trùng tên</strong> với lớp CSS đã định nghĩa (<code>.banner</code>, <code>.slogan</code>, <code>.row</code>, <code>.block_3</code>).</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- NÚT CHUYỂN BÀI DƯỚI CÙNG -->
+  <div class="nav-btns" style="margin-top:32px;">
+    <a href="/sgk/bai-17.html" class="nav-btn">← Nhóm nghề Phát triển phần mềm</a>
+    <a href="/luyen/bai-18" class="nav-btn" style="background:linear-gradient(90deg, var(--cyan), var(--orange)); color:#fff; border:none;">🎯 Luyện trắc nghiệm ngay</a>
+    <a href="/sgk/bai-19.html" class="nav-btn">Dịch vụ công nghệ thông tin và nghề liên quan →</a>
+  </div>
+</main>
+
+</div>
+
+<script>
+let fs = 18;
+function changeFont(d) { fs = Math.min(28, Math.max(14, fs + d)); document.body.style.fontSize = fs + 'px'; }
+let light = false;
+function toggleTheme() {
+  light = !light;
+  document.documentElement.style.setProperty('--bg', light ? '#f0f4f8' : '#070b14');
+  document.documentElement.style.setProperty('--text', light ? '#1a2540' : '#e8eef8');
+  document.documentElement.style.setProperty('--panel', light ? '#fff' : '#111a2e');
+  document.documentElement.style.setProperty('--panel2', light ? '#f5f8fc' : '#162035');
+  document.documentElement.style.setProperty('--border', light ? '#d0daea' : '#1e2f4d');
+  document.body.style.background = light
+    ? 'radial-gradient(ellipse at 20% 10%, #d8e8f8 0%, #f0f4f8 60%)'
+    : 'radial-gradient(ellipse at 20% 10%, #0d1f3c 0%, #070b14 50%)';
+}
+window.addEventListener('scroll', () => {
+  const doc = document.documentElement;
+  const scrolled = doc.scrollTop || document.body.scrollTop;
+  const total = doc.scrollHeight - doc.clientHeight;
+  const pct = total > 0 ? Math.round((scrolled / total) * 100) : 0;
+  const p = document.getElementById('prog');
+  const pl = document.getElementById('prog-label');
+  if (p) p.style.width = pct + '%';
+  if (pl) pl.textContent = 'Tiến độ đọc: ' + pct + '%';
+});
+</script>
+</body>
+</html>

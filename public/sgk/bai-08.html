@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Định dạng văn bản – Tin học 12 KNTT (SGK Điện tử)</title>
+<meta name="description" content="SGK Tin học 12 Kết nối tri thức – Định dạng văn bản. Chủ đề 4. Thiết kế trang web (HTML & CSS).">
+<style>
+:root {
+  --bg: #070b14; --bg2: #0d1423; --panel: #111a2e; --panel2: #162035; --border: #1e2f4d;
+  --text: #e8eef8; --muted: #8899b8; --orange: #ff6b35; --orange2: #ff9a64;
+  --cyan: #38d9f5; --cyan2: #7ce8fa; --yellow: #ffd060; --green: #56e39f; --pink: #f06dba; --purple: #a78bfa;
+  --fs: 18px;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  background: radial-gradient(ellipse at 20% 10%, #0d1f3c 0%, #070b14 50%);
+  color: var(--text); font-family: 'Inter','Segoe UI',-apple-system,BlinkMacSystemFont,'Roboto',Arial,sans-serif;
+  font-size: var(--fs); line-height: 1.75; min-height: 100vh;
+}
+.app { display: grid; grid-template-columns: 280px 1fr; min-height: 100vh; }
+.sidebar { position:sticky; top:0; height:100vh; overflow-y:auto; background:rgba(7,11,20,.97); border-right:1px solid var(--border); padding:24px 16px; backdrop-filter:blur(20px); }
+.brand-box { margin-bottom:24px; }
+.series-label { font-size:11px; letter-spacing:2px; text-transform:uppercase; color:var(--cyan); font-weight:700; margin-bottom:6px; }
+.brand-title { font-size:20px; font-weight:900; color:#fff; line-height:1.2; }
+.brand-title span { color:var(--orange); }
+.brand-sub { color:var(--muted); font-size:12px; margin-top:5px; }
+.toc-title { font-size:11px; letter-spacing:1.5px; text-transform:uppercase; color:var(--muted); font-weight:700; margin:20px 0 8px; padding:0 8px; }
+.toc a { display:block; color:#9aaec8; text-decoration:none; padding:9px 12px; border-radius:10px; margin:2px 0; font-size:13.5px; font-weight:500; transition:all .2s; border-left:3px solid transparent; }
+.toc a:hover { background:rgba(56,217,245,.07); color:var(--cyan); border-left-color:var(--cyan); }
+.toc a.active { background:rgba(255,107,53,.1); color:var(--orange); border-left-color:var(--orange); }
+.ctrl-box { margin-top:24px; padding:14px; border:1px solid var(--border); border-radius:14px; background:rgba(255,255,255,.03); }
+.ctrl-box h4 { font-size:11px; letter-spacing:1px; text-transform:uppercase; color:var(--muted); margin-bottom:10px; }
+.ctrl-row { display:flex; gap:8px; margin-bottom:8px; }
+.ctrl-btn { flex:1; background:var(--panel2); border:1px solid var(--border); color:var(--text); border-radius:9px; padding:8px 6px; cursor:pointer; font-size:13px; font-weight:600; transition:all .2s; text-align:center; text-decoration:none; display:inline-block; }
+.ctrl-btn:hover { background:var(--border); color:#fff; }
+.progress-bar { height:4px; background:var(--panel2); border-radius:4px; overflow:hidden; margin-top:10px; }
+.progress-fill { height:100%; width:0%; background:linear-gradient(90deg,var(--cyan),var(--orange)); transition:width .3s; border-radius:4px; }
+.main { max-width:860px; margin:0 auto; padding:32px 28px 80px; }
+.hero { background:linear-gradient(135deg,#0f2040 0%,#0a1628 60%,#131020 100%); border:1px solid var(--border); border-radius:24px; padding:36px 40px; margin-bottom:28px; box-shadow:0 24px 80px rgba(0,0,0,.5); position:relative; overflow:hidden; }
+.hero::before { content:'8'; position:absolute; right:30px; top:20px; font-size:120px; font-weight:900; color:rgba(56,217,245,.05); line-height:1; user-select:none; }
+.chu-de-tag { display:inline-flex; align-items:center; gap:8px; background:rgba(56,217,245,.12); border:1px solid rgba(56,217,245,.3); color:var(--cyan); font-size:13px; font-weight:700; padding:6px 14px; border-radius:20px; margin-bottom:16px; letter-spacing:.5px; }
+.hero h1 { font-size:clamp(26px,4vw,38px); font-weight:900; line-height:1.2; background:linear-gradient(90deg,#fff 0%,var(--cyan2) 50%,var(--orange2) 100%); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; margin-bottom:14px; }
+.hero-desc { color:#b0c4de; font-size:15.5px; line-height:1.6; }
+.section { background:rgba(11,17,30,.9); border:1px solid var(--border); border-radius:20px; padding:28px 32px 36px; margin-bottom:24px; scroll-margin-top:20px; position:relative; transition:border-color .3s; }
+.section:hover { border-color:rgba(56,217,245,.2); }
+.page-num { position:absolute; right:20px; bottom:14px; color:var(--muted); font-size:12px; font-weight:600; background:var(--panel2); padding:3px 10px; border-radius:10px; }
+h2 { font-size:clamp(20px,2.5vw,26px); font-weight:800; color:#fff; margin:28px 0 14px; display:flex; align-items:center; gap:10px; }
+h2::before { content:''; display:inline-block; width:4px; height:24px; background:linear-gradient(var(--orange),var(--cyan)); border-radius:2px; flex-shrink:0; }
+p { color:#d0dcea; margin-bottom:14px; }
+p:last-child { margin-bottom:0; }
+strong { color:#fff; }
+em { color:var(--cyan2); font-style:italic; }
+code { background:rgba(255,255,255,0.08); color:var(--orange2); padding:2px 6px; border-radius:4px; font-size:0.9em; font-family:monospace; }
+ul, ol { padding-left:22px; margin:12px 0; }
+li { color:#c8d8ec; margin-bottom:8px; }
+li::marker { color:var(--cyan); }
+.info-box { background:linear-gradient(135deg,#071e2e,#071828); border:1px dashed rgba(56,217,245,.4); border-radius:14px; padding:18px 22px; margin:20px 0; }
+.info-box p, .info-box li { color:#b8d8f0; }
+.activity { background:linear-gradient(135deg,#1a120a,#130f0a); border:1px solid rgba(255,160,60,.3); border-left:4px solid var(--orange); border-radius:14px; padding:18px 22px; margin:20px 0; }
+.activity-badge { display:inline-flex; align-items:center; gap:6px; background:var(--orange); color:#1a0a00; font-size:12px; font-weight:800; padding:4px 12px; border-radius:6px; margin-bottom:10px; letter-spacing:.5px; text-transform:uppercase; }
+.ghi-nho { background:linear-gradient(135deg,#1a2a10,#0f1e0a); border:1px solid rgba(86,227,159,.3); border-left:4px solid var(--green); border-radius:14px; padding:20px 24px; margin:24px 0; }
+.ghi-nho-title { color:var(--green); font-weight:800; font-size:15px; text-transform:uppercase; letter-spacing:1px; margin-bottom:10px; display:flex; align-items:center; gap:8px; }
+.ghi-nho p, .ghi-nho li { color:#c8f0d8; }
+.nav-btns { display:flex; gap:12px; margin:20px 0; }
+.nav-btn { background:var(--panel); border:1px solid var(--border); color:var(--text); border-radius:10px; padding:10px 18px; text-decoration:none; font-size:14px; font-weight:600; transition:all .2s; flex:1; text-align:center; }
+.nav-btn:hover { background:var(--panel2); border-color:var(--cyan); color:#fff; }
+.field-grid { display:grid; grid-template-columns:1fr 1fr; gap:14px; margin:18px 0; }
+.field-card { background:var(--panel2); border:1px solid var(--border); border-radius:14px; padding:16px 18px; }
+.img-side { display:grid; grid-template-columns:1fr 1fr; gap:14px; margin:18px 0; }
+.img-half { border-radius:12px; border:1px solid var(--border); }
+@media (max-width: 860px) {
+  .app { grid-template-columns: 1fr; }
+  .sidebar { display: none; }
+  .main { padding: 20px 16px 60px; }
+  .field-grid, .img-side { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+
+<div class="app">
+
+<!-- SIDEBAR -->
+<aside class="sidebar">
+  <div class="brand-box">
+    <div class="series-label">KẾT NỐI TRI THỨC</div>
+    <div class="brand-title">TIN HỌC <span>12</span></div>
+    <div class="brand-sub">Sách Giáo Khoa Điện Tử (ICT)</div>
+  </div>
+
+  <div class="ctrl-box">
+    <h4>Cỡ chữ & Giao diện</h4>
+    <div class="ctrl-row">
+      <button class="ctrl-btn" onclick="changeFont(-1)">A -</button>
+      <button class="ctrl-btn" onclick="changeFont(1)">A +</button>
+      <button class="ctrl-btn" onclick="toggleTheme()">🌓 Nền</button>
+    </div>
+    <div style="font-size:12px; color:var(--muted); margin-top:8px;" id="prog-label">Tiến độ đọc: 0%</div>
+    <div class="progress-bar"><div class="progress-fill" id="prog"></div></div>
+  </div>
+
+  <div class="toc-title">Mục lục bài học</div>
+  <nav class="toc">
+    
+      <a href="#sec-1">1. Thuộc tính thẻ</a>
+    
+      <a href="#sec-2">2. Định dạng tiêu đề</a>
+    
+      <a href="#sec-3">3. Đoạn và khối</a>
+    
+      <a href="#sec-4">4. Kiểu chữ</a>
+    
+      <a href="#sec-5">5. Phông chữ</a>
+    
+    <a href="#ghi-nho">📌 Ghi nhớ cốt lõi</a>
+  </nav>
+
+  <div class="ctrl-box" style="margin-top:20px;">
+    <h4>Luyện tập</h4>
+    <a href="/luyen/bai-08" class="ctrl-btn" style="background:var(--cyan); color:#000; font-weight:700;">🎯 Vào Luyện Trắc Nghiệm</a>
+  </div>
+</aside>
+
+<!-- MAIN CONTENT -->
+<main class="main">
+  <!-- HERO BANNER -->
+  <div class="hero">
+    <div class="chu-de-tag">Chủ đề 4. Thiết kế trang web (HTML & CSS)</div>
+    <h1>Định dạng văn bản</h1>
+    <div class="hero-desc">Bài 7 em đã viết được trang web, nhưng chữ còn trơ trụi. Bài này dạy cách <strong>làm cho văn bản đẹp và dễ đọc</strong>: chia tiêu đề nhiều cấp, tách đoạn, in đậm in nghiêng, đổi màu và cỡ chữ. Chìa khoá của cả bài chỉ là một thứ — <strong>thuộc tính <code>style</code></strong>.</div>
+  </div>
+
+  <!-- NÚT CHUYỂN BÀI -->
+  <div class="nav-btns">
+    <a href="/sgk/bai-07.html" class="nav-btn">← HTML và cấu trúc trang web</a>
+    <a href="/sgk/bai-09.html" class="nav-btn">Tạo danh sách, bảng →</a>
+  </div>
+
+  <!-- CÁC MỤC NỘI DUNG -->
+  
+    <section class="section" id="sec-1">
+      <h2 id="heading-1">🔧 1. Thuộc tính thẻ</h2>
+      <p><strong>Mọi phần tử HTML đều có thể có thuộc tính.</strong> Thuộc tính của thẻ có tác dụng <strong>bổ sung thông tin, làm rõ các điều khiển được thẻ chỉ định</strong>.</p>
+
+
+        <div class="info-box">
+          <p>Cú pháp để xác định thuộc tính: <strong>tên_thuộc_tính="giá trị"</strong> — trừ các trường hợp đặc biệt chỉ cần tên thuộc tính để xác định giá trị <strong>Có</strong> hoặc <strong>Không</strong>. Thuộc tính nằm trong <strong>thẻ bắt đầu</strong> (không nằm trong thẻ kết thúc), sau tên thẻ. Thẻ có nhiều hơn một thuộc tính thì <strong>các thuộc tính được ngăn cách bởi dấu cách</strong>.</p>
+        </div>
+
+        <div style="background:#060b14; border:1px solid var(--border); border-radius:12px; overflow:hidden; margin:16px 0; font-family:monospace;">
+          <div style="background:rgba(255,255,255,0.05); padding:6px 14px; font-size:12px; color:var(--muted); border-bottom:1px solid var(--border);">💻 Một thẻ có thể mang nhiều thuộc tính, ngăn nhau bởi dấu cách</div>
+          <pre style="padding:14px 16px; margin:0; font-size:14px; line-height:1.6; color:#7ce8fa; overflow-x:auto;"><code>&lt;Tên_thẻ thuộc_tính_1="giá_trị_1" thuộc_tính_2="giá_trị_2"&gt; Nội dung &lt;/Tên_thẻ&gt;</code></pre>
+        </div>
+<p>Một trong những thuộc tính được sử dụng <strong>thường xuyên nhất là <code>style</code></strong>, dùng để thiết lập định dạng văn bản như <strong>chọn màu sắc, phông chữ, cỡ chữ, kiểu chữ, căn lề, tạo khung</strong>,… cho một phần tử HTML <strong>ngay tại vị trí được viết</strong>.</p>
+
+        <div class="cau-hoi" style="margin:16px 0; border:1px solid rgba(56,217,245,0.3); background:rgba(56,217,245,0.04); border-radius:14px; padding:16px 20px;">
+          <div class="q-num" style="background:var(--cyan); color:#000; font-weight:800; border-radius:50%; width:28px; height:28px; display:flex; align-items:center; justify-content:center; flex-shrink:0;">?</div>
+          <div style="flex:1;">
+            <div class="q-text" style="font-weight:600; color:#fff; font-size:15.5px; margin-bottom:10px;">Thuộc tính của thẻ được viết ở đâu?</div>
+            <div style="display:grid; grid-template-columns:1fr; gap:6px; margin-bottom:10px;">
+              
+                <div style="background:rgba(255,255,255,0.04); border:1px solid var(--border); border-radius:8px; padding:6px 12px; font-size:14px; color:#c8d8ec;">
+                  <b>A.</b> Trong thẻ bắt đầu, sau tên thẻ
+                </div>
+              
+                <div style="background:rgba(255,255,255,0.04); border:1px solid var(--border); border-radius:8px; padding:6px 12px; font-size:14px; color:#c8d8ec;">
+                  <b>B.</b> Trong thẻ kết thúc, sau dấu /
+                </div>
+              
+                <div style="background:rgba(255,255,255,0.04); border:1px solid var(--border); border-radius:8px; padding:6px 12px; font-size:14px; color:#c8d8ec;">
+                  <b>C.</b> Ở cả thẻ bắt đầu và thẻ kết thúc cho khớp nhau
+                </div>
+              
+                <div style="background:rgba(255,255,255,0.04); border:1px solid var(--border); border-radius:8px; padding:6px 12px; font-size:14px; color:#c8d8ec;">
+                  <b>D.</b> Ở dòng riêng phía trên thẻ
+                </div>
+              
+            </div>
+            <details style="margin-top:8px;">
+              <summary style="cursor:pointer; color:var(--cyan); font-size:13px; font-weight:600;">👉 Xem đáp án & giải thích</summary>
+              <div style="margin-top:6px; padding:8px 12px; background:rgba(86,227,159,0.1); border-left:3px solid var(--green); border-radius:6px; font-size:13.5px; color:#a3e635;">
+                <strong>Đáp án đúng: A</strong><br>
+                <span>Thuộc tính nằm trong <strong>thẻ bắt đầu, sau tên thẻ</strong> — không nằm trong thẻ kết thúc. Nếu có nhiều thuộc tính thì chúng <strong>ngăn cách nhau bởi dấu cách</strong>.</span>
+              </div>
+            </details>
+          </div>
+        </div>
+      <div class="page-num">Trang 52-57</div>
+    </section>
+  
+
+    <section class="section" id="sec-2">
+      <h2 id="heading-2">📰 2. Định dạng tiêu đề</h2>
+      <p>Để định dạng tiêu đề và các tiêu đề con, ta dùng các thẻ dạng <strong><code><hx></code></strong>, trong đó <strong>x nhận một trong các giá trị từ 1 đến 6</strong>, thể hiện <strong>độ quan trọng giảm dần</strong> của nội dung. Thẻ <strong><code><h1></code> nên dùng cho tiêu đề chính hay tiêu đề chung của cả văn bản</strong>; các tiêu đề ở mức thấp hơn dùng <code><h2></code> rồi tiếp tục với các mức tiếp theo.</p>
+
+        <div style="background:#060b14; border:1px solid var(--border); border-radius:12px; overflow:hidden; margin:16px 0; font-family:monospace;">
+          <div style="background:rgba(255,255,255,0.05); padding:6px 14px; font-size:12px; color:var(--muted); border-bottom:1px solid var(--border);">💻 Ví dụ 1 trong SGK — một văn bản có bốn mức tiêu đề</div>
+          <pre style="padding:14px 16px; margin:0; font-size:14px; line-height:1.6; color:#7ce8fa; overflow-x:auto;"><code>&lt;h1&gt;Tin học 12&lt;/h1&gt;
+&lt;h2&gt;Phần chung&lt;/h2&gt;
+&lt;h3&gt;Chủ đề 1. Máy tính và xã hội tri thức&lt;/h3&gt;
+&lt;h4&gt;1. Trí tuệ nhân tạo và ứng dụng&lt;/h4&gt;
+&lt;h4&gt;2. Trí tuệ nhân tạo trong khoa học và đời sống&lt;/h4&gt;
+&lt;h3&gt;Chủ đề 2. Mạng máy tính và Internet&lt;/h3&gt;
+&lt;h4&gt;3. Thiết bị mạng&lt;/h4&gt;</code></pre>
+        </div>
+
+        <div class="activity">
+          <div class="activity-badge">💡 Thẻ tiêu đề không chỉ để cho đẹp</div>
+          <p>Khi sử dụng thẻ <code><hx></code>, trình duyệt dùng chúng để <strong>hiển thị trang web và định dạng văn bản giúp người dùng đọc lướt trang web theo tiêu đề</strong>. Ngoài ra, <strong>các công cụ tìm kiếm sử dụng thẻ này để xác định cấu trúc và nội dung trang web</strong> — dùng đúng cấp tiêu đề thì trang của em dễ được tìm thấy hơn.</p>
+        </div>
+      <div class="page-num">Trang 52-57</div>
+    </section>
+  
+
+    <section class="section" id="sec-3">
+      <h2 id="heading-3">🧱 3. Đoạn và khối</h2>
+      <p>Một văn bản thường gồm <strong>nhiều đoạn văn bản tách rời nhau</strong>. Cách đơn giản nhất để xác định đoạn là đặt nội dung trong cặp thẻ <strong><code><p>Nội dung</p></code></strong>. Khi gặp cặp thẻ này, trình duyệt sẽ hiển thị nội dung đoạn <strong>trên dòng mới, kèm với khoảng trống nhỏ trước và sau đoạn</strong>.</p>
+
+        <div class="info-box">
+          <p>Nội dung đoạn có thể chứa văn bản, hình ảnh và cả các phần tử khác, <strong>nhưng không được chứa tiêu đề, danh sách, phần tử phân đoạn hoặc các phần tử dạng khối khác</strong>. Các đoạn được định dạng bằng thẻ <code><p></code> phù hợp với <strong>văn bản chứa nhiều chữ</strong>.</p>
+        </div>
+
+<p>Khi cần thao tác với nhiều loại nội dung, ta có thể dùng phần tử <strong><code><div></code></strong> và thẻ <strong><code><span></code></strong>. Cặp thẻ <code><div>…</div></code> hay <code><span>…</span></code> <strong>tạo một khối chứa nội dung bất kì</strong> đặt ở giữa hai thẻ. Phần tử <code><div></code> là <strong>một khối, bắt đầu trên dòng mới</strong>; trong khi <code><span></code> có tác dụng tương tự nhưng <strong>sử dụng cho quy mô nhỏ hơn</strong> — nội dung khối hiển thị <strong>trên cùng dòng đang viết</strong>.</p>
+
+        <div style="background:#060b14; border:1px solid var(--border); border-radius:12px; overflow:hidden; margin:16px 0; font-family:monospace;">
+          <div style="background:rgba(255,255,255,0.05); padding:6px 14px; font-size:12px; color:var(--muted); border-bottom:1px solid var(--border);">💻 So sánh trực tiếp: div đẩy nội dung xuống dòng mới, span thì không</div>
+          <pre style="padding:14px 16px; margin:0; font-size:14px; line-height:1.6; color:#7ce8fa; overflow-x:auto;"><code>&lt;p&gt;Đoạn văn có &lt;span style="color:red"&gt;một cụm span&lt;/span&gt; nằm giữa dòng.&lt;/p&gt;
+&lt;div style="color:blue"&gt;Còn div thì tự xuống dòng mới.&lt;/div&gt;
+&lt;p&gt;Đoạn tiếp theo.&lt;/p&gt;</code></pre>
+        </div>
+<p>Ngoài các thẻ định dạng đoạn và khối kể trên, còn có hai thẻ <strong><code><br></code></strong> và <strong><code><hr></code></strong> để <strong>xuống dòng</strong> hoặc <strong>tạo ra một đường kẻ ngang</strong> trên trang web.</p>
+
+        <div style="background:#060b14; border:1px solid var(--border); border-radius:12px; overflow:hidden; margin:16px 0; font-family:monospace;">
+          <div style="background:rgba(255,255,255,0.05); padding:6px 14px; font-size:12px; color:var(--muted); border-bottom:1px solid var(--border);">💻 Cả bốn đoạn p dính liền nhau, nhưng trình duyệt vẫn tách thành từng dòng riêng có khoảng trống</div>
+          <pre style="padding:14px 16px; margin:0; font-size:14px; line-height:1.6; color:#7ce8fa; overflow-x:auto;"><code>&lt;p&gt;Thẻ p tạo đoạn nội dung, &lt;/p&gt;&lt;p&gt;thẻ div tạo khối chứa dữ liệu. &lt;/p&gt;
+&lt;p&gt;Các thẻ này &lt;br&gt; không có hình thức trình bày riêng &lt;/p&gt;&lt;p&gt; mà được định dạng bằng thuộc tính style. &lt;/p&gt;</code></pre>
+        </div>
+
+        <div class="cau-hoi" style="margin:16px 0; border:1px solid rgba(56,217,245,0.3); background:rgba(56,217,245,0.04); border-radius:14px; padding:16px 20px;">
+          <div class="q-num" style="background:var(--cyan); color:#000; font-weight:800; border-radius:50%; width:28px; height:28px; display:flex; align-items:center; justify-content:center; flex-shrink:0;">?</div>
+          <div style="flex:1;">
+            <div class="q-text" style="font-weight:600; color:#fff; font-size:15.5px; margin-bottom:10px;">Điểm khác nhau cơ bản giữa <div> và <span> là gì?</div>
+            <div style="display:grid; grid-template-columns:1fr; gap:6px; margin-bottom:10px;">
+              
+                <div style="background:rgba(255,255,255,0.04); border:1px solid var(--border); border-radius:8px; padding:6px 12px; font-size:14px; color:#c8d8ec;">
+                  <b>A.</b> div dùng cho chữ, còn span dùng cho hình ảnh
+                </div>
+              
+                <div style="background:rgba(255,255,255,0.04); border:1px solid var(--border); border-radius:8px; padding:6px 12px; font-size:14px; color:#c8d8ec;">
+                  <b>B.</b> div là khối bắt đầu dòng mới, span nằm trong dòng
+                </div>
+              
+                <div style="background:rgba(255,255,255,0.04); border:1px solid var(--border); border-radius:8px; padding:6px 12px; font-size:14px; color:#c8d8ec;">
+                  <b>C.</b> div phải có thuộc tính style, còn span thì không
+                </div>
+              
+                <div style="background:rgba(255,255,255,0.04); border:1px solid var(--border); border-radius:8px; padding:6px 12px; font-size:14px; color:#c8d8ec;">
+                  <b>D.</b> span là thẻ đơn còn div là thẻ đôi có thẻ đóng
+                </div>
+              
+            </div>
+            <details style="margin-top:8px;">
+              <summary style="cursor:pointer; color:var(--cyan); font-size:13px; font-weight:600;">👉 Xem đáp án & giải thích</summary>
+              <div style="margin-top:6px; padding:8px 12px; background:rgba(86,227,159,0.1); border-left:3px solid var(--green); border-radius:6px; font-size:13.5px; color:#a3e635;">
+                <strong>Đáp án đúng: B</strong><br>
+                <span>Cả hai đều tạo khối chứa nội dung bất kì. Nhưng <strong><code><div></code> là một khối, bắt đầu trên dòng mới</strong>; còn <strong><code><span></code> dùng cho quy mô nhỏ hơn</strong>, nội dung của nó hiển thị <strong>trên cùng dòng đang viết</strong>.</span>
+              </div>
+            </details>
+          </div>
+        </div>
+      <div class="page-num">Trang 52-57</div>
+    </section>
+  
+
+    <section class="section" id="sec-4">
+      <h2 id="heading-4">✒️ 4. Kiểu chữ</h2>
+      <p>Một số kiểu chữ thường dùng gồm: <strong>đậm, nghiêng, gạch chân, đánh dấu (highlight)</strong>,… Các đoạn chữ cần thiết lập kiểu chữ được đặt trong <strong>cặp thẻ tương ứng</strong>.</p>
+
+        <div style="background:#060b14; border:1px solid var(--border); border-radius:12px; overflow:hidden; margin:16px 0; font-family:monospace;">
+          <div style="background:rgba(255,255,255,0.05); padding:6px 14px; font-size:12px; color:var(--muted); border-bottom:1px solid var(--border);">💻 Bảng 8.1 của SGK — tám kiểu chữ, xem kết quả ngay bên cạnh</div>
+          <pre style="padding:14px 16px; margin:0; font-size:14px; line-height:1.6; color:#7ce8fa; overflow-x:auto;"><code>&lt;p&gt;Đây là câu chuẩn&lt;/p&gt;
+&lt;p&gt;Đây &lt;strong&gt;là câu&lt;/strong&gt; chuẩn&lt;/p&gt;
+&lt;p&gt;Đây &lt;em&gt;là câu&lt;/em&gt; chuẩn&lt;/p&gt;
+&lt;p&gt;Đây &lt;u&gt;là câu&lt;/u&gt; chuẩn&lt;/p&gt;
+&lt;p&gt;Đây &lt;mark&gt;là câu&lt;/mark&gt; chuẩn&lt;/p&gt;
+&lt;p&gt;Đây &lt;small&gt;là câu&lt;/small&gt; chuẩn&lt;/p&gt;
+&lt;p&gt;Đây &lt;sup&gt;là câu&lt;/sup&gt; chuẩn&lt;/p&gt;
+&lt;p&gt;Đây &lt;del&gt;là câu&lt;/del&gt; chuẩn&lt;/p&gt;</code></pre>
+        </div>
+
+        <div class="field-grid">
+          
+            <div class="field-card">
+              <div class="icon">🅱️</div>
+              <h4 style="margin:0 0 6px; color:var(--cyan2);"><strong> ; <b></h4>
+              <p style="margin:0; font-size:14px; color:#b0c4de;">Chữ <strong>đậm</strong></p>
+            </div>
+          
+
+            <div class="field-card">
+              <div class="icon">🇮</div>
+              <h4 style="margin:0 0 6px; color:var(--cyan2);"><em> ; <i></h4>
+              <p style="margin:0; font-size:14px; color:#b0c4de;">Chữ <em>nghiêng</em></p>
+            </div>
+          
+
+            <div class="field-card">
+              <div class="icon">➖</div>
+              <h4 style="margin:0 0 6px; color:var(--cyan2);"><u></h4>
+              <p style="margin:0; font-size:14px; color:#b0c4de;">Gạch chân</p>
+            </div>
+          
+
+            <div class="field-card">
+              <div class="icon">🖍️</div>
+              <h4 style="margin:0 0 6px; color:var(--cyan2);"><mark></h4>
+              <p style="margin:0; font-size:14px; color:#b0c4de;">Đánh dấu (bôi vàng)</p>
+            </div>
+          
+
+            <div class="field-card">
+              <div class="icon">🔡</div>
+              <h4 style="margin:0 0 6px; color:var(--cyan2);"><small></h4>
+              <p style="margin:0; font-size:14px; color:#b0c4de;">Giảm cỡ chữ</p>
+            </div>
+          
+
+            <div class="field-card">
+              <div class="icon">🔢</div>
+              <h4 style="margin:0 0 6px; color:var(--cyan2);"><sup> ; <sub></h4>
+              <p style="margin:0; font-size:14px; color:#b0c4de;">Chỉ số trên hoặc chỉ số dưới</p>
+            </div>
+          
+
+            <div class="field-card">
+              <div class="icon">🚫</div>
+              <h4 style="margin:0 0 6px; color:var(--cyan2);"><del></h4>
+              <p style="margin:0; font-size:14px; color:#b0c4de;">Đánh dấu xoá bằng nét gạch giữa chữ</p>
+            </div>
+          
+        </div>
+
+        <div class="info-box">
+          <p><strong>HTML5 không hỗ trợ thẻ <code><big></code> và <code><u></code></strong> — để điều khiển, nên thay bằng giá trị <strong><code>font-size</code></strong> và <strong><code>text-decoration</code></strong> trong thuộc tính <code>style</code>.</p>
+        </div>
+
+        <div class="activity">
+          <div class="activity-badge">💡 strong / em khác gì b / i?</div>
+          <p>Các thẻ <code><strong></code>, <code><em></code> có <strong>cùng tác dụng định dạng</strong> chữ đậm, nghiêng giống các thẻ <code><b></code>, <code><i></code>. Nhưng <code><strong></code> và <code><em></code> <strong>có ý nghĩa nhấn mạnh vào ngữ nghĩa của nội dung</strong> và <strong>được khuyến khích sử dụng nhiều hơn</strong> trong định dạng văn bản.</p>
+        </div>
+
+        <div style="background:#060b14; border:1px solid var(--border); border-radius:12px; overflow:hidden; margin:16px 0; font-family:monospace;">
+          <div style="background:rgba(255,255,255,0.05); padding:6px 14px; font-size:12px; color:var(--muted); border-bottom:1px solid var(--border);">💻 Ví dụ 2 trong SGK — đặt em ở chỗ khác nhau thì nhấn mạnh ý khác nhau</div>
+          <pre style="padding:14px 16px; margin:0; font-size:14px; line-height:1.6; color:#7ce8fa; overflow-x:auto;"><code>&lt;p&gt;Môn &lt;em&gt;Tin học&lt;/em&gt; rất hay.&lt;/p&gt;
+&lt;p&gt;Môn Tin học &lt;em&gt;rất&lt;/em&gt; hay.&lt;/p&gt;</code></pre>
+        </div>
+
+        <div class="cau-hoi" style="margin:16px 0; border:1px solid rgba(56,217,245,0.3); background:rgba(56,217,245,0.04); border-radius:14px; padding:16px 20px;">
+          <div class="q-num" style="background:var(--cyan); color:#000; font-weight:800; border-radius:50%; width:28px; height:28px; display:flex; align-items:center; justify-content:center; flex-shrink:0;">?</div>
+          <div style="flex:1;">
+            <div class="q-text" style="font-weight:600; color:#fff; font-size:15.5px; margin-bottom:10px;">Vì sao SGK khuyến khích dùng <strong> và <em> nhiều hơn <b> và <i>?</div>
+            <div style="display:grid; grid-template-columns:1fr; gap:6px; margin-bottom:10px;">
+              
+                <div style="background:rgba(255,255,255,0.04); border:1px solid var(--border); border-radius:8px; padding:6px 12px; font-size:14px; color:#c8d8ec;">
+                  <b>A.</b> Vì <strong> và <em> hiển thị đẹp hơn hẳn
+                </div>
+              
+                <div style="background:rgba(255,255,255,0.04); border:1px solid var(--border); border-radius:8px; padding:6px 12px; font-size:14px; color:#c8d8ec;">
+                  <b>B.</b> Vì <strong> và <em> nhấn mạnh về mặt ngữ nghĩa
+                </div>
+              
+                <div style="background:rgba(255,255,255,0.04); border:1px solid var(--border); border-radius:8px; padding:6px 12px; font-size:14px; color:#c8d8ec;">
+                  <b>C.</b> Vì <b> và <i> đã bị HTML5 loại bỏ hoàn toàn
+                </div>
+              
+                <div style="background:rgba(255,255,255,0.04); border:1px solid var(--border); border-radius:8px; padding:6px 12px; font-size:14px; color:#c8d8ec;">
+                  <b>D.</b> Vì <strong> và <em> gõ nhanh hơn khi soạn mã
+                </div>
+              
+            </div>
+            <details style="margin-top:8px;">
+              <summary style="cursor:pointer; color:var(--cyan); font-size:13px; font-weight:600;">👉 Xem đáp án & giải thích</summary>
+              <div style="margin-top:6px; padding:8px 12px; background:rgba(86,227,159,0.1); border-left:3px solid var(--green); border-radius:6px; font-size:13.5px; color:#a3e635;">
+                <strong>Đáp án đúng: B</strong><br>
+                <span>Bốn thẻ có <strong>cùng tác dụng định dạng</strong> (đậm, nghiêng). Khác biệt nằm ở ý nghĩa: <code><strong></code> và <code><em></code> <strong>nhấn mạnh vào ngữ nghĩa của nội dung</strong> chứ không chỉ đổi hình thức, nên <strong>được khuyến khích dùng nhiều hơn</strong>.</span>
+              </div>
+            </details>
+          </div>
+        </div>
+      <div class="page-num">Trang 52-57</div>
+    </section>
+  
+
+    <section class="section" id="sec-5">
+      <h2 id="heading-5">🎨 5. Phông chữ</h2>
+      <p>Để định dạng phông chữ ta sử dụng <strong>thuộc tính <code>style</code></strong>. Ba thuộc tính hay dùng nhất:</p>
+
+        <ul>
+          <li><strong>Màu sắc:</strong> <code><p style="color:màu">Nội dung.</p></code></li>
+<li><strong>Phông chữ:</strong> <code><p style="font-family:tên phông">Nội dung.</p></code></li>
+<li><strong>Cỡ chữ:</strong> <code><p style="font-size:cỡ">Nội dung.</p></code></li>
+        </ul>
+<p>Có nhiều cách xác định cỡ chữ, phổ biến là <strong>dùng số kèm đơn vị (px-pixel, mm, cm,…)</strong> hoặc <strong>cỡ chữ thông dụng (small, medium, large,…)</strong>. Giá trị màu sắc được viết <strong>theo tiếng Anh</strong>: red, green, blue, grey, yellow, black, brown,… hoặc dùng <strong>giá trị màu trong hệ RGB</strong>.</p>
+
+        <div class="info-box">
+          <p>Khi muốn thực hiện <strong>nhiều định dạng phông đồng thời</strong>, ta đặt các cặp <strong>tên:giá trị</strong> trong phần giá trị của thuộc tính, <strong>ngăn cách nhau bởi dấu “;”</strong>.</p>
+        </div>
+
+        <div style="background:#060b14; border:1px solid var(--border); border-radius:12px; overflow:hidden; margin:16px 0; font-family:monospace;">
+          <div style="background:rgba(255,255,255,0.05); padding:6px 14px; font-size:12px; color:var(--muted); border-bottom:1px solid var(--border);">💻 Ba cách gọi màu, ba cách đặt cỡ chữ, và cách gộp nhiều định dạng bằng dấu ;</div>
+          <pre style="padding:14px 16px; margin:0; font-size:14px; line-height:1.6; color:#7ce8fa; overflow-x:auto;"><code>&lt;p style="color:red"&gt;Màu gọi theo tên tiếng Anh&lt;/p&gt;
+&lt;p style="color:rgb(0,0,255)"&gt;Màu gọi theo hệ RGB&lt;/p&gt;
+&lt;p style="font-size:22px"&gt;Cỡ chữ theo số pixel&lt;/p&gt;
+&lt;p style="font-size:large"&gt;Cỡ chữ thông dụng&lt;/p&gt;
+&lt;p style="color:green;font-family:Tahoma;font-size:20px"&gt;Gộp cả ba, ngăn nhau bởi dấu ;&lt;/p&gt;</code></pre>
+        </div>
+<p>Ghép tất cả những gì đã học trong bài, em viết được một văn bản hoàn chỉnh có tiêu đề nhiều cấp, chữ màu, chỉ số trên và chỉ số dưới:</p>
+
+        <div style="background:#060b14; border:1px solid var(--border); border-radius:12px; overflow:hidden; margin:16px 0; font-family:monospace;">
+          <div style="background:rgba(255,255,255,0.05); padding:6px 14px; font-size:12px; color:var(--muted); border-bottom:1px solid var(--border);">💻 Bài thực hành trong SGK — biện luận số nghiệm phương trình bậc 2</div>
+          <pre style="padding:14px 16px; margin:0; font-size:14px; line-height:1.6; color:#7ce8fa; overflow-x:auto;"><code>&lt;h1&gt;Biện luận số nghiệm của phương trình bậc 2&lt;/h1&gt;
+&lt;h3&gt;&lt;span style="color:rgb(205,0,0)"&gt;Bài toán:&lt;/span&gt; Xác định số nghiệm của
+phương trình ax&lt;sup&gt;2&lt;/sup&gt; + bx + c = 0 (a != 0)&lt;/h3&gt;
+&lt;h3 style="color:rgb(205,0,0)"&gt;Cách làm:&lt;/h3&gt;
+&lt;p&gt;&lt;strong&gt;B&lt;sub&gt;1&lt;/sub&gt;&lt;/strong&gt;: Xác định hệ số a, b và c&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;B&lt;sub&gt;2&lt;/sub&gt;&lt;/strong&gt;: Tính &lt;strong&gt;delta&lt;/strong&gt; = b&lt;sup&gt;2&lt;/sup&gt; - 4ac&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;B&lt;sub&gt;3&lt;/sub&gt;&lt;/strong&gt;: Kết luận&lt;br&gt;
++ Nếu &lt;strong&gt;delta&lt;/strong&gt; &amp;lt; 0: Phương trình &lt;em&gt;vô nghiệm&lt;/em&gt;&lt;br&gt;
++ Nếu &lt;strong&gt;delta&lt;/strong&gt; = 0: Phương trình có &lt;em&gt;nghiệm duy nhất&lt;/em&gt;&lt;br&gt;
++ Nếu &lt;strong&gt;delta&lt;/strong&gt; &amp;gt; 0: Phương trình có hai &lt;em&gt;nghiệm phân biệt&lt;/em&gt;&lt;/p&gt;</code></pre>
+        </div>
+
+        <div class="cau-hoi" style="margin:16px 0; border:1px solid rgba(56,217,245,0.3); background:rgba(56,217,245,0.04); border-radius:14px; padding:16px 20px;">
+          <div class="q-num" style="background:var(--cyan); color:#000; font-weight:800; border-radius:50%; width:28px; height:28px; display:flex; align-items:center; justify-content:center; flex-shrink:0;">?</div>
+          <div style="flex:1;">
+            <div class="q-text" style="font-weight:600; color:#fff; font-size:15.5px; margin-bottom:10px;">Muốn một đoạn văn bản vừa có chữ màu xanh, vừa dùng phông Tahoma, vừa cỡ 20px thì viết thế nào?</div>
+            <div style="display:grid; grid-template-columns:1fr; gap:6px; margin-bottom:10px;">
+              
+                <div style="background:rgba(255,255,255,0.04); border:1px solid var(--border); border-radius:8px; padding:6px 12px; font-size:14px; color:#c8d8ec;">
+                  <b>A.</b> <p style="color:blue" style="font-family:Tahoma" style="font-size:20px">
+                </div>
+              
+                <div style="background:rgba(255,255,255,0.04); border:1px solid var(--border); border-radius:8px; padding:6px 12px; font-size:14px; color:#c8d8ec;">
+                  <b>B.</b> <p style="color:blue,font-family:Tahoma,font-size:20px">
+                </div>
+              
+                <div style="background:rgba(255,255,255,0.04); border:1px solid var(--border); border-radius:8px; padding:6px 12px; font-size:14px; color:#c8d8ec;">
+                  <b>C.</b> <p style="color:blue;font-family:Tahoma;font-size:20px">
+                </div>
+              
+                <div style="background:rgba(255,255,255,0.04); border:1px solid var(--border); border-radius:8px; padding:6px 12px; font-size:14px; color:#c8d8ec;">
+                  <b>D.</b> <p color="blue" font="Tahoma" size="20px">
+                </div>
+              
+            </div>
+            <details style="margin-top:8px;">
+              <summary style="cursor:pointer; color:var(--cyan); font-size:13px; font-weight:600;">👉 Xem đáp án & giải thích</summary>
+              <div style="margin-top:6px; padding:8px 12px; background:rgba(86,227,159,0.1); border-left:3px solid var(--green); border-radius:6px; font-size:13.5px; color:#a3e635;">
+                <strong>Đáp án đúng: C</strong><br>
+                <span>Nhiều định dạng phông cùng lúc thì đặt <strong>tất cả các cặp tên:giá trị trong MỘT thuộc tính <code>style</code></strong>, <strong>ngăn cách nhau bởi dấu chấm phẩy “;”</strong>. Không viết nhiều thuộc tính <code>style</code> rời nhau, cũng không ngăn bằng dấu phẩy.</span>
+              </div>
+            </details>
+          </div>
+        </div>
+      <div class="page-num">Trang 52-57</div>
+    </section>
+  
+
+  <!-- HỘP GHI NHỚ CUỐI BÀI -->
+  <section class="section" id="ghi-nho">
+    <div class="ghi-nho">
+      <div class="ghi-nho-title">📌 Em cần ghi nhớ</div>
+      <ul style="padding-left:20px;">
+        <li style="font-size:15.5px; line-height:1.7; margin-bottom:10px;"><strong>Mọi phần tử HTML đều có thể có thuộc tính</strong>. Cú pháp: <strong>tên_thuộc_tính="giá trị"</strong>, viết trong <strong>thẻ bắt đầu</strong>, nhiều thuộc tính thì <strong>ngăn nhau bởi dấu cách</strong>.</li>
+<li style="font-size:15.5px; line-height:1.7; margin-bottom:10px;">Một văn bản thường gồm hai thành phần cơ bản: <strong>tiêu đề</strong> định dạng bởi thẻ <code><h1></code> đến <code><h6></code> (6 mức, quan trọng giảm dần) và <strong>đoạn văn bản</strong> định dạng bởi thẻ <code><p></code>.</li>
+<li style="font-size:15.5px; line-height:1.7; margin-bottom:10px;"><strong>Khối</strong> là phần tử chứa nhiều loại dữ liệu, định nghĩa bởi <strong><code><div></code></strong> (bắt đầu trên dòng mới) và <strong><code><span></code></strong> (nằm trong dòng đang viết, quy mô nhỏ hơn).</li>
+<li style="font-size:15.5px; line-height:1.7; margin-bottom:10px;">Mỗi kiểu chữ có thẻ riêng: <strong><code><strong></code>/<code><b></code></strong> đậm, <strong><code><em></code>/<code><i></code></strong> nghiêng, <strong><code><u></code></strong> gạch chân, <strong><code><mark></code></strong> đánh dấu, <strong><code><small></code></strong> giảm cỡ, <strong><code><sup></code>/<code><sub></code></strong> chỉ số trên/dưới, <strong><code><del></code></strong> gạch giữa chữ.</li>
+<li style="font-size:15.5px; line-height:1.7; margin-bottom:10px;"><code><strong></code> và <code><em></code> <strong>nhấn mạnh vào ngữ nghĩa</strong> nên được khuyến khích dùng hơn <code><b></code>, <code><i></code>.</li>
+<li style="font-size:15.5px; line-height:1.7; margin-bottom:10px;"><strong>Để định dạng phông chữ ta dùng thuộc tính <code>style</code></strong> trong HTML5: <code>color</code>, <code>font-family</code>, <code>font-size</code>. Nhiều định dạng cùng lúc thì <strong>ngăn nhau bởi dấu “;”</strong>.</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- NÚT CHUYỂN BÀI DƯỚI CÙNG -->
+  <div class="nav-btns" style="margin-top:32px;">
+    <a href="/sgk/bai-07.html" class="nav-btn">← HTML và cấu trúc trang web</a>
+    <a href="/luyen/bai-08" class="nav-btn" style="background:linear-gradient(90deg, var(--cyan), var(--orange)); color:#fff; border:none;">🎯 Luyện trắc nghiệm ngay</a>
+    <a href="/sgk/bai-09.html" class="nav-btn">Tạo danh sách, bảng →</a>
+  </div>
+</main>
+
+</div>
+
+<script>
+let fs = 18;
+function changeFont(d) { fs = Math.min(28, Math.max(14, fs + d)); document.body.style.fontSize = fs + 'px'; }
+let light = false;
+function toggleTheme() {
+  light = !light;
+  document.documentElement.style.setProperty('--bg', light ? '#f0f4f8' : '#070b14');
+  document.documentElement.style.setProperty('--text', light ? '#1a2540' : '#e8eef8');
+  document.documentElement.style.setProperty('--panel', light ? '#fff' : '#111a2e');
+  document.documentElement.style.setProperty('--panel2', light ? '#f5f8fc' : '#162035');
+  document.documentElement.style.setProperty('--border', light ? '#d0daea' : '#1e2f4d');
+  document.body.style.background = light
+    ? 'radial-gradient(ellipse at 20% 10%, #d8e8f8 0%, #f0f4f8 60%)'
+    : 'radial-gradient(ellipse at 20% 10%, #0d1f3c 0%, #070b14 50%)';
+}
+window.addEventListener('scroll', () => {
+  const doc = document.documentElement;
+  const scrolled = doc.scrollTop || document.body.scrollTop;
+  const total = doc.scrollHeight - doc.clientHeight;
+  const pct = total > 0 ? Math.round((scrolled / total) * 100) : 0;
+  const p = document.getElementById('prog');
+  const pl = document.getElementById('prog-label');
+  if (p) p.style.width = pct + '%';
+  if (pl) pl.textContent = 'Tiến độ đọc: ' + pct + '%';
+});
+</script>
+</body>
+</html>

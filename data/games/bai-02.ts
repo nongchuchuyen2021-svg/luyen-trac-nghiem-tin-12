@@ -813,8 +813,6 @@ export const teamBattleGameAiSingularity: TeamBattleGame = {
 };
 
 const games: LessonGame[] = [
-  teamBattleGameAiSingularity,
-  arenaGameAiSingularity,
   sortGameLoiIchNguyCo,
   sortGameTaoSinh,
   timelineGameAiHistory,

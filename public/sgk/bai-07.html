@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HTML và cấu trúc trang web – Tin học 12 KNTT (SGK Điện tử)</title>
+<meta name="description" content="SGK Tin học 12 Kết nối tri thức – HTML và cấu trúc trang web. Chủ đề 4. Thiết kế trang web (HTML & CSS).">
+<style>
+:root {
+  --bg: #070b14; --bg2: #0d1423; --panel: #111a2e; --panel2: #162035; --border: #1e2f4d;
+  --text: #e8eef8; --muted: #8899b8; --orange: #ff6b35; --orange2: #ff9a64;
+  --cyan: #38d9f5; --cyan2: #7ce8fa; --yellow: #ffd060; --green: #56e39f; --pink: #f06dba; --purple: #a78bfa;
+  --fs: 18px;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  background: radial-gradient(ellipse at 20% 10%, #0d1f3c 0%, #070b14 50%);
+  color: var(--text); font-family: 'Inter','Segoe UI',-apple-system,BlinkMacSystemFont,'Roboto',Arial,sans-serif;
+  font-size: var(--fs); line-height: 1.75; min-height: 100vh;
+}
+.app { display: grid; grid-template-columns: 280px 1fr; min-height: 100vh; }
+.sidebar { position:sticky; top:0; height:100vh; overflow-y:auto; background:rgba(7,11,20,.97); border-right:1px solid var(--border); padding:24px 16px; backdrop-filter:blur(20px); }
+.brand-box { margin-bottom:24px; }
+.series-label { font-size:11px; letter-spacing:2px; text-transform:uppercase; color:var(--cyan); font-weight:700; margin-bottom:6px; }
+.brand-title { font-size:20px; font-weight:900; color:#fff; line-height:1.2; }
+.brand-title span { color:var(--orange); }
+.brand-sub { color:var(--muted); font-size:12px; margin-top:5px; }
+.toc-title { font-size:11px; letter-spacing:1.5px; text-transform:uppercase; color:var(--muted); font-weight:700; margin:20px 0 8px; padding:0 8px; }
+.toc a { display:block; color:#9aaec8; text-decoration:none; padding:9px 12px; border-radius:10px; margin:2px 0; font-size:13.5px; font-weight:500; transition:all .2s; border-left:3px solid transparent; }
+.toc a:hover { background:rgba(56,217,245,.07); color:var(--cyan); border-left-color:var(--cyan); }
+.toc a.active { background:rgba(255,107,53,.1); color:var(--orange); border-left-color:var(--orange); }
+.ctrl-box { margin-top:24px; padding:14px; border:1px solid var(--border); border-radius:14px; background:rgba(255,255,255,.03); }
+.ctrl-box h4 { font-size:11px; letter-spacing:1px; text-transform:uppercase; color:var(--muted); margin-bottom:10px; }
+.ctrl-row { display:flex; gap:8px; margin-bottom:8px; }
+.ctrl-btn { flex:1; background:var(--panel2); border:1px solid var(--border); color:var(--text); border-radius:9px; padding:8px 6px; cursor:pointer; font-size:13px; font-weight:600; transition:all .2s; text-align:center; text-decoration:none; display:inline-block; }
+.ctrl-btn:hover { background:var(--border); color:#fff; }
+.progress-bar { height:4px; background:var(--panel2); border-radius:4px; overflow:hidden; margin-top:10px; }
+.progress-fill { height:100%; width:0%; background:linear-gradient(90deg,var(--cyan),var(--orange)); transition:width .3s; border-radius:4px; }
+.main { max-width:860px; margin:0 auto; padding:32px 28px 80px; }
+.hero { background:linear-gradient(135deg,#0f2040 0%,#0a1628 60%,#131020 100%); border:1px solid var(--border); border-radius:24px; padding:36px 40px; margin-bottom:28px; box-shadow:0 24px 80px rgba(0,0,0,.5); position:relative; overflow:hidden; }
+.hero::before { content:'7'; position:absolute; right:30px; top:20px; font-size:120px; font-weight:900; color:rgba(56,217,245,.05); line-height:1; user-select:none; }
+.chu-de-tag { display:inline-flex; align-items:center; gap:8px; background:rgba(56,217,245,.12); border:1px solid rgba(56,217,245,.3); color:var(--cyan); font-size:13px; font-weight:700; padding:6px 14px; border-radius:20px; margin-bottom:16px; letter-spacing:.5px; }
+.hero h1 { font-size:clamp(26px,4vw,38px); font-weight:900; line-height:1.2; background:linear-gradient(90deg,#fff 0%,var(--cyan2) 50%,var(--orange2) 100%); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; margin-bottom:14px; }
+.hero-desc { color:#b0c4de; font-size:15.5px; line-height:1.6; }
+.section { background:rgba(11,17,30,.9); border:1px solid var(--border); border-radius:20px; padding:28px 32px 36px; margin-bottom:24px; scroll-margin-top:20px; position:relative; transition:border-color .3s; }
+.section:hover { border-color:rgba(56,217,245,.2); }
+.page-num { position:absolute; right:20px; bottom:14px; color:var(--muted); font-size:12px; font-weight:600; background:var(--panel2); padding:3px 10px; border-radius:10px; }
+h2 { font-size:clamp(20px,2.5vw,26px); font-weight:800; color:#fff; margin:28px 0 14px; display:flex; align-items:center; gap:10px; }
+h2::before { content:''; display:inline-block; width:4px; height:24px; background:linear-gradient(var(--orange),var(--cyan)); border-radius:2px; flex-shrink:0; }
+p { color:#d0dcea; margin-bottom:14px; }
+p:last-child { margin-bottom:0; }
+strong { color:#fff; }
+em { color:var(--cyan2); font-style:italic; }
+code { background:rgba(255,255,255,0.08); color:var(--orange2); padding:2px 6px; border-radius:4px; font-size:0.9em; font-family:monospace; }
+ul, ol { padding-left:22px; margin:12px 0; }
+li { color:#c8d8ec; margin-bottom:8px; }
+li::marker { color:var(--cyan); }
+.info-box { background:linear-gradient(135deg,#071e2e,#071828); border:1px dashed rgba(56,217,245,.4); border-radius:14px; padding:18px 22px; margin:20px 0; }
+.info-box p, .info-box li { color:#b8d8f0; }
+.activity { background:linear-gradient(135deg,#1a120a,#130f0a); border:1px solid rgba(255,160,60,.3); border-left:4px solid var(--orange); border-radius:14px; padding:18px 22px; margin:20px 0; }
+.activity-badge { display:inline-flex; align-items:center; gap:6px; background:var(--orange); color:#1a0a00; font-size:12px; font-weight:800; padding:4px 12px; border-radius:6px; margin-bottom:10px; letter-spacing:.5px; text-transform:uppercase; }
+.ghi-nho { background:linear-gradient(135deg,#1a2a10,#0f1e0a); border:1px solid rgba(86,227,159,.3); border-left:4px solid var(--green); border-radius:14px; padding:20px 24px; margin:24px 0; }
+.ghi-nho-title { color:var(--green); font-weight:800; font-size:15px; text-transform:uppercase; letter-spacing:1px; margin-bottom:10px; display:flex; align-items:center; gap:8px; }
+.ghi-nho p, .ghi-nho li { color:#c8f0d8; }
+.nav-btns { display:flex; gap:12px; margin:20px 0; }
+.nav-btn { background:var(--panel); border:1px solid var(--border); color:var(--text); border-radius:10px; padding:10px 18px; text-decoration:none; font-size:14px; font-weight:600; transition:all .2s; flex:1; text-align:center; }
+.nav-btn:hover { background:var(--panel2); border-color:var(--cyan); color:#fff; }
+.field-grid { display:grid; grid-template-columns:1fr 1fr; gap:14px; margin:18px 0; }
+.field-card { background:var(--panel2); border:1px solid var(--border); border-radius:14px; padding:16px 18px; }
+.img-side { display:grid; grid-template-columns:1fr 1fr; gap:14px; margin:18px 0; }
+.img-half { border-radius:12px; border:1px solid var(--border); }
+@media (max-width: 860px) {
+  .app { grid-template-columns: 1fr; }
+  .sidebar { display: none; }
+  .main { padding: 20px 16px 60px; }
+  .field-grid, .img-side { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+
+<div class="app">
+
+<!-- SIDEBAR -->
+<aside class="sidebar">
+  <div class="brand-box">
+    <div class="series-label">KẾT NỐI TRI THỨC</div>
+    <div class="brand-title">TIN HỌC <span>12</span></div>
+    <div class="brand-sub">Sách Giáo Khoa Điện Tử (ICT)</div>
+  </div>
+
+  <div class="ctrl-box">
+    <h4>Cỡ chữ & Giao diện</h4>
+    <div class="ctrl-row">
+      <button class="ctrl-btn" onclick="changeFont(-1)">A -</button>
+      <button class="ctrl-btn" onclick="changeFont(1)">A +</button>
+      <button class="ctrl-btn" onclick="toggleTheme()">🌓 Nền</button>
+    </div>
+    <div style="font-size:12px; color:var(--muted); margin-top:8px;" id="prog-label">Tiến độ đọc: 0%</div>
+    <div class="progress-bar"><div class="progress-fill" id="prog"></div></div>
+  </div>
+
+  <div class="toc-title">Mục lục bài học</div>
+  <nav class="toc">
+    
+      <a href="#sec-1">1. Trang web và HTML</a>
+    
+      <a href="#sec-2">2. Thẻ và phần tử</a>
+    
+      <a href="#sec-3">3. Cấu trúc tệp HTML</a>
+    
+      <a href="#sec-4">4. Cây thông tin</a>
+    
+      <a href="#sec-5">5. Soạn thảo HTML</a>
+    
+    <a href="#ghi-nho">📌 Ghi nhớ cốt lõi</a>
+  </nav>
+
+  <div class="ctrl-box" style="margin-top:20px;">
+    <h4>Luyện tập</h4>
+    <a href="/luyen/bai-07" class="ctrl-btn" style="background:var(--cyan); color:#000; font-weight:700;">🎯 Vào Luyện Trắc Nghiệm</a>
+  </div>
+</aside>
+
+<!-- MAIN CONTENT -->
+<main class="main">
+  <!-- HERO BANNER -->
+  <div class="hero">
+    <div class="chu-de-tag">Chủ đề 4. Thiết kế trang web (HTML & CSS)</div>
+    <h1>HTML và cấu trúc trang web</h1>
+    <div class="hero-desc">Từ bài này em bắt đầu <strong>tự viết ra trang web</strong> chứ không chỉ xem. Trang web mà em thấy trên Chrome hay Cốc Cốc thực chất chỉ là <strong>một tệp văn bản</strong> — bài này chỉ ra tệp đó viết bằng gì, có cấu trúc ra sao. Mỗi đoạn mã dưới đây đều có <strong>khung xem trước ngay bên cạnh</strong>, em đối chiếu mã với kết quả là hiểu nhanh nhất.</div>
+  </div>
+
+  <!-- NÚT CHUYỂN BÀI -->
+  <div class="nav-btns">
+    <a href="/sgk/bai-06.html" class="nav-btn">← Giao tiếp và ứng xử trong không gian mạng</a>
+    <a href="/sgk/bai-08.html" class="nav-btn">Định dạng văn bản →</a>
+  </div>
+
+  <!-- CÁC MỤC NỘI DUNG -->
+  
+    <section class="section" id="sec-1">
+      <h2 id="heading-1">📄 1. Trang web và HTML</h2>
+      <p>Các trang web em vẫn xem được hiển thị bởi <strong>trình duyệt web</strong> (Cốc Cốc, FireFox, Chrome). Thực chất chúng được tạo ra từ <strong>các tệp văn bản</strong> — các tệp này gọi là <strong>trang nguồn</strong> (hay <strong>mã nguồn</strong>) của trang web tương ứng.</p>
+<p>Trang web được thiết lập từ các tệp văn bản thường có phần mở rộng là <strong>.html</strong> hoặc <strong>.htm</strong>, gọi là <strong>trang html</strong>. Trên trang html có phần văn bản (text) và các <strong>kí tự đánh dấu đặc biệt nằm trong hai dấu “<” và “>”</strong> — các kí tự này gọi là <strong>thẻ đánh dấu HTML</strong>, còn gọi là <strong>thẻ HTML</strong> hay <strong>tag</strong>.</p>
+
+        <div class="info-box">
+          <p><strong>HTML</strong> là viết tắt của <strong>Hypertext Markup Language</strong> (<em>ngôn ngữ đánh dấu siêu văn bản</em>), là <strong>một bộ quy tắc dùng để thiết lập cấu trúc và hiển thị nội dung trang web</strong>.</p>
+        </div>
+<p>Các thẻ HTML được dùng để xác định <strong>phần tử HTML</strong> tương ứng. Các phần tử HTML định dạng thông tin trong trang web. Muốn hiển thị được thông tin đó thì cần <strong>phần mềm trình duyệt web</strong>.</p>
+      <div class="page-num">Trang 45-51</div>
+    </section>
+  
+
+    <section class="section" id="sec-2">
+      <h2 id="heading-2">🏷️ 2. Thẻ và phần tử</h2>
+      <p><strong>Thẻ đánh dấu HTML (tag)</strong> là các thành phần chính tạo thành ngôn ngữ HTML. Mỗi loại thẻ có <strong>một tên riêng</strong> và <strong>một ý nghĩa nhất định</strong> trong việc định dạng nội dung. Thẻ được viết trong cặp dấu “<”, “>”; thông thường mỗi thẻ gồm <strong>thẻ bắt đầu và thẻ kết thúc</strong>, chỉ ra phạm vi tác dụng.</p>
+
+        <div style="background:#060b14; border:1px solid var(--border); border-radius:12px; overflow:hidden; margin:16px 0; font-family:monospace;">
+          <div style="background:rgba(255,255,255,0.05); padding:6px 14px; font-size:12px; color:var(--muted); border-bottom:1px solid var(--border);">💻 Hai thẻ cơ bản nhất: p là đoạn văn bản, h1 là tiêu đề cấp 1</div>
+          <pre style="padding:14px 16px; margin:0; font-size:14px; line-height:1.6; color:#7ce8fa; overflow-x:auto;"><code>&lt;h1&gt;Đây là tiêu đề 1&lt;/h1&gt;
+&lt;p&gt;Đây là đoạn văn bản.&lt;/p&gt;</code></pre>
+        </div>
+
+
+        <div class="info-box">
+          <p><strong>Phần tử HTML (element)</strong> là khái niệm cơ bản của trang html. Thông thường một phần tử được định nghĩa bởi <strong>thẻ bắt đầu, thẻ kết thúc và phần nội dung nằm giữa cặp thẻ này</strong>. Các <strong>thẻ đơn cùng với nội dung của nó cũng được gọi là phần tử HTML</strong>.</p>
+        </div>
+<p>Mỗi tệp HTML là <strong>tập hợp các phần tử HTML</strong>. Các phần tử này đóng vai trò quan trọng tạo nên cấu trúc và nội dung của trang web, và chúng có thể <strong>độc lập, rời nhau hoặc lồng nhau</strong>.</p>
+
+        <div style="background:#060b14; border:1px solid var(--border); border-radius:12px; overflow:hidden; margin:16px 0; font-family:monospace;">
+          <div style="background:rgba(255,255,255,0.05); padding:6px 14px; font-size:12px; color:var(--muted); border-bottom:1px solid var(--border);">💻 Thẻ em được lồng bên trong thẻ p</div>
+          <pre style="padding:14px 16px; margin:0; font-size:14px; line-height:1.6; color:#7ce8fa; overflow-x:auto;"><code>&lt;p&gt;Trang này được lập bởi &lt;em&gt;nhóm bạn bè&lt;/em&gt; thân thiết&lt;/p&gt;</code></pre>
+        </div>
+
+        <div style="background:#060b14; border:1px solid var(--border); border-radius:12px; overflow:hidden; margin:16px 0; font-family:monospace;">
+          <div style="background:rgba(255,255,255,0.05); padding:6px 14px; font-size:12px; color:var(--muted); border-bottom:1px solid var(--border);">💻 Mỗi thẻ có thể đi kèm thông tin thuộc tính — ở đây là màu chữ</div>
+          <pre style="padding:14px 16px; margin:0; font-size:14px; line-height:1.6; color:#7ce8fa; overflow-x:auto;"><code>&lt;p style="color : red"&gt;This is a paragraph.&lt;/p&gt;</code></pre>
+        </div>
+
+        <div class="img-side">
+          <div class="img-half" style="background:rgba(242,104,60,0.08); border-color:rgba(242,104,60,0.3); padding:16px;">
+            <div style="font-weight:700; color:var(--orange); font-size:15px; margin-bottom:10px;">🔗 Thẻ đôi</div>
+            <ul style="padding-left:18px;">
+              <li style="font-size:14px; margin-bottom:6px;"><strong>Phần lớn các thẻ</strong> đều là thẻ đôi</li><li style="font-size:14px; margin-bottom:6px;">Có <strong>thẻ bắt đầu (opening tag)</strong> và <strong>thẻ kết thúc (closing tag)</strong></li><li style="font-size:14px; margin-bottom:6px;">Vị trí kết thúc có thêm dấu <strong>“/”</strong>, chẳng hạn <code></p></code></li>
+            </ul>
+          </div>
+          <div class="img-half" style="background:rgba(56,217,245,0.08); border-color:rgba(56,217,245,0.3); padding:16px;">
+            <div style="font-weight:700; color:var(--cyan); font-size:15px; margin-bottom:10px;">➖ Thẻ đơn</div>
+            <ul style="padding-left:18px;">
+              <li style="font-size:14px; margin-bottom:6px;"><strong>Chỉ có thẻ bắt đầu</strong></li><li style="font-size:14px; margin-bottom:6px;">Dạng <code><tên thẻ></code> hoặc <code><tên thẻ/></code></li><li style="font-size:14px; margin-bottom:6px;"><code><hr/></code> — dòng kẻ ngang</li><li style="font-size:14px; margin-bottom:6px;"><code><br/></code> — ngắt xuống dòng</li>
+            </ul>
+          </div>
+        </div>
+
+        <div style="background:#060b14; border:1px solid var(--border); border-radius:12px; overflow:hidden; margin:16px 0; font-family:monospace;">
+          <div style="background:rgba(255,255,255,0.05); padding:6px 14px; font-size:12px; color:var(--muted); border-bottom:1px solid var(--border);">💻 Hai thẻ đơn quen thuộc: hr kẻ một đường ngang, br ngắt xuống dòng</div>
+          <pre style="padding:14px 16px; margin:0; font-size:14px; line-height:1.6; color:#7ce8fa; overflow-x:auto;"><code>&lt;p&gt;Phần trên&lt;/p&gt;
+&lt;hr&gt;
+&lt;p&gt;Phần dưới có&lt;br&gt;ngắt xuống dòng&lt;/p&gt;</code></pre>
+        </div>
+
+        <div class="activity">
+          <div class="activity-badge">💡 Bẫy hay gặp nhất khi mới học</div>
+          <p><strong>HTML và trình duyệt không nhận biết được nhiều dấu cách.</strong> Gõ bao nhiêu dấu cách liền nhau thì máy cũng chỉ hiểu là <strong>một dấu cách</strong>. Trình duyệt cũng <strong>không nhận biết dấu xuống dòng</strong> khi em nhấn phím <strong>Enter</strong> lúc soạn thảo. Em xem khung dưới đây rồi đối chiếu sẽ thấy ngay.</p>
+        </div>
+
+        <div style="background:#060b14; border:1px solid var(--border); border-radius:12px; overflow:hidden; margin:16px 0; font-family:monospace;">
+          <div style="background:rgba(255,255,255,0.05); padding:6px 14px; font-size:12px; color:var(--muted); border-bottom:1px solid var(--border);">💻 Gõ 10 dấu cách và 2 lần Enter, nhưng trình duyệt chỉ hiện một dòng liền</div>
+          <pre style="padding:14px 16px; margin:0; font-size:14px; line-height:1.6; color:#7ce8fa; overflow-x:auto;"><code>&lt;p&gt;Nhiều          dấu cách
+và cả xuống dòng
+đều bị bỏ qua hết.&lt;/p&gt;</code></pre>
+        </div>
+<p>Hai lưu ý nhỏ nữa: <strong>tên thẻ HTML không phân biệt chữ hoa chữ thường</strong>, nhưng mặc định người ta <strong>viết chữ thường</strong>. Và dòng <code><!DOCTYPE html></code> ở đầu tệp <strong>không được xem là phần tử HTML</strong> — nó chỉ thông báo kiểu của tệp.</p>
+
+        <div style="background:#060b14; border:1px solid var(--border); border-radius:12px; overflow:hidden; margin:16px 0; font-family:monospace;">
+          <div style="background:rgba(255,255,255,0.05); padding:6px 14px; font-size:12px; color:var(--muted); border-bottom:1px solid var(--border);">💻 Phần tử đặc biệt mang ý nghĩa chú thích — trình duyệt bỏ qua, không hiển thị</div>
+          <pre style="padding:14px 16px; margin:0; font-size:14px; line-height:1.6; color:#7ce8fa; overflow-x:auto;"><code>&lt;p&gt;Dòng này hiện ra&lt;/p&gt;
+&lt;!--  đây là dòng chú thích  --&gt;</code></pre>
+        </div>
+
+        <div class="cau-hoi" style="margin:16px 0; border:1px solid rgba(56,217,245,0.3); background:rgba(56,217,245,0.04); border-radius:14px; padding:16px 20px;">
+          <div class="q-num" style="background:var(--cyan); color:#000; font-weight:800; border-radius:50%; width:28px; height:28px; display:flex; align-items:center; justify-content:center; flex-shrink:0;">?</div>
+          <div style="flex:1;">
+            <div class="q-text" style="font-weight:600; color:#fff; font-size:15.5px; margin-bottom:10px;">Thẻ nào dưới đây là thẻ đơn?</div>
+            <div style="display:grid; grid-template-columns:1fr; gap:6px; margin-bottom:10px;">
+              
+                <div style="background:rgba(255,255,255,0.04); border:1px solid var(--border); border-radius:8px; padding:6px 12px; font-size:14px; color:#c8d8ec;">
+                  <b>A.</b> <p>
+                </div>
+              
+                <div style="background:rgba(255,255,255,0.04); border:1px solid var(--border); border-radius:8px; padding:6px 12px; font-size:14px; color:#c8d8ec;">
+                  <b>B.</b> <hr>
+                </div>
+              
+                <div style="background:rgba(255,255,255,0.04); border:1px solid var(--border); border-radius:8px; padding:6px 12px; font-size:14px; color:#c8d8ec;">
+                  <b>C.</b> <h1>
+                </div>
+              
+                <div style="background:rgba(255,255,255,0.04); border:1px solid var(--border); border-radius:8px; padding:6px 12px; font-size:14px; color:#c8d8ec;">
+                  <b>D.</b> <em>
+                </div>
+              
+            </div>
+            <details style="margin-top:8px;">
+              <summary style="cursor:pointer; color:var(--cyan); font-size:13px; font-weight:600;">👉 Xem đáp án & giải thích</summary>
+              <div style="margin-top:6px; padding:8px 12px; background:rgba(86,227,159,0.1); border-left:3px solid var(--green); border-radius:6px; font-size:13.5px; color:#a3e635;">
+                <strong>Đáp án đúng: B</strong><br>
+                <span><strong><code><hr></code></strong> (dòng kẻ ngang) là thẻ đơn — chỉ có thẻ bắt đầu, không có thẻ kết thúc. <code><br></code> (ngắt xuống dòng) cũng vậy. Còn <code><p></code>, <code><h1></code>, <code><em></code> đều là <strong>thẻ đôi</strong>, phải có thẻ kết thúc <code></p></code>, <code></h1></code>, <code></em></code>.</span>
+              </div>
+            </details>
+          </div>
+        </div>
+
+        <div class="cau-hoi" style="margin:16px 0; border:1px solid rgba(56,217,245,0.3); background:rgba(56,217,245,0.04); border-radius:14px; padding:16px 20px;">
+          <div class="q-num" style="background:var(--cyan); color:#000; font-weight:800; border-radius:50%; width:28px; height:28px; display:flex; align-items:center; justify-content:center; flex-shrink:0;">?</div>
+          <div style="flex:1;">
+            <div class="q-text" style="font-weight:600; color:#fff; font-size:15.5px; margin-bottom:10px;">Trong tệp HTML, em gõ 10 dấu cách liền nhau rồi nhấn Enter xuống dòng. Trình duyệt sẽ hiển thị thế nào?</div>
+            <div style="display:grid; grid-template-columns:1fr; gap:6px; margin-bottom:10px;">
+              
+                <div style="background:rgba(255,255,255,0.04); border:1px solid var(--border); border-radius:8px; padding:6px 12px; font-size:14px; color:#c8d8ec;">
+                  <b>A.</b> Đúng 10 dấu cách và xuống dòng như em gõ
+                </div>
+              
+                <div style="background:rgba(255,255,255,0.04); border:1px solid var(--border); border-radius:8px; padding:6px 12px; font-size:14px; color:#c8d8ec;">
+                  <b>B.</b> Chỉ một dấu cách, và không xuống dòng
+                </div>
+              
+                <div style="background:rgba(255,255,255,0.04); border:1px solid var(--border); border-radius:8px; padding:6px 12px; font-size:14px; color:#c8d8ec;">
+                  <b>C.</b> Báo lỗi cú pháp HTML
+                </div>
+              
+                <div style="background:rgba(255,255,255,0.04); border:1px solid var(--border); border-radius:8px; padding:6px 12px; font-size:14px; color:#c8d8ec;">
+                  <b>D.</b> Bỏ hết dấu cách, viết liền các từ vào nhau
+                </div>
+              
+            </div>
+            <details style="margin-top:8px;">
+              <summary style="cursor:pointer; color:var(--cyan); font-size:13px; font-weight:600;">👉 Xem đáp án & giải thích</summary>
+              <div style="margin-top:6px; padding:8px 12px; background:rgba(86,227,159,0.1); border-left:3px solid var(--green); border-radius:6px; font-size:13.5px; color:#a3e635;">
+                <strong>Đáp án đúng: B</strong><br>
+                <span>HTML và trình duyệt <strong>không nhận biết nhiều dấu cách</strong> — gõ bao nhiêu cũng chỉ hiểu là <strong>một dấu cách</strong>; và <strong>không nhận biết dấu xuống dòng</strong> khi nhấn Enter. Muốn xuống dòng thật thì phải dùng thẻ <code><br></code> hoặc tách thành đoạn <code><p></code> mới.</span>
+              </div>
+            </details>
+          </div>
+        </div>
+      <div class="page-num">Trang 45-51</div>
+    </section>
+  
+
+    <section class="section" id="sec-3">
+      <h2 id="heading-3">🧱 3. Cấu trúc tệp HTML</h2>
+      <p>Mọi tệp HTML đều theo một khung sườn giống nhau. Em đọc đoạn mã dưới đây rồi đối chiếu với khung xem trước — đây chính là <strong>tệp html hoàn chỉnh đầu tiên</strong> của em.</p>
+
+        <div style="background:#060b14; border:1px solid var(--border); border-radius:12px; overflow:hidden; margin:16px 0; font-family:monospace;">
+          <div style="background:rgba(255,255,255,0.05); padding:6px 14px; font-size:12px; color:var(--muted); border-bottom:1px solid var(--border);">💻 newpage.html — cấu trúc cơ bản của một tệp HTML</div>
+          <pre style="padding:14px 16px; margin:0; font-size:14px; line-height:1.6; color:#7ce8fa; overflow-x:auto;"><code>&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+  &lt;head&gt;
+    &lt;meta charset="utf-8"&gt;
+    &lt;title&gt;Tên trang Web&lt;/title&gt;
+  &lt;/head&gt;
+  &lt;body&gt;
+    &lt;div&gt;
+      &lt;h1&gt;Trang Web và HTML&lt;/h1&gt;
+      &lt;p&gt;Đây là dòng đầu tiên&lt;/p&gt;
+      &lt;hr&gt;
+      &lt;p&gt;Đây là dòng cuối cùng&lt;/p&gt;
+    &lt;/div&gt;
+    &lt;p&gt;Trang này được lập bởi &lt;em&gt;nhóm bạn bè&lt;/em&gt;&lt;/p&gt;
+  &lt;/body&gt;
+&lt;/html&gt;</code></pre>
+        </div>
+
+        <div class="field-grid">
+          
+            <div class="field-card">
+              <div class="icon">1️⃣</div>
+              <h4 style="margin:0 0 6px; color:var(--cyan2);"><!DOCTYPE html></h4>
+              <p style="margin:0; font-size:14px; color:#b0c4de;"><strong>Dòng đầu tiên</strong>, mang ý nghĩa đặc biệt: thông báo cho trình duyệt biết đây là tệp có định dạng html. Có thể coi là <strong>dòng khai báo html</strong> của tệp văn bản. <strong>Không được coi là phần tử HTML.</strong></p>
+            </div>
+          
+
+            <div class="field-card">
+              <div class="icon">2️⃣</div>
+              <h4 style="margin:0 0 6px; color:var(--cyan2);"><html></h4>
+              <p style="margin:0; font-size:14px; color:#b0c4de;"><strong>Bắt buộc phải có.</strong> Là <strong>phần tử gốc (root)</strong>, chứa tất cả các phần tử HTML còn lại của trang. Thường chứa hai phần tử con là <code><head></code> và <code><body></code>.</p>
+            </div>
+          
+
+            <div class="field-card">
+              <div class="icon">3️⃣</div>
+              <h4 style="margin:0 0 6px; color:var(--cyan2);"><head></h4>
+              <p style="margin:0; font-size:14px; color:#b0c4de;">Chứa các phần tử <strong>liên quan chung đến toàn bộ trang web</strong>. Trong head thường có <code><title></code>; một số phần tử khác thường gặp là <code><meta></code>, <code><style></code> và <code><script></code>.</p>
+            </div>
+          
+
+            <div class="field-card">
+              <div class="icon">4️⃣</div>
+              <h4 style="margin:0 0 6px; color:var(--cyan2);"><body></h4>
+              <p style="margin:0; font-size:14px; color:#b0c4de;">Chứa <strong>tất cả các phần tử còn lại</strong> — chính là <strong>thông tin của trang web</strong> mà người xem nhìn thấy.</p>
+            </div>
+          
+
+            <div class="field-card">
+              <div class="icon">5️⃣</div>
+              <h4 style="margin:0 0 6px; color:var(--cyan2);"><meta></h4>
+              <p style="margin:0; font-size:14px; color:#b0c4de;">Mô tả các <strong>thông tin bổ sung</strong> của trang web: cách mã hoá Unicode, từ khoá dùng để tìm kiếm trang, tên tác giả. Nằm trong <code><head></code>. <em><code><meta charset="utf-8"></code> mô tả cách mã hoá văn bản theo mã UTF-8 — có nó thì tiếng Việt mới hiện đúng dấu.</em></p>
+            </div>
+          
+
+            <div class="field-card">
+              <div class="icon">6️⃣</div>
+              <h4 style="margin:0 0 6px; color:var(--cyan2);"><title></h4>
+              <p style="margin:0; font-size:14px; color:#b0c4de;">Nằm trong <code><head></code>, mô tả <strong>tên của trang web hiện thời</strong> — tên này xuất hiện trên <strong>tab trình duyệt</strong> và trong <strong>danh sách kết quả tìm kiếm</strong>. Phần tử title phải là <strong>văn bản thường và không được phép chứa các phần tử con</strong>.</p>
+            </div>
+          
+        </div>
+<p>Nhóm các thẻ định dạng văn bản thường dùng là các <strong>thẻ tiêu đề theo thứ tự giảm cấp dần: <code><h1></code>, <code><h2></code>, <code><h3></code>, <code><h4></code>, <code><h5></code>, <code><h6></code></strong>. Thẻ <code><p></code> mô tả <strong>một đoạn văn bản hoàn chỉnh</strong>.</p>
+
+        <div style="background:#060b14; border:1px solid var(--border); border-radius:12px; overflow:hidden; margin:16px 0; font-family:monospace;">
+          <div style="background:rgba(255,255,255,0.05); padding:6px 14px; font-size:12px; color:var(--muted); border-bottom:1px solid var(--border);">💻 Sáu cấp tiêu đề nhỏ dần, và một đoạn văn bản</div>
+          <pre style="padding:14px 16px; margin:0; font-size:14px; line-height:1.6; color:#7ce8fa; overflow-x:auto;"><code>&lt;h1&gt;Tiêu đề cấp 1&lt;/h1&gt;
+&lt;h2&gt;Tiêu đề cấp 2&lt;/h2&gt;
+&lt;h3&gt;Tiêu đề cấp 3&lt;/h3&gt;
+&lt;p&gt;Còn đây là một đoạn văn bản.&lt;/p&gt;</code></pre>
+        </div>
+
+        <div class="cau-hoi" style="margin:16px 0; border:1px solid rgba(56,217,245,0.3); background:rgba(56,217,245,0.04); border-radius:14px; padding:16px 20px;">
+          <div class="q-num" style="background:var(--cyan); color:#000; font-weight:800; border-radius:50%; width:28px; height:28px; display:flex; align-items:center; justify-content:center; flex-shrink:0;">?</div>
+          <div style="flex:1;">
+            <div class="q-text" style="font-weight:600; color:#fff; font-size:15.5px; margin-bottom:10px;">Dòng <code><!DOCTYPE html></code> ở đầu tệp có phải là một phần tử HTML không?</div>
+            <div style="display:grid; grid-template-columns:1fr; gap:6px; margin-bottom:10px;">
+              
+                <div style="background:rgba(255,255,255,0.04); border:1px solid var(--border); border-radius:8px; padding:6px 12px; font-size:14px; color:#c8d8ec;">
+                  <b>A.</b> Có, vì nó cũng nằm trong cặp dấu < > như thẻ
+                </div>
+              
+                <div style="background:rgba(255,255,255,0.04); border:1px solid var(--border); border-radius:8px; padding:6px 12px; font-size:14px; color:#c8d8ec;">
+                  <b>B.</b> Không — nó chỉ báo cho trình duyệt biết đây là tệp html
+                </div>
+              
+                <div style="background:rgba(255,255,255,0.04); border:1px solid var(--border); border-radius:8px; padding:6px 12px; font-size:14px; color:#c8d8ec;">
+                  <b>C.</b> Có, và nó chính là phần tử gốc của cả trang web
+                </div>
+              
+                <div style="background:rgba(255,255,255,0.04); border:1px solid var(--border); border-radius:8px; padding:6px 12px; font-size:14px; color:#c8d8ec;">
+                  <b>D.</b> Không, vì nó chỉ là một dòng chú thích cho người đọc
+                </div>
+              
+            </div>
+            <details style="margin-top:8px;">
+              <summary style="cursor:pointer; color:var(--cyan); font-size:13px; font-weight:600;">👉 Xem đáp án & giải thích</summary>
+              <div style="margin-top:6px; padding:8px 12px; background:rgba(86,227,159,0.1); border-left:3px solid var(--green); border-radius:6px; font-size:13.5px; color:#a3e635;">
+                <strong>Đáp án đúng: B</strong><br>
+                <span>SGK ghi rõ: dòng <code><!DOCTYPE html></code> <strong>không được coi là phần tử HTML</strong>, nó mang ý nghĩa đặc biệt là <strong>thông báo cho trình duyệt biết đây là tệp có định dạng html</strong>. Phần tử gốc của trang là <strong><code><html></code></strong>, không phải DOCTYPE.</span>
+              </div>
+            </details>
+          </div>
+        </div>
+      <div class="page-num">Trang 45-51</div>
+    </section>
+  
+
+    <section class="section" id="sec-4">
+      <h2 id="heading-4">🌳 4. Cây thông tin</h2>
+      <p>Mỗi tệp HTML gồm nhiều phần tử, và các phần tử <strong>có thể lồng nhau</strong>. Quan hệ lồng nhau này có thể hình dung như <strong>quan hệ cha – con</strong>, hay quan hệ giữa các nút của một <strong>sơ đồ hình cây</strong>.</p>
+
+<p>Nhìn cây trên em thấy: <code><div></code> <strong>chứa</strong> bốn phần tử con là <code>h1</code>, <code>p</code>, <code>hr</code>, <code>p</code> — nên trên cây chúng là <strong>con của div</strong>. Còn <code><head></code> và <code><body></code> là <strong>hai phần tử rời nhau</strong>, không cái nào chứa cái nào.</p>
+
+        <div class="info-box">
+          <p>Cấu trúc cơ bản của tệp HTML có dạng như <strong>một cây thông tin các phần tử HTML</strong>. Quan hệ <strong>cha – con</strong> của các nút trên cây được mô tả bằng <strong>sự lồng nhau</strong> của các phần tử (hay thẻ) HTML. <strong>Gốc của cây HTML chính là phần tử <code><html></code>.</strong></p>
+        </div>
+      <div class="page-num">Trang 45-51</div>
+    </section>
+  
+
+    <section class="section" id="sec-5">
+      <h2 id="heading-5">⌨️ 5. Soạn thảo HTML</h2>
+      <p>Tệp HTML chỉ là <strong>tệp văn bản thuần</strong>, nên có nhiều cách để soạn thảo nó.</p>
+
+        <div class="field-grid">
+          
+            <div class="field-card">
+              <div class="icon">📝</div>
+              <h4 style="margin:0 0 6px; color:var(--cyan2);">Notepad</h4>
+              <p style="margin:0; font-size:14px; color:#b0c4de;">Phần mềm soạn thảo <strong>văn bản đơn giản không định dạng</strong>, cung cấp một số chức năng chỉnh sửa cơ bản. <strong>Có sẵn trên Windows</strong>. Trên MacOS có phần mềm tương tự là <strong>TextEdit</strong>.</p>
+            </div>
+          
+
+            <div class="field-card">
+              <div class="icon">🧑‍💻</div>
+              <h4 style="margin:0 0 6px; color:var(--cyan2);">Notepad++</h4>
+              <p style="margin:0; font-size:14px; color:#b0c4de;">Phần mềm soạn thảo chương trình <strong>đa năng</strong>, hỗ trợ nhiều ngôn ngữ trong đó có HTML. <strong>Miễn phí, mã nguồn mở</strong>, tải ở notepad-plus-plus.org. <em>Lưu ý: chọn <strong>Language → H → HTML</strong> để phần mềm hiển thị đúng ngôn ngữ HTML.</em></p>
+            </div>
+          
+
+            <div class="field-card">
+              <div class="icon">🎨</div>
+              <h4 style="margin:0 0 6px; color:var(--cyan2);">Sublime Text</h4>
+              <p style="margin:0; font-size:14px; color:#b0c4de;">Soạn thảo chương trình nhiều ngôn ngữ, <strong>tương tự Notepad++</strong>, có phiên bản cơ bản miễn phí, tải ở sublimetext.com. <em>Lưu ý: chọn <strong>View → Syntax → HTML</strong>.</em></p>
+            </div>
+          
+
+            <div class="field-card">
+              <div class="icon">🌐</div>
+              <h4 style="margin:0 0 6px; color:var(--cyan2);">Trang soạn thảo trực tuyến</h4>
+              <p style="margin:0; font-size:14px; color:#b0c4de;">Cần <strong>máy có kết nối Internet và trình duyệt chuẩn</strong>. Soạn ở khung bên trái, nháy nút <strong>Run</strong> để xem kết quả ở khung bên phải — <strong>giống hệt cách bài học này đang trình bày</strong>. Ví dụ: w3schools.com, tutorialspoint.com.</p>
+            </div>
+          
+        </div>
+
+        <div class="info-box">
+          <p>Có thể soạn thảo tệp HTML bằng <strong>nhiều phần mềm khác nhau</strong>. Cũng có thể <strong>soạn thảo trực tuyến và kiểm tra kết quả trực tiếp trên trình duyệt</strong>.</p>
+        </div>
+
+        <div class="cau-hoi" style="margin:16px 0; border:1px solid rgba(56,217,245,0.3); background:rgba(56,217,245,0.04); border-radius:14px; padding:16px 20px;">
+          <div class="q-num" style="background:var(--cyan); color:#000; font-weight:800; border-radius:50%; width:28px; height:28px; display:flex; align-items:center; justify-content:center; flex-shrink:0;">?</div>
+          <div style="flex:1;">
+            <div class="q-text" style="font-weight:600; color:#fff; font-size:15.5px; margin-bottom:10px;">Nhóm nào dưới đây gồm TOÀN các phần mềm soạn thảo HTML (không phải trình duyệt web)?</div>
+            <div style="display:grid; grid-template-columns:1fr; gap:6px; margin-bottom:10px;">
+              
+                <div style="background:rgba(255,255,255,0.04); border:1px solid var(--border); border-radius:8px; padding:6px 12px; font-size:14px; color:#c8d8ec;">
+                  <b>A.</b> Notepad, Notepad++, Sublime Text
+                </div>
+              
+                <div style="background:rgba(255,255,255,0.04); border:1px solid var(--border); border-radius:8px; padding:6px 12px; font-size:14px; color:#c8d8ec;">
+                  <b>B.</b> Opera, Chrome, Cốc Cốc
+                </div>
+              
+                <div style="background:rgba(255,255,255,0.04); border:1px solid var(--border); border-radius:8px; padding:6px 12px; font-size:14px; color:#c8d8ec;">
+                  <b>C.</b> Notepad++, FireFox, Sublime Text
+                </div>
+              
+                <div style="background:rgba(255,255,255,0.04); border:1px solid var(--border); border-radius:8px; padding:6px 12px; font-size:14px; color:#c8d8ec;">
+                  <b>D.</b> Microsoft Edge, Notepad, Opera
+                </div>
+              
+            </div>
+            <details style="margin-top:8px;">
+              <summary style="cursor:pointer; color:var(--cyan); font-size:13px; font-weight:600;">👉 Xem đáp án & giải thích</summary>
+              <div style="margin-top:6px; padding:8px 12px; background:rgba(86,227,159,0.1); border-left:3px solid var(--green); border-radius:6px; font-size:13.5px; color:#a3e635;">
+                <strong>Đáp án đúng: A</strong><br>
+                <span><strong>Notepad, Notepad++, Sublime Text</strong> là phần mềm soạn thảo. Còn <strong>Opera, Chrome, Cốc Cốc, FireFox, Microsoft Edge</strong> đều là <strong>trình duyệt web</strong> — chúng dùng để <em>hiển thị</em> trang web chứ không phải để viết mã nguồn.</span>
+              </div>
+            </details>
+          </div>
+        </div>
+      <div class="page-num">Trang 45-51</div>
+    </section>
+  
+
+  <!-- HỘP GHI NHỚ CUỐI BÀI -->
+  <section class="section" id="ghi-nho">
+    <div class="ghi-nho">
+      <div class="ghi-nho-title">📌 Em cần ghi nhớ</div>
+      <ul style="padding-left:20px;">
+        <li style="font-size:15.5px; line-height:1.7; margin-bottom:10px;"><strong>HTML = Hypertext Markup Language</strong> (ngôn ngữ đánh dấu siêu văn bản) — bộ quy tắc <strong>thiết lập cấu trúc và hiển thị nội dung trang web</strong>. Tệp có phần mở rộng <strong>.html</strong> hoặc <strong>.htm</strong>.</li>
+<li style="font-size:15.5px; line-height:1.7; margin-bottom:10px;"><strong>Thẻ (tag)</strong> viết trong cặp dấu < >. <strong>Phần tử (element)</strong> = thẻ bắt đầu + nội dung + thẻ kết thúc. Thẻ đơn cùng nội dung của nó cũng là một phần tử.</li>
+<li style="font-size:15.5px; line-height:1.7; margin-bottom:10px;">Phần lớn là <strong>thẻ đôi</strong>; <strong>thẻ đơn</strong> chỉ có thẻ bắt đầu — ví dụ <code><hr></code> (dòng kẻ ngang), <code><br></code> (ngắt xuống dòng).</li>
+<li style="font-size:15.5px; line-height:1.7; margin-bottom:10px;">Trình duyệt <strong>không nhận biết nhiều dấu cách</strong> (gõ bao nhiêu cũng thành một) và <strong>không nhận biết dấu xuống dòng</strong> khi nhấn Enter.</li>
+<li style="font-size:15.5px; line-height:1.7; margin-bottom:10px;">Khung sườn tệp HTML: <strong><code><!DOCTYPE html></code></strong> (không phải phần tử) → <strong><code><html></code></strong> (phần tử gốc) → <strong><code><head></code></strong> (chứa <code><meta></code>, <code><title></code>) và <strong><code><body></code></strong> (chứa nội dung trang).</li>
+<li style="font-size:15.5px; line-height:1.7; margin-bottom:10px;">Cấu trúc tệp HTML là <strong>một cây thông tin</strong>: phần tử lồng nhau chính là quan hệ <strong>cha – con</strong>, <strong>gốc của cây là <code><html></code></strong>.</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- NÚT CHUYỂN BÀI DƯỚI CÙNG -->
+  <div class="nav-btns" style="margin-top:32px;">
+    <a href="/sgk/bai-06.html" class="nav-btn">← Giao tiếp và ứng xử trong không gian mạng</a>
+    <a href="/luyen/bai-07" class="nav-btn" style="background:linear-gradient(90deg, var(--cyan), var(--orange)); color:#fff; border:none;">🎯 Luyện trắc nghiệm ngay</a>
+    <a href="/sgk/bai-08.html" class="nav-btn">Định dạng văn bản →</a>
+  </div>
+</main>
+
+</div>
+
+<script>
+let fs = 18;
+function changeFont(d) { fs = Math.min(28, Math.max(14, fs + d)); document.body.style.fontSize = fs + 'px'; }
+let light = false;
+function toggleTheme() {
+  light = !light;
+  document.documentElement.style.setProperty('--bg', light ? '#f0f4f8' : '#070b14');
+  document.documentElement.style.setProperty('--text', light ? '#1a2540' : '#e8eef8');
+  document.documentElement.style.setProperty('--panel', light ? '#fff' : '#111a2e');
+  document.documentElement.style.setProperty('--panel2', light ? '#f5f8fc' : '#162035');
+  document.documentElement.style.setProperty('--border', light ? '#d0daea' : '#1e2f4d');
+  document.body.style.background = light
+    ? 'radial-gradient(ellipse at 20% 10%, #d8e8f8 0%, #f0f4f8 60%)'
+    : 'radial-gradient(ellipse at 20% 10%, #0d1f3c 0%, #070b14 50%)';
+}
+window.addEventListener('scroll', () => {
+  const doc = document.documentElement;
+  const scrolled = doc.scrollTop || document.body.scrollTop;
+  const total = doc.scrollHeight - doc.clientHeight;
+  const pct = total > 0 ? Math.round((scrolled / total) * 100) : 0;
+  const p = document.getElementById('prog');
+  const pl = document.getElementById('prog-label');
+  if (p) p.style.width = pct + '%';
+  if (pl) pl.textContent = 'Tiến độ đọc: ' + pct + '%';
+});
+</script>
+</body>
+</html>

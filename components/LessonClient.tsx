@@ -219,19 +219,9 @@ export default function LessonClient({
       ? [
           {
             key: "games" as Mode,
-            emoji: games.some((g) => g.kind === "arena" || g.kind === "team-battle" || g.kind === "group-battle") ? "⚔️" : "🎮",
-            name: games.some((g) => g.kind === "arena" || g.kind === "team-battle" || g.kind === "group-battle")
-              ? "Đấu trường game"
-              : games.length === 1
-                ? games[0].title
-                : "Trung tâm Game",
-            desc: games.some((g) => g.kind === "group-battle" || g.kind === "team-battle")
-              ? `${games.length} trò chơi · Có ĐẠI CHIẾN ĐẤU TRƯỜNG GIỮA CÁC NHÓM!`
-              : games.some((g) => g.kind === "arena")
-                ? `${games.length} trò chơi · Có ĐẤU TRƯỜNG đối đầu Siêu AI Omega!`
-                : games.length === 1
-                  ? `${gameItemCount(games[0])} thẻ · kéo hoặc chạm để chơi`
-                  : `${games.length} trò chơi ôn bài · kéo hoặc chạm để chơi`,
+            emoji: "🎮",
+            name: games.length === 1 ? games[0].title : "Trò chơi ôn bài",
+            desc: `${games.length} trò chơi tương tác · kéo thả, sắp xếp & phân loại kiến thức`,
             best: null,
             done: false,
             enabled: true,

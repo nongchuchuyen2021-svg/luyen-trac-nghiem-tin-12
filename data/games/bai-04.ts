@@ -403,7 +403,6 @@ export const BAI_04_BATTLE_QUESTIONS: BattleQuestion[] = [
 ];
 
 const games: LessonGame[] = [
-  summitBattleGame,
   sortGameBayDeThi,
   encapsulationGameDongGoi,
   routingGameTramDinhTuyen,

@@ -1,0 +1,562 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Thực hành chia sẻ tài nguyên trên mạng – Tin học 12 KNTT (SGK Điện tử)</title>
+<meta name="description" content="SGK Tin học 12 Kết nối tri thức – Thực hành chia sẻ tài nguyên trên mạng. Chủ đề 2. Mạng máy tính và Internet.">
+<style>
+:root {
+  --bg: #070b14; --bg2: #0d1423; --panel: #111a2e; --panel2: #162035; --border: #1e2f4d;
+  --text: #e8eef8; --muted: #8899b8; --orange: #ff6b35; --orange2: #ff9a64;
+  --cyan: #38d9f5; --cyan2: #7ce8fa; --yellow: #ffd060; --green: #56e39f; --pink: #f06dba; --purple: #a78bfa;
+  --fs: 18px;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  background: radial-gradient(ellipse at 20% 10%, #0d1f3c 0%, #070b14 50%);
+  color: var(--text); font-family: 'Inter','Segoe UI',-apple-system,BlinkMacSystemFont,'Roboto',Arial,sans-serif;
+  font-size: var(--fs); line-height: 1.75; min-height: 100vh;
+}
+.app { display: grid; grid-template-columns: 280px 1fr; min-height: 100vh; }
+.sidebar { position:sticky; top:0; height:100vh; overflow-y:auto; background:rgba(7,11,20,.97); border-right:1px solid var(--border); padding:24px 16px; backdrop-filter:blur(20px); }
+.brand-box { margin-bottom:24px; }
+.series-label { font-size:11px; letter-spacing:2px; text-transform:uppercase; color:var(--cyan); font-weight:700; margin-bottom:6px; }
+.brand-title { font-size:20px; font-weight:900; color:#fff; line-height:1.2; }
+.brand-title span { color:var(--orange); }
+.brand-sub { color:var(--muted); font-size:12px; margin-top:5px; }
+.toc-title { font-size:11px; letter-spacing:1.5px; text-transform:uppercase; color:var(--muted); font-weight:700; margin:20px 0 8px; padding:0 8px; }
+.toc a { display:block; color:#9aaec8; text-decoration:none; padding:9px 12px; border-radius:10px; margin:2px 0; font-size:13.5px; font-weight:500; transition:all .2s; border-left:3px solid transparent; }
+.toc a:hover { background:rgba(56,217,245,.07); color:var(--cyan); border-left-color:var(--cyan); }
+.toc a.active { background:rgba(255,107,53,.1); color:var(--orange); border-left-color:var(--orange); }
+.ctrl-box { margin-top:24px; padding:14px; border:1px solid var(--border); border-radius:14px; background:rgba(255,255,255,.03); }
+.ctrl-box h4 { font-size:11px; letter-spacing:1px; text-transform:uppercase; color:var(--muted); margin-bottom:10px; }
+.ctrl-row { display:flex; gap:8px; margin-bottom:8px; }
+.ctrl-btn { flex:1; background:var(--panel2); border:1px solid var(--border); color:var(--text); border-radius:9px; padding:8px 6px; cursor:pointer; font-size:13px; font-weight:600; transition:all .2s; text-align:center; text-decoration:none; display:inline-block; }
+.ctrl-btn:hover { background:var(--border); color:#fff; }
+.progress-bar { height:4px; background:var(--panel2); border-radius:4px; overflow:hidden; margin-top:10px; }
+.progress-fill { height:100%; width:0%; background:linear-gradient(90deg,var(--cyan),var(--orange)); transition:width .3s; border-radius:4px; }
+.main { max-width:860px; margin:0 auto; padding:32px 28px 80px; }
+.hero { background:linear-gradient(135deg,#0f2040 0%,#0a1628 60%,#131020 100%); border:1px solid var(--border); border-radius:24px; padding:36px 40px; margin-bottom:28px; box-shadow:0 24px 80px rgba(0,0,0,.5); position:relative; overflow:hidden; }
+.hero::before { content:'5'; position:absolute; right:30px; top:20px; font-size:120px; font-weight:900; color:rgba(56,217,245,.05); line-height:1; user-select:none; }
+.chu-de-tag { display:inline-flex; align-items:center; gap:8px; background:rgba(56,217,245,.12); border:1px solid rgba(56,217,245,.3); color:var(--cyan); font-size:13px; font-weight:700; padding:6px 14px; border-radius:20px; margin-bottom:16px; letter-spacing:.5px; }
+.hero h1 { font-size:clamp(26px,4vw,38px); font-weight:900; line-height:1.2; background:linear-gradient(90deg,#fff 0%,var(--cyan2) 50%,var(--orange2) 100%); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; margin-bottom:14px; }
+.hero-desc { color:#b0c4de; font-size:15.5px; line-height:1.6; }
+.section { background:rgba(11,17,30,.9); border:1px solid var(--border); border-radius:20px; padding:28px 32px 36px; margin-bottom:24px; scroll-margin-top:20px; position:relative; transition:border-color .3s; }
+.section:hover { border-color:rgba(56,217,245,.2); }
+.page-num { position:absolute; right:20px; bottom:14px; color:var(--muted); font-size:12px; font-weight:600; background:var(--panel2); padding:3px 10px; border-radius:10px; }
+h2 { font-size:clamp(20px,2.5vw,26px); font-weight:800; color:#fff; margin:28px 0 14px; display:flex; align-items:center; gap:10px; }
+h2::before { content:''; display:inline-block; width:4px; height:24px; background:linear-gradient(var(--orange),var(--cyan)); border-radius:2px; flex-shrink:0; }
+p { color:#d0dcea; margin-bottom:14px; }
+p:last-child { margin-bottom:0; }
+strong { color:#fff; }
+em { color:var(--cyan2); font-style:italic; }
+code { background:rgba(255,255,255,0.08); color:var(--orange2); padding:2px 6px; border-radius:4px; font-size:0.9em; font-family:monospace; }
+ul, ol { padding-left:22px; margin:12px 0; }
+li { color:#c8d8ec; margin-bottom:8px; }
+li::marker { color:var(--cyan); }
+.info-box { background:linear-gradient(135deg,#071e2e,#071828); border:1px dashed rgba(56,217,245,.4); border-radius:14px; padding:18px 22px; margin:20px 0; }
+.info-box p, .info-box li { color:#b8d8f0; }
+.activity { background:linear-gradient(135deg,#1a120a,#130f0a); border:1px solid rgba(255,160,60,.3); border-left:4px solid var(--orange); border-radius:14px; padding:18px 22px; margin:20px 0; }
+.activity-badge { display:inline-flex; align-items:center; gap:6px; background:var(--orange); color:#1a0a00; font-size:12px; font-weight:800; padding:4px 12px; border-radius:6px; margin-bottom:10px; letter-spacing:.5px; text-transform:uppercase; }
+.ghi-nho { background:linear-gradient(135deg,#1a2a10,#0f1e0a); border:1px solid rgba(86,227,159,.3); border-left:4px solid var(--green); border-radius:14px; padding:20px 24px; margin:24px 0; }
+.ghi-nho-title { color:var(--green); font-weight:800; font-size:15px; text-transform:uppercase; letter-spacing:1px; margin-bottom:10px; display:flex; align-items:center; gap:8px; }
+.ghi-nho p, .ghi-nho li { color:#c8f0d8; }
+.nav-btns { display:flex; gap:12px; margin:20px 0; }
+.nav-btn { background:var(--panel); border:1px solid var(--border); color:var(--text); border-radius:10px; padding:10px 18px; text-decoration:none; font-size:14px; font-weight:600; transition:all .2s; flex:1; text-align:center; }
+.nav-btn:hover { background:var(--panel2); border-color:var(--cyan); color:#fff; }
+.field-grid { display:grid; grid-template-columns:1fr 1fr; gap:14px; margin:18px 0; }
+.field-card { background:var(--panel2); border:1px solid var(--border); border-radius:14px; padding:16px 18px; }
+.img-side { display:grid; grid-template-columns:1fr 1fr; gap:14px; margin:18px 0; }
+.img-half { border-radius:12px; border:1px solid var(--border); }
+@media (max-width: 860px) {
+  .app { grid-template-columns: 1fr; }
+  .sidebar { display: none; }
+  .main { padding: 20px 16px 60px; }
+  .field-grid, .img-side { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+
+<div class="app">
+
+<!-- SIDEBAR -->
+<aside class="sidebar">
+  <div class="brand-box">
+    <div class="series-label">KẾT NỐI TRI THỨC</div>
+    <div class="brand-title">TIN HỌC <span>12</span></div>
+    <div class="brand-sub">Sách Giáo Khoa Điện Tử (ICT)</div>
+  </div>
+
+  <div class="ctrl-box">
+    <h4>Cỡ chữ & Giao diện</h4>
+    <div class="ctrl-row">
+      <button class="ctrl-btn" onclick="changeFont(-1)">A -</button>
+      <button class="ctrl-btn" onclick="changeFont(1)">A +</button>
+      <button class="ctrl-btn" onclick="toggleTheme()">🌓 Nền</button>
+    </div>
+    <div style="font-size:12px; color:var(--muted); margin-top:8px;" id="prog-label">Tiến độ đọc: 0%</div>
+    <div class="progress-bar"><div class="progress-fill" id="prog"></div></div>
+  </div>
+
+  <div class="toc-title">Mục lục bài học</div>
+  <nav class="toc">
+    
+      <a href="#sec-1">1. Chia sẻ là gì?</a>
+    
+      <a href="#sec-2">2. Chuẩn bị máy</a>
+    
+      <a href="#sec-3">3. Chia sẻ thư mục</a>
+    
+      <a href="#sec-4">4. Huỷ chia sẻ</a>
+    
+      <a href="#sec-5">5. Chia sẻ máy in</a>
+    
+    <a href="#ghi-nho">📌 Ghi nhớ cốt lõi</a>
+  </nav>
+
+  <div class="ctrl-box" style="margin-top:20px;">
+    <h4>Luyện tập</h4>
+    <a href="/luyen/bai-05" class="ctrl-btn" style="background:var(--cyan); color:#000; font-weight:700;">🎯 Vào Luyện Trắc Nghiệm</a>
+  </div>
+</aside>
+
+<!-- MAIN CONTENT -->
+<main class="main">
+  <!-- HERO BANNER -->
+  <div class="hero">
+    <div class="chu-de-tag">Chủ đề 2. Mạng máy tính và Internet</div>
+    <h1>Thực hành chia sẻ tài nguyên trên mạng</h1>
+    <div class="hero-desc">Bài này trả lời một câu rất thực tế: <strong>làm sao để máy này mở được thư mục nằm trên máy kia</strong>, và <strong>làm sao cả phòng máy in chung một máy in</strong>. Đây là bài thực hành nên em vừa đọc vừa làm theo trên máy sẽ nhớ lâu hơn — nhưng nhớ được thứ tự các bước và ý nghĩa từng bước thì làm bài kiểm tra cũng đủ.</div>
+  </div>
+
+  <!-- NÚT CHUYỂN BÀI -->
+  <div class="nav-btns">
+    <a href="/sgk/bai-04.html" class="nav-btn">← Giao thức mạng</a>
+    <a href="/sgk/bai-06.html" class="nav-btn">Giao tiếp và ứng xử trong không gian mạng →</a>
+  </div>
+
+  <!-- CÁC MỤC NỘI DUNG -->
+  
+    <section class="section" id="sec-1">
+      <h2 id="heading-1">🔑 1. Chia sẻ là gì?</h2>
+      
+        <div class="info-box">
+          <p><strong>Tài nguyên</strong> của một máy tính trên mạng có thể là <strong>dữ liệu, phần mềm hay thiết bị</strong>. <strong>Chia sẻ tài nguyên</strong> trong mạng cục bộ là cho phép một người từ một máy tính có thể <strong>“nhìn thấy” và sử dụng tài nguyên trên một máy tính khác</strong> trong mạng.</p>
+        </div>
+<p>Việc chia sẻ <strong>có thể gây rủi ro</strong>: dữ liệu có thể bị truy cập với mục đích xấu hay bị làm hỏng bởi một người dùng trên mạng. Vì thế luôn cần các <strong>cơ chế bảo mật và cấp phép</strong> khi chia sẻ tài nguyên.</p>
+
+        <div class="img-side">
+          <div class="img-half" style="background:rgba(242,104,60,0.08); border-color:rgba(242,104,60,0.3); padding:16px;">
+            <div style="font-weight:700; color:var(--orange); font-size:15px; margin-bottom:10px;">❌ KHÔNG cần những thứ này</div>
+            <ul style="padding-left:18px;">
+              <li style="font-size:14px; margin-bottom:6px;">Không cần <strong>“kết bạn”</strong> với nhau như trên mạng xã hội</li><li style="font-size:14px; margin-bottom:6px;">Không cần <strong>đề xuất yêu cầu và trả phí</strong> truy cập</li>
+            </ul>
+          </div>
+          <div class="img-half" style="background:rgba(56,217,245,0.08); border-color:rgba(56,217,245,0.3); padding:16px;">
+            <div style="font-weight:700; color:var(--cyan); font-size:15px; margin-bottom:10px;">✅ Chỉ cần đúng hai điều kiện</div>
+            <ul style="padding-left:18px;">
+              <li style="font-size:14px; margin-bottom:6px;"><strong>Kết nối</strong> hai máy tính với nhau qua mạng</li><li style="font-size:14px; margin-bottom:6px;">Người chia sẻ phải <strong>cấp quyền truy cập</strong> tài nguyên — được xem, được sửa, được xoá…</li>
+            </ul>
+          </div>
+        </div>
+<p>Lí do rất đơn giản: chia sẻ tài nguyên trong mạng cục bộ là <strong>công việc có tính kĩ thuật, phục vụ công việc nội bộ</strong> của tổ chức sở hữu mạng cục bộ đó. Nó được thực hiện <strong>theo yêu cầu công việc</strong> và cần được <strong>người chủ tài nguyên cấp phép</strong> thông qua các biện pháp kĩ thuật trên hệ điều hành.</p>
+
+        <div class="cau-hoi" style="margin:16px 0; border:1px solid rgba(56,217,245,0.3); background:rgba(56,217,245,0.04); border-radius:14px; padding:16px 20px;">
+          <div class="q-num" style="background:var(--cyan); color:#000; font-weight:800; border-radius:50%; width:28px; height:28px; display:flex; align-items:center; justify-content:center; flex-shrink:0;">?</div>
+          <div style="flex:1;">
+            <div class="q-text" style="font-weight:600; color:#fff; font-size:15.5px; margin-bottom:10px;">Để hai máy tính có thể chia sẻ tài nguyên qua mạng cục bộ, cần những điều kiện nào?</div>
+            <div style="display:grid; grid-template-columns:1fr; gap:6px; margin-bottom:10px;">
+              
+                <div style="background:rgba(255,255,255,0.04); border:1px solid var(--border); border-radius:8px; padding:6px 12px; font-size:14px; color:#c8d8ec;">
+                  <b>A.</b> Kết nối hai máy qua mạng, và người chia sẻ cấp quyền truy cập
+                </div>
+              
+                <div style="background:rgba(255,255,255,0.04); border:1px solid var(--border); border-radius:8px; padding:6px 12px; font-size:14px; color:#c8d8ec;">
+                  <b>B.</b> Hai người phải “kết bạn” với nhau như trên mạng xã hội
+                </div>
+              
+                <div style="background:rgba(255,255,255,0.04); border:1px solid var(--border); border-radius:8px; padding:6px 12px; font-size:14px; color:#c8d8ec;">
+                  <b>C.</b> Người được chia sẻ phải đề xuất yêu cầu và trả phí truy cập
+                </div>
+              
+                <div style="background:rgba(255,255,255,0.04); border:1px solid var(--border); border-radius:8px; padding:6px 12px; font-size:14px; color:#c8d8ec;">
+                  <b>D.</b> Hai máy phải cùng đăng nhập một tài khoản Microsoft
+                </div>
+              
+            </div>
+            <details style="margin-top:8px;">
+              <summary style="cursor:pointer; color:var(--cyan); font-size:13px; font-weight:600;">👉 Xem đáp án & giải thích</summary>
+              <div style="margin-top:6px; padding:8px 12px; background:rgba(86,227,159,0.1); border-left:3px solid var(--green); border-radius:6px; font-size:13.5px; color:#a3e635;">
+                <strong>Đáp án đúng: A</strong><br>
+                <span>Chỉ cần <strong>kết nối mạng</strong> và <strong>cấp quyền truy cập</strong>. Chia sẻ trong LAN là việc kĩ thuật phục vụ công việc nội bộ, nên <strong>không có yêu cầu “kết bạn” hay “trả phí”</strong>.</span>
+              </div>
+            </details>
+          </div>
+        </div>
+      <div class="page-num">Trang 32-38</div>
+    </section>
+  
+
+    <section class="section" id="sec-2">
+      <h2 id="heading-2">🛠️ 2. Chuẩn bị máy</h2>
+      <p>Các phiên bản Windows sau này đều <strong>kiểm soát chặt chẽ về an ninh</strong>, nên trước khi chia sẻ dữ liệu cần <strong>nới lỏng các hạn chế</strong>. Có ba việc phải làm.</p>
+
+        <div class="field-grid">
+          
+            <div class="field-card">
+              <div class="icon">🏠</div>
+              <h4 style="margin:0 0 6px; color:var(--cyan2);">1. Đặt chế độ mạng riêng</h4>
+              <p style="margin:0; font-size:14px; color:#b0c4de;">Windows từ phiên bản 10 cho phép cài đặt <strong>mạng riêng (Private)</strong> hoặc <strong>mạng công cộng (Public)</strong>. Mạng công cộng thường đặt ở nhà ga, sân bay, quán cà phê… nhằm <strong>hạn chế nguy cơ lộ thông tin</strong>. Mạng riêng là mạng của nhóm người dùng <strong>có độ tin cậy cao hơn</strong>, có thể chia sẻ tài nguyên với nhau.</p>
+            </div>
+          
+
+            <div class="field-card">
+              <div class="icon">👀</div>
+              <h4 style="margin:0 0 6px; color:var(--cyan2);">2. Cho nhìn thấy và cho chia sẻ</h4>
+              <p style="margin:0; font-size:14px; color:#b0c4de;">Bật cho phép các máy khác <strong>nhìn thấy (discoverable)</strong> và cho phép <strong>chia sẻ tệp và máy in (file and printer sharing)</strong>.</p>
+            </div>
+          
+
+            <div class="field-card">
+              <div class="icon">🧱</div>
+              <h4 style="margin:0 0 6px; color:var(--cyan2);">3. Tắt tạm thời tường lửa</h4>
+              <p style="margin:0; font-size:14px; color:#b0c4de;"><strong>Tường lửa (firewall)</strong> là phần mềm kiểm soát truy cập máy tính từ bên ngoài, ngăn ngừa nguy cơ xâm nhập và tấn công từ Internet. Ở Windows 10 và 11, tường lửa <strong>Defender mặc định được kích hoạt</strong> — nên <strong>tạm dừng trong thời gian chia sẻ</strong>.</p>
+            </div>
+          
+        </div>
+
+        <div class="steps-container" style="display:flex; flex-direction:column; gap:12px; margin:16px 0;">
+          
+            <div style="background:var(--panel2); border-left:4px solid var(--cyan); border-radius:10px; padding:12px 16px;">
+              <div style="display:flex; gap:8px; align-items:center; margin-bottom:4px;">
+                <span style="background:var(--cyan); color:#000; font-weight:800; font-size:11px; padding:2px 8px; border-radius:12px;">B1</span>
+                <strong style="color:var(--text); font-size:15px;">Mở chức năng thiết lập chia sẻ nâng cao</strong>
+              </div>
+              <p style="margin:0; font-size:14.5px; color:#b0c4de;"><strong>Control Panel → Network and Internet → Network and Sharing Center → Advanced Sharing Settings</strong>. Trong hộp thoại, kéo con trượt <strong>Network discovery</strong> và <strong>File and printer sharing</strong> sang <strong>On</strong>. Khi được nhìn thấy, tên máy sẽ xuất hiện trên giao diện của File Browser.</p>
+            </div>
+          
+
+            <div style="background:var(--panel2); border-left:4px solid var(--cyan); border-radius:10px; padding:12px 16px;">
+              <div style="display:flex; gap:8px; align-items:center; margin-bottom:4px;">
+                <span style="background:var(--cyan); color:#000; font-weight:800; font-size:11px; padding:2px 8px; border-radius:12px;">B2</span>
+                <strong style="color:var(--text); font-size:15px;">Thiết lập chia sẻ thư mục công cộng</strong>
+              </div>
+              <p style="margin:0; font-size:14.5px; color:#b0c4de;">Windows có sẵn thư mục <strong>Public</strong> ở <strong>This PC → System (C:) → Users → Public</strong>, gồm các thư mục con Public Documents, Public Downloads, Public Music, Public Pictures, Public Videos. Dữ liệu trong Public <strong>mặc định là không chia sẻ</strong>; bật <strong>Public folder sharing</strong> thì mọi người dùng trên mạng nhìn thấy toàn bộ những gì có trong Public.</p>
+            </div>
+          
+
+            <div style="background:var(--panel2); border-left:4px solid var(--cyan); border-radius:10px; padding:12px 16px;">
+              <div style="display:flex; gap:8px; align-items:center; margin-bottom:4px;">
+                <span style="background:var(--cyan); color:#000; font-weight:800; font-size:11px; padding:2px 8px; border-radius:12px;">B3</span>
+                <strong style="color:var(--text); font-size:15px;">Dừng tạm thời tường lửa</strong>
+              </div>
+              <p style="margin:0; font-size:14.5px; color:#b0c4de;"><strong>Privacy and Security → Windows Security → FireWall Network Protection → Private Network</strong>, rồi kéo con trượt <strong>Microsoft Defender Firewall</strong> về <strong>Off</strong>. Khi máy hỏi <em>“Do you want to allow this app to make change to your device?”</em> — mặc định là <strong>No</strong> — hãy chọn <strong>Yes</strong> để cho phép.</p>
+            </div>
+          
+        </div>
+      <div class="page-num">Trang 32-38</div>
+    </section>
+  
+
+    <section class="section" id="sec-3">
+      <h2 id="heading-3">📁 3. Chia sẻ thư mục</h2>
+      <p>Mở ứng dụng quản lí tệp <strong>File Explorer</strong>, nháy chuột vào <strong>Network</strong> ở phía dưới bên trái cửa sổ — danh sách những máy tính tham gia mạng cục bộ sẽ hiển thị ra.</p>
+
+
+        <div class="steps-container" style="display:flex; flex-direction:column; gap:12px; margin:16px 0;">
+          
+            <div style="background:var(--panel2); border-left:4px solid var(--cyan); border-radius:10px; padding:12px 16px;">
+              <div style="display:flex; gap:8px; align-items:center; margin-bottom:4px;">
+                <span style="background:var(--cyan); color:#000; font-weight:800; font-size:11px; padding:2px 8px; border-radius:12px;">B1</span>
+                <strong style="color:var(--text); font-size:15px;">Mở cửa sổ Properties</strong>
+              </div>
+              <p style="margin:0; font-size:14.5px; color:#b0c4de;">Nháy <strong>nút phải chuột</strong> lên biểu tượng thư mục cần chia sẻ để mở bảng chọn các công việc, rồi chọn <strong>Properties</strong> (Thuộc tính).</p>
+            </div>
+          
+
+            <div style="background:var(--panel2); border-left:4px solid var(--cyan); border-radius:10px; padding:12px 16px;">
+              <div style="display:flex; gap:8px; align-items:center; margin-bottom:4px;">
+                <span style="background:var(--cyan); color:#000; font-weight:800; font-size:11px; padding:2px 8px; border-radius:12px;">B2</span>
+                <strong style="color:var(--text); font-size:15px;">Vào thẻ Sharing</strong>
+              </div>
+              <p style="margin:0; font-size:14.5px; color:#b0c4de;">Trong cửa sổ Properties, nháy chuột vào <strong>Sharing</strong> (Chia sẻ). Giao diện có ba mục: <strong>Network File and Folder Sharing</strong> (chia sẻ tệp thư mục trên mạng), <strong>Advanced Sharing</strong> (chia sẻ nâng cao) và <strong>Password Protection</strong> (bảo vệ bằng mật khẩu). Nháy vào nút <strong>Share…</strong></p>
+            </div>
+          
+
+            <div style="background:var(--panel2); border-left:4px solid var(--cyan); border-radius:10px; padding:12px 16px;">
+              <div style="display:flex; gap:8px; align-items:center; margin-bottom:4px;">
+                <span style="background:var(--cyan); color:#000; font-weight:800; font-size:11px; padding:2px 8px; border-radius:12px;">B3</span>
+                <strong style="color:var(--text); font-size:15px;">Chọn người được chia sẻ và mức quyền</strong>
+              </div>
+              <p style="margin:0; font-size:14.5px; color:#b0c4de;">Trên một máy tính có thể có nhiều người dùng, ví dụ user11, user12. Chọn người dùng rồi bấm <strong>Add</strong> (Thêm); cũng có thể tạo người dùng mới bằng <strong>Create a new user…</strong>. Bài này chỉ giới hạn chia sẻ cho <strong>tất cả người dùng — Everyone</strong>. Chọn xong bấm <strong>Share</strong> để hoàn tất.</p>
+            </div>
+          
+
+            <div style="background:var(--panel2); border-left:4px solid var(--cyan); border-radius:10px; padding:12px 16px;">
+              <div style="display:flex; gap:8px; align-items:center; margin-bottom:4px;">
+                <span style="background:var(--cyan); color:#000; font-weight:800; font-size:11px; padding:2px 8px; border-radius:12px;">B4</span>
+                <strong style="color:var(--text); font-size:15px;">Truy cập từ máy khác</strong>
+              </div>
+              <p style="margin:0; font-size:14.5px; color:#b0c4de;">Nháy đúp chuột vào biểu tượng của một máy (ví dụ MAY_1) sẽ thấy tất cả thư mục đã chia sẻ. Người dùng có thể <strong>làm việc với thư mục và tệp trên mạng bình thường như trên máy tính riêng</strong>.</p>
+            </div>
+          
+        </div>
+
+        <div class="info-box">
+          <p>Everyone được thêm vào danh sách <strong>mặc định có quyền Read</strong> — chỉ được <strong>đọc, xem mà không được sửa (write)</strong>. Muốn cho sửa thì nháy vào hình tam giác nhỏ cạnh chữ Read rồi chọn <strong>Read/Write</strong>. Chọn <strong>Remove</strong> để huỷ chia sẻ đối với người dùng này.</p>
+        </div>
+
+        <div class="activity">
+          <div class="activity-badge">💡 Chia sẻ thư mục cũng là chia sẻ thiết bị lưu trữ</div>
+          <p>Về phương diện lưu trữ, có thể xem <strong>toàn bộ một ổ đĩa là thư mục lớn nhất</strong> chứa các thư mục khác. Vì vậy có thể <strong>chia sẻ cả ổ đĩa</strong> giống như chia sẻ thư mục: nháy nút phải chuột vào biểu tượng ổ đĩa, chọn Properties rồi làm y hệt các bước trên.</p>
+        </div>
+
+        <div class="cau-hoi" style="margin:16px 0; border:1px solid rgba(56,217,245,0.3); background:rgba(56,217,245,0.04); border-radius:14px; padding:16px 20px;">
+          <div class="q-num" style="background:var(--cyan); color:#000; font-weight:800; border-radius:50%; width:28px; height:28px; display:flex; align-items:center; justify-content:center; flex-shrink:0;">?</div>
+          <div style="flex:1;">
+            <div class="q-text" style="font-weight:600; color:#fff; font-size:15.5px; margin-bottom:10px;">Máy A chia sẻ một thư mục cho Everyone nhưng để nguyên mức quyền mặc định. Máy B mở tệp trong thư mục đó thì làm được gì?</div>
+            <div style="display:grid; grid-template-columns:1fr; gap:6px; margin-bottom:10px;">
+              
+                <div style="background:rgba(255,255,255,0.04); border:1px solid var(--border); border-radius:8px; padding:6px 12px; font-size:14px; color:#c8d8ec;">
+                  <b>A.</b> Vừa xem vừa sửa được nội dung tệp
+                </div>
+              
+                <div style="background:rgba(255,255,255,0.04); border:1px solid var(--border); border-radius:8px; padding:6px 12px; font-size:14px; color:#c8d8ec;">
+                  <b>B.</b> Chỉ xem được, không sửa được
+                </div>
+              
+                <div style="background:rgba(255,255,255,0.04); border:1px solid var(--border); border-radius:8px; padding:6px 12px; font-size:14px; color:#c8d8ec;">
+                  <b>C.</b> Không mở được vì chưa nhập mật khẩu
+                </div>
+              
+                <div style="background:rgba(255,255,255,0.04); border:1px solid var(--border); border-radius:8px; padding:6px 12px; font-size:14px; color:#c8d8ec;">
+                  <b>D.</b> Xoá được tệp nhưng không sửa được
+                </div>
+              
+            </div>
+            <details style="margin-top:8px;">
+              <summary style="cursor:pointer; color:var(--cyan); font-size:13px; font-weight:600;">👉 Xem đáp án & giải thích</summary>
+              <div style="margin-top:6px; padding:8px 12px; background:rgba(86,227,159,0.1); border-left:3px solid var(--green); border-radius:6px; font-size:13.5px; color:#a3e635;">
+                <strong>Đáp án đúng: B</strong><br>
+                <span>Mức quyền mặc định của Everyone là <strong>Read</strong> — chỉ cho <strong>xem mà không được sửa</strong>. Muốn máy B sửa được thì máy A phải đổi mức quyền sang <strong>Read/Write</strong>.</span>
+              </div>
+            </details>
+          </div>
+        </div>
+      <div class="page-num">Trang 32-38</div>
+    </section>
+  
+
+    <section class="section" id="sec-4">
+      <h2 id="heading-4">🚫 4. Huỷ chia sẻ</h2>
+      
+        <div class="steps-container" style="display:flex; flex-direction:column; gap:12px; margin:16px 0;">
+          
+            <div style="background:var(--panel2); border-left:4px solid var(--cyan); border-radius:10px; padding:12px 16px;">
+              <div style="display:flex; gap:8px; align-items:center; margin-bottom:4px;">
+                <span style="background:var(--cyan); color:#000; font-weight:800; font-size:11px; padding:2px 8px; border-radius:12px;">B1</span>
+                <strong style="color:var(--text); font-size:15px;">Mở cửa sổ Advanced Sharing</strong>
+              </div>
+              <p style="margin:0; font-size:14.5px; color:#b0c4de;">Chọn thư mục cần huỷ chia sẻ, lần lượt thực hiện <strong>các bước giống hệt như khi chia sẻ</strong> (nháy phải chuột → Properties → Sharing), sau đó nháy chuột chọn nút <strong>Advanced Sharing…</strong></p>
+            </div>
+          
+
+            <div style="background:var(--panel2); border-left:4px solid var(--cyan); border-radius:10px; padding:12px 16px;">
+              <div style="display:flex; gap:8px; align-items:center; margin-bottom:4px;">
+                <span style="background:var(--cyan); color:#000; font-weight:800; font-size:11px; padding:2px 8px; border-radius:12px;">B2</span>
+                <strong style="color:var(--text); font-size:15px;">Bỏ dấu tích Share this folder</strong>
+              </div>
+              <p style="margin:0; font-size:14.5px; color:#b0c4de;">Trong cửa sổ Advanced Sharing, nếu thư mục <strong>đang được chia sẻ</strong> thì có <strong>dấu tích ✓ ở ô Share this folder</strong>. Muốn huỷ thì nháy chuột vào ô đó để <strong>bỏ dấu tích</strong>, rồi chọn <strong>OK</strong> hoặc <strong>Apply</strong>.</p>
+            </div>
+          
+        </div>
+      <div class="page-num">Trang 32-38</div>
+    </section>
+  
+
+    <section class="section" id="sec-5">
+      <h2 id="heading-5">🖨️ 5. Chia sẻ máy in</h2>
+      
+        <div class="activity">
+          <div class="activity-badge">💡 Không chia sẻ thì bất tiện thế nào?</div>
+          <p>Trong phòng làm việc của một cơ quan, các máy tính đều nối trong một LAN nhưng <strong>chỉ có một máy in</strong> nối với một máy tính. Nếu máy in không được chia sẻ qua mạng thì <strong>mỗi lần cần in lại phải sao chép dữ liệu đem sang máy tính có máy in</strong> — vừa mất thời gian vừa dễ nhầm lẫn.</p>
+        </div>
+
+<p>Máy tính cung cấp dịch vụ in sẽ <strong>nhận yêu cầu gửi đến từ các máy tính khác trong mạng, xếp thành hàng đợi</strong>. Khi máy in sẵn sàng, nó <strong>điều khiển máy in in lần lượt</strong> các tài liệu được gửi tới. Như vậy, việc chia sẻ máy in thực chất là <strong>biến máy tính có máy in đó thành một máy chủ cung cấp dịch vụ in (Print Server)</strong>.</p>
+
+        <div class="info-box">
+          <p>Để chia sẻ máy in cần <strong>hai điều kiện</strong>: (1) thiết lập được <strong>máy tính cung cấp dịch vụ in</strong> trên mạng — máy in nối với máy này sẽ trở thành <strong>máy in mạng</strong>; (2) máy tính cung cấp dịch vụ in phải <strong>cài đặt máy in bình thường như cài máy in riêng</strong>, sau đó <strong>thiết lập chế độ chia sẻ</strong>. Các máy tính khác <strong>chỉ cần khai báo sử dụng máy in mạng</strong>.</p>
+        </div>
+<p><strong>a) Thiết lập máy cung cấp dịch vụ in</strong> — làm trên máy có máy in cắm vào:</p>
+
+        <div class="steps-container" style="display:flex; flex-direction:column; gap:12px; margin:16px 0;">
+          
+            <div style="background:var(--panel2); border-left:4px solid var(--cyan); border-radius:10px; padding:12px 16px;">
+              <div style="display:flex; gap:8px; align-items:center; margin-bottom:4px;">
+                <span style="background:var(--cyan); color:#000; font-weight:800; font-size:11px; padding:2px 8px; border-radius:12px;">B1</span>
+                <strong style="color:var(--text); font-size:15px;">Mở danh sách máy in</strong>
+              </div>
+              <p style="margin:0; font-size:14.5px; color:#b0c4de;"><strong>Control Panel → Hardware and Sound – View device and printers → Printers & scanners</strong>.</p>
+            </div>
+          
+
+            <div style="background:var(--panel2); border-left:4px solid var(--cyan); border-radius:10px; padding:12px 16px;">
+              <div style="display:flex; gap:8px; align-items:center; margin-bottom:4px;">
+                <span style="background:var(--cyan); color:#000; font-weight:800; font-size:11px; padding:2px 8px; border-radius:12px;">B2</span>
+                <strong style="color:var(--text); font-size:15px;">Chọn máy in mạng</strong>
+              </div>
+              <p style="margin:0; font-size:14.5px; color:#b0c4de;">Nháy chuột vào tên máy in muốn chia sẻ, ví dụ máy <strong>Canon LBP2900</strong>.</p>
+            </div>
+          
+
+            <div style="background:var(--panel2); border-left:4px solid var(--cyan); border-radius:10px; padding:12px 16px;">
+              <div style="display:flex; gap:8px; align-items:center; margin-bottom:4px;">
+                <span style="background:var(--cyan); color:#000; font-weight:800; font-size:11px; padding:2px 8px; border-radius:12px;">B3</span>
+                <strong style="color:var(--text); font-size:15px;">Đặt làm máy in mặc định</strong>
+              </div>
+              <p style="margin:0; font-size:14.5px; color:#b0c4de;">Nháy chuột chọn <strong>Set as default</strong> để đặt máy in thành mặc định.</p>
+            </div>
+          
+
+            <div style="background:var(--panel2); border-left:4px solid var(--cyan); border-radius:10px; padding:12px 16px;">
+              <div style="display:flex; gap:8px; align-items:center; margin-bottom:4px;">
+                <span style="background:var(--cyan); color:#000; font-weight:800; font-size:11px; padding:2px 8px; border-radius:12px;">B4</span>
+                <strong style="color:var(--text); font-size:15px;">Mở cửa sổ thiết lập chia sẻ</strong>
+              </div>
+              <p style="margin:0; font-size:14.5px; color:#b0c4de;">Chọn <strong>Printer properties</strong>.</p>
+            </div>
+          
+
+            <div style="background:var(--panel2); border-left:4px solid var(--cyan); border-radius:10px; padding:12px 16px;">
+              <div style="display:flex; gap:8px; align-items:center; margin-bottom:4px;">
+                <span style="background:var(--cyan); color:#000; font-weight:800; font-size:11px; padding:2px 8px; border-radius:12px;">B5</span>
+                <strong style="color:var(--text); font-size:15px;">Chia sẻ máy in</strong>
+              </div>
+              <p style="margin:0; font-size:14.5px; color:#b0c4de;">Trong cửa sổ Properties, chọn thẻ <strong>Sharing</strong>. Nên <strong>đặt lại tên máy in cho gợi nhớ</strong> — thay vì tên mặc định “Canon LBP2900” có thể đặt là “Máy in mạng Canon LBP2900” để người dùng trên mạng dễ nhận biết. Chọn <strong>OK</strong> và <strong>Apply</strong> để xác nhận.</p>
+            </div>
+          
+        </div>
+<p><strong>b) Kết nối với máy in mạng từ các máy tính khác:</strong></p>
+
+        <div class="steps-container" style="display:flex; flex-direction:column; gap:12px; margin:16px 0;">
+          
+            <div style="background:var(--panel2); border-left:4px solid var(--cyan); border-radius:10px; padding:12px 16px;">
+              <div style="display:flex; gap:8px; align-items:center; margin-bottom:4px;">
+                <span style="background:var(--cyan); color:#000; font-weight:800; font-size:11px; padding:2px 8px; border-radius:12px;">B1</span>
+                <strong style="color:var(--text); font-size:15px;">Tìm máy in mạng</strong>
+              </div>
+              <p style="margin:0; font-size:14.5px; color:#b0c4de;">Vào <strong>Printers & scanners</strong> như trên, chọn <strong>Add device</strong> — nút này chuyển thành <strong>Refresh</strong> (làm mới danh sách). Nếu không thấy máy in muốn kết nối, nháy vào <strong>The printer that I want isn’t listed</strong>, rồi ở cửa sổ tìm máy in chọn nút <strong>Browse…</strong>. Các máy tính trong mạng sẽ hiện ra; nháy vào máy chia sẻ máy in (ví dụ MAY_1) thì <strong>danh sách máy in của máy đó hiện ra ở khung bên phải</strong>.</p>
+            </div>
+          
+
+            <div style="background:var(--panel2); border-left:4px solid var(--cyan); border-radius:10px; padding:12px 16px;">
+              <div style="display:flex; gap:8px; align-items:center; margin-bottom:4px;">
+                <span style="background:var(--cyan); color:#000; font-weight:800; font-size:11px; padding:2px 8px; border-radius:12px;">B2</span>
+                <strong style="color:var(--text); font-size:15px;">Thêm máy in mạng</strong>
+              </div>
+              <p style="margin:0; font-size:14.5px; color:#b0c4de;">Chọn tên máy in cần kết nối rồi nháy <strong>Select</strong> (chọn). Hộp thoại xác nhận xuất hiện — chọn <strong>Next</strong> để chuyển sang công việc tiếp theo.</p>
+            </div>
+          
+
+            <div style="background:var(--panel2); border-left:4px solid var(--cyan); border-radius:10px; padding:12px 16px;">
+              <div style="display:flex; gap:8px; align-items:center; margin-bottom:4px;">
+                <span style="background:var(--cyan); color:#000; font-weight:800; font-size:11px; padding:2px 8px; border-radius:12px;">B3</span>
+                <strong style="color:var(--text); font-size:15px;">Sử dụng máy in mạng</strong>
+              </div>
+              <p style="margin:0; font-size:14.5px; color:#b0c4de;">Mở ứng dụng soạn thảo văn bản rồi in thử một trang bằng máy in mạng — trong hộp thoại Print, chọn đúng tên máy in vừa thêm.</p>
+            </div>
+          
+        </div>
+
+        <div class="cau-hoi" style="margin:16px 0; border:1px solid rgba(56,217,245,0.3); background:rgba(56,217,245,0.04); border-radius:14px; padding:16px 20px;">
+          <div class="q-num" style="background:var(--cyan); color:#000; font-weight:800; border-radius:50%; width:28px; height:28px; display:flex; align-items:center; justify-content:center; flex-shrink:0;">?</div>
+          <div style="flex:1;">
+            <div class="q-text" style="font-weight:600; color:#fff; font-size:15.5px; margin-bottom:10px;">Nói “chia sẻ máy in” thực chất là làm gì?</div>
+            <div style="display:grid; grid-template-columns:1fr; gap:6px; margin-bottom:10px;">
+              
+                <div style="background:rgba(255,255,255,0.04); border:1px solid var(--border); border-radius:8px; padding:6px 12px; font-size:14px; color:#c8d8ec;">
+                  <b>A.</b> Nối máy in trực tiếp vào bộ định tuyến bằng cáp mạng
+                </div>
+              
+                <div style="background:rgba(255,255,255,0.04); border:1px solid var(--border); border-radius:8px; padding:6px 12px; font-size:14px; color:#c8d8ec;">
+                  <b>B.</b> Biến máy tính có máy in thành máy chủ cung cấp dịch vụ in (Print Server)
+                </div>
+              
+                <div style="background:rgba(255,255,255,0.04); border:1px solid var(--border); border-radius:8px; padding:6px 12px; font-size:14px; color:#c8d8ec;">
+                  <b>C.</b> Sao chép trình điều khiển máy in sang tất cả các máy trong mạng
+                </div>
+              
+                <div style="background:rgba(255,255,255,0.04); border:1px solid var(--border); border-radius:8px; padding:6px 12px; font-size:14px; color:#c8d8ec;">
+                  <b>D.</b> Đặt máy in ở giữa phòng để mọi người cùng dùng
+                </div>
+              
+            </div>
+            <details style="margin-top:8px;">
+              <summary style="cursor:pointer; color:var(--cyan); font-size:13px; font-weight:600;">👉 Xem đáp án & giải thích</summary>
+              <div style="margin-top:6px; padding:8px 12px; background:rgba(86,227,159,0.1); border-left:3px solid var(--green); border-radius:6px; font-size:13.5px; color:#a3e635;">
+                <strong>Đáp án đúng: B</strong><br>
+                <span>Máy tính cung cấp dịch vụ in <strong>nhận yêu cầu từ các máy khác, xếp thành hàng đợi</strong>, rồi khi máy in sẵn sàng thì <strong>điều khiển máy in in lần lượt</strong> từng tài liệu. Nói cách khác, chia sẻ máy in là biến máy tính đó thành một <strong>Print Server</strong>.</span>
+              </div>
+            </details>
+          </div>
+        </div>
+      <div class="page-num">Trang 32-38</div>
+    </section>
+  
+
+  <!-- HỘP GHI NHỚ CUỐI BÀI -->
+  <section class="section" id="ghi-nho">
+    <div class="ghi-nho">
+      <div class="ghi-nho-title">📌 Em cần ghi nhớ</div>
+      <ul style="padding-left:20px;">
+        <li style="font-size:15.5px; line-height:1.7; margin-bottom:10px;"><strong>Tài nguyên</strong> trên mạng có thể là <strong>dữ liệu, phần mềm hay thiết bị</strong>. Chia sẻ là cho phép người ở máy này <strong>nhìn thấy và sử dụng</strong> tài nguyên trên máy khác trong mạng.</li>
+<li style="font-size:15.5px; line-height:1.7; margin-bottom:10px;">Chỉ cần <strong>hai điều kiện</strong>: máy được <strong>kết nối mạng</strong> và người chủ <strong>cấp quyền truy cập</strong> — không cần “kết bạn” hay trả phí.</li>
+<li style="font-size:15.5px; line-height:1.7; margin-bottom:10px;">Chuẩn bị máy: đặt <strong>mạng riêng (Private)</strong>, bật <strong>Network discovery</strong> và <strong>File and printer sharing</strong>, <strong>tạm tắt tường lửa</strong> trong thời gian chia sẻ.</li>
+<li style="font-size:15.5px; line-height:1.7; margin-bottom:10px;">Chia sẻ thư mục: nháy phải chuột → <strong>Properties → Sharing → Share…</strong> → chọn <strong>Everyone</strong>. Mức quyền mặc định là <strong>Read</strong> (chỉ xem); muốn sửa phải đổi sang <strong>Read/Write</strong>.</li>
+<li style="font-size:15.5px; line-height:1.7; margin-bottom:10px;">Huỷ chia sẻ: vào <strong>Advanced Sharing</strong> rồi <strong>bỏ dấu tích ở ô Share this folder</strong>.</li>
+<li style="font-size:15.5px; line-height:1.7; margin-bottom:10px;">Chia sẻ máy in là <strong>biến máy tính có máy in thành máy chủ cung cấp dịch vụ in (Print Server)</strong>: nó nhận yêu cầu, xếp hàng đợi rồi điều khiển máy in in lần lượt.</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- NÚT CHUYỂN BÀI DƯỚI CÙNG -->
+  <div class="nav-btns" style="margin-top:32px;">
+    <a href="/sgk/bai-04.html" class="nav-btn">← Giao thức mạng</a>
+    <a href="/luyen/bai-05" class="nav-btn" style="background:linear-gradient(90deg, var(--cyan), var(--orange)); color:#fff; border:none;">🎯 Luyện trắc nghiệm ngay</a>
+    <a href="/sgk/bai-06.html" class="nav-btn">Giao tiếp và ứng xử trong không gian mạng →</a>
+  </div>
+</main>
+
+</div>
+
+<script>
+let fs = 18;
+function changeFont(d) { fs = Math.min(28, Math.max(14, fs + d)); document.body.style.fontSize = fs + 'px'; }
+let light = false;
+function toggleTheme() {
+  light = !light;
+  document.documentElement.style.setProperty('--bg', light ? '#f0f4f8' : '#070b14');
+  document.documentElement.style.setProperty('--text', light ? '#1a2540' : '#e8eef8');
+  document.documentElement.style.setProperty('--panel', light ? '#fff' : '#111a2e');
+  document.documentElement.style.setProperty('--panel2', light ? '#f5f8fc' : '#162035');
+  document.documentElement.style.setProperty('--border', light ? '#d0daea' : '#1e2f4d');
+  document.body.style.background = light
+    ? 'radial-gradient(ellipse at 20% 10%, #d8e8f8 0%, #f0f4f8 60%)'
+    : 'radial-gradient(ellipse at 20% 10%, #0d1f3c 0%, #070b14 50%)';
+}
+window.addEventListener('scroll', () => {
+  const doc = document.documentElement;
+  const scrolled = doc.scrollTop || document.body.scrollTop;
+  const total = doc.scrollHeight - doc.clientHeight;
+  const pct = total > 0 ? Math.round((scrolled / total) * 100) : 0;
+  const p = document.getElementById('prog');
+  const pl = document.getElementById('prog-label');
+  if (p) p.style.width = pct + '%';
+  if (pl) pl.textContent = 'Tiến độ đọc: ' + pct + '%';
+});
+</script>
+</body>
+</html>

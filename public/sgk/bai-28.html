@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dự án: Hoàn thiện website với Google Sites – Tin học 12 KNTT (SGK Điện tử)</title>
+<meta name="description" content="SGK Tin học 12 Kết nối tri thức – Dự án: Hoàn thiện website với Google Sites. Chủ đề 7. Tạo trang web với Google Sites.">
+<style>
+:root {
+  --bg: #070b14; --bg2: #0d1423; --panel: #111a2e; --panel2: #162035; --border: #1e2f4d;
+  --text: #e8eef8; --muted: #8899b8; --orange: #ff6b35; --orange2: #ff9a64;
+  --cyan: #38d9f5; --cyan2: #7ce8fa; --yellow: #ffd060; --green: #56e39f; --pink: #f06dba; --purple: #a78bfa;
+  --fs: 18px;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  background: radial-gradient(ellipse at 20% 10%, #0d1f3c 0%, #070b14 50%);
+  color: var(--text); font-family: 'Inter','Segoe UI',-apple-system,BlinkMacSystemFont,'Roboto',Arial,sans-serif;
+  font-size: var(--fs); line-height: 1.75; min-height: 100vh;
+}
+.app { display: grid; grid-template-columns: 280px 1fr; min-height: 100vh; }
+.sidebar { position:sticky; top:0; height:100vh; overflow-y:auto; background:rgba(7,11,20,.97); border-right:1px solid var(--border); padding:24px 16px; backdrop-filter:blur(20px); }
+.brand-box { margin-bottom:24px; }
+.series-label { font-size:11px; letter-spacing:2px; text-transform:uppercase; color:var(--cyan); font-weight:700; margin-bottom:6px; }
+.brand-title { font-size:20px; font-weight:900; color:#fff; line-height:1.2; }
+.brand-title span { color:var(--orange); }
+.brand-sub { color:var(--muted); font-size:12px; margin-top:5px; }
+.toc-title { font-size:11px; letter-spacing:1.5px; text-transform:uppercase; color:var(--muted); font-weight:700; margin:20px 0 8px; padding:0 8px; }
+.toc a { display:block; color:#9aaec8; text-decoration:none; padding:9px 12px; border-radius:10px; margin:2px 0; font-size:13.5px; font-weight:500; transition:all .2s; border-left:3px solid transparent; }
+.toc a:hover { background:rgba(56,217,245,.07); color:var(--cyan); border-left-color:var(--cyan); }
+.toc a.active { background:rgba(255,107,53,.1); color:var(--orange); border-left-color:var(--orange); }
+.ctrl-box { margin-top:24px; padding:14px; border:1px solid var(--border); border-radius:14px; background:rgba(255,255,255,.03); }
+.ctrl-box h4 { font-size:11px; letter-spacing:1px; text-transform:uppercase; color:var(--muted); margin-bottom:10px; }
+.ctrl-row { display:flex; gap:8px; margin-bottom:8px; }
+.ctrl-btn { flex:1; background:var(--panel2); border:1px solid var(--border); color:var(--text); border-radius:9px; padding:8px 6px; cursor:pointer; font-size:13px; font-weight:600; transition:all .2s; text-align:center; text-decoration:none; display:inline-block; }
+.ctrl-btn:hover { background:var(--border); color:#fff; }
+.progress-bar { height:4px; background:var(--panel2); border-radius:4px; overflow:hidden; margin-top:10px; }
+.progress-fill { height:100%; width:0%; background:linear-gradient(90deg,var(--cyan),var(--orange)); transition:width .3s; border-radius:4px; }
+.main { max-width:860px; margin:0 auto; padding:32px 28px 80px; }
+.hero { background:linear-gradient(135deg,#0f2040 0%,#0a1628 60%,#131020 100%); border:1px solid var(--border); border-radius:24px; padding:36px 40px; margin-bottom:28px; box-shadow:0 24px 80px rgba(0,0,0,.5); position:relative; overflow:hidden; }
+.hero::before { content:'28'; position:absolute; right:30px; top:20px; font-size:120px; font-weight:900; color:rgba(56,217,245,.05); line-height:1; user-select:none; }
+.chu-de-tag { display:inline-flex; align-items:center; gap:8px; background:rgba(56,217,245,.12); border:1px solid rgba(56,217,245,.3); color:var(--cyan); font-size:13px; font-weight:700; padding:6px 14px; border-radius:20px; margin-bottom:16px; letter-spacing:.5px; }
+.hero h1 { font-size:clamp(26px,4vw,38px); font-weight:900; line-height:1.2; background:linear-gradient(90deg,#fff 0%,var(--cyan2) 50%,var(--orange2) 100%); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; margin-bottom:14px; }
+.hero-desc { color:#b0c4de; font-size:15.5px; line-height:1.6; }
+.section { background:rgba(11,17,30,.9); border:1px solid var(--border); border-radius:20px; padding:28px 32px 36px; margin-bottom:24px; scroll-margin-top:20px; position:relative; transition:border-color .3s; }
+.section:hover { border-color:rgba(56,217,245,.2); }
+.page-num { position:absolute; right:20px; bottom:14px; color:var(--muted); font-size:12px; font-weight:600; background:var(--panel2); padding:3px 10px; border-radius:10px; }
+h2 { font-size:clamp(20px,2.5vw,26px); font-weight:800; color:#fff; margin:28px 0 14px; display:flex; align-items:center; gap:10px; }
+h2::before { content:''; display:inline-block; width:4px; height:24px; background:linear-gradient(var(--orange),var(--cyan)); border-radius:2px; flex-shrink:0; }
+p { color:#d0dcea; margin-bottom:14px; }
+p:last-child { margin-bottom:0; }
+strong { color:#fff; }
+em { color:var(--cyan2); font-style:italic; }
+code { background:rgba(255,255,255,0.08); color:var(--orange2); padding:2px 6px; border-radius:4px; font-size:0.9em; font-family:monospace; }
+ul, ol { padding-left:22px; margin:12px 0; }
+li { color:#c8d8ec; margin-bottom:8px; }
+li::marker { color:var(--cyan); }
+.info-box { background:linear-gradient(135deg,#071e2e,#071828); border:1px dashed rgba(56,217,245,.4); border-radius:14px; padding:18px 22px; margin:20px 0; }
+.info-box p, .info-box li { color:#b8d8f0; }
+.activity { background:linear-gradient(135deg,#1a120a,#130f0a); border:1px solid rgba(255,160,60,.3); border-left:4px solid var(--orange); border-radius:14px; padding:18px 22px; margin:20px 0; }
+.activity-badge { display:inline-flex; align-items:center; gap:6px; background:var(--orange); color:#1a0a00; font-size:12px; font-weight:800; padding:4px 12px; border-radius:6px; margin-bottom:10px; letter-spacing:.5px; text-transform:uppercase; }
+.ghi-nho { background:linear-gradient(135deg,#1a2a10,#0f1e0a); border:1px solid rgba(86,227,159,.3); border-left:4px solid var(--green); border-radius:14px; padding:20px 24px; margin:24px 0; }
+.ghi-nho-title { color:var(--green); font-weight:800; font-size:15px; text-transform:uppercase; letter-spacing:1px; margin-bottom:10px; display:flex; align-items:center; gap:8px; }
+.ghi-nho p, .ghi-nho li { color:#c8f0d8; }
+.nav-btns { display:flex; gap:12px; margin:20px 0; }
+.nav-btn { background:var(--panel); border:1px solid var(--border); color:var(--text); border-radius:10px; padding:10px 18px; text-decoration:none; font-size:14px; font-weight:600; transition:all .2s; flex:1; text-align:center; }
+.nav-btn:hover { background:var(--panel2); border-color:var(--cyan); color:#fff; }
+.field-grid { display:grid; grid-template-columns:1fr 1fr; gap:14px; margin:18px 0; }
+.field-card { background:var(--panel2); border:1px solid var(--border); border-radius:14px; padding:16px 18px; }
+.img-side { display:grid; grid-template-columns:1fr 1fr; gap:14px; margin:18px 0; }
+.img-half { border-radius:12px; border:1px solid var(--border); }
+@media (max-width: 860px) {
+  .app { grid-template-columns: 1fr; }
+  .sidebar { display: none; }
+  .main { padding: 20px 16px 60px; }
+  .field-grid, .img-side { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+
+<div class="app">
+
+<!-- SIDEBAR -->
+<aside class="sidebar">
+  <div class="brand-box">
+    <div class="series-label">KẾT NỐI TRI THỨC</div>
+    <div class="brand-title">TIN HỌC <span>12</span></div>
+    <div class="brand-sub">Sách Giáo Khoa Điện Tử (ICT)</div>
+  </div>
+
+  <div class="ctrl-box">
+    <h4>Cỡ chữ & Giao diện</h4>
+    <div class="ctrl-row">
+      <button class="ctrl-btn" onclick="changeFont(-1)">A -</button>
+      <button class="ctrl-btn" onclick="changeFont(1)">A +</button>
+      <button class="ctrl-btn" onclick="toggleTheme()">🌓 Nền</button>
+    </div>
+    <div style="font-size:12px; color:var(--muted); margin-top:8px;" id="prog-label">Tiến độ đọc: 0%</div>
+    <div class="progress-bar"><div class="progress-fill" id="prog"></div></div>
+  </div>
+
+  <div class="toc-title">Mục lục bài học</div>
+  <nav class="toc">
+    
+      <a href="#sec-1">1. Nhiệm vụ và tiêu chí đánh giá sản phẩm website</a>
+    
+      <a href="#sec-2">2. Quy trình 5 bước xây dựng và hoàn thiện website</a>
+    
+      <a href="#sec-3">3. Xuất bản (Publish) và chia sẻ trang web ra Internet</a>
+    
+    <a href="#ghi-nho">📌 Ghi nhớ cốt lõi</a>
+  </nav>
+
+  <div class="ctrl-box" style="margin-top:20px;">
+    <h4>Luyện tập</h4>
+    <a href="/luyen/bai-28" class="ctrl-btn" style="background:var(--cyan); color:#000; font-weight:700;">🎯 Vào Luyện Trắc Nghiệm</a>
+  </div>
+</aside>
+
+<!-- MAIN CONTENT -->
+<main class="main">
+  <!-- HERO BANNER -->
+  <div class="hero">
+    <div class="chu-de-tag">Chủ đề 7. Tạo trang web với Google Sites</div>
+    <h1>Dự án: Hoàn thiện website với Google Sites</h1>
+    <div class="hero-desc">Bài thực hành tổng kết khép lại toàn bộ chương trình Tin học 12 định hướng Tin học ứng dụng (ICT). Bạn sẽ vận dụng tổng hợp tất cả kĩ năng đã học để <strong>xây dựng một website hoàn chỉnh</strong>, kiểm thử tính tương thích đa thiết bị và <strong>xuất bản (Publish)</strong> trang web lên Internet.</div>
+  </div>
+
+  <!-- NÚT CHUYỂN BÀI -->
+  <div class="nav-btns">
+    <a href="/sgk/bai-27.html" class="nav-btn">← Biểu mẫu thu thập ý kiến và tạo tương tác</a>
+    <div style="flex:1;"></div>
+  </div>
+
+  <!-- CÁC MỤC NỘI DUNG -->
+  
+    <section class="section" id="sec-1">
+      <h2 id="heading-1">🏆 1. Nhiệm vụ và tiêu chí đánh giá sản phẩm website</h2>
+      <p>Trong bài thực hành tổng hợp, học sinh có thể thực hiện sản phẩm theo hình thức <strong>cá nhân hoặc theo nhóm nhỏ (không quá 3 người)</strong> trong thời lượng khoảng 3 tiết thực hành trên lớp.</p>
+<p>Một sản phẩm website đạt chuẩn theo SGK cần đáp ứng đầy đủ các tiêu chí cốt lõi sau:</p>
+
+        <ul>
+          <li><strong>Cấu trúc hoàn chỉnh:</strong> Gồm một trang chủ và các trang con độc lập (chứa ít nhất <strong>3 đến 4 bài viết</strong> ngắn gọn), có thanh điều hướng phân cấp rõ ràng và phần chân trang đồng bộ.</li>
+<li><strong>Dữ liệu đa phương tiện:</strong> Tất cả các trang đều sử dụng dữ liệu đa phương tiện phong phú (hình ảnh chất lượng, video nhúng, bản đồ, âm thanh), <strong>không phải là trang văn bản thuần chữ</strong> nhàm chán.</li>
+<li><strong>Tính tương tác:</strong> Có hệ thống liên kết nội bộ thông suốt giữa các trang (như các nút bấm, dòng chữ 'Đọc tiếp'), liên kết ra ngoài, và có ít nhất một biểu mẫu Google Forms để khảo sát ý kiến hoặc trắc nghiệm kiến thức.</li>
+<li><strong>Thẩm mĩ và phong cách:</strong> Bố cục các khối nội dung cân đối, màu sắc hài hòa, phông chữ dễ đọc, tuân thủ một chủ đề giao diện (theme) thống nhất.</li>
+        </ul>
+
+        <div class="cau-hoi" style="margin:16px 0; border:1px solid rgba(56,217,245,0.3); background:rgba(56,217,245,0.04); border-radius:14px; padding:16px 20px;">
+          <div class="q-num" style="background:var(--cyan); color:#000; font-weight:800; border-radius:50%; width:28px; height:28px; display:flex; align-items:center; justify-content:center; flex-shrink:0;">?</div>
+          <div style="flex:1;">
+            <div class="q-text" style="font-weight:600; color:#fff; font-size:15.5px; margin-bottom:10px;">Theo yêu cầu của SGK, một sản phẩm website hoàn chỉnh trong bài thực hành tổng hợp cần bao gồm ít nhất bao nhiêu bài viết?</div>
+            <div style="display:grid; grid-template-columns:1fr; gap:6px; margin-bottom:10px;">
+              
+                <div style="background:rgba(255,255,255,0.04); border:1px solid var(--border); border-radius:8px; padding:6px 12px; font-size:14px; color:#c8d8ec;">
+                  <b>A.</b> Ít nhất 3 đến 4 bài viết ngắn gọn kèm dữ liệu đa phương tiện
+                </div>
+              
+                <div style="background:rgba(255,255,255,0.04); border:1px solid var(--border); border-radius:8px; padding:6px 12px; font-size:14px; color:#c8d8ec;">
+                  <b>B.</b> Chỉ cần đúng 1 bài viết duy nhất trên trang chủ là đủ yêu cầu
+                </div>
+              
+                <div style="background:rgba(255,255,255,0.04); border:1px solid var(--border); border-radius:8px; padding:6px 12px; font-size:14px; color:#c8d8ec;">
+                  <b>C.</b> Bắt buộc phải có tối thiểu 20 bài viết dài như một trang báo lớn
+                </div>
+              
+                <div style="background:rgba(255,255,255,0.04); border:1px solid var(--border); border-radius:8px; padding:6px 12px; font-size:14px; color:#c8d8ec;">
+                  <b>D.</b> Không cần bài viết nào, chỉ cần chèn các tệp video giải trí
+                </div>
+              
+            </div>
+            <details style="margin-top:8px;">
+              <summary style="cursor:pointer; color:var(--cyan); font-size:13px; font-weight:600;">👉 Xem đáp án & giải thích</summary>
+              <div style="margin-top:6px; padding:8px 12px; background:rgba(86,227,159,0.1); border-left:3px solid var(--green); border-radius:6px; font-size:13.5px; color:#a3e635;">
+                <strong>Đáp án đúng: A</strong><br>
+                <span>SGK nêu rõ yêu cầu về nội dung: website bao gồm các tư liệu đa phương tiện với ít nhất 3 đến 4 bài viết ngắn gọn.</span>
+              </div>
+            </details>
+          </div>
+        </div>
+
+        <div class="cau-hoi" style="margin:16px 0; border:1px solid rgba(56,217,245,0.3); background:rgba(56,217,245,0.04); border-radius:14px; padding:16px 20px;">
+          <div class="q-num" style="background:var(--cyan); color:#000; font-weight:800; border-radius:50%; width:28px; height:28px; display:flex; align-items:center; justify-content:center; flex-shrink:0;">?</div>
+          <div style="flex:1;">
+            <div class="q-text" style="font-weight:600; color:#fff; font-size:15.5px; margin-bottom:10px;">Theo phần yêu cầu chung của SGK, đặc điểm bắt buộc đối với tất cả các trang web trong sản phẩm là gì?</div>
+            <div style="display:grid; grid-template-columns:1fr; gap:6px; margin-bottom:10px;">
+              
+                <div style="background:rgba(255,255,255,0.04); border:1px solid var(--border); border-radius:8px; padding:6px 12px; font-size:14px; color:#c8d8ec;">
+                  <b>A.</b> Đều có dữ liệu đa phương tiện, không phải trang văn bản thuần chữ
+                </div>
+              
+                <div style="background:rgba(255,255,255,0.04); border:1px solid var(--border); border-radius:8px; padding:6px 12px; font-size:14px; color:#c8d8ec;">
+                  <b>B.</b> Chỉ được chứa chữ viết thuần tuý, không được phép chèn hình ảnh
+                </div>
+              
+                <div style="background:rgba(255,255,255,0.04); border:1px solid var(--border); border-radius:8px; padding:6px 12px; font-size:14px; color:#c8d8ec;">
+                  <b>C.</b> Bắt buộc phải có nền màu đen và chữ màu đỏ trên mọi trang web
+                </div>
+              
+                <div style="background:rgba(255,255,255,0.04); border:1px solid var(--border); border-radius:8px; padding:6px 12px; font-size:14px; color:#c8d8ec;">
+                  <b>D.</b> Không được phép có bất kì liên kết nào giữa các trang với nhau
+                </div>
+              
+            </div>
+            <details style="margin-top:8px;">
+              <summary style="cursor:pointer; color:var(--cyan); font-size:13px; font-weight:600;">👉 Xem đáp án & giải thích</summary>
+              <div style="margin-top:6px; padding:8px 12px; background:rgba(86,227,159,0.1); border-left:3px solid var(--green); border-radius:6px; font-size:13.5px; color:#a3e635;">
+                <strong>Đáp án đúng: A</strong><br>
+                <span>SGK yêu cầu: tất cả các trang web đều có dữ liệu đa phương tiện, không phải trang văn bản thuần chữ.</span>
+              </div>
+            </details>
+          </div>
+        </div>
+      <div class="page-num">Trang 187-193</div>
+    </section>
+  
+
+    <section class="section" id="sec-2">
+      <h2 id="heading-2">🛠️ 2. Quy trình 5 bước xây dựng và hoàn thiện website</h2>
+      <p>Để hoàn thành sản phẩm đúng tiến độ và chất lượng cao, các nhóm nên tuân thủ quy trình 5 bước khoa học:</p>
+
+        <ul>
+          <li><strong>Bước 1 — Chọn chủ đề và lập dàn ý:</strong> Chọn chủ đề vừa sức, gần gũi (ví dụ: <em>Địa danh lịch sử - văn hóa quê hương Na Rì</em>, <em>Giới thiệu Câu lạc bộ Tin học</em>, <em>Kỉ yếu lớp 12</em>, <em>Sổ tay an toàn trên không gian mạng</em>). Lập sơ đồ cây các trang cần tạo.</li>
+<li><strong>Bước 2 — Thu thập và chuẩn bị tư liệu:</strong> Soạn thảo sẵn các đoạn văn bản tóm tắt, chọn lọc ảnh chụp sắc nét, tìm video YouTube minh họa, tạo sẵn biểu mẫu Forms trong Google Drive.</li>
+<li><strong>Bước 3 — Xây dựng website trên Google Sites:</strong> Tạo trang chủ, thiết lập banner, logo, favicon; dùng các khối mẫu (Content blocks) để bố cục thân trang; tạo các trang con và liên kết điều hướng; nhúng biểu mẫu và chân trang.</li>
+<li><strong>Bước 4 — Xem trước (Preview) và kiểm thử:</strong> Bấm nút biểu tượng màn hình và điện thoại ở góc trên cửa sổ thiết kế để xem trước website ở 3 chế độ: <em>Màn hình lớn (Máy tính)</em>, <em>Máy tính bảng (Tablet)</em> và <em>Điện thoại di động (Phone)</em>. Thử nhấp vào tất cả các liên kết để đảm bảo không bị đứt link, và gửi thử biểu mẫu phản hồi.</li>
+<li><strong>Bước 5 — Xuất bản (Publish) website:</strong> Bấm nút <strong>Công bố (Publish)</strong>, nhập địa chỉ trang web (dạng chữ thường không dấu), thiết lập quyền xem công khai, và sao chép đường dẫn xuất bản để nộp bài hoặc chia sẻ.</li>
+        </ul>
+
+        <div class="cau-hoi" style="margin:16px 0; border:1px solid rgba(56,217,245,0.3); background:rgba(56,217,245,0.04); border-radius:14px; padding:16px 20px;">
+          <div class="q-num" style="background:var(--cyan); color:#000; font-weight:800; border-radius:50%; width:28px; height:28px; display:flex; align-items:center; justify-content:center; flex-shrink:0;">?</div>
+          <div style="flex:1;">
+            <div class="q-text" style="font-weight:600; color:#fff; font-size:15.5px; margin-bottom:10px;">Tính năng Xem trước (Preview) trong Google Sites hỗ trợ người thiết kế kiểm tra giao diện trên những loại màn hình thiết bị nào?</div>
+            <div style="display:grid; grid-template-columns:1fr; gap:6px; margin-bottom:10px;">
+              
+                <div style="background:rgba(255,255,255,0.04); border:1px solid var(--border); border-radius:8px; padding:6px 12px; font-size:14px; color:#c8d8ec;">
+                  <b>A.</b> Màn hình lớn máy tính, máy tính bảng và điện thoại thông minh
+                </div>
+              
+                <div style="background:rgba(255,255,255,0.04); border:1px solid var(--border); border-radius:8px; padding:6px 12px; font-size:14px; color:#c8d8ec;">
+                  <b>B.</b> Chỉ duy nhất một loại màn hình máy tính bàn, không có loại khác
+                </div>
+              
+                <div style="background:rgba(255,255,255,0.04); border:1px solid var(--border); border-radius:8px; padding:6px 12px; font-size:14px; color:#c8d8ec;">
+                  <b>C.</b> Chỉ duy nhất màn hình của các loại đồng hồ thông minh đeo tay
+                </div>
+              
+                <div style="background:rgba(255,255,255,0.04); border:1px solid var(--border); border-radius:8px; padding:6px 12px; font-size:14px; color:#c8d8ec;">
+                  <b>D.</b> Màn hình tivi công cộng trong các trung tâm mua sắm ngoài trời
+                </div>
+              
+            </div>
+            <details style="margin-top:8px;">
+              <summary style="cursor:pointer; color:var(--cyan); font-size:13px; font-weight:600;">👉 Xem đáp án & giải thích</summary>
+              <div style="margin-top:6px; padding:8px 12px; background:rgba(86,227,159,0.1); border-left:3px solid var(--green); border-radius:6px; font-size:13.5px; color:#a3e635;">
+                <strong>Đáp án đúng: A</strong><br>
+                <span>Công cụ Preview của Google Sites cho phép chuyển đổi linh hoạt giữa 3 kích thước màn hình: Máy tính (Large screen), Máy tính bảng (Tablet) và Điện thoại (Phone) để kiểm tra tính tương thích.</span>
+              </div>
+            </details>
+          </div>
+        </div>
+      <div class="page-num">Trang 187-193</div>
+    </section>
+  
+
+    <section class="section" id="sec-3">
+      <h2 id="heading-3">🚀 3. Xuất bản (Publish) và chia sẻ trang web ra Internet</h2>
+      <p>Khi thiết kế trên Google Sites, trang web mới chỉ ở dạng bản nháp cá nhân. Để người khác trên Internet có thể truy cập được, bắt buộc phải thực hiện thao tác <strong>Công bố (Publish)</strong>:</p>
+
+        <ul>
+          <li>Nhấp vào nút <strong>Công bố (Publish)</strong> màu xanh ở góc trên bên phải.</li>
+<li>Tại ô <strong>Địa chỉ web (Web address)</strong>, nhập phần đuôi định danh của website (ví dụ: <em><code>clb-tin-hoc-nari</code></em>). Địa chỉ đầy đủ của trang sẽ là: <code>https://sites.google.com/view/clb-tin-hoc-nari</code>.</li>
+<li>Tại mục <strong>Ai có thể xem trang web của tôi (Who can view my site)</strong>, chọn <em>Bất kì ai (Anyone)</em> để mọi người đều có thể truy cập mà không bị chặn quyền.</li>
+<li>Bấm nút <strong>Công bố</strong> để hoàn tất.</li>
+<li>Để gửi link cho thầy cô hoặc bạn bè, bấm vào biểu tượng mắt xích <strong>Sao chép đường liên kết tới trang web đã xuất bản (Copy published site link)</strong>.</li>
+        </ul>
+
+        <div class="info-box">
+          <p>Sau khi xuất bản, mỗi khi chỉnh sửa nội dung mới trên trang web, bạn cần nhấn lại nút 'Công bố' để Google Sites cập nhật các thay đổi mới nhất lên Internet.</p>
+        </div>
+      <div class="page-num">Trang 187-193</div>
+    </section>
+  
+
+  <!-- HỘP GHI NHỚ CUỐI BÀI -->
+  <section class="section" id="ghi-nho">
+    <div class="ghi-nho">
+      <div class="ghi-nho-title">📌 Em cần ghi nhớ</div>
+      <ul style="padding-left:20px;">
+        <li style="font-size:15.5px; line-height:1.7; margin-bottom:10px;">Website hoàn chỉnh gồm trang chủ và các trang con (ít nhất 3-4 bài viết), sử dụng tư liệu đa phương tiện, không phải trang thuần chữ.</li>
+<li style="font-size:15.5px; line-height:1.7; margin-bottom:10px;">Quy trình 5 bước xây dựng website: Chọn chủ đề & lập dàn ý → Chuẩn bị tư liệu → Thiết kế trên Google Sites → Xem trước (Preview) kiểm thử → Xuất bản (Publish).</li>
+<li style="font-size:15.5px; line-height:1.7; margin-bottom:10px;">Tính năng <strong>Xem trước (Preview)</strong> hỗ trợ kiểm tra giao diện trên 3 chế độ: Màn hình lớn (PC), Máy tính bảng (Tablet) và Điện thoại thông minh (Phone).</li>
+<li style="font-size:15.5px; line-height:1.7; margin-bottom:10px;">Thao tác <strong>Công bố (Publish)</strong> tạo địa chỉ web trực tuyến công khai; cần công bố lại mỗi khi có chỉnh sửa nội dung mới.</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- NÚT CHUYỂN BÀI DƯỚI CÙNG -->
+  <div class="nav-btns" style="margin-top:32px;">
+    <a href="/sgk/bai-27.html" class="nav-btn">← Biểu mẫu thu thập ý kiến và tạo tương tác</a>
+    <a href="/luyen/bai-28" class="nav-btn" style="background:linear-gradient(90deg, var(--cyan), var(--orange)); color:#fff; border:none;">🎯 Luyện trắc nghiệm ngay</a>
+    <div style="flex:1;"></div>
+  </div>
+</main>
+
+</div>
+
+<script>
+let fs = 18;
+function changeFont(d) { fs = Math.min(28, Math.max(14, fs + d)); document.body.style.fontSize = fs + 'px'; }
+let light = false;
+function toggleTheme() {
+  light = !light;
+  document.documentElement.style.setProperty('--bg', light ? '#f0f4f8' : '#070b14');
+  document.documentElement.style.setProperty('--text', light ? '#1a2540' : '#e8eef8');
+  document.documentElement.style.setProperty('--panel', light ? '#fff' : '#111a2e');
+  document.documentElement.style.setProperty('--panel2', light ? '#f5f8fc' : '#162035');
+  document.documentElement.style.setProperty('--border', light ? '#d0daea' : '#1e2f4d');
+  document.body.style.background = light
+    ? 'radial-gradient(ellipse at 20% 10%, #d8e8f8 0%, #f0f4f8 60%)'
+    : 'radial-gradient(ellipse at 20% 10%, #0d1f3c 0%, #070b14 50%)';
+}
+window.addEventListener('scroll', () => {
+  const doc = document.documentElement;
+  const scrolled = doc.scrollTop || document.body.scrollTop;
+  const total = doc.scrollHeight - doc.clientHeight;
+  const pct = total > 0 ? Math.round((scrolled / total) * 100) : 0;
+  const p = document.getElementById('prog');
+  const pl = document.getElementById('prog-label');
+  if (p) p.style.width = pct + '%';
+  if (pl) pl.textContent = 'Tiến độ đọc: ' + pct + '%';
+});
+</script>
+</body>
+</html>

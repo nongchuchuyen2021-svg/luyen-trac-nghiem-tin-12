@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tạo liên kết – Tin học 12 KNTT (SGK Điện tử)</title>
+<meta name="description" content="SGK Tin học 12 Kết nối tri thức – Tạo liên kết. Chủ đề 4. Thiết kế trang web (HTML & CSS).">
+<style>
+:root {
+  --bg: #070b14; --bg2: #0d1423; --panel: #111a2e; --panel2: #162035; --border: #1e2f4d;
+  --text: #e8eef8; --muted: #8899b8; --orange: #ff6b35; --orange2: #ff9a64;
+  --cyan: #38d9f5; --cyan2: #7ce8fa; --yellow: #ffd060; --green: #56e39f; --pink: #f06dba; --purple: #a78bfa;
+  --fs: 18px;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  background: radial-gradient(ellipse at 20% 10%, #0d1f3c 0%, #070b14 50%);
+  color: var(--text); font-family: 'Inter','Segoe UI',-apple-system,BlinkMacSystemFont,'Roboto',Arial,sans-serif;
+  font-size: var(--fs); line-height: 1.75; min-height: 100vh;
+}
+.app { display: grid; grid-template-columns: 280px 1fr; min-height: 100vh; }
+.sidebar { position:sticky; top:0; height:100vh; overflow-y:auto; background:rgba(7,11,20,.97); border-right:1px solid var(--border); padding:24px 16px; backdrop-filter:blur(20px); }
+.brand-box { margin-bottom:24px; }
+.series-label { font-size:11px; letter-spacing:2px; text-transform:uppercase; color:var(--cyan); font-weight:700; margin-bottom:6px; }
+.brand-title { font-size:20px; font-weight:900; color:#fff; line-height:1.2; }
+.brand-title span { color:var(--orange); }
+.brand-sub { color:var(--muted); font-size:12px; margin-top:5px; }
+.toc-title { font-size:11px; letter-spacing:1.5px; text-transform:uppercase; color:var(--muted); font-weight:700; margin:20px 0 8px; padding:0 8px; }
+.toc a { display:block; color:#9aaec8; text-decoration:none; padding:9px 12px; border-radius:10px; margin:2px 0; font-size:13.5px; font-weight:500; transition:all .2s; border-left:3px solid transparent; }
+.toc a:hover { background:rgba(56,217,245,.07); color:var(--cyan); border-left-color:var(--cyan); }
+.toc a.active { background:rgba(255,107,53,.1); color:var(--orange); border-left-color:var(--orange); }
+.ctrl-box { margin-top:24px; padding:14px; border:1px solid var(--border); border-radius:14px; background:rgba(255,255,255,.03); }
+.ctrl-box h4 { font-size:11px; letter-spacing:1px; text-transform:uppercase; color:var(--muted); margin-bottom:10px; }
+.ctrl-row { display:flex; gap:8px; margin-bottom:8px; }
+.ctrl-btn { flex:1; background:var(--panel2); border:1px solid var(--border); color:var(--text); border-radius:9px; padding:8px 6px; cursor:pointer; font-size:13px; font-weight:600; transition:all .2s; text-align:center; text-decoration:none; display:inline-block; }
+.ctrl-btn:hover { background:var(--border); color:#fff; }
+.progress-bar { height:4px; background:var(--panel2); border-radius:4px; overflow:hidden; margin-top:10px; }
+.progress-fill { height:100%; width:0%; background:linear-gradient(90deg,var(--cyan),var(--orange)); transition:width .3s; border-radius:4px; }
+.main { max-width:860px; margin:0 auto; padding:32px 28px 80px; }
+.hero { background:linear-gradient(135deg,#0f2040 0%,#0a1628 60%,#131020 100%); border:1px solid var(--border); border-radius:24px; padding:36px 40px; margin-bottom:28px; box-shadow:0 24px 80px rgba(0,0,0,.5); position:relative; overflow:hidden; }
+.hero::before { content:'10'; position:absolute; right:30px; top:20px; font-size:120px; font-weight:900; color:rgba(56,217,245,.05); line-height:1; user-select:none; }
+.chu-de-tag { display:inline-flex; align-items:center; gap:8px; background:rgba(56,217,245,.12); border:1px solid rgba(56,217,245,.3); color:var(--cyan); font-size:13px; font-weight:700; padding:6px 14px; border-radius:20px; margin-bottom:16px; letter-spacing:.5px; }
+.hero h1 { font-size:clamp(26px,4vw,38px); font-weight:900; line-height:1.2; background:linear-gradient(90deg,#fff 0%,var(--cyan2) 50%,var(--orange2) 100%); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; margin-bottom:14px; }
+.hero-desc { color:#b0c4de; font-size:15.5px; line-height:1.6; }
+.section { background:rgba(11,17,30,.9); border:1px solid var(--border); border-radius:20px; padding:28px 32px 36px; margin-bottom:24px; scroll-margin-top:20px; position:relative; transition:border-color .3s; }
+.section:hover { border-color:rgba(56,217,245,.2); }
+.page-num { position:absolute; right:20px; bottom:14px; color:var(--muted); font-size:12px; font-weight:600; background:var(--panel2); padding:3px 10px; border-radius:10px; }
+h2 { font-size:clamp(20px,2.5vw,26px); font-weight:800; color:#fff; margin:28px 0 14px; display:flex; align-items:center; gap:10px; }
+h2::before { content:''; display:inline-block; width:4px; height:24px; background:linear-gradient(var(--orange),var(--cyan)); border-radius:2px; flex-shrink:0; }
+p { color:#d0dcea; margin-bottom:14px; }
+p:last-child { margin-bottom:0; }
+strong { color:#fff; }
+em { color:var(--cyan2); font-style:italic; }
+code { background:rgba(255,255,255,0.08); color:var(--orange2); padding:2px 6px; border-radius:4px; font-size:0.9em; font-family:monospace; }
+ul, ol { padding-left:22px; margin:12px 0; }
+li { color:#c8d8ec; margin-bottom:8px; }
+li::marker { color:var(--cyan); }
+.info-box { background:linear-gradient(135deg,#071e2e,#071828); border:1px dashed rgba(56,217,245,.4); border-radius:14px; padding:18px 22px; margin:20px 0; }
+.info-box p, .info-box li { color:#b8d8f0; }
+.activity { background:linear-gradient(135deg,#1a120a,#130f0a); border:1px solid rgba(255,160,60,.3); border-left:4px solid var(--orange); border-radius:14px; padding:18px 22px; margin:20px 0; }
+.activity-badge { display:inline-flex; align-items:center; gap:6px; background:var(--orange); color:#1a0a00; font-size:12px; font-weight:800; padding:4px 12px; border-radius:6px; margin-bottom:10px; letter-spacing:.5px; text-transform:uppercase; }
+.ghi-nho { background:linear-gradient(135deg,#1a2a10,#0f1e0a); border:1px solid rgba(86,227,159,.3); border-left:4px solid var(--green); border-radius:14px; padding:20px 24px; margin:24px 0; }
+.ghi-nho-title { color:var(--green); font-weight:800; font-size:15px; text-transform:uppercase; letter-spacing:1px; margin-bottom:10px; display:flex; align-items:center; gap:8px; }
+.ghi-nho p, .ghi-nho li { color:#c8f0d8; }
+.nav-btns { display:flex; gap:12px; margin:20px 0; }
+.nav-btn { background:var(--panel); border:1px solid var(--border); color:var(--text); border-radius:10px; padding:10px 18px; text-decoration:none; font-size:14px; font-weight:600; transition:all .2s; flex:1; text-align:center; }
+.nav-btn:hover { background:var(--panel2); border-color:var(--cyan); color:#fff; }
+.field-grid { display:grid; grid-template-columns:1fr 1fr; gap:14px; margin:18px 0; }
+.field-card { background:var(--panel2); border:1px solid var(--border); border-radius:14px; padding:16px 18px; }
+.img-side { display:grid; grid-template-columns:1fr 1fr; gap:14px; margin:18px 0; }
+.img-half { border-radius:12px; border:1px solid var(--border); }
+@media (max-width: 860px) {
+  .app { grid-template-columns: 1fr; }
+  .sidebar { display: none; }
+  .main { padding: 20px 16px 60px; }
+  .field-grid, .img-side { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+
+<div class="app">
+
+<!-- SIDEBAR -->
+<aside class="sidebar">
+  <div class="brand-box">
+    <div class="series-label">KẾT NỐI TRI THỨC</div>
+    <div class="brand-title">TIN HỌC <span>12</span></div>
+    <div class="brand-sub">Sách Giáo Khoa Điện Tử (ICT)</div>
+  </div>
+
+  <div class="ctrl-box">
+    <h4>Cỡ chữ & Giao diện</h4>
+    <div class="ctrl-row">
+      <button class="ctrl-btn" onclick="changeFont(-1)">A -</button>
+      <button class="ctrl-btn" onclick="changeFont(1)">A +</button>
+      <button class="ctrl-btn" onclick="toggleTheme()">🌓 Nền</button>
+    </div>
+    <div style="font-size:12px; color:var(--muted); margin-top:8px;" id="prog-label">Tiến độ đọc: 0%</div>
+    <div class="progress-bar"><div class="progress-fill" id="prog"></div></div>
+  </div>
+
+  <div class="toc-title">Mục lục bài học</div>
+  <nav class="toc">
+    
+      <a href="#sec-1">1. Siêu văn bản và đường dẫn</a>
+    
+      <a href="#sec-2">2. Liên kết tới trang web khác</a>
+    
+      <a href="#sec-3">3. Liên kết trong cùng website</a>
+    
+      <a href="#sec-4">4. Liên kết tới vị trí khác trong cùng trang web</a>
+    
+      <a href="#sec-5">5. Tạo liên kết cho hình ảnh</a>
+    
+    <a href="#ghi-nho">📌 Ghi nhớ cốt lõi</a>
+  </nav>
+
+  <div class="ctrl-box" style="margin-top:20px;">
+    <h4>Luyện tập</h4>
+    <a href="/luyen/bai-10" class="ctrl-btn" style="background:var(--cyan); color:#000; font-weight:700;">🎯 Vào Luyện Trắc Nghiệm</a>
+  </div>
+</aside>
+
+<!-- MAIN CONTENT -->
+<main class="main">
+  <!-- HERO BANNER -->
+  <div class="hero">
+    <div class="chu-de-tag">Chủ đề 4. Thiết kế trang web (HTML & CSS)</div>
+    <h1>Tạo liên kết</h1>
+    <div class="hero-desc">Trang web sẽ trở thành một 'ốc đảo' nếu không có cách nào đi đến nó hay từ nó đi ra. Bài này dạy cách tạo <strong>siêu liên kết</strong> (link) bằng thẻ <code><a></code> — tính năng cốt lõi làm nên mạng lưới World Wide Web.</div>
+  </div>
+
+  <!-- NÚT CHUYỂN BÀI -->
+  <div class="nav-btns">
+    <a href="/sgk/bai-09.html" class="nav-btn">← Tạo danh sách, bảng</a>
+    <a href="/sgk/bai-11.html" class="nav-btn">Chèn tệp đa phương tiện và khung nội tuyến →</a>
+  </div>
+
+  <!-- CÁC MỤC NỘI DUNG -->
+  
+    <section class="section" id="sec-1">
+      <h2 id="heading-1">🔗 1. Siêu văn bản và đường dẫn</h2>
+      <p><strong>Siêu văn bản</strong> (hypertext) là loại văn bản mà nội dung của nó không chỉ chứa văn bản mà còn chứa nhiều dạng dữ liệu khác như âm thanh, hình ảnh,… và đặc biệt là chứa các <strong>siêu liên kết</strong> (hyperlink) tới siêu văn bản khác.</p>
+
+        <div class="activity">
+          <div class="activity-badge">💡 Khác gì với đọc sách giấy?</div>
+          <p>Khi xem siêu văn bản, em <strong>không cần xem tuần tự từ đầu đến cuối</strong> mà có thể nhờ các siêu liên kết để <strong>truy cập vị trí tương ứng không theo trình tự nào</strong>. <strong>Siêu liên kết</strong> (còn gọi tắt là <strong>liên kết</strong>) là <strong>một tham chiếu</strong> để liên kết tới siêu văn bản khác — nháy chuột vào vị trí đặt liên kết trong văn bản ban đầu là truy cập được ngay.</p>
+        </div>
+<p>Trong HTML, người ta sử dụng <strong>thẻ <code><a></code></strong> cho các liên kết. Cấu trúc chung:</p>
+
+        <div style="background:#060b14; border:1px solid var(--border); border-radius:12px; overflow:hidden; margin:16px 0; font-family:monospace;">
+          <div style="background:rgba(255,255,255,0.05); padding:6px 14px; font-size:12px; color:var(--muted); border-bottom:1px solid var(--border);">💻 Cú pháp tạo liên kết</div>
+          <pre style="padding:14px 16px; margin:0; font-size:14px; line-height:1.6; color:#7ce8fa; overflow-x:auto;"><code>&lt;a href="URL"&gt;Nội dung hiển thị tại vị trí đặt liên kết&lt;/a&gt;</code></pre>
+        </div>
+<p>Trong đó <strong>URL</strong> là địa chỉ (đường dẫn) tham chiếu tới tài liệu được liên kết. Thuộc tính <strong><code>href</code></strong> dùng để cung cấp địa chỉ của trang web hay tài liệu được liên kết. <strong>Đường dẫn URL phải được nằm trong cặp dấu nháy kép <code>" "</code>.</strong> Phần lớn các liên kết trỏ tới một tài liệu HTML khác, nhưng cũng có thể trỏ tới một hình ảnh, tệp âm thanh hoặc video.</p>
+<p>Có <strong>hai loại URL chính</strong> là đường dẫn tuyệt đối và đường dẫn tương đối:</p>
+
+        <div class="img-side">
+          <div class="img-half" style="background:rgba(242,104,60,0.08); border-color:rgba(242,104,60,0.3); padding:16px;">
+            <div style="font-weight:700; color:var(--orange); font-size:15px; margin-bottom:10px;">🌐 Tuyệt đối</div>
+            <ul style="padding-left:18px;">
+              <li style="font-size:14px; margin-bottom:6px;">Cung cấp <strong>địa chỉ đầy đủ</strong> bao gồm cả giao thức (<code>http://</code> hoặc <code>https://</code>), tên miền và tên đường dẫn chi tiết nếu cần.</li><li style="font-size:14px; margin-bottom:6px;">Dùng khi liên kết trên mạng Internet (tài liệu <strong>không nằm trên máy chủ của mình</strong>).</li><li style="font-size:14px; margin-bottom:6px;">Ví dụ: <code>href="https://www.nxbgd.vn/"</code></li>
+            </ul>
+          </div>
+          <div class="img-half" style="background:rgba(56,217,245,0.08); border-color:rgba(56,217,245,0.3); padding:16px;">
+            <div style="font-weight:700; color:var(--cyan); font-size:15px; margin-bottom:10px;">📂 Tương đối</div>
+            <ul style="padding-left:18px;">
+              <li style="font-size:14px; margin-bottom:6px;">Mô tả cách truy cập tài liệu được liên kết <strong>từ vị trí của tài liệu hiện tại</strong>.</li><li style="font-size:14px; margin-bottom:6px;">Dùng khi liên kết tới một tài liệu khác trên <strong>cùng trang web (cùng máy chủ)</strong>, không yêu cầu giao thức hay tên miền.</li><li style="font-size:14px; margin-bottom:6px;">Ví dụ: <code>href="BT/bai_tap_1.html"</code></li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="info-box">
+          <p>Siêu văn bản là văn bản chứa nhiều loại dữ liệu và các liên kết tới siêu văn bản khác. Trong HTML, liên kết được xác định bằng <strong>thẻ <code><a></code></strong> và thuộc tính <strong><code>href</code></strong> dùng để cung cấp đường dẫn (tuyệt đối hoặc tương đối) tới địa chỉ đích.</p>
+        </div>
+
+        <div class="cau-hoi" style="margin:16px 0; border:1px solid rgba(56,217,245,0.3); background:rgba(56,217,245,0.04); border-radius:14px; padding:16px 20px;">
+          <div class="q-num" style="background:var(--cyan); color:#000; font-weight:800; border-radius:50%; width:28px; height:28px; display:flex; align-items:center; justify-content:center; flex-shrink:0;">?</div>
+          <div style="flex:1;">
+            <div class="q-text" style="font-weight:600; color:#fff; font-size:15.5px; margin-bottom:10px;">Đường dẫn nào sau đây là đường dẫn tuyệt đối?</div>
+            <div style="display:grid; grid-template-columns:1fr; gap:6px; margin-bottom:10px;">
+              
+                <div style="background:rgba(255,255,255,0.04); border:1px solid var(--border); border-radius:8px; padding:6px 12px; font-size:14px; color:#c8d8ec;">
+                  <b>A.</b> html/cach_tao_lien_ket.html
+                </div>
+              
+                <div style="background:rgba(255,255,255,0.04); border:1px solid var(--border); border-radius:8px; padding:6px 12px; font-size:14px; color:#c8d8ec;">
+                  <b>B.</b> ../index.html
+                </div>
+              
+                <div style="background:rgba(255,255,255,0.04); border:1px solid var(--border); border-radius:8px; padding:6px 12px; font-size:14px; color:#c8d8ec;">
+                  <b>C.</b> http://google.com
+                </div>
+              
+                <div style="background:rgba(255,255,255,0.04); border:1px solid var(--border); border-radius:8px; padding:6px 12px; font-size:14px; color:#c8d8ec;">
+                  <b>D.</b> bai_tap/bai_tap_1.html
+                </div>
+              
+            </div>
+            <details style="margin-top:8px;">
+              <summary style="cursor:pointer; color:var(--cyan); font-size:13px; font-weight:600;">👉 Xem đáp án & giải thích</summary>
+              <div style="margin-top:6px; padding:8px 12px; background:rgba(86,227,159,0.1); border-left:3px solid var(--green); border-radius:6px; font-size:13.5px; color:#a3e635;">
+                <strong>Đáp án đúng: C</strong><br>
+                <span><strong><code>http://google.com</code></strong> là đường dẫn tuyệt đối vì có chứa giao thức (<code>http://</code>) và tên miền. Các đường dẫn còn lại là tương đối, mô tả vị trí từ tài liệu hiện tại.</span>
+              </div>
+            </details>
+          </div>
+        </div>
+      <div class="page-num">Trang 65-70</div>
+    </section>
+  
+
+    <section class="section" id="sec-2">
+      <h2 id="heading-2">🌍 2. Liên kết tới trang web khác</h2>
+      <p>Khi cần liên kết từ trang web của mình tới một trang web khác trên Internet (liên kết ngoài), ta sử dụng thẻ <code><a></code> và truyền <strong>đường dẫn tuyệt đối</strong> cho thuộc tính <code>href</code>.</p>
+
+        <div style="background:#060b14; border:1px solid var(--border); border-radius:12px; overflow:hidden; margin:16px 0; font-family:monospace;">
+          <div style="background:rgba(255,255,255,0.05); padding:6px 14px; font-size:12px; color:var(--muted); border-bottom:1px solid var(--border);">💻 Ví dụ liên kết tới website của Nhà xuất bản Giáo dục</div>
+          <pre style="padding:14px 16px; margin:0; font-size:14px; line-height:1.6; color:#7ce8fa; overflow-x:auto;"><code>&lt;p&gt;&lt;a href="https://hanhtrangso.nxbgd.vn/sach-dien-tu?book_active=0"&gt; Sách
+điện tử Kết nối tri thức với cuộc sống&lt;/a&gt;&lt;/p&gt;</code></pre>
+        </div>
+      <div class="page-num">Trang 65-70</div>
+    </section>
+  
+
+    <section class="section" id="sec-3">
+      <h2 id="heading-3">📁 3. Liên kết trong cùng website</h2>
+      <p>Phần lớn các liên kết được sử dụng là liên kết trỏ tới các trang trong cùng website của mình (ví dụ: từ trang chủ đi tới các trang nội dung). Trường hợp này gọi là liên kết trong, ta sử dụng <strong>đường dẫn tương đối</strong>.</p>
+<p>Khi đường dẫn không có giao thức ở đầu, trình duyệt kiểm tra địa chỉ đó <strong>trên máy chủ hiện tại</strong> để tìm tài liệu. Muốn viết được đường dẫn tương đối, trước hết phải <strong>nhìn ra cấu trúc thư mục của website</strong> — em đang đứng ở tệp nào, tệp cần tới nằm ở đâu.</p>
+
+<p>Giả sử em đang ở trang <strong><code>index.html</code></strong> như hình trên. Có <strong>bốn trường hợp</strong> khi dùng đường dẫn tương đối:</p>
+
+        <ul>
+          <li><strong>Cùng thư mục:</strong> chỉ cần cung cấp tên tệp. Ví dụ: <code>href="thong_tin.html"</code>.</li>
+<li><strong>Dưới một cấp:</strong> đường dẫn gồm tên thư mục và tên tệp, ngăn cách bởi dấu <code>/</code>. Ví dụ: <code>href="bai_tap/bai_tap_1.html"</code>.</li>
+<li><strong>Dưới hai (hay nhiều) cấp:</strong> đường dẫn gồm <strong>tên các thư mục theo thứ tự từ trên xuống</strong> rồi mới tới tên tệp, <strong>mỗi cấp ngăn nhau bởi dấu <code>/</code></strong>. Ví dụ: <code>href="bai_tap/on_tap/bai_tap_on_tap.html"</code>.</li>
+<li><strong>Ở thư mục mức trên:</strong> dùng kí tự <strong><code>../</code></strong> để chỉ định “trở lại thư mục trên <strong>một</strong> mức”. <strong>Số cụm <code>../</code> tương ứng với số mức quay trở lại.</strong> Ví dụ từ <code>bai_tap_1.html</code> quay về trang chủ: <code>href="../index.html"</code>.</li>
+        </ul>
+
+        <div style="background:#060b14; border:1px solid var(--border); border-radius:12px; overflow:hidden; margin:16px 0; font-family:monospace;">
+          <div style="background:rgba(255,255,255,0.05); padding:6px 14px; font-size:12px; color:var(--muted); border-bottom:1px solid var(--border);">💻 Bốn trường hợp viết đường dẫn tương đối trên cấu trúc website ở hình trên</div>
+          <pre style="padding:14px 16px; margin:0; font-size:14px; line-height:1.6; color:#7ce8fa; overflow-x:auto;"><code>&lt;!-- 1. Cùng thư mục với index.html --&gt;
+&lt;a href="thong_tin.html"&gt;Giới thiệu về trang web&lt;/a&gt;
+
+&lt;!-- 2. Xuống một cấp (vào thư mục bai_tap) --&gt;
+&lt;a href="bai_tap/bai_tap_1.html"&gt;Bài tập 1&lt;/a&gt;
+
+&lt;!-- 3. Xuống hai cấp (bai_tap rồi on_tap) --&gt;
+&lt;a href="bai_tap/on_tap/bai_tap_on_tap.html"&gt;Bài tập ôn tập&lt;/a&gt;
+
+&lt;!-- 4. Lên một cấp — viết trong tệp bai_tap_1.html --&gt;
+&lt;a href="../index.html"&gt;Quay lại trang chủ&lt;/a&gt;</code></pre>
+        </div>
+
+        <div class="cau-hoi" style="margin:16px 0; border:1px solid rgba(56,217,245,0.3); background:rgba(56,217,245,0.04); border-radius:14px; padding:16px 20px;">
+          <div class="q-num" style="background:var(--cyan); color:#000; font-weight:800; border-radius:50%; width:28px; height:28px; display:flex; align-items:center; justify-content:center; flex-shrink:0;">?</div>
+          <div style="flex:1;">
+            <div class="q-text" style="font-weight:600; color:#fff; font-size:15.5px; margin-bottom:10px;">Để liên kết từ tệp hiện tại đến một tệp nằm ở thư mục cha (trên một cấp), ta bắt đầu đường dẫn bằng gì?</div>
+            <div style="display:grid; grid-template-columns:1fr; gap:6px; margin-bottom:10px;">
+              
+                <div style="background:rgba(255,255,255,0.04); border:1px solid var(--border); border-radius:8px; padding:6px 12px; font-size:14px; color:#c8d8ec;">
+                  <b>A.</b> /
+                </div>
+              
+                <div style="background:rgba(255,255,255,0.04); border:1px solid var(--border); border-radius:8px; padding:6px 12px; font-size:14px; color:#c8d8ec;">
+                  <b>B.</b> ./
+                </div>
+              
+                <div style="background:rgba(255,255,255,0.04); border:1px solid var(--border); border-radius:8px; padding:6px 12px; font-size:14px; color:#c8d8ec;">
+                  <b>C.</b> ../
+                </div>
+              
+                <div style="background:rgba(255,255,255,0.04); border:1px solid var(--border); border-radius:8px; padding:6px 12px; font-size:14px; color:#c8d8ec;">
+                  <b>D.</b> //
+                </div>
+              
+            </div>
+            <details style="margin-top:8px;">
+              <summary style="cursor:pointer; color:var(--cyan); font-size:13px; font-weight:600;">👉 Xem đáp án & giải thích</summary>
+              <div style="margin-top:6px; padding:8px 12px; background:rgba(86,227,159,0.1); border-left:3px solid var(--green); border-radius:6px; font-size:13.5px; color:#a3e635;">
+                <strong>Đáp án đúng: C</strong><br>
+                <span>Sử dụng <strong><code>../</code></strong> để chỉ định trở lại thư mục trên một mức. Nếu muốn lên 2 mức thì dùng <code>../../</code>.</span>
+              </div>
+            </details>
+          </div>
+        </div>
+
+        <div class="cau-hoi" style="margin:16px 0; border:1px solid rgba(56,217,245,0.3); background:rgba(56,217,245,0.04); border-radius:14px; padding:16px 20px;">
+          <div class="q-num" style="background:var(--cyan); color:#000; font-weight:800; border-radius:50%; width:28px; height:28px; display:flex; align-items:center; justify-content:center; flex-shrink:0;">?</div>
+          <div style="flex:1;">
+            <div class="q-text" style="font-weight:600; color:#fff; font-size:15.5px; margin-bottom:10px;">Nhìn cây thư mục ở trên: từ trang index.html, muốn liên kết tới tệp bai_tap_on_tap.html thì viết href thế nào?</div>
+            <div style="display:grid; grid-template-columns:1fr; gap:6px; margin-bottom:10px;">
+              
+                <div style="background:rgba(255,255,255,0.04); border:1px solid var(--border); border-radius:8px; padding:6px 12px; font-size:14px; color:#c8d8ec;">
+                  <b>A.</b> href="bai_tap_on_tap.html"
+                </div>
+              
+                <div style="background:rgba(255,255,255,0.04); border:1px solid var(--border); border-radius:8px; padding:6px 12px; font-size:14px; color:#c8d8ec;">
+                  <b>B.</b> href="on_tap/bai_tap_on_tap.html"
+                </div>
+              
+                <div style="background:rgba(255,255,255,0.04); border:1px solid var(--border); border-radius:8px; padding:6px 12px; font-size:14px; color:#c8d8ec;">
+                  <b>C.</b> href="bai_tap/on_tap/bai_tap_on_tap.html"
+                </div>
+              
+                <div style="background:rgba(255,255,255,0.04); border:1px solid var(--border); border-radius:8px; padding:6px 12px; font-size:14px; color:#c8d8ec;">
+                  <b>D.</b> href="../bai_tap/on_tap/bai_tap_on_tap.html"
+                </div>
+              
+            </div>
+            <details style="margin-top:8px;">
+              <summary style="cursor:pointer; color:var(--cyan); font-size:13px; font-weight:600;">👉 Xem đáp án & giải thích</summary>
+              <div style="margin-top:6px; padding:8px 12px; background:rgba(86,227,159,0.1); border-left:3px solid var(--green); border-radius:6px; font-size:13.5px; color:#a3e635;">
+                <strong>Đáp án đúng: C</strong><br>
+                <span>Tệp nằm <strong>dưới hai cấp</strong> so với index.html: phải đi qua thư mục <code>bai_tap</code> rồi tới <code>on_tap</code> mới gặp tệp. Đường dẫn gồm <strong>tên các thư mục theo thứ tự từ trên xuống, mỗi cấp ngăn nhau bởi dấu <code>/</code></strong> → <strong><code>bai_tap/on_tap/bai_tap_on_tap.html</code></strong>. Không dùng <code>../</code> vì ta đang đi <strong>xuống</strong> chứ không đi lên.</span>
+              </div>
+            </details>
+          </div>
+        </div>
+      <div class="page-num">Trang 65-70</div>
+    </section>
+  
+
+    <section class="section" id="sec-4">
+      <h2 id="heading-4">🎯 4. Liên kết tới vị trí khác trong cùng trang web</h2>
+      <p>Khi đọc một trang web dài, người dùng thường muốn nháy chuột vào mục lục để nhảy ngay đến phần nội dung tương ứng, hoặc từ cuối trang nhảy nhanh về đầu trang. Để tạo liên kết trong cùng trang, ta thực hiện hai bước:</p>
+
+        <div class="steps-container" style="display:flex; flex-direction:column; gap:12px; margin:16px 0;">
+          
+            <div style="background:var(--panel2); border-left:4px solid var(--cyan); border-radius:10px; padding:12px 16px;">
+              <div style="display:flex; gap:8px; align-items:center; margin-bottom:4px;">
+                <span style="background:var(--cyan); color:#000; font-weight:800; font-size:11px; padding:2px 8px; border-radius:12px;">1</span>
+                <strong style="color:var(--text); font-size:15px;">Tạo đích đến</strong>
+              </div>
+              <p style="margin:0; font-size:14.5px; color:#b0c4de;">Thiết lập thuộc tính <strong><code>id</code></strong> cho thẻ HTML tại vị trí cần đến. Thuộc tính <code>id</code> giống như việc cắm cờ, giá trị <code>id</code> phải là <strong>duy nhất</strong> trong toàn bộ trang web (mỗi tên gọi chỉ xuất hiện một lần). Đây gọi là mã định danh đoạn.</p>
+            </div>
+          
+
+            <div style="background:var(--panel2); border-left:4px solid var(--cyan); border-radius:10px; padding:12px 16px;">
+              <div style="display:flex; gap:8px; align-items:center; margin-bottom:4px;">
+                <span style="background:var(--cyan); color:#000; font-weight:800; font-size:11px; padding:2px 8px; border-radius:12px;">2</span>
+                <strong style="color:var(--text); font-size:15px;">Tạo liên kết</strong>
+              </div>
+              <p style="margin:0; font-size:14.5px; color:#b0c4de;">Tạo thẻ <code><a></code> với thuộc tính <code>href</code> chứa dấu <strong><code>#</code></strong> theo sau là giá trị <code>id</code> vừa tạo: <code>href="#mã_định_danh_đoạn"</code>.</p>
+            </div>
+          
+        </div>
+
+        <div style="background:#060b14; border:1px solid var(--border); border-radius:12px; overflow:hidden; margin:16px 0; font-family:monospace;">
+          <div style="background:rgba(255,255,255,0.05); padding:6px 14px; font-size:12px; color:var(--muted); border-bottom:1px solid var(--border);">💻 Ví dụ trong SGK — tạo bảng có id, rồi tạo liên kết trỏ tới bảng đó</div>
+          <pre style="padding:14px 16px; margin:0; font-size:14px; line-height:1.6; color:#7ce8fa; overflow-x:auto;"><code>&lt;!-- 1. Đặt id cho đích đến --&gt;
+&lt;table id="Thong_tin"&gt; ... &lt;/table&gt;
+
+&lt;!-- 2. Tạo liên kết trỏ tới id đó --&gt;
+&lt;a href="#Thong_tin"&gt;Thông tin chi tiết&lt;/a&gt;</code></pre>
+        </div>
+
+        <div style="background:#060b14; border:1px solid var(--border); border-radius:12px; overflow:hidden; margin:16px 0; font-family:monospace;">
+          <div style="background:rgba(255,255,255,0.05); padding:6px 14px; font-size:12px; color:var(--muted); border-bottom:1px solid var(--border);">💻 Thử ngay: bấm vào liên kết trong khung xem trước sẽ nhảy xuống đúng mục có id</div>
+          <pre style="padding:14px 16px; margin:0; font-size:14px; line-height:1.6; color:#7ce8fa; overflow-x:auto;"><code>&lt;p&gt;&lt;a href="#phan-cuoi"&gt;Nhảy xuống phần cuối ↓&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;Nội dung ở giữa…&lt;/p&gt;
+&lt;p&gt;Nội dung ở giữa…&lt;/p&gt;
+&lt;p&gt;Nội dung ở giữa…&lt;/p&gt;
+&lt;p&gt;Nội dung ở giữa…&lt;/p&gt;
+&lt;h3 id="phan-cuoi"&gt;Phần cuối&lt;/h3&gt;
+&lt;p&gt;Em đã nhảy tới đây!&lt;/p&gt;</code></pre>
+        </div>
+
+        <div class="cau-hoi" style="margin:16px 0; border:1px solid rgba(56,217,245,0.3); background:rgba(56,217,245,0.04); border-radius:14px; padding:16px 20px;">
+          <div class="q-num" style="background:var(--cyan); color:#000; font-weight:800; border-radius:50%; width:28px; height:28px; display:flex; align-items:center; justify-content:center; flex-shrink:0;">?</div>
+          <div style="flex:1;">
+            <div class="q-text" style="font-weight:600; color:#fff; font-size:15.5px; margin-bottom:10px;">Để tạo liên kết nhảy đến một phần tử có id là "Lich_su", thuộc tính href phải viết như thế nào?</div>
+            <div style="display:grid; grid-template-columns:1fr; gap:6px; margin-bottom:10px;">
+              
+                <div style="background:rgba(255,255,255,0.04); border:1px solid var(--border); border-radius:8px; padding:6px 12px; font-size:14px; color:#c8d8ec;">
+                  <b>A.</b> href="Lich_su"
+                </div>
+              
+                <div style="background:rgba(255,255,255,0.04); border:1px solid var(--border); border-radius:8px; padding:6px 12px; font-size:14px; color:#c8d8ec;">
+                  <b>B.</b> href="@Lich_su"
+                </div>
+              
+                <div style="background:rgba(255,255,255,0.04); border:1px solid var(--border); border-radius:8px; padding:6px 12px; font-size:14px; color:#c8d8ec;">
+                  <b>C.</b> href="#Lich_su"
+                </div>
+              
+                <div style="background:rgba(255,255,255,0.04); border:1px solid var(--border); border-radius:8px; padding:6px 12px; font-size:14px; color:#c8d8ec;">
+                  <b>D.</b> href="id=Lich_su"
+                </div>
+              
+            </div>
+            <details style="margin-top:8px;">
+              <summary style="cursor:pointer; color:var(--cyan); font-size:13px; font-weight:600;">👉 Xem đáp án & giải thích</summary>
+              <div style="margin-top:6px; padding:8px 12px; background:rgba(86,227,159,0.1); border-left:3px solid var(--green); border-radius:6px; font-size:13.5px; color:#a3e635;">
+                <strong>Đáp án đúng: C</strong><br>
+                <span>Để liên kết tới một <code>id</code> trong cùng trang, <code>href</code> phải bắt đầu bằng dấu thăng <strong><code>#</code></strong> kèm theo tên <code>id</code>, tức là <strong><code>href="#Lich_su"</code></strong>.</span>
+              </div>
+            </details>
+          </div>
+        </div>
+      <div class="page-num">Trang 65-70</div>
+    </section>
+  
+
+    <section class="section" id="sec-5">
+      <h2 id="heading-5">🖼️ 5. Tạo liên kết cho hình ảnh</h2>
+      <p>Ngoài văn bản, ta có thể dùng hình ảnh làm nội dung liên kết (người dùng nháy chuột vào ảnh để mở trang khác). Để làm vậy, ta chỉ cần đặt thẻ <strong><code><img></code></strong> vào bên trong thẻ <strong><code><a></code></strong>.</p>
+<p>Trước hết cần hiển thị ảnh trong trang web bằng thẻ <strong><code><img></code></strong> với thuộc tính <strong><code>src</code></strong> chứa đường dẫn tới tệp ảnh. Đường dẫn này <strong>cũng dùng đường dẫn tuyệt đối hoặc tương đối</strong> giống như <code>href</code>.</p>
+
+        <div style="background:#060b14; border:1px solid var(--border); border-radius:12px; overflow:hidden; margin:16px 0; font-family:monospace;">
+          <div style="background:rgba(255,255,255,0.05); padding:6px 14px; font-size:12px; color:var(--muted); border-bottom:1px solid var(--border);">💻 Ví dụ trong SGK — ảnh Mặt Trời lưu ở images/sun.png, nháy vào ảnh mở trang thong_tin.html</div>
+          <pre style="padding:14px 16px; margin:0; font-size:14px; line-height:1.6; color:#7ce8fa; overflow-x:auto;"><code>&lt;a href="thong_tin.html"&gt;
+  &lt;img src="images/sun.png"&gt;
+&lt;/a&gt;</code></pre>
+        </div>
+
+        <div style="background:#060b14; border:1px solid var(--border); border-radius:12px; overflow:hidden; margin:16px 0; font-family:monospace;">
+          <div style="background:rgba(255,255,255,0.05); padding:6px 14px; font-size:12px; color:var(--muted); border-bottom:1px solid var(--border);">💻 Thử ngay: nháy vào hình Mặt Trời — ảnh nằm trong thẻ <a> nên bấm vào ảnh là đi theo liên kết. Ở đây href trỏ tới một mục ngay bên dưới để chạy được trong khung; ngoài thực tế href thường là tên tệp trang khác như ví dụ trên.</div>
+          <pre style="padding:14px 16px; margin:0; font-size:14px; line-height:1.6; color:#7ce8fa; overflow-x:auto;"><code>&lt;a href="#gioi-thieu"&gt;
+  &lt;img width="90" height="90" alt="Mặt Trời"
+       src="data:image/svg+xml;utf8,
+       &lt;svg xmlns='http://www.w3.org/2000/svg' width='90' height='90'&gt;
+       &lt;circle cx='45' cy='45' r='24' fill='%23EFA31D'/&gt;&lt;/svg&gt;"&gt;
+&lt;/a&gt;
+&lt;p&gt;Nháy vào hình Mặt Trời ở trên ↑&lt;/p&gt;
+&lt;p&gt;Nội dung ở giữa…&lt;/p&gt;
+&lt;p&gt;Nội dung ở giữa…&lt;/p&gt;
+&lt;p&gt;Nội dung ở giữa…&lt;/p&gt;
+&lt;h3 id="gioi-thieu"&gt;Em vừa nháy vào một tấm ảnh!&lt;/h3&gt;
+&lt;p&gt;Ảnh đặt trong thẻ a nên bấm vào ảnh cũng đi theo liên kết.&lt;/p&gt;</code></pre>
+        </div>
+
+        <div class="info-box">
+          <p>Từ một vị trí trong một trang web, ta có thể tạo liên kết tới trang web bất kì trên Internet, tới các trang ở trên cùng máy chủ hay liên kết tới những vị trí khác trong cùng trang.</p>
+        </div>
+      <div class="page-num">Trang 65-70</div>
+    </section>
+  
+
+  <!-- HỘP GHI NHỚ CUỐI BÀI -->
+  <section class="section" id="ghi-nho">
+    <div class="ghi-nho">
+      <div class="ghi-nho-title">📌 Em cần ghi nhớ</div>
+      <ul style="padding-left:20px;">
+        <li style="font-size:15.5px; line-height:1.7; margin-bottom:10px;"><strong>Siêu văn bản</strong> là văn bản chứa các <strong>siêu liên kết</strong> tới siêu văn bản khác.</li>
+<li style="font-size:15.5px; line-height:1.7; margin-bottom:10px;">Thẻ <strong><code><a></code></strong> tạo liên kết, thuộc tính <strong><code>href</code></strong> chứa đường dẫn.</li>
+<li style="font-size:15.5px; line-height:1.7; margin-bottom:10px;"><strong>Đường dẫn tuyệt đối</strong>: chứa đầy đủ giao thức (<code>http://</code>) và tên miền, dùng để liên kết ra ngoài website.</li>
+<li style="font-size:15.5px; line-height:1.7; margin-bottom:10px;"><strong>Đường dẫn tương đối</strong>: chỉ vị trí tương đối từ tệp hiện tại, dùng để liên kết trong cùng website (<code>thong_tin.html</code>, <code>bai_tap/bt1.html</code>, <code>../index.html</code>).</li>
+<li style="font-size:15.5px; line-height:1.7; margin-bottom:10px;"><strong>Liên kết trong cùng trang</strong>: đặt thuộc tính <strong><code>id</code></strong> cho đích đến (duy nhất trong trang), sau đó tạo liên kết <strong><code>href="#tên_id"</code></strong>.</li>
+<li style="font-size:15.5px; line-height:1.7; margin-bottom:10px;">Để tạo <strong>liên kết cho hình ảnh</strong>, đặt thẻ <strong><code><img></code></strong> vào bên trong thẻ <strong><code><a></code></strong>.</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- NÚT CHUYỂN BÀI DƯỚI CÙNG -->
+  <div class="nav-btns" style="margin-top:32px;">
+    <a href="/sgk/bai-09.html" class="nav-btn">← Tạo danh sách, bảng</a>
+    <a href="/luyen/bai-10" class="nav-btn" style="background:linear-gradient(90deg, var(--cyan), var(--orange)); color:#fff; border:none;">🎯 Luyện trắc nghiệm ngay</a>
+    <a href="/sgk/bai-11.html" class="nav-btn">Chèn tệp đa phương tiện và khung nội tuyến →</a>
+  </div>
+</main>
+
+</div>
+
+<script>
+let fs = 18;
+function changeFont(d) { fs = Math.min(28, Math.max(14, fs + d)); document.body.style.fontSize = fs + 'px'; }
+let light = false;
+function toggleTheme() {
+  light = !light;
+  document.documentElement.style.setProperty('--bg', light ? '#f0f4f8' : '#070b14');
+  document.documentElement.style.setProperty('--text', light ? '#1a2540' : '#e8eef8');
+  document.documentElement.style.setProperty('--panel', light ? '#fff' : '#111a2e');
+  document.documentElement.style.setProperty('--panel2', light ? '#f5f8fc' : '#162035');
+  document.documentElement.style.setProperty('--border', light ? '#d0daea' : '#1e2f4d');
+  document.body.style.background = light
+    ? 'radial-gradient(ellipse at 20% 10%, #d8e8f8 0%, #f0f4f8 60%)'
+    : 'radial-gradient(ellipse at 20% 10%, #0d1f3c 0%, #070b14 50%)';
+}
+window.addEventListener('scroll', () => {
+  const doc = document.documentElement;
+  const scrolled = doc.scrollTop || document.body.scrollTop;
+  const total = doc.scrollHeight - doc.clientHeight;
+  const pct = total > 0 ? Math.round((scrolled / total) * 100) : 0;
+  const p = document.getElementById('prog');
+  const pl = document.getElementById('prog-label');
+  if (p) p.style.width = pct + '%';
+  if (pl) pl.textContent = 'Tiến độ đọc: ' + pct + '%';
+});
+</script>
+</body>
+</html>

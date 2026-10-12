@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Làm quen với Google Sites – Tin học 12 KNTT (SGK Điện tử)</title>
+<meta name="description" content="SGK Tin học 12 Kết nối tri thức – Làm quen với Google Sites. Chủ đề 7. Tạo trang web với Google Sites.">
+<style>
+:root {
+  --bg: #070b14; --bg2: #0d1423; --panel: #111a2e; --panel2: #162035; --border: #1e2f4d;
+  --text: #e8eef8; --muted: #8899b8; --orange: #ff6b35; --orange2: #ff9a64;
+  --cyan: #38d9f5; --cyan2: #7ce8fa; --yellow: #ffd060; --green: #56e39f; --pink: #f06dba; --purple: #a78bfa;
+  --fs: 18px;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  background: radial-gradient(ellipse at 20% 10%, #0d1f3c 0%, #070b14 50%);
+  color: var(--text); font-family: 'Inter','Segoe UI',-apple-system,BlinkMacSystemFont,'Roboto',Arial,sans-serif;
+  font-size: var(--fs); line-height: 1.75; min-height: 100vh;
+}
+.app { display: grid; grid-template-columns: 280px 1fr; min-height: 100vh; }
+.sidebar { position:sticky; top:0; height:100vh; overflow-y:auto; background:rgba(7,11,20,.97); border-right:1px solid var(--border); padding:24px 16px; backdrop-filter:blur(20px); }
+.brand-box { margin-bottom:24px; }
+.series-label { font-size:11px; letter-spacing:2px; text-transform:uppercase; color:var(--cyan); font-weight:700; margin-bottom:6px; }
+.brand-title { font-size:20px; font-weight:900; color:#fff; line-height:1.2; }
+.brand-title span { color:var(--orange); }
+.brand-sub { color:var(--muted); font-size:12px; margin-top:5px; }
+.toc-title { font-size:11px; letter-spacing:1.5px; text-transform:uppercase; color:var(--muted); font-weight:700; margin:20px 0 8px; padding:0 8px; }
+.toc a { display:block; color:#9aaec8; text-decoration:none; padding:9px 12px; border-radius:10px; margin:2px 0; font-size:13.5px; font-weight:500; transition:all .2s; border-left:3px solid transparent; }
+.toc a:hover { background:rgba(56,217,245,.07); color:var(--cyan); border-left-color:var(--cyan); }
+.toc a.active { background:rgba(255,107,53,.1); color:var(--orange); border-left-color:var(--orange); }
+.ctrl-box { margin-top:24px; padding:14px; border:1px solid var(--border); border-radius:14px; background:rgba(255,255,255,.03); }
+.ctrl-box h4 { font-size:11px; letter-spacing:1px; text-transform:uppercase; color:var(--muted); margin-bottom:10px; }
+.ctrl-row { display:flex; gap:8px; margin-bottom:8px; }
+.ctrl-btn { flex:1; background:var(--panel2); border:1px solid var(--border); color:var(--text); border-radius:9px; padding:8px 6px; cursor:pointer; font-size:13px; font-weight:600; transition:all .2s; text-align:center; text-decoration:none; display:inline-block; }
+.ctrl-btn:hover { background:var(--border); color:#fff; }
+.progress-bar { height:4px; background:var(--panel2); border-radius:4px; overflow:hidden; margin-top:10px; }
+.progress-fill { height:100%; width:0%; background:linear-gradient(90deg,var(--cyan),var(--orange)); transition:width .3s; border-radius:4px; }
+.main { max-width:860px; margin:0 auto; padding:32px 28px 80px; }
+.hero { background:linear-gradient(135deg,#0f2040 0%,#0a1628 60%,#131020 100%); border:1px solid var(--border); border-radius:24px; padding:36px 40px; margin-bottom:28px; box-shadow:0 24px 80px rgba(0,0,0,.5); position:relative; overflow:hidden; }
+.hero::before { content:'23'; position:absolute; right:30px; top:20px; font-size:120px; font-weight:900; color:rgba(56,217,245,.05); line-height:1; user-select:none; }
+.chu-de-tag { display:inline-flex; align-items:center; gap:8px; background:rgba(56,217,245,.12); border:1px solid rgba(56,217,245,.3); color:var(--cyan); font-size:13px; font-weight:700; padding:6px 14px; border-radius:20px; margin-bottom:16px; letter-spacing:.5px; }
+.hero h1 { font-size:clamp(26px,4vw,38px); font-weight:900; line-height:1.2; background:linear-gradient(90deg,#fff 0%,var(--cyan2) 50%,var(--orange2) 100%); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; margin-bottom:14px; }
+.hero-desc { color:#b0c4de; font-size:15.5px; line-height:1.6; }
+.section { background:rgba(11,17,30,.9); border:1px solid var(--border); border-radius:20px; padding:28px 32px 36px; margin-bottom:24px; scroll-margin-top:20px; position:relative; transition:border-color .3s; }
+.section:hover { border-color:rgba(56,217,245,.2); }
+.page-num { position:absolute; right:20px; bottom:14px; color:var(--muted); font-size:12px; font-weight:600; background:var(--panel2); padding:3px 10px; border-radius:10px; }
+h2 { font-size:clamp(20px,2.5vw,26px); font-weight:800; color:#fff; margin:28px 0 14px; display:flex; align-items:center; gap:10px; }
+h2::before { content:''; display:inline-block; width:4px; height:24px; background:linear-gradient(var(--orange),var(--cyan)); border-radius:2px; flex-shrink:0; }
+p { color:#d0dcea; margin-bottom:14px; }
+p:last-child { margin-bottom:0; }
+strong { color:#fff; }
+em { color:var(--cyan2); font-style:italic; }
+code { background:rgba(255,255,255,0.08); color:var(--orange2); padding:2px 6px; border-radius:4px; font-size:0.9em; font-family:monospace; }
+ul, ol { padding-left:22px; margin:12px 0; }
+li { color:#c8d8ec; margin-bottom:8px; }
+li::marker { color:var(--cyan); }
+.info-box { background:linear-gradient(135deg,#071e2e,#071828); border:1px dashed rgba(56,217,245,.4); border-radius:14px; padding:18px 22px; margin:20px 0; }
+.info-box p, .info-box li { color:#b8d8f0; }
+.activity { background:linear-gradient(135deg,#1a120a,#130f0a); border:1px solid rgba(255,160,60,.3); border-left:4px solid var(--orange); border-radius:14px; padding:18px 22px; margin:20px 0; }
+.activity-badge { display:inline-flex; align-items:center; gap:6px; background:var(--orange); color:#1a0a00; font-size:12px; font-weight:800; padding:4px 12px; border-radius:6px; margin-bottom:10px; letter-spacing:.5px; text-transform:uppercase; }
+.ghi-nho { background:linear-gradient(135deg,#1a2a10,#0f1e0a); border:1px solid rgba(86,227,159,.3); border-left:4px solid var(--green); border-radius:14px; padding:20px 24px; margin:24px 0; }
+.ghi-nho-title { color:var(--green); font-weight:800; font-size:15px; text-transform:uppercase; letter-spacing:1px; margin-bottom:10px; display:flex; align-items:center; gap:8px; }
+.ghi-nho p, .ghi-nho li { color:#c8f0d8; }
+.nav-btns { display:flex; gap:12px; margin:20px 0; }
+.nav-btn { background:var(--panel); border:1px solid var(--border); color:var(--text); border-radius:10px; padding:10px 18px; text-decoration:none; font-size:14px; font-weight:600; transition:all .2s; flex:1; text-align:center; }
+.nav-btn:hover { background:var(--panel2); border-color:var(--cyan); color:#fff; }
+.field-grid { display:grid; grid-template-columns:1fr 1fr; gap:14px; margin:18px 0; }
+.field-card { background:var(--panel2); border:1px solid var(--border); border-radius:14px; padding:16px 18px; }
+.img-side { display:grid; grid-template-columns:1fr 1fr; gap:14px; margin:18px 0; }
+.img-half { border-radius:12px; border:1px solid var(--border); }
+@media (max-width: 860px) {
+  .app { grid-template-columns: 1fr; }
+  .sidebar { display: none; }
+  .main { padding: 20px 16px 60px; }
+  .field-grid, .img-side { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+
+<div class="app">
+
+<!-- SIDEBAR -->
+<aside class="sidebar">
+  <div class="brand-box">
+    <div class="series-label">KẾT NỐI TRI THỨC</div>
+    <div class="brand-title">TIN HỌC <span>12</span></div>
+    <div class="brand-sub">Sách Giáo Khoa Điện Tử (ICT)</div>
+  </div>
+
+  <div class="ctrl-box">
+    <h4>Cỡ chữ & Giao diện</h4>
+    <div class="ctrl-row">
+      <button class="ctrl-btn" onclick="changeFont(-1)">A -</button>
+      <button class="ctrl-btn" onclick="changeFont(1)">A +</button>
+      <button class="ctrl-btn" onclick="toggleTheme()">🌓 Nền</button>
+    </div>
+    <div style="font-size:12px; color:var(--muted); margin-top:8px;" id="prog-label">Tiến độ đọc: 0%</div>
+    <div class="progress-bar"><div class="progress-fill" id="prog"></div></div>
+  </div>
+
+  <div class="toc-title">Mục lục bài học</div>
+  <nav class="toc">
+    
+      <a href="#sec-1">1. Những đặc điểm chung của trang web</a>
+    
+      <a href="#sec-2">2. Các bước chuẩn bị để xây dựng trang web</a>
+    
+    <a href="#ghi-nho">📌 Ghi nhớ cốt lõi</a>
+  </nav>
+
+  <div class="ctrl-box" style="margin-top:20px;">
+    <h4>Luyện tập</h4>
+    <a href="/luyen/bai-23" class="ctrl-btn" style="background:var(--cyan); color:#000; font-weight:700;">🎯 Vào Luyện Trắc Nghiệm</a>
+  </div>
+</aside>
+
+<!-- MAIN CONTENT -->
+<main class="main">
+  <!-- HERO BANNER -->
+  <div class="hero">
+    <div class="chu-de-tag">Chủ đề 7. Tạo trang web với Google Sites</div>
+    <h1>Làm quen với Google Sites</h1>
+    <div class="hero-desc">Bài này tìm hiểu <strong>những đặc điểm chung</strong> của một trang web (đầu trang, thân trang, chân trang) và <strong>các bước cần chuẩn bị</strong> trước khi bắt tay xây dựng một trang web thật — nền tảng cho các bài thực hành dựng trang web bằng Google Sites tiếp theo.</div>
+  </div>
+
+  <!-- NÚT CHUYỂN BÀI -->
+  <div class="nav-btns">
+    <a href="/sgk/bai-22.html" class="nav-btn">← Thực hành: Kết nối và truyền dữ liệu giữa các thiết bị số</a>
+    <a href="/sgk/bai-24.html" class="nav-btn">Tạo trang web cơ bản với Google Sites →</a>
+  </div>
+
+  <!-- CÁC MỤC NỘI DUNG -->
+  
+    <section class="section" id="sec-1">
+      <h2 id="heading-1">🧩 1. Những đặc điểm chung của trang web</h2>
+      <p>Dễ nhận thấy mỗi trang web đầy đủ nhất đều có cấu trúc gồm <strong>ba phần chính</strong>: phần đầu trang (header) với những thông tin chung nhất về trang, phần thân trang (body) chứa nội dung của trang, và phần chân trang (footer) chứa các thông tin ngắn gọn về chủ thể, bản quyền.</p>
+<p><strong>a) Phần đầu trang.</strong> Phần đầu trang có vai trò như trang bìa thu gọn của một cuốn sách, hay là phần trình bày đầu mỗi chương sách: có hình nền và những thông tin nổi bật trên đó như logo, tên trang, thanh điều hướng (bao gồm bảng chọn các chức năng; chức năng tìm kiếm có thể tách riêng ra khỏi bảng chọn), tiêu đề và thông tin tóm tắt của trang hay là thông tin mới cập nhật.</p>
+
+
+        <ul>
+          <li>Khi trang web được tải lên bởi một trình duyệt web, tên của nó sẽ được hiển thị tại tiêu đề của tab, phía sau một logo nhỏ, gọi là <strong>favicon</strong> (viết tắt của <em>favorite icon</em>). Favicon có thể không phải được thu gọn từ logo của trang mà được tạo dựng riêng, <strong>không phải chỉ cho một trang mà cho cả website</strong>, chứa nhiều trang web liên quan đến nhau.</li>
+<li>Mỗi trang web hay website trên Internet có một địa chỉ truy cập dạng <strong>URL</strong> (Uniform Resource Locator) để người dùng đọc chúng qua một trình duyệt web như Firefox, Chrome, Edge hay Safari.</li>
+<li>Tuỳ theo thiết kế mà đôi khi người ta dành ra một vài dòng trước phần đầu trang để đưa ra những thông báo quan trọng, ví dụ như trang đang được xây dựng hay bảo trì; phần này gọi là <strong>phần thông báo</strong>.</li>
+        </ul>
+<p><strong>b) Phần thân trang.</strong> Thân trang là phần chứa nội dung của trang web, thường được bố cục thành các khối hình chữ nhật, mỗi khối trình bày một nội dung với <strong>tiêu đề riêng</strong>.</p>
+
+<p>Mỗi khối nội dung có thể chứa các thông tin dạng văn bản, hình ảnh, âm thanh, biểu mẫu nhập dữ liệu hay là các ứng dụng nhúng khác nhau (ví dụ: ứng dụng bản đồ, ứng dụng dự báo thời tiết).</p>
+<p><strong>c) Phần chân trang.</strong> Phần này có thể bao gồm những thông tin về thương hiệu, bản quyền, bảo mật, tóm tắt những thông tin cần nhấn mạnh thêm, thông tin liên hệ và những liên kết tới các trang mạng xã hội liên quan.</p>
+
+        <div class="info-box">
+          <p>Một trang web đầy đủ gồm ba phần chính: <strong>đầu trang, thân trang và chân trang</strong>. Phần đầu trang là nơi hiển thị logo, tên trang, thanh điều hướng gồm bảng chọn các chức năng, tiêu đề và thông tin tóm tắt của trang. <strong>Favicon</strong> là biểu tượng đại diện cho tất cả các trang web trong một website, hiển thị trước địa chỉ trang web trên tab của trình duyệt. Phần thân trang được tổ chức theo cấu trúc nhiều khối hình chữ nhật, mỗi khối giới thiệu một nội dung. Phần chân trang được dành để đưa những thông tin về thương hiệu, bản quyền, bảo mật, thông tin liên hệ và những liên kết tới các trang mạng xã hội liên quan.</p>
+        </div>
+
+        <div class="cau-hoi" style="margin:16px 0; border:1px solid rgba(56,217,245,0.3); background:rgba(56,217,245,0.04); border-radius:14px; padding:16px 20px;">
+          <div class="q-num" style="background:var(--cyan); color:#000; font-weight:800; border-radius:50%; width:28px; height:28px; display:flex; align-items:center; justify-content:center; flex-shrink:0;">?</div>
+          <div style="flex:1;">
+            <div class="q-text" style="font-weight:600; color:#fff; font-size:15.5px; margin-bottom:10px;">Phần nào của trang web đóng vai trò như trang bìa thu gọn của một cuốn sách, chứa logo, tên trang và thanh điều hướng?</div>
+            <div style="display:grid; grid-template-columns:1fr; gap:6px; margin-bottom:10px;">
+              
+                <div style="background:rgba(255,255,255,0.04); border:1px solid var(--border); border-radius:8px; padding:6px 12px; font-size:14px; color:#c8d8ec;">
+                  <b>A.</b> Phần đầu trang (header)
+                </div>
+              
+                <div style="background:rgba(255,255,255,0.04); border:1px solid var(--border); border-radius:8px; padding:6px 12px; font-size:14px; color:#c8d8ec;">
+                  <b>B.</b> Phần thân trang (body)
+                </div>
+              
+                <div style="background:rgba(255,255,255,0.04); border:1px solid var(--border); border-radius:8px; padding:6px 12px; font-size:14px; color:#c8d8ec;">
+                  <b>C.</b> Phần chân trang (footer)
+                </div>
+              
+                <div style="background:rgba(255,255,255,0.04); border:1px solid var(--border); border-radius:8px; padding:6px 12px; font-size:14px; color:#c8d8ec;">
+                  <b>D.</b> Phần thông báo
+                </div>
+              
+            </div>
+            <details style="margin-top:8px;">
+              <summary style="cursor:pointer; color:var(--cyan); font-size:13px; font-weight:600;">👉 Xem đáp án & giải thích</summary>
+              <div style="margin-top:6px; padding:8px 12px; background:rgba(86,227,159,0.1); border-left:3px solid var(--green); border-radius:6px; font-size:13.5px; color:#a3e635;">
+                <strong>Đáp án đúng: A</strong><br>
+                <span>SGK ví phần đầu trang có vai trò như trang bìa thu gọn của một cuốn sách hay là phần trình bày đầu mỗi chương sách, chứa logo, tên trang, thanh điều hướng, tiêu đề và thông tin tóm tắt.</span>
+              </div>
+            </details>
+          </div>
+        </div>
+
+        <div class="cau-hoi" style="margin:16px 0; border:1px solid rgba(56,217,245,0.3); background:rgba(56,217,245,0.04); border-radius:14px; padding:16px 20px;">
+          <div class="q-num" style="background:var(--cyan); color:#000; font-weight:800; border-radius:50%; width:28px; height:28px; display:flex; align-items:center; justify-content:center; flex-shrink:0;">?</div>
+          <div style="flex:1;">
+            <div class="q-text" style="font-weight:600; color:#fff; font-size:15.5px; margin-bottom:10px;">Vì sao favicon thường không nhất thiết được thu gọn trực tiếp từ logo của một trang cụ thể?</div>
+            <div style="display:grid; grid-template-columns:1fr; gap:6px; margin-bottom:10px;">
+              
+                <div style="background:rgba(255,255,255,0.04); border:1px solid var(--border); border-radius:8px; padding:6px 12px; font-size:14px; color:#c8d8ec;">
+                  <b>A.</b> Vì favicon là biểu tượng đại diện chung cho cả website, không phải chỉ riêng một trang
+                </div>
+              
+                <div style="background:rgba(255,255,255,0.04); border:1px solid var(--border); border-radius:8px; padding:6px 12px; font-size:14px; color:#c8d8ec;">
+                  <b>B.</b> Vì trình duyệt web không cho phép hiển thị logo có nhiều màu sắc ở vị trí tiêu đề của tab đang mở
+                </div>
+              
+                <div style="background:rgba(255,255,255,0.04); border:1px solid var(--border); border-radius:8px; padding:6px 12px; font-size:14px; color:#c8d8ec;">
+                  <b>C.</b> Vì logo của trang chỉ được phép xuất hiện duy nhất một lần ở giữa phần đầu trang, không lặp lại
+                </div>
+              
+                <div style="background:rgba(255,255,255,0.04); border:1px solid var(--border); border-radius:8px; padding:6px 12px; font-size:14px; color:#c8d8ec;">
+                  <b>D.</b> Vì kích thước tệp của logo luôn quá lớn nên bắt buộc phải thiết kế lại hoàn toàn từ đầu
+                </div>
+              
+            </div>
+            <details style="margin-top:8px;">
+              <summary style="cursor:pointer; color:var(--cyan); font-size:13px; font-weight:600;">👉 Xem đáp án & giải thích</summary>
+              <div style="margin-top:6px; padding:8px 12px; background:rgba(86,227,159,0.1); border-left:3px solid var(--green); border-radius:6px; font-size:13.5px; color:#a3e635;">
+                <strong>Đáp án đúng: A</strong><br>
+                <span>SGK nêu rõ: favicon có thể không phải được thu gọn từ logo của trang mà được tạo dựng riêng, không phải chỉ cho một trang mà cho cả website chứa nhiều trang web liên quan đến nhau.</span>
+              </div>
+            </details>
+          </div>
+        </div>
+
+        <div class="cau-hoi" style="margin:16px 0; border:1px solid rgba(56,217,245,0.3); background:rgba(56,217,245,0.04); border-radius:14px; padding:16px 20px;">
+          <div class="q-num" style="background:var(--cyan); color:#000; font-weight:800; border-radius:50%; width:28px; height:28px; display:flex; align-items:center; justify-content:center; flex-shrink:0;">?</div>
+          <div style="flex:1;">
+            <div class="q-text" style="font-weight:600; color:#fff; font-size:15.5px; margin-bottom:10px;">Bố cục phần thân trang được tổ chức chủ yếu theo hình thức nào?</div>
+            <div style="display:grid; grid-template-columns:1fr; gap:6px; margin-bottom:10px;">
+              
+                <div style="background:rgba(255,255,255,0.04); border:1px solid var(--border); border-radius:8px; padding:6px 12px; font-size:14px; color:#c8d8ec;">
+                  <b>A.</b> Các khối hình chữ nhật, mỗi khối trình bày một nội dung với tiêu đề riêng
+                </div>
+              
+                <div style="background:rgba(255,255,255,0.04); border:1px solid var(--border); border-radius:8px; padding:6px 12px; font-size:14px; color:#c8d8ec;">
+                  <b>B.</b> Một cột văn bản dài duy nhất, không chia nhỏ thành từng phần khác nhau
+                </div>
+              
+                <div style="background:rgba(255,255,255,0.04); border:1px solid var(--border); border-radius:8px; padding:6px 12px; font-size:14px; color:#c8d8ec;">
+                  <b>C.</b> Bảng biểu dạng lưới cố định luôn đúng 3 hàng và 3 cột như nhau
+                </div>
+              
+                <div style="background:rgba(255,255,255,0.04); border:1px solid var(--border); border-radius:8px; padding:6px 12px; font-size:14px; color:#c8d8ec;">
+                  <b>D.</b> Danh sách các liên kết xếp dọc, không có hình ảnh hay tiêu đề kèm theo
+                </div>
+              
+            </div>
+            <details style="margin-top:8px;">
+              <summary style="cursor:pointer; color:var(--cyan); font-size:13px; font-weight:600;">👉 Xem đáp án & giải thích</summary>
+              <div style="margin-top:6px; padding:8px 12px; background:rgba(86,227,159,0.1); border-left:3px solid var(--green); border-radius:6px; font-size:13.5px; color:#a3e635;">
+                <strong>Đáp án đúng: A</strong><br>
+                <span>SGK mô tả: thân trang thường được bố cục thành các khối hình chữ nhật, mỗi khối trình bày một nội dung với tiêu đề riêng (Hình 23.2).</span>
+              </div>
+            </details>
+          </div>
+        </div>
+      <div class="page-num">Trang 152-158</div>
+    </section>
+  
+
+    <section class="section" id="sec-2">
+      <h2 id="heading-2">🧭 2. Các bước chuẩn bị để xây dựng trang web</h2>
+      <p>Việc xây dựng trang web cần bắt đầu với việc <strong>phân tích, xác lập định hướng</strong> về mục đích của trang web và đối tượng người dùng. Mỗi trang web phải bắt nguồn từ một nhu cầu cụ thể — cần xác định đối tượng người đọc (người dùng), khả năng và mong muốn của họ, từ đó xác định mục đích, đối tượng, các yêu cầu về trang web trước khi đi vào chi tiết thiết kế nội dung và hình thức.</p>
+
+        <div class="steps-container" style="display:flex; flex-direction:column; gap:12px; margin:16px 0;">
+          
+            <div style="background:var(--panel2); border-left:4px solid var(--cyan); border-radius:10px; padding:12px 16px;">
+              <div style="display:flex; gap:8px; align-items:center; margin-bottom:4px;">
+                <span style="background:var(--cyan); color:#000; font-weight:800; font-size:11px; padding:2px 8px; border-radius:12px;">1</span>
+                <strong style="color:var(--text); font-size:15px;">Định hình ý tưởng</strong>
+              </div>
+              <p style="margin:0; font-size:14.5px; color:#b0c4de;">Xác định <strong>mục đích</strong> và <strong>đối tượng phục vụ</strong> của trang web. Thiết lập các <strong>yêu cầu</strong> cần đạt được cả về nội dung và hình thức.</p>
+            </div>
+          
+
+            <div style="background:var(--panel2); border-left:4px solid var(--cyan); border-radius:10px; padding:12px 16px;">
+              <div style="display:flex; gap:8px; align-items:center; margin-bottom:4px;">
+                <span style="background:var(--cyan); color:#000; font-weight:800; font-size:11px; padding:2px 8px; border-radius:12px;">2</span>
+                <strong style="color:var(--text); font-size:15px;">Xây dựng thiết kế</strong>
+              </div>
+              <p style="margin:0; font-size:14.5px; color:#b0c4de;">Xây dựng <strong>dàn ý</strong>; xây dựng kiến trúc nội dung, thiết kế mĩ thuật — chọn <strong>bảng màu, phông chữ</strong>…</p>
+            </div>
+          
+
+            <div style="background:var(--panel2); border-left:4px solid var(--cyan); border-radius:10px; padding:12px 16px;">
+              <div style="display:flex; gap:8px; align-items:center; margin-bottom:4px;">
+                <span style="background:var(--cyan); color:#000; font-weight:800; font-size:11px; padding:2px 8px; border-radius:12px;">3</span>
+                <strong style="color:var(--text); font-size:15px;">Chuẩn bị tư liệu, lựa chọn phần mềm</strong>
+              </div>
+              <p style="margin:0; font-size:14.5px; color:#b0c4de;"><strong>Lựa chọn phần mềm</strong> để xây dựng trang web. Chuẩn bị thông tin cho phần đầu trang (logo, favicon, ảnh nền, tên trang); chuẩn bị tư liệu cho phần thân và chân trang.</p>
+            </div>
+          
+        </div>
+
+        <div class="info-box">
+          <p><strong>Lưu ý:</strong> cần phân biệt việc xây dựng <strong>trang web</strong> đơn giản với xây dựng <strong>website</strong>. Công việc chuẩn bị xây dựng website có thể đòi hỏi thêm một số bước khác, đặc biệt là cách tổ chức vận hành và quản trị website.</p>
+        </div>
+<p><strong>a) Định hình ý tưởng.</strong> Nội dung chính của bước này là xác định mục đích, đối tượng và các yêu cầu cần đạt được — tìm câu trả lời tường minh cho các câu hỏi: Mục đích của trang web là gì? Lớp người dùng nào sẽ quan tâm thường xuyên đến trang web này? Để đạt mục đích và đáp ứng nhu cầu người dùng thì trang web phải đạt yêu cầu như thế nào về nội dung, kiến trúc và mĩ thuật?</p>
+
+        <div class="activity">
+          <div class="activity-badge">💡 Ví dụ SGK — dự án "Việt Nam – Vẻ đẹp tiềm ẩn"</div>
+          <p>Một nhóm thiện nguyện tâm huyết muốn quảng bá vẻ đẹp thiên nhiên, văn hoá, con người Việt Nam. <strong>Mục đích:</strong> giới thiệu vẻ đẹp thiên nhiên, văn hoá, con người Việt Nam. <strong>Đối tượng:</strong> những người yêu thích phong cảnh thiên nhiên, văn hoá nghệ thuật, ẩm thực các vùng miền — kể cả người nước ngoài. <strong>Yêu cầu nội dung, hình thức:</strong> nội dung phản ánh nét đẹp riêng của mỗi vùng miền; định dạng đa dạng (văn bản, hình ảnh, âm thanh); có bản đồ, đường đi, mùa đẹp nhất kèm theo; hình thức dễ theo dõi, đẹp, trang nhã về màu sắc; có tương tác với người dùng để biết thêm nhu cầu của họ.</p>
+        </div>
+<p><strong>b) Thiết kế.</strong> Bước này cần bắt đầu với việc xây dựng <strong>dàn ý tổng thể</strong>, từ đó xây dựng bố cục của trang và đưa ra những chỉ định về thiết kế mĩ thuật. Việc xây dựng dàn ý giúp hình dung toàn bộ nội dung sẽ giới thiệu và cách sắp xếp sao cho ấn tượng, mạch lạc, dễ tiếp cận và dễ hiểu nhất.</p>
+<p><strong>Thiết kế mĩ thuật</strong> là thiết kế hình thức của trang web sao cho có vẻ đẹp phù hợp với thẩm mĩ người dùng và nội dung. Ở mức thiết kế chung, công việc này giới hạn trong phạm vi lựa chọn <strong>định dạng chữ</strong> và <strong>bảng màu</strong>, cần nhất quán và hài hoà giữa các phần của trang web.</p>
+
+        <div class="img-side">
+          <div class="img-half" style="background:rgba(242,104,60,0.08); border-color:rgba(242,104,60,0.3); padding:16px;">
+            <div style="font-weight:700; color:var(--orange); font-size:15px; margin-bottom:10px;">🔤 Phông Sans Serif (không chân)</div>
+            <ul style="padding-left:18px;">
+              <li style="font-size:14px; margin-bottom:6px;">Hẹp ngang, dễ đọc, tiết kiệm diện tích — dùng cho bảng chọn trên thanh điều hướng (ví dụ Arial Condensed)</li><li style="font-size:14px; margin-bottom:6px;">Dùng cho phần nội dung bài viết: Calibri, Arial, Verdana, Tahoma…</li>
+            </ul>
+          </div>
+          <div class="img-half" style="background:rgba(56,217,245,0.08); border-color:rgba(56,217,245,0.3); padding:16px;">
+            <div style="font-weight:700; color:var(--cyan); font-size:15px; margin-bottom:10px;">🖋️ Phông Serif (có chân)</div>
+            <ul style="padding-left:18px;">
+              <li style="font-size:14px; margin-bottom:6px;">Ví dụ: Times New Roman</li><li style="font-size:14px; margin-bottom:6px;">Rất ít dùng để trình bày nội dung vì khó nhận diện trên màn hình</li><li style="font-size:14px; margin-bottom:6px;">Chỉ dùng trong trường hợp cỡ chữ lớn, như tiêu đề</li>
+            </ul>
+          </div>
+        </div>
+<p>Kiểu chữ <strong>đậm</strong> có ý nghĩa nhấn mạnh, thường dùng cho tiêu đề. Kiểu chữ <em>nghiêng</em> có ý nghĩa phân biệt, thường dùng khi muốn phân biệt từ ngữ, câu chữ hay phần chú thích.</p>
+
+        <div class="field-grid">
+          
+            <div class="field-card">
+              <div class="icon">🔎</div>
+              <h4 style="margin:0 0 6px; color:var(--cyan2);">Cỡ nhỏ nhất</h4>
+              <p style="margin:0; font-size:14px; color:#b0c4de;">Chỉ dùng cho chú thích không cần nhấn mạnh, như ở chân trang.</p>
+            </div>
+          
+
+            <div class="field-card">
+              <div class="icon">📝</div>
+              <h4 style="margin:0 0 6px; color:var(--cyan2);">Cỡ thường</h4>
+              <p style="margin:0; font-size:14px; color:#b0c4de;">Dùng cho phần nội dung bài viết.</p>
+            </div>
+          
+
+            <div class="field-card">
+              <div class="icon">🔠</div>
+              <h4 style="margin:0 0 6px; color:var(--cyan2);">Cỡ lớn</h4>
+              <p style="margin:0; font-size:14px; color:#b0c4de;">Dùng cho tiêu đề.</p>
+            </div>
+          
+
+            <div class="field-card">
+              <div class="icon">🔥</div>
+              <h4 style="margin:0 0 6px; color:var(--cyan2);">Cỡ rất lớn</h4>
+              <p style="margin:0; font-size:14px; color:#b0c4de;">Dùng cho những tiêu đề nổi bật.</p>
+            </div>
+          
+        </div>
+<p>Về <strong>bảng màu</strong>: một trang web với những màu sắc tương phản quá gắt hay không hài hoà sẽ gây phản cảm với người đọc. Vì vậy cần chọn một số màu có độ tương phản nhẹ nhàng và hài hoà. Mỗi bảng màu thường có <strong>5 màu</strong> pha trộn giữa các màu gam ấm, lạnh và trung tính, chưa kể hai màu trắng và đen.</p>
+<p><strong>c) Lựa chọn phần mềm, chuẩn bị tư liệu.</strong> Hiện nay có nhiều phần mềm hỗ trợ làm trang web trực quan, nhưng hầu hết là phần mềm thương mại. Google cung cấp miễn phí một phần mềm làm trang web với giao diện hoàn toàn trực quan, dễ sử dụng và kết nối dễ dàng với các phần mềm khác của Google như Docs, Sheets, Slides, Maps, Photos, YouTube. Trang web làm xong được lưu trên Google Drive, có thể chia sẻ, xuất bản ngay với một địa chỉ URL do Google hỗ trợ — chỉ cần người dùng có tài khoản Google Mail.</p>
+
+        <div class="info-box">
+          <p>Việc chuẩn bị tư liệu cho trang web kéo dài suốt thời gian thực hiện dự án, bắt đầu từ việc thiết kế favicon, logo, lựa chọn hình nền cho phần đầu trang, thực hiện các bài viết cho từng nội dung, lựa chọn hình ảnh minh hoạ.</p>
+        </div>
+
+        <div class="cau-hoi" style="margin:16px 0; border:1px solid rgba(56,217,245,0.3); background:rgba(56,217,245,0.04); border-radius:14px; padding:16px 20px;">
+          <div class="q-num" style="background:var(--cyan); color:#000; font-weight:800; border-radius:50%; width:28px; height:28px; display:flex; align-items:center; justify-content:center; flex-shrink:0;">?</div>
+          <div style="flex:1;">
+            <div class="q-text" style="font-weight:600; color:#fff; font-size:15.5px; margin-bottom:10px;">Bước nào trong quy trình chuẩn bị xây dựng trang web có nhiệm vụ xác định mục đích và đối tượng phục vụ của trang web?</div>
+            <div style="display:grid; grid-template-columns:1fr; gap:6px; margin-bottom:10px;">
+              
+                <div style="background:rgba(255,255,255,0.04); border:1px solid var(--border); border-radius:8px; padding:6px 12px; font-size:14px; color:#c8d8ec;">
+                  <b>A.</b> Định hình ý tưởng
+                </div>
+              
+                <div style="background:rgba(255,255,255,0.04); border:1px solid var(--border); border-radius:8px; padding:6px 12px; font-size:14px; color:#c8d8ec;">
+                  <b>B.</b> Xây dựng thiết kế
+                </div>
+              
+                <div style="background:rgba(255,255,255,0.04); border:1px solid var(--border); border-radius:8px; padding:6px 12px; font-size:14px; color:#c8d8ec;">
+                  <b>C.</b> Chuẩn bị tư liệu, lựa chọn phần mềm
+                </div>
+              
+                <div style="background:rgba(255,255,255,0.04); border:1px solid var(--border); border-radius:8px; padding:6px 12px; font-size:14px; color:#c8d8ec;">
+                  <b>D.</b> Xuất bản trang web
+                </div>
+              
+            </div>
+            <details style="margin-top:8px;">
+              <summary style="cursor:pointer; color:var(--cyan); font-size:13px; font-weight:600;">👉 Xem đáp án & giải thích</summary>
+              <div style="margin-top:6px; padding:8px 12px; background:rgba(86,227,159,0.1); border-left:3px solid var(--green); border-radius:6px; font-size:13.5px; color:#a3e635;">
+                <strong>Đáp án đúng: A</strong><br>
+                <span>Bước Định hình ý tưởng có nội dung chính là xác định mục đích và đối tượng phục vụ của trang web, cùng các yêu cầu cần đạt được về nội dung và hình thức.</span>
+              </div>
+            </details>
+          </div>
+        </div>
+
+        <div class="cau-hoi" style="margin:16px 0; border:1px solid rgba(56,217,245,0.3); background:rgba(56,217,245,0.04); border-radius:14px; padding:16px 20px;">
+          <div class="q-num" style="background:var(--cyan); color:#000; font-weight:800; border-radius:50%; width:28px; height:28px; display:flex; align-items:center; justify-content:center; flex-shrink:0;">?</div>
+          <div style="flex:1;">
+            <div class="q-text" style="font-weight:600; color:#fff; font-size:15.5px; margin-bottom:10px;">Phông chữ nào được khuyến nghị dùng cho các bảng chọn trên thanh điều hướng, vì hẹp ngang, dễ đọc và tiết kiệm diện tích hiển thị?</div>
+            <div style="display:grid; grid-template-columns:1fr; gap:6px; margin-bottom:10px;">
+              
+                <div style="background:rgba(255,255,255,0.04); border:1px solid var(--border); border-radius:8px; padding:6px 12px; font-size:14px; color:#c8d8ec;">
+                  <b>A.</b> Phông Sans Serif hẹp ngang, ví dụ Arial Condensed
+                </div>
+              
+                <div style="background:rgba(255,255,255,0.04); border:1px solid var(--border); border-radius:8px; padding:6px 12px; font-size:14px; color:#c8d8ec;">
+                  <b>B.</b> Phông Serif có chân, ví dụ Times New Roman
+                </div>
+              
+                <div style="background:rgba(255,255,255,0.04); border:1px solid var(--border); border-radius:8px; padding:6px 12px; font-size:14px; color:#c8d8ec;">
+                  <b>C.</b> Phông viết tay có trang trí cầu kì, nhiều nét uốn lượn
+                </div>
+              
+                <div style="background:rgba(255,255,255,0.04); border:1px solid var(--border); border-radius:8px; padding:6px 12px; font-size:14px; color:#c8d8ec;">
+                  <b>D.</b> Phông chỉ gồm toàn chữ in hoa, không phân biệt hoa thường
+                </div>
+              
+            </div>
+            <details style="margin-top:8px;">
+              <summary style="cursor:pointer; color:var(--cyan); font-size:13px; font-weight:600;">👉 Xem đáp án & giải thích</summary>
+              <div style="margin-top:6px; padding:8px 12px; background:rgba(86,227,159,0.1); border-left:3px solid var(--green); border-radius:6px; font-size:13.5px; color:#a3e635;">
+                <strong>Đáp án đúng: A</strong><br>
+                <span>SGK nêu: phông chữ dùng cho các bảng chọn trên thanh điều hướng nên là các phông Sans Serif (không có chân), hẹp ngang, dễ đọc và tiết kiệm diện tích hiển thị, như phông Arial Condensed.</span>
+              </div>
+            </details>
+          </div>
+        </div>
+      <div class="page-num">Trang 152-158</div>
+    </section>
+  
+
+  <!-- HỘP GHI NHỚ CUỐI BÀI -->
+  <section class="section" id="ghi-nho">
+    <div class="ghi-nho">
+      <div class="ghi-nho-title">📌 Em cần ghi nhớ</div>
+      <ul style="padding-left:20px;">
+        <li style="font-size:15.5px; line-height:1.7; margin-bottom:10px;">Một trang web đầy đủ gồm <strong>ba phần chính</strong>: đầu trang (logo, tên trang, thanh điều hướng, tiêu đề, tóm tắt), thân trang (các khối hình chữ nhật, mỗi khối một tiêu đề riêng) và chân trang (thương hiệu, bản quyền, liên hệ, mạng xã hội).</li>
+<li style="font-size:15.5px; line-height:1.7; margin-bottom:10px;"><strong>Favicon</strong> là biểu tượng đại diện cho cả website, hiển thị trên tab trình duyệt — không nhất thiết thu gọn từ logo của một trang cụ thể.</li>
+<li style="font-size:15.5px; line-height:1.7; margin-bottom:10px;">Ba bước chuẩn bị xây dựng trang web: <strong>Định hình ý tưởng</strong> (mục đích, đối tượng, yêu cầu) → <strong>Xây dựng thiết kế</strong> (dàn ý, bố cục, mĩ thuật) → <strong>Chuẩn bị tư liệu, lựa chọn phần mềm</strong>.</li>
+<li style="font-size:15.5px; line-height:1.7; margin-bottom:10px;">Thiết kế mĩ thuật gồm <strong>định dạng chữ</strong> (Sans Serif cho bảng chọn/nội dung, Serif hạn chế dùng cho tiêu đề cỡ lớn; 4 cỡ chữ theo mức độ nhấn mạnh) và <strong>bảng màu</strong> (thường 5 màu, tương phản hài hoà).</li>
+<li style="font-size:15.5px; line-height:1.7; margin-bottom:10px;">Sách sẽ dùng phần mềm làm web <strong>miễn phí, trực quan của Google</strong>, tích hợp với hệ sinh thái Google, lưu trên Google Drive và xuất bản bằng một địa chỉ URL do Google hỗ trợ.</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- NÚT CHUYỂN BÀI DƯỚI CÙNG -->
+  <div class="nav-btns" style="margin-top:32px;">
+    <a href="/sgk/bai-22.html" class="nav-btn">← Thực hành: Kết nối và truyền dữ liệu giữa các thiết bị số</a>
+    <a href="/luyen/bai-23" class="nav-btn" style="background:linear-gradient(90deg, var(--cyan), var(--orange)); color:#fff; border:none;">🎯 Luyện trắc nghiệm ngay</a>
+    <a href="/sgk/bai-24.html" class="nav-btn">Tạo trang web cơ bản với Google Sites →</a>
+  </div>
+</main>
+
+</div>
+
+<script>
+let fs = 18;
+function changeFont(d) { fs = Math.min(28, Math.max(14, fs + d)); document.body.style.fontSize = fs + 'px'; }
+let light = false;
+function toggleTheme() {
+  light = !light;
+  document.documentElement.style.setProperty('--bg', light ? '#f0f4f8' : '#070b14');
+  document.documentElement.style.setProperty('--text', light ? '#1a2540' : '#e8eef8');
+  document.documentElement.style.setProperty('--panel', light ? '#fff' : '#111a2e');
+  document.documentElement.style.setProperty('--panel2', light ? '#f5f8fc' : '#162035');
+  document.documentElement.style.setProperty('--border', light ? '#d0daea' : '#1e2f4d');
+  document.body.style.background = light
+    ? 'radial-gradient(ellipse at 20% 10%, #d8e8f8 0%, #f0f4f8 60%)'
+    : 'radial-gradient(ellipse at 20% 10%, #0d1f3c 0%, #070b14 50%)';
+}
+window.addEventListener('scroll', () => {
+  const doc = document.documentElement;
+  const scrolled = doc.scrollTop || document.body.scrollTop;
+  const total = doc.scrollHeight - doc.clientHeight;
+  const pct = total > 0 ? Math.round((scrolled / total) * 100) : 0;
+  const p = document.getElementById('prog');
+  const pl = document.getElementById('prog-label');
+  if (p) p.style.width = pct + '%';
+  if (pl) pl.textContent = 'Tiến độ đọc: ' + pct + '%';
+});
+</script>
+</body>
+</html>
