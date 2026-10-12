@@ -415,7 +415,7 @@ export default function TheoryViewer({
                 <span className="text-3xl">📽️</span>
                 <div>
                   <h3 className="font-display text-[15px] font-bold text-ink">Bài giảng điện tử tương tác HTML</h3>
-                  <p className="text-xs text-ink-soft">15 slide có sơ đồ động, phòng code trực tiếp & câu hỏi nhanh</p>
+                  <p className="text-xs text-ink-soft">Slide trình chiếu trực quan, mô phỏng thao tác & câu hỏi tương tác nhanh</p>
                 </div>
               </div>
               <a

@@ -1,0 +1,2126 @@
+import fs from 'node:fs';
+import path from 'node:path';
+
+const htmlContent = `<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bài 5: Thực hành chia sẻ tài nguyên trên mạng — Bài giảng điện tử Tin học 12</title>
+  <style>
+    /* ─── RESET & BIẾN MÀU SẮC CHUẨN 2026 ─── */
+    :root {
+      --bg: #0B131A;
+      --bg-card: rgba(18, 33, 43, 0.90);
+      --border-card: rgba(201, 221, 224, 0.18);
+      --ink: #FFFFFF;
+      --ink-soft: #A3B8C8;
+      --sea: #0D7C86;
+      --sea-light: #16A8B6;
+      --sea-glow: rgba(13, 124, 134, 0.4);
+      --coral: #F2683C;
+      --coral-light: #FF855D;
+      --gold: #F5A623;
+      --gold-light: #FFC043;
+      --leaf: #10B981;
+      --leaf-dark: #065F46;
+      --win-blue: #0078D4;
+      --win-bg: #202020;
+      --win-card: #2D2D2D;
+      --radius-lg: 24px;
+      --radius-md: 16px;
+      --font-main: system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      --font-mono: 'Consolas', 'Fira Code', 'Courier New', monospace;
+      --transition-slide: transform 0.55s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.45s ease;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: var(--font-main);
+      background-color: var(--bg);
+      color: var(--ink);
+      overflow: hidden;
+      width: 100vw;
+      height: 100vh;
+      user-select: none;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ─── NỀN GRADIENT HIỆU ỨNG VŨ TRỤ CÔNG NGHỆ ─── */
+    .bg-mesh {
+      position: fixed;
+      top: 0; left: 0; width: 100vw; height: 100vh;
+      background: radial-gradient(circle at 10% 20%, rgba(13, 124, 134, 0.28) 0%, transparent 45%),
+                  radial-gradient(circle at 90% 80%, rgba(242, 104, 60, 0.22) 0%, transparent 42%),
+                  radial-gradient(circle at 50% 50%, rgba(0, 120, 212, 0.15) 0%, transparent 60%);
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    /* ─── CONTAINER TRÌNH CHIẾU ─── */
+    .deck-container {
+      position: relative;
+      width: 100vw;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 1;
+    }
+
+    /* ─── MỖI SLIDE ─── */
+    .slide {
+      position: absolute;
+      width: 94vw;
+      max-width: 1320px;
+      height: 88vh;
+      max-height: 840px;
+      background: var(--bg-card);
+      border: 1px solid var(--border-card);
+      border-radius: var(--radius-lg);
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+      box-shadow: 0 30px 70px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.12);
+      padding: 36px 48px;
+      display: flex;
+      flex-direction: column;
+      opacity: 0;
+      pointer-events: none;
+      transform: translateX(60px) scale(0.97);
+      transition: var(--transition-slide);
+      overflow-y: auto;
+    }
+
+    .slide::-webkit-scrollbar { width: 6px; }
+    .slide::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 4px; }
+
+    .slide.active {
+      opacity: 1;
+      pointer-events: auto;
+      transform: translateX(0) scale(1);
+      z-index: 2;
+    }
+
+    .slide.prev {
+      opacity: 0;
+      pointer-events: none;
+      transform: translateX(-60px) scale(0.97);
+    }
+
+    /* ─── TIÊU ĐỀ & ĐẦU TRANG SLIDE ─── */
+    .slide-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 20px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      padding-bottom: 14px;
+      flex-shrink: 0;
+    }
+
+    .slide-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 14px;
+      border-radius: 20px;
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      background: rgba(13, 124, 134, 0.25);
+      color: #38E1F0;
+      border: 1px solid rgba(56, 225, 240, 0.3);
+      margin-bottom: 6px;
+    }
+
+    .slide-badge.coral {
+      background: rgba(242, 104, 60, 0.25);
+      color: #FF855D;
+      border-color: rgba(255, 133, 93, 0.35);
+    }
+
+    .slide-badge.gold {
+      background: rgba(245, 166, 35, 0.25);
+      color: #FFC043;
+      border-color: rgba(255, 192, 67, 0.35);
+    }
+
+    .slide-badge.leaf {
+      background: rgba(16, 185, 129, 0.25);
+      color: #34D399;
+      border-color: rgba(52, 211, 153, 0.35);
+    }
+
+    .slide-title {
+      font-size: 30px;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      background: linear-gradient(135deg, #FFFFFF 30%, #C9DDE0 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      line-height: 1.25;
+    }
+
+    .slide-subtitle {
+      font-size: 15px;
+      color: var(--ink-soft);
+      margin-top: 3px;
+    }
+
+    .slide-body {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: 18px;
+      position: relative;
+    }
+
+    /* ─── GRID LAYOUT ─── */
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+      align-items: stretch;
+      width: 100%;
+    }
+
+    .grid-3 {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 18px;
+      width: 100%;
+    }
+
+    .grid-4 {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 14px;
+      width: 100%;
+    }
+
+    /* ─── CARD NỘI DUNG ─── */
+    .card {
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.09);
+      border-radius: var(--radius-md);
+      padding: 20px 24px;
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .card:hover {
+      background: rgba(255, 255, 255, 0.07);
+      border-color: rgba(56, 225, 240, 0.4);
+      transform: translateY(-3px);
+    }
+
+    .card-title {
+      font-size: 19px;
+      font-weight: 700;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .card p, .card li {
+      color: var(--ink-soft);
+      font-size: 15px;
+      line-height: 1.6;
+    }
+
+    .highlight { color: #38E1F0; font-weight: 700; }
+    .coral-text { color: var(--coral-light); font-weight: 700; }
+    .gold-text { color: var(--gold); font-weight: 700; }
+    .leaf-text { color: var(--leaf); font-weight: 700; }
+
+    /* ─── HỘP THOẠI MÔ PHỎNG WINDOWS 11 (FLUENT DESIGN) ─── */
+    .win-window {
+      background: #1E293B;
+      border: 1px solid rgba(255, 255, 255, 0.16);
+      border-radius: 12px;
+      box-shadow: 0 20px 45px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(255, 255, 255, 0.08);
+      overflow: hidden;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .win-titlebar {
+      height: 36px;
+      background: #0F172A;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 12px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      user-select: none;
+    }
+
+    .win-title {
+      font-size: 12px;
+      color: #E2E8F0;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-weight: 500;
+    }
+
+    .win-controls {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .win-btn-control {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      display: inline-block;
+    }
+    .win-btn-control.min { background: #EAB308; }
+    .win-btn-control.max { background: #22C55E; }
+    .win-btn-control.close { background: #EF4444; }
+
+    .win-content {
+      padding: 18px 20px;
+      background: #1E293B;
+      color: #F8FAFC;
+      font-size: 13.5px;
+      line-height: 1.55;
+    }
+
+    /* Các thành phần control Windows */
+    .win-nav-path {
+      background: #0F172A;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 6px;
+      padding: 6px 12px;
+      font-family: var(--font-mono);
+      font-size: 12.5px;
+      color: #38BDF8;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 14px;
+    }
+
+    .win-toggle-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 14px;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 8px;
+      margin-bottom: 10px;
+    }
+
+    .win-toggle-row.active-callout {
+      border: 2px solid #F5A623;
+      background: rgba(245, 166, 35, 0.12);
+      position: relative;
+    }
+
+    /* Con trỏ nhấp thao tác */
+    .click-target {
+      position: relative;
+    }
+    .click-target::after {
+      content: '👆 NHẤP ĐÂY';
+      position: absolute;
+      top: -14px;
+      right: -8px;
+      background: #EF4444;
+      color: white;
+      font-size: 10px;
+      font-weight: 800;
+      padding: 2px 7px;
+      border-radius: 10px;
+      animation: pulseAlert 1.2s infinite ease-in-out;
+      box-shadow: 0 2px 8px rgba(239, 68, 68, 0.6);
+      z-index: 10;
+    }
+
+    @keyframes pulseAlert {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.15) translateY(-2px); }
+    }
+
+    /* Switch On/Off phong cách Windows */
+    .win-switch {
+      position: relative;
+      width: 44px;
+      height: 22px;
+      background: #475569;
+      border-radius: 12px;
+      transition: background 0.25s;
+      cursor: pointer;
+    }
+    .win-switch.on {
+      background: #0078D4;
+    }
+    .win-switch::after {
+      content: '';
+      position: absolute;
+      top: 3px;
+      left: 3px;
+      width: 16px;
+      height: 16px;
+      background: white;
+      border-radius: 50%;
+      transition: transform 0.25s;
+    }
+    .win-switch.on::after {
+      transform: translateX(22px);
+    }
+
+    /* Hộp thoại Tabs kiểu Properties */
+    .win-tabs {
+      display: flex;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+      margin-bottom: 14px;
+      gap: 4px;
+    }
+    .win-tab {
+      padding: 6px 14px;
+      font-size: 12.5px;
+      color: #94A3B8;
+      border-radius: 6px 6px 0 0;
+      cursor: pointer;
+    }
+    .win-tab.active {
+      background: rgba(255, 255, 255, 0.08);
+      color: #FFFFFF;
+      font-weight: 600;
+      border-bottom: 2px solid #38BDF8;
+    }
+
+    .win-btn {
+      background: #334155;
+      color: white;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 6px;
+      padding: 6px 16px;
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s;
+    }
+    .win-btn:hover {
+      background: #475569;
+    }
+    .win-btn.primary {
+      background: #0078D4;
+      border-color: #0284C7;
+    }
+    .win-btn.primary:hover {
+      background: #0284C7;
+    }
+
+    /* ─── BƯỚC THAO TÁC CÓ SỐ THỨ TỰ (STEP CARDS) ─── */
+    .step-badge {
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #0D7C86, #16A8B6);
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      font-size: 15px;
+      box-shadow: 0 4px 12px rgba(13, 124, 134, 0.4);
+      flex-shrink: 0;
+    }
+
+    .step-item {
+      display: flex;
+      gap: 16px;
+      align-items: flex-start;
+      padding: 14px 16px;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: var(--radius-md);
+      transition: all 0.2s;
+    }
+    .step-item:hover {
+      background: rgba(255, 255, 255, 0.07);
+      border-color: rgba(56, 225, 240, 0.3);
+    }
+
+    /* ─── KHỐI THỰC HÀNH TƯƠNG TÁC (SIMULATOR) ─── */
+    .sim-container {
+      background: #0F172A;
+      border: 2px dashed #0D7C86;
+      border-radius: var(--radius-md);
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      position: relative;
+    }
+
+    .sim-folder-target {
+      width: 110px;
+      height: 95px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 12px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      cursor: context-menu;
+      transition: all 0.25s;
+    }
+    .sim-folder-target:hover {
+      background: rgba(13, 124, 134, 0.2);
+      border-color: #38E1F0;
+      transform: scale(1.05);
+    }
+
+    .context-menu {
+      position: absolute;
+      background: #1E293B;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 8px;
+      padding: 6px 0;
+      width: 170px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.6);
+      display: none;
+      z-index: 20;
+    }
+    .context-menu-item {
+      padding: 7px 14px;
+      font-size: 13px;
+      color: #E2E8F0;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .context-menu-item:hover {
+      background: #0078D4;
+      color: white;
+    }
+
+    /* ─── QUIZ CARDS ─── */
+    .quiz-container {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      width: 100%;
+    }
+
+    .quiz-question {
+      font-size: 19px;
+      font-weight: 700;
+      color: #FFFFFF;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .quiz-options {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .quiz-btn {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: var(--radius-md);
+      padding: 14px 18px;
+      font-size: 15px;
+      color: #E2E8F0;
+      text-align: left;
+      cursor: pointer;
+      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .quiz-btn:hover {
+      background: rgba(255, 255, 255, 0.1);
+      border-color: rgba(56, 225, 240, 0.4);
+      transform: translateY(-2px);
+    }
+
+    .quiz-btn.correct {
+      background: rgba(16, 185, 129, 0.25) !important;
+      border-color: #10B981 !important;
+      color: #34D399 !important;
+      font-weight: 700;
+    }
+
+    .quiz-btn.wrong {
+      background: rgba(242, 104, 60, 0.25) !important;
+      border-color: #F2683C !important;
+      color: #FF855D !important;
+    }
+
+    .quiz-feedback {
+      padding: 12px 18px;
+      border-radius: var(--radius-md);
+      font-size: 14.5px;
+      display: none;
+      animation: fadeIn 0.3s ease;
+      line-height: 1.5;
+    }
+
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
+
+    /* ─── THANH ĐIỀU HƯỚNG DƯỚI CÙNG (DECK CONTROLS) ─── */
+    .deck-nav {
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      background: rgba(11, 19, 26, 0.85);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 40px;
+      padding: 8px 24px;
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      z-index: 100;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    }
+
+    .nav-btn {
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      cursor: pointer;
+      font-size: 16px;
+      transition: all 0.2s;
+    }
+
+    .nav-btn:hover {
+      background: #0D7C86;
+      border-color: #38E1F0;
+      transform: scale(1.1);
+    }
+
+    .deck-progress {
+      width: 160px;
+      height: 6px;
+      background: rgba(255, 255, 255, 0.15);
+      border-radius: 3px;
+      overflow: hidden;
+    }
+
+    .deck-progress-bar {
+      height: 100%;
+      background: linear-gradient(90deg, #0D7C86, #38E1F0);
+      width: 6.25%;
+      transition: width 0.3s ease;
+    }
+
+    .deck-counter {
+      font-family: var(--font-mono);
+      font-size: 13px;
+      color: var(--ink-soft);
+      min-width: 60px;
+      text-align: center;
+    }
+
+    /* ─── PHÁO HOA CANVAS ─── */
+    #confettiCanvas {
+      position: fixed;
+      top: 0; left: 0; width: 100vw; height: 100vh;
+      pointer-events: none;
+      z-index: 999;
+    }
+
+    /* ─── CHECKLIST THỰC HÀNH ─── */
+    .checklist-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 14px;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.2s;
+      font-size: 14.5px;
+    }
+    .checklist-item:hover {
+      background: rgba(255, 255, 255, 0.08);
+    }
+    .checklist-item.done {
+      background: rgba(16, 185, 129, 0.15);
+      border-color: #10B981;
+      text-decoration: line-through;
+      color: #6EE7B7;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="bg-mesh"></div>
+  <canvas id="confettiCanvas"></canvas>
+
+  <div class="deck-container">
+
+    <!-- ════════════════════════════════════════════════════════════════════════
+         SLIDE 1: TRANG BÌA BÀI HỌC
+         ════════════════════════════════════════════════════════════════════════ -->
+    <section class="slide active" id="slide-1">
+      <div class="slide-header">
+        <div>
+          <span class="slide-badge">Tin học 12 · Sách Kết nối tri thức</span>
+          <div class="slide-title">BÀI 5: THỰC HÀNH CHIA SẺ TÀI NGUYÊN TRÊN MẠNG</div>
+          <div class="slide-subtitle">Chủ đề B: Mạng máy tính và Internet · Trang 26–33 SGK</div>
+        </div>
+        <div style="text-align: right;">
+          <span style="font-size: 38px;">📁 ⇆ 🖨️</span>
+        </div>
+      </div>
+      <div class="slide-body">
+        <div class="grid-2">
+          <div class="card" style="border-left: 4px solid #38E1F0;">
+            <div class="card-title">🎯 Mục tiêu & Yêu cầu cần đạt</div>
+            <ul style="margin-left: 20px; display: flex; flex-direction: column; gap: 10px;">
+              <li>Hiểu được <strong class="highlight">bản chất chia sẻ tài nguyên</strong> trong mạng LAN và 2 điều kiện bắt buộc.</li>
+              <li>Thành thạo cấu hình an ninh Windows: <strong class="highlight">Private network</strong>, <strong class="highlight">Network discovery</strong> và tạm tắt Tường lửa.</li>
+              <li>Thực hiện thành thạo <strong class="highlight">chia sẻ thư mục/ổ đĩa</strong> và phân biệt quyền <span class="gold-text">Read</span> vs <span class="leaf-text">Read/Write</span>.</li>
+              <li>Biết cách <strong class="highlight">chia sẻ máy in</strong> (Print Server) và kết nối in từ máy trạm khác.</li>
+            </ul>
+          </div>
+          <div class="card" style="background: rgba(13, 124, 134, 0.12); border-color: rgba(56, 225, 240, 0.3);">
+            <div class="card-title">⚡ Cẩm nang cho học sinh thực hành</div>
+            <p style="margin-bottom: 12px;">Slide bài giảng này được thiết kế theo dạng <strong class="highlight">"Cầm tay chỉ việc — Nhìn hình làm theo được ngay"</strong> với:</p>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; font-size: 13.5px;">
+              <div style="background: rgba(255,255,255,0.05); padding: 10px; border-radius: 8px;">
+                🖱️ <strong>Hình ảnh nút bấm thật:</strong> Chỉ rõ tên mục tiếng Anh Windows 10/11.
+              </div>
+              <div style="background: rgba(255,255,255,0.05); padding: 10px; border-radius: 8px;">
+                🧪 <strong>Phòng thực hành ảo:</strong> Bấm thử trực tiếp trên slide trước khi làm trên máy.
+              </div>
+              <div style="background: rgba(255,255,255,0.05); padding: 10px; border-radius: 8px;">
+                ⚠️ <strong>Bắt bệnh lỗi thường gặp:</strong> Không thấy máy, đòi pass, bị cấm ghi.
+              </div>
+              <div style="background: rgba(255,255,255,0.05); padding: 10px; border-radius: 8px;">
+                🎉 <strong>Mini-quiz & Checklist:</strong> Ôn tập nhanh và đánh dấu từng bài thực hành.
+              </div>
+            </div>
+            <div style="margin-top: 14px; font-size: 13px; color: #A3B8C8;">
+              ⌨️ <em>Nhấn <strong>Phím mũi tên phải (→)</strong> hoặc <strong>Phím Space</strong> để bắt đầu bài giảng!</em>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ════════════════════════════════════════════════════════════════════════
+         SLIDE 2: KHÁI NIỆM & BẢN CHẤT CHIA SẺ
+         ════════════════════════════════════════════════════════════════════════ -->
+    <section class="slide" id="slide-2">
+      <div class="slide-header">
+        <div>
+          <span class="slide-badge">Phần 1: Kiến thức nền tảng</span>
+          <div class="slide-title">Chia sẻ tài nguyên trên mạng là gì?</div>
+          <div class="slide-subtitle">Bản chất kỹ thuật và điều kiện để chia sẻ trong mạng cục bộ (LAN)</div>
+        </div>
+        <span style="font-size: 32px;">🔑</span>
+      </div>
+      <div class="slide-body">
+        <div class="grid-3" style="margin-bottom: 12px;">
+          <div class="card" style="text-align: center;">
+            <div style="font-size: 36px; margin-bottom: 8px;">📁</div>
+            <div class="card-title" style="justify-content: center;">1. Dữ liệu (Data)</div>
+            <p>Tệp văn bản, hình ảnh, bài tập, thư mục dự án hoặc toàn bộ cả một ổ đĩa cứng (D:, E:).</p>
+          </div>
+          <div class="card" style="text-align: center;">
+            <div style="font-size: 36px; margin-bottom: 8px;">💾</div>
+            <div class="card-title" style="justify-content: center;">2. Phần mềm</div>
+            <p>Ứng dụng dùng chung, bộ cài đặt phần mềm đặt trên máy chủ cho cả phòng máy truy cập tải về.</p>
+          </div>
+          <div class="card" style="text-align: center;">
+            <div style="font-size: 36px; margin-bottom: 8px;">🖨️</div>
+            <div class="card-title" style="justify-content: center;">3. Thiết bị phần cứng</div>
+            <p>Máy in văn phòng, máy quét (scanner) cắm vào một máy tính nhưng cả phòng cùng in chung được.</p>
+          </div>
+        </div>
+
+        <div class="grid-2">
+          <div class="card" style="border: 2px solid #10B981; background: rgba(16, 185, 129, 0.08);">
+            <div class="card-title" style="color: #34D399;">✅ 2 Điều kiện BẮT BUỘC & DUY NHẤT</div>
+            <div class="step-item" style="margin-bottom: 10px;">
+              <div class="step-badge">1</div>
+              <div>
+                <strong>Kết nối mạng với nhau:</strong> Hai máy phải cùng cắm dây mạng LAN hoặc kết nối chung mạng Wi-Fi (thông mạch IP).
+              </div>
+            </div>
+            <div class="step-item">
+              <div class="step-badge">2</div>
+              <div>
+                <strong>Người chủ cấp quyền truy cập:</strong> Máy có tài nguyên phải mở quyền (chỉ đọc hay cho phép sửa/xóa) thông qua hệ điều hành.
+              </div>
+            </div>
+          </div>
+
+          <div class="card" style="border: 2px solid #F2683C; background: rgba(242, 104, 60, 0.08);">
+            <div class="card-title" style="color: #FF855D;">❌ HIỂU LẦM TAI HẠI (Đề thi hay bẫy)</div>
+            <ul style="margin-left: 20px; display: flex; flex-direction: column; gap: 12px; margin-top: 8px;">
+              <li><strong class="coral-text">KHÔNG CẦN "kết bạn"</strong> như trên mạng xã hội Facebook/Zalo!</li>
+              <li><strong class="coral-text">KHÔNG CẦN trả phí hay đề xuất mua bản quyền</strong> — đây là công việc kỹ thuật nội bộ của cơ quan, trường học!</li>
+              <li><strong class="coral-text">KHÔNG CẦN dùng chung tài khoản Microsoft</strong>.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ════════════════════════════════════════════════════════════════════════
+         SLIDE 3: LỘ TRÌNH 3 BƯỚC THỰC HÀNH TỔNG QUAN
+         ════════════════════════════════════════════════════════════════════════ -->
+    <section class="slide" id="slide-3">
+      <div class="slide-header">
+        <div>
+          <span class="slide-badge gold">Quy trình thực tế</span>
+          <div class="slide-title">Lộ trình 3 Giai đoạn Thực hành trên Windows</div>
+          <div class="slide-subtitle">Nắm chắc bản đồ các bước trước khi bắt tay thao tác trên bàn phím & chuột</div>
+        </div>
+        <span style="font-size: 32px;">🗺️</span>
+      </div>
+      <div class="slide-body">
+        <div class="grid-3" style="gap: 20px;">
+          <!-- Bước 1 -->
+          <div class="card" style="border-top: 5px solid #0D7C86;">
+            <div style="font-size: 32px; margin-bottom: 10px;">🛠️</div>
+            <div class="slide-badge" style="margin-bottom: 8px;">Giai đoạn 1</div>
+            <div class="card-title">Chuẩn bị máy tính (Mở khóa an ninh)</div>
+            <p style="margin-bottom: 12px;">Windows mặc định chặn chia sẻ để bảo vệ máy trước virus/hacker. Ta cần nới lỏng an ninh:</p>
+            <ul style="font-size: 14px; margin-left: 18px; display: flex; flex-direction: column; gap: 6px;">
+              <li>Đổi mạng sang <strong>Private network</strong>.</li>
+              <li>Bật <strong>Network discovery</strong> (Cho máy khác nhìn thấy).</li>
+              <li>Bật <strong>File and printer sharing</strong>.</li>
+              <li>Tạm dừng <strong>Windows Firewall</strong>.</li>
+            </ul>
+          </div>
+
+          <!-- Bước 2 -->
+          <div class="card" style="border-top: 5px solid #F5A623;">
+            <div style="font-size: 32px; margin-bottom: 10px;">📁</div>
+            <div class="slide-badge gold" style="margin-bottom: 8px;">Giai đoạn 2</div>
+            <div class="card-title">Chia sẻ Thư mục & Phân quyền</div>
+            <p style="margin-bottom: 12px;">Chọn thư mục muốn chia sẻ và cấp quyền cho mọi người trong phòng:</p>
+            <ul style="font-size: 14px; margin-left: 18px; display: flex; flex-direction: column; gap: 6px;">
+              <li>Chuột phải thư mục → <strong>Properties → Sharing</strong>.</li>
+              <li>Bấm nút <strong>Share...</strong> → Thêm <strong>Everyone</strong>.</li>
+              <li>Chọn mức quyền: <span class="gold-text">Read</span> (Chỉ xem) hoặc <span class="leaf-text">Read/Write</span> (Được sửa).</li>
+              <li>Mở máy khác kiểm tra qua <strong>Network</strong> hoặc đường dẫn UNC.</li>
+            </ul>
+          </div>
+
+          <!-- Bước 3 -->
+          <div class="card" style="border-top: 5px solid #10B981;">
+            <div style="font-size: 32px; margin-bottom: 10px;">🖨️</div>
+            <div class="slide-badge leaf" style="margin-bottom: 8px;">Giai đoạn 3</div>
+            <div class="card-title">Chia sẻ Máy in (Print Server)</div>
+            <p style="margin-bottom: 12px;">Biến máy cắm máy in thành máy chủ in ấn dùng chung cho cả phòng máy:</p>
+            <ul style="font-size: 14px; margin-left: 18px; display: flex; flex-direction: column; gap: 6px;">
+              <li>Vào <strong>Printers & scanners</strong> trên máy cắm máy in.</li>
+              <li>Vào <strong>Printer properties → Sharing</strong>.</li>
+              <li>Tích chọn <strong>Share this printer</strong> & đặt tên gợi nhớ.</li>
+              <li>Máy học sinh bấm <strong>Add device → Browse</strong> để kết nối in thử!</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ════════════════════════════════════════════════════════════════════════
+         SLIDE 4: GIAI ĐOẠN 1 - BƯỚC 1: ĐẶT MẠNG RIÊNG (PRIVATE NETWORK)
+         ════════════════════════════════════════════════════════════════════════ -->
+    <section class="slide" id="slide-4">
+      <div class="slide-header">
+        <div>
+          <span class="slide-badge">Giai đoạn 1 · Bước 1</span>
+          <div class="slide-title">Đặt chế độ Mạng riêng (Private Network)</div>
+          <div class="slide-subtitle">Chuyển cấu hình mạng từ Public sang Private để cho phép các máy tìm thấy nhau</div>
+        </div>
+        <span style="font-size: 32px;">🏠</span>
+      </div>
+      <div class="slide-body">
+        <div class="grid-2">
+          <div>
+            <div class="card" style="margin-bottom: 16px;">
+              <div class="card-title">🔍 Tại sao bắt buộc phải là Private?</div>
+              <p style="margin-bottom: 8px;">
+                • <strong class="coral-text">Public (Mạng công cộng):</strong> Chế độ dùng ở quán café, sân bay, nhà ga. Windows sẽ <span class="coral-text">ẨN MÁY BẠN ĐI</span>, không cho máy lạ quét thấy để chống xâm nhập.
+              </p>
+              <p>
+                • <strong class="leaf-text">Private (Mạng riêng):</strong> Chế độ dành cho gia đình, lớp học, văn phòng. Máy tính có <span class="leaf-text">độ tin cậy cao</span>, Windows cho phép phát hiện và chia sẻ tệp.
+              </p>
+            </div>
+
+            <div class="step-item" style="margin-bottom: 10px;">
+              <div class="step-badge">1</div>
+              <div>
+                <strong>Mở Settings:</strong> Nhấn tổ hợp phím <code class="highlight" style="font-family: var(--font-mono); background: rgba(0,0,0,0.4); padding: 2px 6px; border-radius: 4px;">Win + I</code> hoặc nhấp menu Start chọn bánh răng <strong>Settings</strong>.
+              </div>
+            </div>
+            <div class="step-item">
+              <div class="step-badge">2</div>
+              <div>
+                <strong>Vào mục mạng:</strong> Chọn <strong>Network & internet</strong> → Chọn mạng Wi-Fi hoặc Ethernet đang kết nối.
+              </div>
+            </div>
+          </div>
+
+          <!-- Mô phỏng giao diện Windows Settings -->
+          <div class="win-window">
+            <div class="win-titlebar">
+              <div class="win-title">
+                <span style="color: #38BDF8;">⚙️</span> Settings — Network & internet > Wi-Fi
+              </div>
+              <div class="win-controls">
+                <span class="win-btn-control min"></span>
+                <span class="win-btn-control max"></span>
+                <span class="win-btn-control close"></span>
+              </div>
+            </div>
+            <div class="win-content">
+              <div style="font-size: 15px; font-weight: 700; margin-bottom: 12px; color: #E2E8F0;">
+                Network profile type (Loại cấu hình mạng)
+              </div>
+
+              <!-- Option 1: Public -->
+              <div style="padding: 12px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); border-radius: 8px; margin-bottom: 12px; display: flex; gap: 12px; opacity: 0.7;">
+                <input type="radio" disabled name="net-type" style="margin-top: 3px;">
+                <div>
+                  <div style="font-weight: 600; color: #94A3B8;">Public network (Mạng công cộng)</div>
+                  <div style="font-size: 12px; color: #64748B;">Thiết bị của bạn sẽ bị ẩn khỏi các máy tính khác trong mạng. Khuyến nghị dùng tại nơi công cộng.</div>
+                </div>
+              </div>
+
+              <!-- Option 2: Private (Được chọn) -->
+              <div class="click-target" style="padding: 14px; background: rgba(13, 124, 134, 0.25); border: 2px solid #38E1F0; border-radius: 8px; display: flex; gap: 12px;">
+                <input type="radio" checked name="net-type" style="margin-top: 3px; accent-color: #38E1F0;">
+                <div>
+                  <div style="font-weight: 700; color: #38E1F0; font-size: 14.5px;">Private network (Mạng riêng) — BẮT BUỘC CHỌN Ô NÀY</div>
+                  <div style="font-size: 12.5px; color: #CBD5E1; margin-top: 2px;">
+                    Thiết bị của bạn có thể được phát hiện bởi các máy tính khác. Dùng cho mạng gia đình, trường học hoặc văn phòng tin cậy.
+                  </div>
+                </div>
+              </div>
+
+              <div style="margin-top: 16px; font-size: 12px; color: #F5A623; display: flex; align-items: center; gap: 6px;">
+                💡 <em>Học sinh chú ý: Nếu để ở Public, máy khác sẽ không bao giờ nhìn thấy thư mục của em!</em>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ════════════════════════════════════════════════════════════════════════
+         SLIDE 5: GIAI ĐOẠN 1 - BƯỚC 2: BẬT NETWORK DISCOVERY & FILE SHARING
+         ════════════════════════════════════════════════════════════════════════ -->
+    <section class="slide" id="slide-5">
+      <div class="slide-header">
+        <div>
+          <span class="slide-badge">Giai đoạn 1 · Bước 2</span>
+          <div class="slide-title">Bật Network Discovery & File/Printer Sharing</div>
+          <div class="slide-subtitle">Đường dẫn: Control Panel > Network and Sharing Center > Advanced sharing settings</div>
+        </div>
+        <span style="font-size: 32px;">👀</span>
+      </div>
+      <div class="slide-body">
+        <div class="win-nav-path">
+          <span>📁 Control Panel</span> ❯ <span>Network and Internet</span> ❯ <span>Network and Sharing Center</span> ❯ <strong style="color: #FDE047;">Advanced sharing settings</strong>
+        </div>
+
+        <div class="grid-2">
+          <!-- Cột bên trái: Chi tiết thiết lập -->
+          <div class="win-window">
+            <div class="win-titlebar">
+              <div class="win-title">Advanced sharing settings (Thiết lập chia sẻ nâng cao)</div>
+              <div class="win-controls">
+                <span class="win-btn-control min"></span>
+                <span class="win-btn-control max"></span>
+                <span class="win-btn-control close"></span>
+              </div>
+            </div>
+            <div class="win-content">
+              <div style="font-size: 13px; color: #38BDF8; font-weight: 700; margin-bottom: 10px;">
+                MỤC: PRIVATE (CURRENT PROFILE)
+              </div>
+
+              <!-- Switch 1: Network discovery -->
+              <div class="win-toggle-row active-callout click-target">
+                <div>
+                  <div style="font-weight: 700; color: white;">Network discovery (Tìm kiếm mạng)</div>
+                  <div style="font-size: 12px; color: #94A3B8;">Cho phép máy này nhìn thấy máy khác & máy khác nhìn thấy máy này.</div>
+                </div>
+                <div style="display: flex; align-items: center; gap: 8px;">
+                  <span style="font-weight: 700; color: #38BDF8;">ON</span>
+                  <div class="win-switch on"></div>
+                </div>
+              </div>
+
+              <!-- Switch 2: File and printer sharing -->
+              <div class="win-toggle-row active-callout click-target">
+                <div>
+                  <div style="font-weight: 700; color: white;">File and printer sharing (Chia sẻ tệp & máy in)</div>
+                  <div style="font-size: 12px; color: #94A3B8;">Cho phép chia sẻ thư mục và máy in cắm trên máy này.</div>
+                </div>
+                <div style="display: flex; align-items: center; gap: 8px;">
+                  <span style="font-weight: 700; color: #38BDF8;">ON</span>
+                  <div class="win-switch on"></div>
+                </div>
+              </div>
+
+              <!-- Nút Save changes -->
+              <div style="text-align: right; margin-top: 14px;">
+                <button class="win-btn primary" style="font-weight: 700;">Save changes (Lưu thay đổi)</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Cột bên phải: Lưu ý thư mục Public -->
+          <div style="display: flex; flex-direction: column; gap: 14px;">
+            <div class="card" style="border-left: 4px solid #F5A623;">
+              <div class="card-title">📂 Về thư mục "Public" có sẵn trong Windows</div>
+              <p style="font-size: 14.5px; line-height: 1.6;">
+                Windows luôn tạo sẵn thư mục công cộng tại: <br>
+                <code style="color: #FDE047; font-family: var(--font-mono); background: #0F172A; padding: 2px 6px; border-radius: 4px;">C:\\Users\\Public</code>
+              </p>
+              <p style="font-size: 13.5px; margin-top: 8px; color: #A3B8C8;">
+                Gồm các thư mục con: <em>Public Documents, Public Downloads, Public Music, Public Pictures, Public Videos</em>.
+              </p>
+              <div style="margin-top: 10px; padding: 10px; background: rgba(245, 166, 35, 0.1); border-radius: 8px; font-size: 13px; color: #FCD34D;">
+                ⚠️ <strong>Quy tắc bảo mật:</strong> Mặc định thư mục Public KHÔNG chia sẻ ra ngoài mạng. Chỉ khi ta bật mục <em>Public folder sharing</em> thì người khác mới thấy nó!
+              </div>
+            </div>
+
+            <div class="card" style="background: rgba(13, 124, 134, 0.12);">
+              <div class="card-title">💡 Mẹo tìm nhanh trong phòng máy</div>
+              <p style="font-size: 13.5px;">
+                Nếu không thấy Control Panel trên màn hình, hãy bấm phím <code class="highlight" style="font-family: var(--font-mono);">Win</code>, gõ ngay từ khóa <strong>"Advanced sharing"</strong> rồi nhấn Enter để mở trực tiếp cửa sổ này!
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ════════════════════════════════════════════════════════════════════════
+         SLIDE 6: GIAI ĐOẠN 1 - BƯỚC 3: TẠM TẮT WINDOWS FIREWALL
+         ════════════════════════════════════════════════════════════════════════ -->
+    <section class="slide" id="slide-6">
+      <div class="slide-header">
+        <div>
+          <span class="slide-badge coral">Giai đoạn 1 · Bước 3</span>
+          <div class="slide-title">Tạm dừng Tường lửa (Windows Defender Firewall)</div>
+          <div class="slide-subtitle">Tránh việc Firewall chặn cổng dịch vụ SMB/Chia sẻ tệp trong quá trình thực hành</div>
+        </div>
+        <span style="font-size: 32px;">🧱</span>
+      </div>
+      <div class="slide-body">
+        <div class="grid-2">
+          <div>
+            <div class="card" style="margin-bottom: 14px;">
+              <div class="card-title">🛡️ Tường lửa (Firewall) là gì?</div>
+              <p style="font-size: 14.5px; line-height: 1.6;">
+                Tường lửa là phần mềm kiểm soát các gói tin ra vào máy tính từ bên ngoài. Mặc định tường lửa bật ON để bảo vệ máy trước các cuộc tấn công. Tuy nhiên, nó cũng có thể <span class="coral-text">chặn nhầm các lệnh kết nối chia sẻ</span> trong giờ học thực hành.
+              </p>
+            </div>
+
+            <div class="step-item" style="margin-bottom: 10px;">
+              <div class="step-badge">1</div>
+              <div>
+                <strong>Đường dẫn:</strong> Settings → <strong>Privacy & security</strong> → <strong>Windows Security</strong> → <strong>Firewall & network protection</strong>.
+              </div>
+            </div>
+
+            <div class="step-item" style="margin-bottom: 10px;">
+              <div class="step-badge">2</div>
+              <div>
+                <strong>Chọn Private network:</strong> Nhấp vào mục <strong>Private network</strong>.
+              </div>
+            </div>
+
+            <div class="step-item">
+              <div class="step-badge">3</div>
+              <div>
+                <strong>Gạt về OFF:</strong> Chuyển công tắc <strong>Microsoft Defender Firewall</strong> sang <span class="coral-text">Off</span>. Khi hộp thoại UAC hỏi, chọn <strong class="highlight">Yes</strong>!
+              </div>
+            </div>
+          </div>
+
+          <!-- Mô phỏng giao diện Windows Security -->
+          <div class="win-window">
+            <div class="win-titlebar">
+              <div class="win-title">
+                <span style="color: #EF4444;">🛡️</span> Windows Security — Firewall & network protection
+              </div>
+              <div class="win-controls">
+                <span class="win-btn-control min"></span>
+                <span class="win-btn-control max"></span>
+                <span class="win-btn-control close"></span>
+              </div>
+            </div>
+            <div class="win-content">
+              <div style="font-size: 16px; font-weight: 700; color: #F8FAFC; margin-bottom: 4px;">Private network</div>
+              <div style="font-size: 12px; color: #94A3B8; margin-bottom: 16px;">Mạng đang hoạt động (Active)</div>
+
+              <div class="win-toggle-row active-callout click-target" style="border-color: #EF4444; background: rgba(239, 68, 68, 0.1);">
+                <div>
+                  <div style="font-weight: 700; color: white;">Microsoft Defender Firewall</div>
+                  <div style="font-size: 12px; color: #FCA5A5;">Tạm tắt trong thời gian thực hành chia sẻ</div>
+                </div>
+                <div style="display: flex; align-items: center; gap: 8px;">
+                  <span style="font-weight: 700; color: #EF4444;">OFF</span>
+                  <div class="win-switch"></div>
+                </div>
+              </div>
+
+              <!-- Hộp thoại cảnh báo UAC -->
+              <div style="margin-top: 14px; background: #0F172A; border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; padding: 12px;">
+                <div style="font-size: 12.5px; color: #E2E8F0; font-weight: 600; margin-bottom: 6px;">
+                  🔔 Cửa sổ xác nhận (User Account Control):
+                </div>
+                <div style="font-size: 12px; color: #94A3B8; margin-bottom: 8px;">
+                  <em>"Do you want to allow this app to make changes to your device?"</em>
+                </div>
+                <div style="display: flex; gap: 8px; justify-content: flex-end;">
+                  <button class="win-btn" style="opacity: 0.6;">No (Mặc định)</button>
+                  <button class="win-btn primary click-target" style="font-weight: 700; background: #16A8B6;">Yes (Chọn nút này!)</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ════════════════════════════════════════════════════════════════════════
+         SLIDE 7: GIAI ĐOẠN 2 - BƯỚC 1: CHỌN THƯ MỤC & VÀO THẺ SHARING
+         ════════════════════════════════════════════════════════════════════════ -->
+    <section class="slide" id="slide-7">
+      <div class="slide-header">
+        <div>
+          <span class="slide-badge gold">Giai đoạn 2 · Bước 1</span>
+          <div class="slide-title">Mở Thuộc tính Thư mục (Properties > Sharing)</div>
+          <div class="slide-subtitle">Bắt đầu quá trình chia sẻ thư mục bài tập (Ví dụ: TAI_LIEU_12 hoặc SACH_LOP_12)</div>
+        </div>
+        <span style="font-size: 32px;">📁</span>
+      </div>
+      <div class="slide-body">
+        <div class="grid-2">
+          <!-- Cột hướng dẫn thao tác chi tiết -->
+          <div>
+            <div class="step-item" style="margin-bottom: 12px;">
+              <div class="step-badge">1</div>
+              <div>
+                <strong>Chuột phải vào thư mục:</strong> Dùng <span class="highlight">nút chuột phải (Right-click)</span> nhấp vào thư mục muốn chia sẻ (trên màn hình Desktop hoặc ổ đĩa D:).
+              </div>
+            </div>
+
+            <div class="step-item" style="margin-bottom: 12px;">
+              <div class="step-badge">2</div>
+              <div>
+                <strong>Chọn dòng Properties:</strong> Nhấp vào mục <strong class="highlight">Properties</strong> ở dòng dưới cùng của menu chuột phải.
+              </div>
+            </div>
+
+            <div class="step-item" style="margin-bottom: 12px;">
+              <div class="step-badge">3</div>
+              <div>
+                <strong>Chuyển sang tab Sharing:</strong> Trong cửa sổ hiện ra, nhấp vào thẻ <strong class="gold-text">Sharing</strong> (thẻ thứ 3 từ trái qua).
+              </div>
+            </div>
+
+            <div class="step-item">
+              <div class="step-badge">4</div>
+              <div>
+                <strong>Nhấn nút Share...:</strong> Trong mục <em>Network File and Folder Sharing</em>, nhấn chuột vào nút <strong class="leaf-text">Share...</strong>
+              </div>
+            </div>
+          </div>
+
+          <!-- Mô phỏng cửa sổ Properties -->
+          <div class="win-window">
+            <div class="win-titlebar">
+              <div class="win-title">
+                <span style="color: #F5A623;">📁</span> SÁCH LỚP 12 Properties
+              </div>
+              <div class="win-controls">
+                <span class="win-btn-control min"></span>
+                <span class="win-btn-control max"></span>
+                <span class="win-btn-control close"></span>
+              </div>
+            </div>
+            <div class="win-content">
+              <!-- Tabs -->
+              <div class="win-tabs">
+                <div class="win-tab">General</div>
+                <div class="win-tab active click-target">Sharing (Chia sẻ)</div>
+                <div class="win-tab">Security</div>
+                <div class="win-tab">Customize</div>
+              </div>
+
+              <!-- Nội dung thẻ Sharing -->
+              <div style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); border-radius: 8px; padding: 14px; margin-bottom: 12px;">
+                <div style="font-weight: 700; color: #E2E8F0; margin-bottom: 4px;">Network File and Folder Sharing</div>
+                <div style="font-size: 12.5px; color: #94A3B8; margin-bottom: 10px;">
+                  SÁCH LỚP 12 <br>
+                  <span style="color: #F87171;">Not Shared (Hiện chưa được chia sẻ)</span>
+                </div>
+                <button class="win-btn primary click-target" style="font-size: 13.5px; padding: 8px 18px; font-weight: 700; background: #0284C7;">
+                  🛡️ Share... (Nhấp vào nút này)
+                </button>
+              </div>
+
+              <!-- Mục Advanced Sharing -->
+              <div style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); border-radius: 8px; padding: 12px;">
+                <div style="font-weight: 600; color: #E2E8F0; font-size: 12.5px; margin-bottom: 6px;">Advanced Sharing</div>
+                <div style="font-size: 12px; color: #94A3B8; margin-bottom: 8px;">Dùng khi muốn chia sẻ nâng cao hoặc huỷ chia sẻ.</div>
+                <button class="win-btn" style="font-size: 12px;">Advanced Sharing...</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ════════════════════════════════════════════════════════════════════════
+         SLIDE 8: GIAI ĐOẠN 2 - BƯỚC 2: PHÂN QUYỀN TRUY CẬP (READ vs READ/WRITE)
+         ════════════════════════════════════════════════════════════════════════ -->
+    <section class="slide" id="slide-8">
+      <div class="slide-header">
+        <div>
+          <span class="slide-badge gold">Giai đoạn 2 · Bước 2</span>
+          <div class="slide-title">Chọn đối tượng "Everyone" & Phân mức quyền</div>
+          <div class="slide-subtitle">Hiểu rõ quyền Read (Chỉ đọc) và Read/Write (Toàn quyền sửa/xóa/lưu bài)</div>
+        </div>
+        <span style="font-size: 32px;">👥</span>
+      </div>
+      <div class="slide-body">
+        <div class="grid-2">
+          <!-- Mô phỏng cửa sổ Network File and Folder Sharing -->
+          <div class="win-window">
+            <div class="win-titlebar">
+              <div class="win-title">Network Access — Choose people to share with</div>
+              <div class="win-controls">
+                <span class="win-btn-control min"></span>
+                <span class="win-btn-control max"></span>
+                <span class="win-btn-control close"></span>
+              </div>
+            </div>
+            <div class="win-content">
+              <div style="font-size: 12.5px; color: #94A3B8; margin-bottom: 10px;">
+                Type a name and then click Add, or click the arrow to find someone.
+              </div>
+
+              <!-- Dropdown chọn Everyone -->
+              <div style="display: flex; gap: 8px; margin-bottom: 14px;">
+                <div class="click-target" style="flex: 1; background: #0F172A; border: 1px solid #38BDF8; border-radius: 6px; padding: 6px 12px; font-weight: 700; color: #FDE047; display: flex; justify-content: space-between; align-items: center;">
+                  <span>Everyone (Tất cả mọi người)</span>
+                  <span>▼</span>
+                </div>
+                <button class="win-btn primary click-target" style="padding: 6px 14px; font-weight: 700;">Add</button>
+              </div>
+
+              <!-- Bảng danh sách phân quyền -->
+              <table style="width: 100%; border-collapse: collapse; font-size: 12.5px; margin-bottom: 14px;">
+                <tr style="border-bottom: 1px solid rgba(255,255,255,0.15); color: #94A3B8;">
+                  <th style="text-align: left; padding: 6px;">Name</th>
+                  <th style="text-align: right; padding: 6px;">Permission Level (Mức quyền)</th>
+                </tr>
+                <tr style="border-bottom: 1px solid rgba(255,255,255,0.06);">
+                  <td style="padding: 8px 6px;">👤 Admin (Chủ máy)</td>
+                  <td style="text-align: right; padding: 8px 6px; color: #38BDF8;">Owner</td>
+                </tr>
+                <tr style="background: rgba(245, 166, 35, 0.15); border: 1px solid #F5A623;">
+                  <td style="padding: 8px 6px; font-weight: 700; color: white;">👥 Everyone</td>
+                  <td style="text-align: right; padding: 8px 6px;">
+                    <span class="click-target" style="background: #0284C7; color: white; padding: 3px 10px; border-radius: 4px; font-weight: 700; display: inline-flex; align-items: center; gap: 4px;">
+                      Read/Write ▼
+                    </span>
+                  </td>
+                </tr>
+              </table>
+
+              <!-- Nút Share hoàn tất -->
+              <div style="display: flex; justify-content: flex-end; gap: 10px;">
+                <button class="win-btn">Cancel</button>
+                <button class="win-btn primary click-target" style="font-weight: 700; background: #16A8B6; padding: 8px 24px;">Share</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Bảng so sánh 2 mức quyền cốt lõi -->
+          <div style="display: flex; flex-direction: column; gap: 14px;">
+            <div class="card" style="border-left: 5px solid #F5A623;">
+              <div class="card-title" style="color: #FFC043;">
+                <span>👁️</span> 1. Mức quyền "Read" (MẶC ĐỊNH)
+              </div>
+              <p style="margin-bottom: 6px;">Khi thêm Everyone, Windows <strong>mặc định gán quyền Read</strong>.</p>
+              <ul style="margin-left: 20px; font-size: 13.5px; color: #CBD5E1;">
+                <li>✅ <strong>ĐƯỢC LÀM:</strong> Mở tệp xem nội dung, xem ảnh, nghe nhạc, copy file về máy mình.</li>
+                <li>❌ <strong>KHÔNG ĐƯỢC:</strong> Sửa nội dung file rồi bấm Lưu, không được xoá tệp, không được tạo tệp mới.</li>
+              </ul>
+            </div>
+
+            <div class="card" style="border-left: 5px solid #10B981;">
+              <div class="card-title" style="color: #34D399;">
+                <span>✍️</span> 2. Mức quyền "Read/Write" (ĐỌC & GHI)
+              </div>
+              <p style="margin-bottom: 6px;">Muốn cho bạn cùng nhóm nộp bài, chỉnh sửa trực tiếp thì phải đổi sang quyền này!</p>
+              <ul style="margin-left: 20px; font-size: 13.5px; color: #CBD5E1;">
+                <li>✅ <strong>TOÀN QUYỀN:</strong> Xem, sửa tệp, lưu đè trực tiếp, tạo thêm thư mục mới, xóa tệp cũ.</li>
+                <li>💡 <em>Thao tác đổi: Bấm vào mũi tên nhỏ bên cạnh chữ Read rồi chọn <strong>Read/Write</strong>.</em></li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ════════════════════════════════════════════════════════════════════════
+         SLIDE 9: THỰC HÀNH ẢO (INTERACTIVE SIMULATOR)
+         ════════════════════════════════════════════════════════════════════════ -->
+    <section class="slide" id="slide-9">
+      <div class="slide-header">
+        <div>
+          <span class="slide-badge leaf">Thực hành mô phỏng trực tiếp</span>
+          <div class="slide-title">Trải nghiệm tương tác: Thử chia sẻ thư mục ngay trên slide!</div>
+          <div class="slide-subtitle">Nhấp chuột phải vào thư mục bên dưới để thực hành theo quy trình chuẩn của Windows</div>
+        </div>
+        <span style="font-size: 32px;">🧪</span>
+      </div>
+      <div class="slide-body">
+        <div class="sim-container" id="simArea">
+          <div style="font-size: 14.5px; color: #38E1F0; font-weight: 600; margin-bottom: 16px;">
+            👇 THAO TÁC THỬ: Nhấp nút chuột phải (hoặc chạm giữ) vào thư mục bên dưới:
+          </div>
+
+          <!-- Thư mục ảo -->
+          <div class="sim-folder-target click-target" id="simFolder" oncontextmenu="openSimMenu(event); return false;" onclick="openSimMenu(event);">
+            <div style="font-size: 44px;">📁</div>
+            <div style="font-size: 13px; font-weight: 700; color: white; margin-top: 4px;">TAI_LIEU_12</div>
+          </div>
+
+          <!-- Menu ngữ cảnh chuột phải -->
+          <div class="context-menu" id="simContextMenu">
+            <div class="context-menu-item" onclick="alert('Hãy chọn dòng Properties ở dưới cùng!')">📂 Open</div>
+            <div class="context-menu-item" onclick="alert('Hãy chọn dòng Properties ở dưới cùng!')">✂️ Cut</div>
+            <div class="context-menu-item" onclick="alert('Hãy chọn dòng Properties ở dưới cùng!')">📋 Copy</div>
+            <div style="height: 1px; background: rgba(255,255,255,0.1); margin: 3px 0;"></div>
+            <div class="context-menu-item click-target" style="font-weight: 700; color: #FDE047;" onclick="simOpenProperties();">
+              ⚙️ Properties (Thuộc tính)
+            </div>
+          </div>
+
+          <!-- Modal mô phỏng popup Properties -->
+          <div id="simModal" style="display: none; position: absolute; top: 15px; width: 440px; z-index: 50;">
+            <div class="win-window">
+              <div class="win-titlebar">
+                <div class="win-title">📁 TAI_LIEU_12 Properties</div>
+                <div class="win-controls">
+                  <span class="win-btn-control close" onclick="closeSimModal();" style="cursor: pointer;"></span>
+                </div>
+              </div>
+              <div class="win-content">
+                <div class="win-tabs">
+                  <div class="win-tab">General</div>
+                  <div class="win-tab active">Sharing</div>
+                  <div class="win-tab">Security</div>
+                </div>
+                <div style="font-size: 12.5px; margin-bottom: 12px; color: #CBD5E1;">
+                  Đang thiết lập chia sẻ cho thư mục <strong>TAI_LIEU_12</strong>:
+                </div>
+                <div style="background: rgba(255,255,255,0.05); padding: 12px; border-radius: 8px; margin-bottom: 14px;">
+                  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                    <span>Đối tượng chia sẻ:</span>
+                    <strong style="color: #38BDF8;">Everyone</strong>
+                  </div>
+                  <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <span>Mức quyền (Permission):</span>
+                    <select id="simPermSelect" style="background: #0F172A; color: #FDE047; border: 1px solid #38BDF8; padding: 4px 8px; border-radius: 4px; font-weight: 700;">
+                      <option value="Read">Read (Chỉ đọc - Mặc định)</option>
+                      <option value="ReadWrite" selected>Read/Write (Đọc & Ghi sửa)</option>
+                    </select>
+                  </div>
+                </div>
+                <div style="text-align: right;">
+                  <button class="win-btn primary" onclick="simCompleteShare();" style="font-weight: 700; padding: 8px 20px; background: #10B981;">
+                    ✓ Bấm nút Share hoàn tất!
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Thông báo thành công -->
+          <div id="simSuccessMsg" style="display: none; margin-top: 16px; background: rgba(16, 185, 129, 0.2); border: 1px solid #10B981; border-radius: 8px; padding: 12px 24px; color: #34D399; font-weight: 700; text-align: center;">
+            🎉 TUYỆT VỜI! Thư mục đã được chia sẻ thành công trên mạng LAN!<br>
+            <span style="font-family: var(--font-mono); font-size: 13.5px; color: #FDE047;">Đường dẫn mạng UNC: \\\\MAY_01\\TAI_LIEU_12</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ════════════════════════════════════════════════════════════════════════
+         SLIDE 10: GIAI ĐOẠN 2 - BƯỚC 3: TRUY CẬP TỪ MÁY KHÁC TRONG MẠNG
+         ════════════════════════════════════════════════════════════════════════ -->
+    <section class="slide" id="slide-10">
+      <div class="slide-header">
+        <div>
+          <span class="slide-badge gold">Giai đoạn 2 · Bước 3</span>
+          <div class="slide-title">Cách mở thư mục chia sẻ từ máy tính khác</div>
+          <div class="slide-subtitle">Thao tác trên Máy trạm học sinh để kết nối vào máy chủ chia sẻ tài nguyên</div>
+        </div>
+        <span style="font-size: 32px;">💻 ⇆ 💻</span>
+      </div>
+      <div class="slide-body">
+        <div class="grid-2">
+          <!-- Cách 1: Qua File Explorer -->
+          <div class="card" style="border-top: 4px solid #38E1F0;">
+            <div class="card-title" style="color: #38E1F0;">Cách 1: Duyệt qua mục Network (Trực quan)</div>
+            <div class="step-item" style="margin-bottom: 10px;">
+              <div class="step-badge">1</div>
+              <div>Mở <strong>File Explorer</strong> (Phím tắt <code class="highlight" style="font-family: var(--font-mono);">Win + E</code>).</div>
+            </div>
+            <div class="step-item" style="margin-bottom: 10px;">
+              <div class="step-badge">2</div>
+              <div>Ở thanh danh mục bên trái, cuộn xuống dưới cùng và nhấp vào biểu tượng <strong>Network</strong>.</div>
+            </div>
+            <div class="step-item">
+              <div class="step-badge">3</div>
+              <div>Danh sách các máy tính trong phòng sẽ hiện ra. Nhấp đúp vào máy chủ (ví dụ: <strong class="highlight">MAY_01</strong>) để xem thư mục chia sẻ!</div>
+            </div>
+          </div>
+
+          <!-- Cách 2: Qua hộp thoại Run (Đường dẫn UNC) -->
+          <div class="card" style="border-top: 4px solid #10B981;">
+            <div class="card-title" style="color: #34D399;">Cách 2: Gõ đường dẫn UNC qua Run (Cực nhanh)</div>
+            <div class="step-item" style="margin-bottom: 10px;">
+              <div class="step-badge">1</div>
+              <div>Nhấn tổ hợp phím <code class="highlight" style="font-family: var(--font-mono);">Win + R</code> để mở hộp thoại <strong>Run</strong>.</div>
+            </div>
+            <div class="step-item" style="margin-bottom: 10px;">
+              <div class="step-badge">2</div>
+              <div>
+                Gõ cú pháp 2 dấu gạch chéo ngược: <br>
+                <code style="color: #FDE047; font-family: var(--font-mono); font-size: 14px; background: #0F172A; padding: 4px 8px; border-radius: 4px; display: inline-block; margin-top: 4px;">\\\\MAY_01</code> hoặc <code style="color: #FDE047; font-family: var(--font-mono); font-size: 14px; background: #0F172A; padding: 4px 8px; border-radius: 4px;">\\\\192.168.1.10</code>
+              </div>
+            </div>
+            <div class="step-item">
+              <div class="step-badge">3</div>
+              <div>Nhấn <strong>Enter</strong>: Cửa sổ thư mục sẽ bật ra ngay lập tức, không cần tìm kiếm!</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card" style="margin-top: 10px; background: rgba(245, 166, 35, 0.1); border-color: rgba(245, 166, 35, 0.3);">
+          <div class="card-title" style="color: #FFC043; font-size: 16px;">💾 MỞ RỘNG: Chia sẻ toàn bộ một ổ đĩa (D:, E:)</div>
+          <p style="font-size: 14px; color: #CBD5E1;">
+            Về mặt kỹ thuật, <strong>một ổ đĩa chính là một thư mục lớn nhất</strong> chứa mọi thư mục con khác. Do đó, cách chia sẻ cả một ổ đĩa thực hiện <strong class="highlight">hoàn toàn y hệt như chia sẻ thư mục</strong>: Chuột phải vào biểu tượng ổ đĩa (D:) trong This PC → Chọn Properties → Thẻ Sharing → Share!
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ════════════════════════════════════════════════════════════════════════
+         SLIDE 11: HUỶ CHIA SẺ THƯ MỤC (STOP SHARING)
+         ════════════════════════════════════════════════════════════════════════ -->
+    <section class="slide" id="slide-11">
+      <div class="slide-header">
+        <div>
+          <span class="slide-badge coral">Bảo mật dữ liệu</span>
+          <div class="slide-title">Huỷ chia sẻ thư mục (Stop Sharing)</div>
+          <div class="slide-subtitle">Khóa lại thư mục khi buổi học kết thúc để đảm bảo an toàn thông tin</div>
+        </div>
+        <span style="font-size: 32px;">🚫</span>
+      </div>
+      <div class="slide-body">
+        <div class="grid-2">
+          <div>
+            <div class="card" style="margin-bottom: 16px;">
+              <div class="card-title">❓ Khi nào cần huỷ chia sẻ?</div>
+              <p style="font-size: 14.5px; line-height: 1.6;">
+                Khi kết thúc giờ học hoặc khi dữ liệu chia sẻ có thông tin nhạy cảm (điểm số, đề thi...). Nếu để chia sẻ liên tục, mọi máy khác trong mạng vẫn có thể truy cập đọc hoặc sửa bất cứ lúc nào.
+              </p>
+            </div>
+
+            <div class="step-item" style="margin-bottom: 12px;">
+              <div class="step-badge">1</div>
+              <div>
+                <strong>Mở lại Properties:</strong> Chuột phải vào thư mục cần huỷ → Chọn <strong>Properties</strong> → Vào thẻ <strong>Sharing</strong>.
+              </div>
+            </div>
+
+            <div class="step-item" style="margin-bottom: 12px;">
+              <div class="step-badge">2</div>
+              <div>
+                <strong>Bấm nút Advanced Sharing...:</strong> Khác với lúc chia sẻ, ở bước này ta nhấp chọn nút <strong class="coral-text">Advanced Sharing...</strong>
+              </div>
+            </div>
+
+            <div class="step-item">
+              <div class="step-badge">3</div>
+              <div>
+                <strong>Bỏ dấu tích:</strong> Nhấp chuột vào ô <strong class="coral-text">[ ] Share this folder</strong> để BỎ DẤU TÍCH → Nhấn <strong>OK / Apply</strong>!
+              </div>
+            </div>
+          </div>
+
+          <!-- Mô phỏng cửa sổ Advanced Sharing -->
+          <div class="win-window">
+            <div class="win-titlebar">
+              <div class="win-title">Advanced Sharing — SÁCH LỚP 12</div>
+              <div class="win-controls">
+                <span class="win-btn-control min"></span>
+                <span class="win-btn-control max"></span>
+                <span class="win-btn-control close"></span>
+              </div>
+            </div>
+            <div class="win-content">
+              <!-- Ô Checkbox Share this folder được khoanh đỏ -->
+              <div class="click-target" style="padding: 14px; background: rgba(239, 68, 68, 0.15); border: 2px solid #EF4444; border-radius: 8px; margin-bottom: 14px;">
+                <label style="display: flex; align-items: center; gap: 10px; cursor: pointer; font-weight: 700; font-size: 15px; color: white;">
+                  <input type="checkbox" checked style="width: 18px; height: 18px; accent-color: #EF4444;">
+                  <span>Share this folder (BỎ DẤU TÍCH Ở Ô NÀY ĐỂ HUỶ)</span>
+                </label>
+                <div style="font-size: 12px; color: #FCA5A5; margin-left: 28px; margin-top: 4px;">
+                  Khi bỏ dấu tích, toàn bộ quyền truy cập từ mạng LAN tới thư mục này sẽ bị thu hồi ngay lập tức.
+                </div>
+              </div>
+
+              <div style="opacity: 0.5; pointer-events: none; margin-bottom: 14px;">
+                <div style="font-size: 12.5px; color: #94A3B8; margin-bottom: 6px;">Share name: SACH_LOP_12</div>
+                <div style="font-size: 12.5px; color: #94A3B8;">Limit the number of simultaneous users to: 20</div>
+              </div>
+
+              <div style="display: flex; justify-content: flex-end; gap: 10px;">
+                <button class="win-btn primary click-target" style="background: #0284C7; font-weight: 700; padding: 6px 20px;">OK</button>
+                <button class="win-btn">Cancel</button>
+                <button class="win-btn click-target">Apply</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ════════════════════════════════════════════════════════════════════════
+         SLIDE 12: GIAI ĐOẠN 3 - BƯỚC 1: THIẾT LẬP MÁY CHỦ IN (PRINT SERVER)
+         ════════════════════════════════════════════════════════════════════════ -->
+    <section class="slide" id="slide-12">
+      <div class="slide-header">
+        <div>
+          <span class="slide-badge leaf">Giai đoạn 3 · Bước 1</span>
+          <div class="slide-title">Chia sẻ Máy in — Thiết lập Print Server</div>
+          <div class="slide-subtitle">Thực hiện trên máy tính có cắm dây cáp trực tiếp vào máy in (ví dụ máy giáo viên)</div>
+        </div>
+        <span style="font-size: 32px;">🖨️</span>
+      </div>
+      <div class="slide-body">
+        <div class="grid-2">
+          <div>
+            <div class="card" style="margin-bottom: 14px;">
+              <div class="card-title">💡 Bản chất của "Chia sẻ máy in"</div>
+              <p style="font-size: 14.5px; line-height: 1.6;">
+                Nói "chia sẻ máy in" thực chất là <strong class="highlight">biến máy tính cắm máy in thành một máy chủ dịch vụ in (Print Server)</strong>. Máy này nhận lệnh gửi tới từ các máy khác trong phòng, xếp thành <strong>hàng đợi (Print Queue)</strong> và điều khiển máy in in lần lượt từng tài liệu.
+              </p>
+            </div>
+
+            <div class="step-item" style="margin-bottom: 10px;">
+              <div class="step-badge">1</div>
+              <div>
+                <strong>Mở danh mục máy in:</strong> Vào <code>Control Panel → Hardware and Sound → Devices and Printers</code> (hoặc <strong>Printers & scanners</strong> trong Settings).
+              </div>
+            </div>
+            <div class="step-item" style="margin-bottom: 10px;">
+              <div class="step-badge">2</div>
+              <div>
+                <strong>Chọn máy in:</strong> Nhấp vào máy in đang kết nối (Ví dụ: <strong class="highlight">Canon LBP2900</strong>) → Chọn <strong>Printer properties</strong>.
+              </div>
+            </div>
+            <div class="step-item">
+              <div class="step-badge">3</div>
+              <div>
+                <strong>Bật chia sẻ:</strong> Vào thẻ <strong>Sharing</strong> → Tích vào ô <strong class="leaf-text">[✓] Share this printer</strong> → Đặt tên chia sẻ dễ nhớ → Nhấn <strong>OK</strong>!
+              </div>
+            </div>
+          </div>
+
+          <!-- Mô phỏng cửa sổ Printer Properties -->
+          <div class="win-window">
+            <div class="win-titlebar">
+              <div class="win-title">🖨️ Canon LBP2900 Properties</div>
+              <div class="win-controls">
+                <span class="win-btn-control min"></span>
+                <span class="win-btn-control max"></span>
+                <span class="win-btn-control close"></span>
+              </div>
+            </div>
+            <div class="win-content">
+              <!-- Tabs -->
+              <div class="win-tabs">
+                <div class="win-tab">General</div>
+                <div class="win-tab active click-target">Sharing (Chia sẻ)</div>
+                <div class="win-tab">Ports</div>
+                <div class="win-tab">Advanced</div>
+              </div>
+
+              <!-- Checkbox Share this printer -->
+              <div class="click-target" style="padding: 12px; background: rgba(16, 185, 129, 0.15); border: 2px solid #10B981; border-radius: 8px; margin-bottom: 14px;">
+                <label style="display: flex; align-items: center; gap: 10px; cursor: pointer; font-weight: 700; color: white;">
+                  <input type="checkbox" checked style="width: 18px; height: 18px; accent-color: #10B981;">
+                  <span>Share this printer (Chia sẻ máy in này qua mạng)</span>
+                </label>
+              </div>
+
+              <!-- Share Name -->
+              <div style="margin-bottom: 16px;">
+                <label style="font-size: 12.5px; color: #94A3B8; display: block; margin-bottom: 6px;">Share name (Tên máy in hiển thị trên mạng):</label>
+                <input type="text" value="Máy in Canon 2900 Phòng Tin Học" style="width: 100%; background: #0F172A; border: 1px solid #38BDF8; color: #FDE047; padding: 6px 12px; border-radius: 6px; font-weight: 600; font-size: 13px;">
+                <div style="font-size: 11.5px; color: #64748B; margin-top: 4px;">
+                  💡 <em>Nên đặt tên gợi nhớ để các học sinh khác trong phòng dễ tìm đúng máy in.</em>
+                </div>
+              </div>
+
+              <div style="display: flex; justify-content: flex-end; gap: 8px;">
+                <button class="win-btn primary click-target" style="font-weight: 700; background: #16A8B6;">OK</button>
+                <button class="win-btn">Cancel</button>
+                <button class="win-btn click-target">Apply</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ════════════════════════════════════════════════════════════════════════
+         SLIDE 13: GIAI ĐOẠN 3 - BƯỚC 2: KẾT NỐI MÁY IN TỪ MÁY TRẠM
+         ════════════════════════════════════════════════════════════════════════ -->
+    <section class="slide" id="slide-13">
+      <div class="slide-header">
+        <div>
+          <span class="slide-badge leaf">Giai đoạn 3 · Bước 2</span>
+          <div class="slide-title">Kết nối & In ấn từ Máy trạm khác</div>
+          <div class="slide-subtitle">Thao tác trên máy học sinh để thêm máy in mạng vào danh sách thiết bị</div>
+        </div>
+        <span style="font-size: 32px;">📑 ➔ 🖨️</span>
+      </div>
+      <div class="slide-body">
+        <div class="grid-2">
+          <!-- Các bước kết nối -->
+          <div>
+            <div class="step-item" style="margin-bottom: 12px;">
+              <div class="step-badge">1</div>
+              <div>
+                <strong>Bấm Add device:</strong> Vào <code>Printers & scanners</code> trên máy học sinh → Bấm nút <strong class="highlight">Add device</strong> (Thêm thiết bị).
+              </div>
+            </div>
+
+            <div class="step-item" style="margin-bottom: 12px;">
+              <div class="step-badge">2</div>
+              <div>
+                <strong>Máy in không hiện?</strong> Nếu danh sách quét không thấy ngay, nhấp vào dòng chữ xanh: <br>
+                <strong class="gold-text">"The printer that I want isn't listed"</strong>.
+              </div>
+            </div>
+
+            <div class="step-item" style="margin-bottom: 12px;">
+              <div class="step-badge">3</div>
+              <div>
+                <strong>Duyệt tìm máy in:</strong> Chọn dòng <em>Select a shared printer by name</em> → Bấm nút <strong>Browse...</strong> → Nhấp chọn máy chủ (ví dụ MAY_01) → Chọn tên máy in → Bấm <strong>Select</strong>.
+              </div>
+            </div>
+
+            <div class="step-item">
+              <div class="step-badge">4</div>
+              <div>
+                <strong>In thử nghiệm:</strong> Mở Word hoặc Notepad, soạn 1 dòng văn bản rồi bấm <code class="highlight" style="font-family: var(--font-mono);">Ctrl + P</code>, chọn đúng tên máy in mạng vừa thêm để in!
+              </div>
+            </div>
+          </div>
+
+          <!-- Mô phỏng cửa sổ Add Printer -->
+          <div class="win-window">
+            <div class="win-titlebar">
+              <div class="win-title">Add Printer (Thêm máy in)</div>
+              <div class="win-controls">
+                <span class="win-btn-control min"></span>
+                <span class="win-btn-control max"></span>
+                <span class="win-btn-control close"></span>
+              </div>
+            </div>
+            <div class="win-content">
+              <div style="font-size: 15px; font-weight: 700; color: #F8FAFC; margin-bottom: 8px;">
+                Find a printer by other options
+              </div>
+              <div style="font-size: 12px; color: #94A3B8; margin-bottom: 14px;">
+                Chọn cách kết nối máy in trong mạng cục bộ:
+              </div>
+
+              <!-- Lựa chọn Browse máy in mạng -->
+              <div class="click-target" style="padding: 12px; background: rgba(13, 124, 134, 0.2); border: 2px solid #38E1F0; border-radius: 8px; margin-bottom: 12px;">
+                <label style="display: flex; gap: 10px; cursor: pointer; color: white;">
+                  <input type="radio" checked style="accent-color: #38E1F0; margin-top: 2px;">
+                  <div>
+                    <div style="font-weight: 700; color: #38E1F0;">Select a shared printer by name (Chọn máy in chia sẻ)</div>
+                    <div style="font-size: 12px; color: #CBD5E1; margin-top: 4px; display: flex; gap: 8px; align-items: center;">
+                      <span>Ví dụ: \\\\MAY_01\\Canon2900</span>
+                      <button class="win-btn click-target" style="font-size: 11px; padding: 2px 10px; background: #0284C7;">Browse...</button>
+                    </div>
+                  </div>
+                </label>
+              </div>
+
+              <!-- Máy in tìm thấy -->
+              <div style="background: #0F172A; border: 1px solid rgba(255,255,255,0.1); border-radius: 6px; padding: 10px; font-size: 12.5px; display: flex; align-items: center; justify-content: space-between;">
+                <div style="display: flex; align-items: center; gap: 8px;">
+                  <span style="font-size: 18px;">🖨️</span>
+                  <span><strong>Canon LBP2900</strong> trên <em>\\\\MAY_01</em></span>
+                </div>
+                <span style="color: #34D399; font-weight: 700; font-size: 11.5px;">✓ Đã sẵn sàng</span>
+              </div>
+
+              <div style="display: flex; justify-content: flex-end; gap: 8px; margin-top: 16px;">
+                <button class="win-btn primary click-target" style="background: #16A8B6; font-weight: 700; padding: 6px 20px;">Next >></button>
+                <button class="win-btn">Cancel</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ════════════════════════════════════════════════════════════════════════
+         SLIDE 14: XỬ LÝ SỰ CỐ & LỖI THƯỜNG GẶP (TROUBLESHOOTING)
+         ════════════════════════════════════════════════════════════════════════ -->
+    <section class="slide" id="slide-14">
+      <div class="slide-header">
+        <div>
+          <span class="slide-badge coral">Cẩm nang thực hành</span>
+          <div class="slide-title">Bắt bệnh & Xử lý 4 Lỗi thường gặp nhất</div>
+          <div class="slide-subtitle">Các tình huống thực tế thường làm học sinh lúng túng khi thực hành tại phòng máy</div>
+        </div>
+        <span style="font-size: 32px;">🩺</span>
+      </div>
+      <div class="slide-body">
+        <div class="grid-2" style="gap: 16px;">
+          <!-- Lỗi 1 -->
+          <div class="card" style="border-left: 4px solid #EF4444;">
+            <div class="card-title" style="color: #F87171; font-size: 17px;">
+              ⚠️ Lỗi 1: Vào Network không thấy máy nào cả
+            </div>
+            <p style="margin-bottom: 6px;"><strong>Nguyên nhân:</strong> Quên chưa bật tính năng tìm kiếm mạng hoặc mạng đang để ở Public.</p>
+            <div style="background: rgba(255,255,255,0.04); padding: 8px 12px; border-radius: 6px; font-size: 13.5px; color: #6EE7B7;">
+              ✅ <strong>Cách sửa:</strong> Vào <em>Advanced sharing settings</em> gạt <strong>Network discovery</strong> sang <strong>ON</strong> và chuyển mạng sang <strong>Private network</strong>.
+            </div>
+          </div>
+
+          <!-- Lỗi 2 -->
+          <div class="card" style="border-left: 4px solid #F5A623;">
+            <div class="card-title" style="color: #FBBF24; font-size: 17px;">
+              ⚠️ Lỗi 2: Bấm vào máy bắt nhập User / Password
+            </div>
+            <p style="margin-bottom: 6px;"><strong>Nguyên nhân:</strong> Đang bật chế độ chia sẻ bảo vệ bằng mật khẩu (Password protected sharing).</p>
+            <div style="background: rgba(255,255,255,0.04); padding: 8px 12px; border-radius: 6px; font-size: 13.5px; color: #6EE7B7;">
+              ✅ <strong>Cách sửa:</strong> Trong <em>Advanced sharing settings</em> cuộn xuống mục <em>All Networks</em> → Chọn <strong>Turn off password protected sharing</strong>.
+            </div>
+          </div>
+
+          <!-- Lỗi 3 -->
+          <div class="card" style="border-left: 4px solid #38E1F0;">
+            <div class="card-title" style="color: #38BDF8; font-size: 17px;">
+              ⚠️ Lỗi 3: Mở file xem được nhưng không Lưu bài được
+            </div>
+            <p style="margin-bottom: 6px;"><strong>Nguyên nhân:</strong> Người chia sẻ mới chỉ để mức quyền mặc định là <strong>Read</strong> (Chỉ đọc).</p>
+            <div style="background: rgba(255,255,255,0.04); padding: 8px 12px; border-radius: 6px; font-size: 13.5px; color: #6EE7B7;">
+              ✅ <strong>Cách sửa:</strong> Máy chủ chuột phải thư mục → Properties → Sharing → Share... → Đổi quyền của Everyone sang <strong>Read/Write</strong>.
+            </div>
+          </div>
+
+          <!-- Lỗi 4 -->
+          <div class="card" style="border-left: 4px solid #10B981;">
+            <div class="card-title" style="color: #34D399; font-size: 17px;">
+              ⚠️ Lỗi 4: Lệnh in bị treo hoặc báo "Printer Offline"
+            </div>
+            <p style="margin-bottom: 6px;"><strong>Nguyên nhân:</strong> Máy chủ cắm máy in bị tắt, mất mạng hoặc rút cáp USB kết nối máy in.</p>
+            <div style="background: rgba(255,255,255,0.04); padding: 8px 12px; border-radius: 6px; font-size: 13.5px; color: #6EE7B7;">
+              ✅ <strong>Cách sửa:</strong> Đảm bảo máy cắm máy in luôn <strong>BẬT NGUỒN</strong> và đang nối chung mạng LAN với các máy trạm.
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ════════════════════════════════════════════════════════════════════════
+         SLIDE 15: MINI-QUIZ TƯƠNG TÁC CỦNG CỐ KIẾN THỨC
+         ════════════════════════════════════════════════════════════════════════ -->
+    <section class="slide" id="slide-15">
+      <div class="slide-header">
+        <div>
+          <span class="slide-badge gold">Thử thách kiểm tra nhanh</span>
+          <div class="slide-title">Mini-Quiz: 3 Câu hỏi trọng tâm bài học</div>
+          <div class="slide-subtitle">Nhấp chọn đáp án để kiểm tra mức độ nắm bắt bài giảng của em nhé!</div>
+        </div>
+        <span style="font-size: 32px;">🏆</span>
+      </div>
+      <div class="slide-body">
+        <div class="quiz-container">
+          <!-- Câu 1 -->
+          <div class="card" style="padding: 16px 20px;">
+            <div class="quiz-question">
+              <span class="step-badge" style="width: 26px; height: 26px; font-size: 13px;">1</span>
+              <span>Để hai máy tính chia sẻ tài nguyên trong mạng LAN, điều kiện nào sau đây là ĐÚNG?</span>
+            </div>
+            <div class="quiz-options">
+              <button class="quiz-btn" onclick="checkQuiz(this, true, 'q1', 'Chính xác! Chỉ cần kết nối thông mạng và người chủ cấp quyền truy cập, hoàn toàn không cần kết bạn hay trả phí.')">
+                A. Kết nối mạng với nhau và người chủ cấp quyền truy cập
+              </button>
+              <button class="quiz-btn" onclick="checkQuiz(this, false, 'q1', 'Sai rồi! Chia sẻ trong LAN là việc kỹ thuật nội bộ, không cần kết bạn như mạng xã hội.')">
+                B. Hai người phải kết bạn với nhau qua mạng xã hội
+              </button>
+              <button class="quiz-btn" onclick="checkQuiz(this, false, 'q1', 'Sai rồi! Chia sẻ nội bộ trường học không có yêu cầu trả phí truy cập.')">
+                C. Người dùng phải gửi đề xuất yêu cầu và trả phí
+              </button>
+              <button class="quiz-btn" onclick="checkQuiz(this, false, 'q1', 'Sai rồi! Các máy trong LAN không bắt buộc phải cùng chung tài khoản Microsoft.')">
+                D. Hai máy phải cùng đăng nhập chung một tài khoản Microsoft
+              </button>
+            </div>
+            <div class="quiz-feedback" id="q1-feedback"></div>
+          </div>
+
+          <!-- Câu 2 -->
+          <div class="card" style="padding: 16px 20px;">
+            <div class="quiz-question">
+              <span class="step-badge" style="width: 26px; height: 26px; font-size: 13px;">2</span>
+              <span>Máy A chia sẻ thư mục cho Everyone nhưng để nguyên mức quyền mặc định. Máy B sẽ làm được gì?</span>
+            </div>
+            <div class="quiz-options">
+              <button class="quiz-btn" onclick="checkQuiz(this, false, 'q2', 'Sai rồi! Mức mặc định chỉ là Read, không được phép sửa nội dung.')">
+                A. Vừa xem vừa sửa đổi được nội dung các tệp
+              </button>
+              <button class="quiz-btn" onclick="checkQuiz(this, true, 'q2', 'Chính xác! Mức quyền mặc định cho Everyone là Read — chỉ cho xem/đọc, không được sửa hay lưu đè.')">
+                B. Chỉ mở xem được nội dung, không sửa hay lưu đè được
+              </button>
+              <button class="quiz-btn" onclick="checkQuiz(this, false, 'q2', 'Sai rồi! Xoá tệp đòi hỏi quyền Write.')">
+                C. Xoá được tệp nhưng không sửa được nội dung
+              </button>
+              <button class="quiz-btn" onclick="checkQuiz(this, false, 'q2', 'Sai rồi! Không bắt buộc mật khẩu nếu đã tắt password protected sharing.')">
+                D. Hoàn toàn không mở được vì chưa có mật khẩu
+              </button>
+            </div>
+            <div class="quiz-feedback" id="q2-feedback"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ════════════════════════════════════════════════════════════════════════
+         SLIDE 16: CHECKLIST THỰC HÀNH & TỔNG KẾT BÀI HỌC
+         ════════════════════════════════════════════════════════════════════════ -->
+    <section class="slide" id="slide-16">
+      <div class="slide-header">
+        <div>
+          <span class="slide-badge leaf">Tổng kết & Ghi nhớ</span>
+          <div class="slide-title">Bảng Checklist Thực hành & Ghi nhớ trọng tâm</div>
+          <div class="slide-subtitle">Học sinh tự tích chọn vào các ô bên dưới khi đã hoàn thành từng thao tác trên máy</div>
+        </div>
+        <span style="font-size: 32px;">🎓</span>
+      </div>
+      <div class="slide-body">
+        <div class="grid-2">
+          <!-- Cột Checklist học sinh tự kiểm tra -->
+          <div class="card" style="border-left: 4px solid #10B981;">
+            <div class="card-title" style="color: #34D399;">
+              📋 Checklist học sinh thực hành (Click để đánh dấu):
+            </div>
+            <div style="display: flex; flex-direction: column; gap: 8px; margin-top: 10px;">
+              <div class="checklist-item" onclick="this.classList.toggle('done');">
+                <span>⬜</span> <span>1. Chuyển cấu hình mạng sang <strong>Private network</strong></span>
+              </div>
+              <div class="checklist-item" onclick="this.classList.toggle('done');">
+                <span>⬜</span> <span>2. Bật <strong>Network discovery</strong> & <strong>File/Printer sharing</strong></span>
+              </div>
+              <div class="checklist-item" onclick="this.classList.toggle('done');">
+                <span>⬜</span> <span>3. Tạm tắt tường lửa <strong>Windows Defender Firewall</strong></span>
+              </div>
+              <div class="checklist-item" onclick="this.classList.toggle('done');">
+                <span>⬜</span> <span>4. Tạo thư mục bài tập & chia sẻ cho <strong>Everyone (Read/Write)</strong></span>
+              </div>
+              <div class="checklist-item" onclick="this.classList.toggle('done');">
+                <span>⬜</span> <span>5. Sang máy bạn trong phòng mở thử thư mục và nộp 1 file bài tập</span>
+              </div>
+              <div class="checklist-item" onclick="this.classList.toggle('done');">
+                <span>⬜</span> <span>6. Thử huỷ chia sẻ qua nút <strong>Advanced Sharing</strong></span>
+              </div>
+              <div class="checklist-item" onclick="this.classList.toggle('done');">
+                <span>⬜</span> <span>7. Kết nối máy in mạng và in thử trang văn bản</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Cột Tổng kết & Nút hành động -->
+          <div style="display: flex; flex-direction: column; gap: 14px;">
+            <div class="card" style="background: rgba(13, 124, 134, 0.15); border-color: rgba(56, 225, 240, 0.4);">
+              <div class="card-title">💡 3 Điều cốt lõi cần nhớ nhất</div>
+              <ul style="margin-left: 18px; font-size: 14px; display: flex; flex-direction: column; gap: 8px; color: #E2E8F0;">
+                <li>Chia sẻ chỉ cần: <strong>Kết nối mạng</strong> + <strong>Người chủ cấp quyền</strong>.</li>
+                <li>Phân quyền: <span class="gold-text">Read</span> (Chỉ xem) khác hoàn toàn với <span class="leaf-text">Read/Write</span> (Được sửa & tạo mới).</li>
+                <li>Chia sẻ máy in thực chất là <strong>biến máy cắm máy in thành Print Server</strong>.</li>
+              </ul>
+            </div>
+
+            <div class="card" style="text-align: center; padding: 22px;">
+              <div style="font-size: 20px; font-weight: 700; color: white; margin-bottom: 12px;">
+                🎉 Chúc mừng em đã hoàn thành bài học!
+              </div>
+              <div style="display: flex; gap: 12px; justify-content: center;">
+                <a href="/luyen/bai-05" style="display: inline-flex; align-items: center; gap: 6px; background: #0D7C86; color: white; text-decoration: none; padding: 10px 20px; border-radius: 10px; font-weight: 700; font-size: 14px; transition: 0.2s;" onmouseover="this.style.background='#16A8B6';" onmouseout="this.style.background='#0D7C86';">
+                  ✍️ Luyện trắc nghiệm Bài 5
+                </a>
+                <a href="/sgk/bai-05.html" target="_blank" style="display: inline-flex; align-items: center; gap: 6px; background: rgba(255,255,255,0.08); color: white; text-decoration: none; padding: 10px 20px; border-radius: 10px; font-weight: 700; font-size: 14px; border: 1px solid rgba(255,255,255,0.15);">
+                  📖 Đọc SGK Điện tử
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </div>
+
+  <!-- ════════════════════════════════════════════════════════════════════════
+       THANH ĐIỀU HƯỚNG SLIDE DƯỚI CÙNG (DECK NAV)
+       ════════════════════════════════════════════════════════════════════════ -->
+  <div class="deck-nav">
+    <button class="nav-btn" onclick="prevSlide();" title="Slide trước (← Phím Mũi tên trái)">‹</button>
+    
+    <div class="deck-progress">
+      <div class="deck-progress-bar" id="progressBar"></div>
+    </div>
+    
+    <div class="deck-counter" id="slideCounter">01 / 16</div>
+    
+    <button class="nav-btn" onclick="nextSlide();" title="Slide tiếp (→ Phím Mũi tên phải hoặc Space)">›</button>
+    <button class="nav-btn" onclick="toggleFullScreen();" title="Bật/Tắt Toàn màn hình (F)">⛶</button>
+  </div>
+
+  <script>
+    /* ─── QUẢN LÝ SLIDE TRÌNH CHIẾU ─── */
+    let currentSlide = 1;
+    const totalSlides = 16;
+
+    function updateSlide() {
+      document.querySelectorAll('.slide').forEach((s, idx) => {
+        const slideIndex = idx + 1;
+        s.classList.remove('active', 'prev');
+        if (slideIndex === currentSlide) {
+          s.classList.add('active');
+        } else if (slideIndex < currentSlide) {
+          s.classList.add('prev');
+        }
+      });
+
+      const progress = (currentSlide / totalSlides) * 100;
+      document.getElementById('progressBar').style.width = progress + '%';
+      document.getElementById('slideCounter').innerText = 
+        String(currentSlide).padStart(2, '0') + ' / ' + String(totalSlides).padStart(2, '0');
+    }
+
+    function nextSlide() {
+      if (currentSlide < totalSlides) {
+        currentSlide++;
+        updateSlide();
+      }
+    }
+
+    function prevSlide() {
+      if (currentSlide > 1) {
+        currentSlide--;
+        updateSlide();
+      }
+    }
+
+    function toggleFullScreen() {
+      if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen().catch(() => {});
+      } else {
+        if (document.exitFullscreen) {
+          document.exitFullscreen();
+        }
+      }
+    }
+
+    // Bắt sự kiện phím bấm
+    window.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown') {
+        nextSlide();
+      } else if (e.key === 'ArrowLeft' || e.key === 'PageUp') {
+        prevSlide();
+      } else if (e.key === 'f' || e.key === 'F') {
+        toggleFullScreen();
+      } else if (e.key === 'Home') {
+        currentSlide = 1; updateSlide();
+      } else if (e.key === 'End') {
+        currentSlide = totalSlides; updateSlide();
+      }
+    });
+
+    // Vuốt màn hình cảm ứng
+    let touchStartX = 0;
+    window.addEventListener('touchstart', e => { touchStartX = e.touches[0].clientX; });
+    window.addEventListener('touchend', e => {
+      const touchEndX = e.changedTouches[0].clientX;
+      if (touchStartX - touchEndX > 50) nextSlide();
+      if (touchEndX - touchStartX > 50) prevSlide();
+    });
+
+    /* ─── SIMULATOR LOGIC (SLIDE 9) ─── */
+    function openSimMenu(e) {
+      const menu = document.getElementById('simContextMenu');
+      menu.style.display = 'block';
+      menu.style.left = '200px';
+      menu.style.top = '70px';
+    }
+
+    function simOpenProperties() {
+      document.getElementById('simContextMenu').style.display = 'none';
+      document.getElementById('simModal').style.display = 'block';
+    }
+
+    function closeSimModal() {
+      document.getElementById('simModal').style.display = 'none';
+    }
+
+    function simCompleteShare() {
+      document.getElementById('simModal').style.display = 'none';
+      const msg = document.getElementById('simSuccessMsg');
+      msg.style.display = 'block';
+      triggerConfetti();
+    }
+
+    document.addEventListener('click', (e) => {
+      const folder = document.getElementById('simFolder');
+      const menu = document.getElementById('simContextMenu');
+      if (menu && !menu.contains(e.target) && folder && !folder.contains(e.target)) {
+        menu.style.display = 'none';
+      }
+    });
+
+    /* ─── QUIZ LOGIC (SLIDE 15) ─── */
+    function checkQuiz(btn, isCorrect, qId, msg) {
+      const parent = btn.parentElement;
+      parent.querySelectorAll('.quiz-btn').forEach(b => b.classList.remove('correct', 'wrong'));
+      
+      const feedback = document.getElementById(qId + '-feedback');
+      feedback.style.display = 'block';
+
+      if (isCorrect) {
+        btn.classList.add('correct');
+        feedback.style.background = 'rgba(16, 185, 129, 0.2)';
+        feedback.style.border = '1px solid #10B981';
+        feedback.style.color = '#6EE7B7';
+        feedback.innerHTML = '🎉 ' + msg;
+        triggerConfetti();
+      } else {
+        btn.classList.add('wrong');
+        feedback.style.background = 'rgba(242, 104, 60, 0.2)';
+        feedback.style.border = '1px solid #F2683C';
+        feedback.style.color = '#FCA5A5';
+        feedback.innerHTML = '❌ ' + msg;
+      }
+    }
+
+    /* ─── CONFETTI CANVAS ─── */
+    function triggerConfetti() {
+      const canvas = document.getElementById('confettiCanvas');
+      const ctx = canvas.getContext('2d');
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+
+      const particles = [];
+      const colors = ['#38E1F0', '#F2683C', '#F5A623', '#10B981', '#FFFFFF'];
+
+      for (let i = 0; i < 90; i++) {
+        particles.push({
+          x: canvas.width / 2,
+          y: canvas.height / 2,
+          r: Math.random() * 6 + 3,
+          color: colors[Math.floor(Math.random() * colors.length)],
+          vx: (Math.random() - 0.5) * 16,
+          vy: (Math.random() - 0.5) * 16 - 3,
+          alpha: 1,
+          gravity: 0.25
+        });
+      }
+
+      function render() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        let alive = false;
+        particles.forEach(p => {
+          p.x += p.vx;
+          p.y += p.vy;
+          p.vy += p.gravity;
+          p.alpha -= 0.015;
+
+          if (p.alpha > 0) {
+            alive = true;
+            ctx.save();
+            ctx.globalAlpha = p.alpha;
+            ctx.fillStyle = p.color;
+            ctx.beginPath();
+            ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.restore();
+          }
+        });
+
+        if (alive) {
+          requestAnimationFrame(render);
+        } else {
+          ctx.clearRect(0, 0, canvas.width, canvas.height);
+        }
+      }
+      render();
+    }
+
+    // Khởi tạo trạng thái ban đầu
+    updateSlide();
+  </script>
+</body>
+</html>
+`;
+
+// Ghi ra 2 nơi: public/bai-05-trinh-chieu.html và bai-05-trinh-chieu.html
+const publicPath = path.resolve('public', 'bai-05-trinh-chieu.html');
+const rootPath = path.resolve('bai-05-trinh-chieu.html');
+
+fs.writeFileSync(publicPath, htmlContent, 'utf-8');
+fs.writeFileSync(rootPath, htmlContent, 'utf-8');
+
+console.log('Successfully generated:');
+console.log(' - ' + publicPath);
+console.log(' - ' + rootPath);
