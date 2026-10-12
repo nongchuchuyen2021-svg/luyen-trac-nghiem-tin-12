@@ -344,6 +344,7 @@ export default function TheoryViewer({
   lessonTitle,
   topicName,
   theory,
+  slideUrl,
   onBack,
   onGoQuiz,
 }: {
@@ -351,6 +352,7 @@ export default function TheoryViewer({
   lessonTitle: string;
   topicName: string;
   theory: LessonTheory;
+  slideUrl?: string | null;
   onBack: () => void;
   onGoQuiz: () => void;
 }) {
@@ -407,6 +409,25 @@ export default function TheoryViewer({
           <p className="mt-4 rounded-2xl bg-white p-4 text-[15px] leading-[1.7] text-ink-soft shadow-card">
             <Rich text={theory.intro} />
           </p>
+          {slideUrl && (
+            <div className="mt-4 flex flex-col gap-3 rounded-2xl border-2 border-sea/25 bg-gradient-to-r from-sea/10 via-white to-coral/10 p-4 shadow-sm sm:flex-row sm:items-center sm:justify-between">
+              <div className="flex items-center gap-3">
+                <span className="text-3xl">📽️</span>
+                <div>
+                  <h3 className="font-display text-[15px] font-bold text-ink">Bài giảng điện tử tương tác HTML</h3>
+                  <p className="text-xs text-ink-soft">15 slide có sơ đồ động, phòng code trực tiếp & câu hỏi nhanh</p>
+                </div>
+              </div>
+              <a
+                href={slideUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center justify-center gap-1.5 rounded-xl bg-sea px-4 py-2 font-display text-xs font-bold text-white shadow-sm transition hover:bg-sea-deep hover:scale-105 active:scale-95"
+              >
+                Mở Trình chiếu ↗
+              </a>
+            </div>
+          )}
         </header>
 
         {/* Mục lục dạng chip, bấm nhảy tới mục */}

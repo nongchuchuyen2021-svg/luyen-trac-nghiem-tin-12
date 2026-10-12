@@ -11,7 +11,7 @@ import TheoryViewer from "@/components/TheoryViewer";
 import GameHub from "@/components/GameHub";
 import ReviewViewer from "@/components/ReviewViewer";
 
-type Mode = "menu" | "theory" | "mcq" | "tf" | "essay" | "sgk" | "games" | "review";
+type Mode = "menu" | "theory" | "mcq" | "tf" | "essay" | "sgk" | "games" | "review" | "slides";
 
 // Số "thẻ chơi" của 1 game, dùng chung để hiện gợi ý ở màn menu — mỗi loại
 // game lưu danh sách nội dung dưới tên trường khác nhau (items/nodes/questions).
@@ -48,6 +48,7 @@ export default function LessonClient({
   sgkUrl,
   games,
   review,
+  slideUrl,
 }: {
   lessonId: string;
   lessonTitle: string;
@@ -59,6 +60,7 @@ export default function LessonClient({
   sgkUrl?: string | null;
   games?: LessonGame[];
   review?: LessonReview | null;
+  slideUrl?: string | null;
 }) {
   const [mode, setMode] = useState<Mode>("menu");
   const [bestMcq, setBestMcq] = useState<number | null>(null);
@@ -98,6 +100,34 @@ export default function LessonClient({
     );
   }
 
+  if (mode === "slides" && slideUrl) {
+    return (
+      <div className="fixed inset-0 z-50 bg-[#0B131A]">
+        <div className="fixed left-3 top-3 z-10 flex gap-2">
+          <button
+            onClick={() => setMode("menu")}
+            className="rounded-full border border-white/20 bg-black/70 px-3.5 py-1.5 font-mono text-xs text-white backdrop-blur transition hover:border-white/40 hover:bg-black/90"
+          >
+            ← Quay lại bài học
+          </button>
+          <a
+            href={slideUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="rounded-full border border-sea/40 bg-sea/80 px-3.5 py-1.5 font-mono text-xs text-white backdrop-blur transition hover:bg-sea"
+          >
+            ↗ Mở toàn màn hình tab mới
+          </a>
+        </div>
+        <iframe
+          src={slideUrl}
+          title={`Trình chiếu · ${lessonTitle}`}
+          className="h-full w-full border-0"
+        />
+      </div>
+    );
+  }
+
   if (mode === "theory" && theory) {
     return (
       <main className="playground min-h-screen pb-16">
@@ -106,6 +136,7 @@ export default function LessonClient({
           lessonTitle={lessonTitle}
           topicName={topicName}
           theory={theory}
+          slideUrl={slideUrl}
           onBack={() => leaveTheory("menu")}
           onGoQuiz={() => leaveTheory("mcq")}
         />
@@ -171,6 +202,19 @@ export default function LessonClient({
       done: readTheory,
       enabled: theory !== null,
     },
+    ...(slideUrl
+      ? [
+          {
+            key: "slides" as Mode,
+            emoji: "📽️",
+            name: "Slide Trình chiếu",
+            desc: "15 slide bài giảng điện tử tương tác · sơ đồ động, phòng code trực tiếp & đố vui",
+            best: null,
+            done: false,
+            enabled: true,
+          },
+        ]
+      : []),
     ...(games && games.length > 0
       ? [
           {
