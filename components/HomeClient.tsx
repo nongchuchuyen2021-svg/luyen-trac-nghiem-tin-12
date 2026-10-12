@@ -184,7 +184,7 @@ export default function HomeClient({ counts }: { counts: Record<string, LessonCo
         </div>
 
         <footer className="mt-12 space-y-1 text-center font-mono text-xs text-ink-soft/50">
-          <p>Tổ Toán - Tin, trường THPT Na Rì, xã Na Rì, tỉnh Thái Nguyên</p>
+          <p>Tổ Toán - Tin, trường THPT Na Rì, tỉnh Thái Nguyên</p>
           <p>SGK Kết nối tri thức với cuộc sống · Tiến độ lưu trên trình duyệt của bạn</p>
         </footer>
       </div>

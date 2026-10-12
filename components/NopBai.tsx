@@ -12,13 +12,15 @@ export default function NopBai({
   diem,
   soCauDung,
   tongSoCau,
+  diemChu,
 }: {
   baiId: string;
   tenBai: string;
-  dang: "Trắc nghiệm" | "Đúng/Sai";
+  dang: "Trắc nghiệm" | "Đúng/Sai" | "Thi thử";
   diem: number;
   soCauDung: number;
   tongSoCau: number;
+  diemChu?: string;
 }) {
   const [trangThai, setTrangThai] = useState<TrangThai>("nhap");
   const [hoTen, setHoTen] = useState("");
@@ -84,7 +86,7 @@ export default function NopBai({
           Đã nộp cho thầy cô rồi!
         </p>
         <p className="mt-1 text-sm text-ink-soft">
-          {hoTen} · lớp {lop} · {dang} · {diem}%
+          {hoTen} · lớp {lop} · {dang} · {diemChu ?? `${diem}%`}
         </p>
       </div>
     );

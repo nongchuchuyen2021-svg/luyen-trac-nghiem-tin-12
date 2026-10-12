@@ -1,4 +1,5 @@
-import type { LessonGame } from "@/lib/types";
+import type { LessonGame, TeamBattleGame } from "@/lib/types";
+import { getQuestions } from "@/lib/questions";
 
 // Ngân hàng game gắn với từng bài — thêm 1 dòng mỗi khi soạn xong 1 bài
 import bai02 from "@/data/games/bai-02";
@@ -16,5 +17,33 @@ export const GAME_BANK: Record<string, LessonGame[]> = {
 };
 
 export function getLessonGames(lessonId: string): LessonGame[] {
-  return GAME_BANK[lessonId] ?? [];
+  const custom = GAME_BANK[lessonId];
+  if (custom && custom.length > 0) {
+    return custom;
+  }
+
+  // Tự động sinh Đấu trường Đại chiến Các Nhóm cho tất cả các bài có câu hỏi trắc nghiệm
+  const mcqs = getQuestions(lessonId);
+  if (mcqs.length >= 4) {
+    const autoTeamGame: TeamBattleGame = {
+      kind: "team-battle",
+      id: `team-battle-${lessonId}`,
+      title: "Đấu trường Đại chiến Các Nhóm",
+      emoji: "⚔️",
+      instructions:
+        "Chia lớp thành 2 - 4 nhóm đối kháng trực tiếp trên màn hình máy chiếu! Bấm chuông cướp quyền, rinh cúp vô địch môn Tin học 12!",
+      questions: mcqs.map((q) => ({
+        id: q.id,
+        q: q.q,
+        options: q.options,
+        answer: q.answer,
+        explain: q.explain,
+        score: 100,
+        damage: 25,
+      })),
+    };
+    return [autoTeamGame];
+  }
+
+  return [];
 }

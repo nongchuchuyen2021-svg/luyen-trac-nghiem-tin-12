@@ -90,6 +90,8 @@ export default function DauTruongClient({ initialPin = "" }: { initialPin?: stri
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [soundOn, setSoundOn] = useState<boolean>(true);
   const [copiedLink, setCopiedLink] = useState<boolean>(false);
+  const [isLocalhost, setIsLocalhost] = useState<boolean>(false);
+  const [currentOrigin, setCurrentOrigin] = useState<string>("https://luyen-trac-nghiem-tin-12.vercel.app");
 
   const prevStatusRef = useRef<string>("lobby");
   const prevQIndexRef = useRef<number>(-1);
@@ -97,6 +99,21 @@ export default function DauTruongClient({ initialPin = "" }: { initialPin?: stri
 
   useEffect(() => {
     setSoundOn(isSoundEnabled());
+    if (typeof window !== "undefined") {
+      setCurrentOrigin(window.location.origin);
+      setIsLocalhost(
+        window.location.hostname === "localhost" ||
+        window.location.hostname === "127.0.0.1" ||
+        window.location.hostname.endsWith(".local")
+      );
+
+      const params = new URLSearchParams(window.location.search);
+      const urlPin = params.get("pin");
+      if (urlPin) {
+        setPinInput(urlPin.trim());
+        setRole("player");
+      }
+    }
   }, []);
 
   const toggleSound = () => {
@@ -335,11 +352,15 @@ export default function DauTruongClient({ initialPin = "" }: { initialPin?: stri
     }
   };
 
-  const copyRoomLink = () => {
-    const url = `${window.location.origin}/dau-truong?pin=${roomPin}`;
-    navigator.clipboard.writeText(url).then(() => {
+  const copyRoomLink = (onlyUrl = false) => {
+    const shareUrl = `${currentOrigin}/dau-truong?pin=${roomPin}`;
+    const textToCopy = onlyUrl
+      ? shareUrl
+      : `🎮 MỜI THAM GIA ĐẤU TRƯỜNG TIN HỌC 12!\n📌 Mã PIN phòng: ${roomPin}\n👉 Nhấp vào link để thi đấu ngay: ${shareUrl}`;
+
+    navigator.clipboard.writeText(textToCopy).then(() => {
       setCopiedLink(true);
-      setTimeout(() => setCopiedLink(false), 2000);
+      setTimeout(() => setCopiedLink(false), 2500);
     });
   };
 
@@ -419,7 +440,27 @@ export default function DauTruongClient({ initialPin = "" }: { initialPin?: stri
       {/* 1. MÀN HÌNH CHỌN VAI TRÒ (HỌC SINH VÀO PHÒNG HOẶC GIÁO VIÊN TẠO PHÒNG) */}
       {/* ==================================================================== */}
       {role === "select" && (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-4">
+        <div className="space-y-4 pt-2">
+          {isLocalhost && (
+            <div className="rounded-2xl border border-amber-500/60 bg-amber-950/50 p-3.5 text-xs text-amber-200 flex flex-wrap items-center justify-between gap-2 shadow-lg">
+              <div className="flex items-center gap-2">
+                <span className="text-base">💡</span>
+                <span>
+                  Bạn đang xem trên <b>localhost (máy cá nhân)</b>. Để tạo phòng cho cả lớp tham gia qua Zalo / điện thoại, vui lòng mở website Online:
+                </span>
+              </div>
+              <a
+                href="https://chinh-phuc-tin-12.vercel.app/dau-truong"
+                target="_blank"
+                rel="noreferrer"
+                className="font-bold underline text-amber-300 hover:text-white"
+              >
+                chinh-phuc-tin-12.vercel.app/dau-truong →
+              </a>
+            </div>
+          )}
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {/* CỘT TRÁI: DÀNH CHO HỌC SINH */}
           <div className="rounded-3xl border border-cyan-500/40 bg-gradient-to-br from-slate-900 via-slate-950 to-indigo-950/60 p-6 sm:p-8 text-white shadow-2xl space-y-5">
             <div className="flex items-center gap-3">
@@ -611,6 +652,7 @@ export default function DauTruongClient({ initialPin = "" }: { initialPin?: stri
             </div>
           </div>
         </div>
+        </div>
       )}
 
       {/* ==================================================================== */}
@@ -630,24 +672,80 @@ export default function DauTruongClient({ initialPin = "" }: { initialPin?: stri
                 </h2>
               </div>
 
-              {/* MÃ PIN KHỔNG LỒ */}
-              <div className="inline-flex flex-col items-center justify-center rounded-3xl border-2 border-cyan-400 bg-cyan-500/10 px-8 py-5 shadow-2xl shadow-cyan-500/30 animate-pulse">
-                <span className="font-mono text-xs uppercase tracking-widest text-cyan-300">MÃ PIN PHÒNG ĐẤU</span>
-                <span className="font-mono text-5xl sm:text-7xl font-black tracking-widest text-white mt-1">
-                  {roomPin}
-                </span>
-              </div>
+              {/* CẢNH BÁO NẾU ĐANG CHẠY TRÊN LOCALHOST */}
+              {isLocalhost && (
+                <div className="rounded-2xl border-2 border-amber-500/80 bg-amber-950/80 p-4 sm:p-5 text-amber-200 text-left space-y-3 shadow-xl max-w-2xl mx-auto">
+                  <div className="flex items-center gap-2 font-bold text-amber-300 text-sm sm:text-base">
+                    <span className="text-lg">⚠️</span>
+                    <span>LƯU Ý QUAN TRỌNG: BẠN ĐANG MỞ TRÊN MÁY NỘI BỘ (LOCALHOST)</span>
+                  </div>
+                  <p className="text-xs sm:text-sm text-amber-100/90 leading-relaxed">
+                    Link <code className="bg-amber-900/80 px-1.5 py-0.5 rounded text-amber-200 font-mono">http://localhost:3002/...</code> <b>chỉ chạy được trên máy tính này</b>.
+                    Nếu gửi link này vào <b>Zalo</b> hoặc để học sinh mở bằng điện thoại/máy khác, điện thoại sẽ <b>báo lỗi không thể kết nối</b>.
+                  </p>
+                  <div className="pt-1 flex flex-wrap items-center gap-2">
+                    <a
+                      href="https://chinh-phuc-tin-12.vercel.app/dau-truong"
+                      target="_blank"
+                      rel="noreferrer"
+                      className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-amber-400 to-yellow-400 px-4 py-2 font-bold text-slate-950 text-xs shadow-lg hover:brightness-110 transition"
+                    >
+                      <span>🌐 Mở website Online chính thức để tạo phòng gửi Zalo</span>
+                      <span>→</span>
+                    </a>
+                  </div>
+                </div>
+              )}
 
-              <div className="flex flex-wrap items-center justify-center gap-3">
-                <button
-                  onClick={copyRoomLink}
-                  className="rounded-full border border-slate-700 bg-slate-800 px-4 py-2 font-mono text-xs text-slate-300 hover:text-white transition flex items-center gap-1.5"
-                >
-                  <span>{copiedLink ? "✓ Đã chép link!" : "📋 Sao chép link mời"}</span>
-                </button>
-                <span className="font-mono text-xs text-slate-400">
-                  Link: <code className="text-cyan-300">.../dau-truong?pin={roomPin}</code>
-                </span>
+              {/* KHU VỰC MÃ PIN & QR CODE QUÉT BẰNG ZALO */}
+              <div className="flex flex-col md:flex-row items-center justify-center gap-6 p-6 rounded-3xl bg-slate-950/80 border border-slate-800 max-w-3xl mx-auto shadow-2xl">
+                {/* QR Code */}
+                <div className="flex flex-col items-center gap-2 bg-slate-900/90 border border-slate-700/80 p-3.5 rounded-2xl shadow-inner">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src={`https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=${encodeURIComponent(
+                      `${currentOrigin}/dau-truong?pin=${roomPin}`
+                    )}`}
+                    alt="Mã QR Phòng Đấu"
+                    className="w-36 h-36 rounded-xl bg-white p-2 shadow-md"
+                  />
+                  <span className="font-mono text-[11px] text-cyan-300 font-bold flex items-center gap-1">
+                    <span>📱 Quét bằng Zalo / Camera</span>
+                  </span>
+                </div>
+
+                {/* Mã PIN & Nút bấm */}
+                <div className="flex flex-col items-center md:items-start gap-4 text-center md:text-left">
+                  <div className="inline-flex flex-col items-center md:items-start justify-center rounded-2xl border-2 border-cyan-400 bg-cyan-500/10 px-6 py-3 shadow-xl shadow-cyan-500/30">
+                    <span className="font-mono text-xs uppercase tracking-widest text-cyan-300 font-bold">MÃ PIN PHÒNG ĐẤU</span>
+                    <span className="font-mono text-5xl sm:text-6xl font-black tracking-widest text-white mt-0.5">
+                      {roomPin}
+                    </span>
+                  </div>
+
+                  <div className="space-y-2">
+                    <div className="flex flex-wrap items-center justify-center md:justify-start gap-2">
+                      <button
+                        onClick={() => copyRoomLink(false)}
+                        className="rounded-xl border border-cyan-400/60 bg-gradient-to-r from-cyan-500 to-indigo-600 px-4 py-2 font-mono text-xs font-bold text-white shadow-lg shadow-cyan-500/25 hover:brightness-110 active:scale-95 transition flex items-center gap-1.5"
+                      >
+                        <span>{copiedLink ? "✓ Đã chép tin nhắn Zalo!" : "📋 Sao chép link mời gửi Zalo"}</span>
+                      </button>
+
+                      <button
+                        onClick={() => copyRoomLink(true)}
+                        className="rounded-xl border border-slate-700 bg-slate-800 px-3 py-2 font-mono text-xs text-slate-300 hover:text-white hover:border-slate-600 transition"
+                        title="Chỉ chép đường link URL"
+                      >
+                        Chép URL
+                      </button>
+                    </div>
+
+                    <div className="font-mono text-xs text-slate-400 break-all max-w-md">
+                      Link: <code className="text-cyan-300 font-bold">{currentOrigin}/dau-truong?pin={roomPin}</code>
+                    </div>
+                  </div>
+                </div>
               </div>
 
               {/* DANH SÁCH HỌC SINH ĐÃ VÀO */}

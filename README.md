@@ -26,28 +26,21 @@ cách render trang ra ảnh để đọc.
 
 ## Tiến độ soạn ngân hàng câu hỏi
 
-| Chủ đề | Bài | Trạng thái |
-|---|---|---|
-| 1. Máy tính và xã hội tri thức | 1-2 | ✅ xong |
-| 2. Mạng máy tính và Internet | 3-5 | ✅ xong |
-| 3. Đạo đức, pháp luật và văn hoá trong môi trường số | 6 | ✅ xong |
-| 4. Giải quyết vấn đề với sự trợ giúp của máy tính (HTML & CSS) | 7-18 | 🔸 xong Bài 7, **làm tiếp từ Bài 8** |
-| 5. Hướng nghiệp với tin học | 19-21 | ⬜ chưa soạn |
-| 6. Máy tính và xã hội tri thức | 22 | ⬜ chưa soạn |
-| 7. Ứng dụng tin học *(Google Sites)* | 23-28 | ⬜ chưa soạn |
+| Chủ đề | Bài | Trắc nghiệm & Đúng/Sai | Lý thuyết |
+|---|---|---|---|
+| 1. Máy tính và xã hội tri thức | 1-2 | ✅ Đủ 100% | ✅ Đã có (100%) |
+| 2. Mạng máy tính và Internet | 3-5 | ✅ Đủ 100% | ✅ Đã có (100%) |
+| 3. Đạo đức, pháp luật và văn hoá trong môi trường số | 6 | ✅ Đủ 100% | ✅ Đã có (100%) |
+| 4. Giải quyết vấn đề với sự trợ giúp của máy tính (HTML & CSS) | 7-18 | ✅ Đủ 100% | ✅ Đã có (100%) |
+| 5. Hướng nghiệp với tin học | 19-21 | ✅ Đủ 100% | ✅ Đã có (100%) |
+| 6. Máy tính và xã hội tri thức | 22 | ✅ Đủ 100% | ✅ Đã có (100%) |
+| 7. Ứng dụng tin học *(Google Sites)* | 23-28 | ✅ Đủ 100% | ✅ Đã có (100%) |
 
-Bài 1–21 là kiến thức cốt lõi chung cho cả hai định hướng ICT và CS; Bài 22–28 mới
-là phần riêng của ICT. Vì vậy tên Chủ đề 6 trùng tên Chủ đề 1 — đó là cách SGK đặt,
-không phải lỗi. **Bài 23–28 dạy bằng Google Sites, không phải HTML/CSS** — xem
-`tai-lieu/BAN_DO_TRANG_SGK.md`.
+Bài 1–21 là kiến thức cốt lõi chung cho cả hai định hướng ICT và CS; Bài 22–28 là phần riêng của ICT.
 
-Đã có chế độ **Thi thử** bấm giờ theo cấu trúc đề tốt nghiệp THPT (QĐ 764) tại
-`/thi-thu` — 50 phút, 24 câu trắc nghiệm D1 + 2 câu đúng/sai D2 (**bản rút gọn**:
-đề thật có 4 câu D2 nhưng 2 câu lấy từ chủ đề Cơ sở dữ liệu SGK lớp 11, ngân hàng
-web này chưa có nội dung đó nên tạm bớt, mỗi câu D2 còn lại tính điểm gấp đôi để
-giữ đúng thang 10 điểm).
+Đã có chế độ **Thi thử** bấm giờ theo cấu trúc đề tốt nghiệp THPT (QĐ 764) tại `/thi-thu` — 50 phút, **24 câu trắc nghiệm D1 + 4 câu đúng/sai D2 chuẩn cấu trúc Bộ GD&ĐT** (đã tích hợp đầy đủ ngân hàng CSDL lớp 11 để đảm bảo đúng ma trận đề thi thật).
 
-Chưa làm: phần **nâng cấp giao diện** so với web lớp 10.
+Đã có chế độ **Đấu trường trực tuyến** (mã PIN phòng) tại `/dau-truong` và Đấu trường Đại chiến các nhóm trên máy chiếu cho toàn bộ 28 bài học.
 
 ## Chạy ở máy local
 

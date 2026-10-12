@@ -23,6 +23,10 @@ function danhSachMien(): string[] {
     "luyen-trac-nghiem-tin-12.vercel.app",
     "localhost:3002",
     "127.0.0.1:3002",
+    "localhost:3000",
+    "127.0.0.1:3000",
+    "localhost:3001",
+    "127.0.0.1:3001",
   ];
   const cuaVercel = process.env.VERCEL_URL ? [process.env.VERCEL_URL] : [];
   const themVao = (process.env.MIEN_CHO_PHEP_THEM ?? "")
@@ -32,7 +36,7 @@ function danhSachMien(): string[] {
   return [...codinh, ...cuaVercel, ...themVao];
 }
 
-const DANG_HOP_LE = ["Trắc nghiệm", "Đúng/Sai"] as const;
+const DANG_HOP_LE = ["Trắc nghiệm", "Đúng/Sai", "Thi thử"] as const;
 
 // Giới hạn tần suất: tối đa 20 lượt nộp trong 10 phút cho mỗi IP.
 // Bộ nhớ này chỉ sống trong một tiến trình serverless nên là biện pháp chặn
@@ -116,7 +120,7 @@ export async function POST(req: Request) {
     tongSoCau === null ||
     soCauDung === null ||
     diem === null ||
-    !/^bai-\d{2}$/.test(baiId)
+    !/^(bai-\d{2}|thi-thu)$/.test(baiId)
   ) {
     return NextResponse.json({ ok: false, loi: "Dữ liệu gửi lên không hợp lệ" }, { status: 400 });
   }

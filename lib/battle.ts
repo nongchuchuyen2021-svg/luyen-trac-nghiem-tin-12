@@ -1,5 +1,6 @@
 import type { Question } from "./types";
 import { getQuestions, QUESTION_BANK } from "./questions";
+import { CURRICULUM } from "@/data/curriculum";
 
 function shuffle<T>(arr: T[]): T[] {
   const a = [...arr];
@@ -26,19 +27,14 @@ export interface BattleTopic {
 }
 
 export const BATTLE_TOPICS: BattleTopic[] = [
-  { id: "bai-04", name: "Bài 4. Giao thức mạng (TCP/IP, MAC, Router)", chapter: "Chủ đề 2: Mạng máy tính & Internet" },
-  { id: "all", name: "Đại Chiến Toàn Diện (Ngẫu nhiên toàn bộ Tin 12)", chapter: "Toàn bộ SGK Tin học 12" },
-  { id: "bai-01", name: "Bài 1. Làm quen với Trí tuệ nhân tạo", chapter: "Chủ đề 1: Máy tính & Xã hội tri thức" },
-  { id: "bai-02", name: "Bài 2. Trí tuệ nhân tạo trong khoa học & đời sống", chapter: "Chủ đề 1: Máy tính & Xã hội tri thức" },
-  { id: "bai-03", name: "Bài 3. Một số thiết bị mạng thông dụng", chapter: "Chủ đề 2: Mạng máy tính & Internet" },
-  { id: "bai-05", name: "Bài 5. Thực hành chia sẻ tài nguyên mạng", chapter: "Chủ đề 2: Mạng máy tính & Internet" },
-  { id: "bai-06", name: "Bài 6. Giao tiếp & ứng xử không gian mạng", chapter: "Chủ đề 3: Đạo đức & Văn hoá số" },
-  { id: "bai-07", name: "Bài 7. HTML & cấu trúc trang web", chapter: "Chủ đề 4: Thiết kế Web (HTML & CSS)" },
-  { id: "bai-08", name: "Bài 8. Định dạng văn bản", chapter: "Chủ đề 4: Thiết kế Web (HTML & CSS)" },
-  { id: "bai-09", name: "Bài 9. Tạo danh sách, bảng", chapter: "Chủ đề 4: Thiết kế Web (HTML & CSS)" },
-  { id: "bai-10", name: "Bài 10. Tạo liên kết", chapter: "Chủ đề 4: Thiết kế Web (HTML & CSS)" },
-  { id: "bai-12", name: "Bài 12. Tạo biểu mẫu (Form)", chapter: "Chủ đề 4: Thiết kế Web (HTML & CSS)" },
-  { id: "bai-13", name: "Bài 13. Khái niệm, vai trò của CSS", chapter: "Chủ đề 4: Thiết kế Web (HTML & CSS)" },
+  { id: "all", name: "🏆 Đại Chiến Toàn Diện (Ngẫu nhiên toàn bộ Tin 12)", chapter: "Toàn bộ SGK Tin học 12" },
+  ...CURRICULUM.flatMap((topic) =>
+    topic.lessons.map((lesson) => ({
+      id: lesson.id,
+      name: lesson.title,
+      chapter: topic.name,
+    }))
+  ),
 ];
 
 function shuffleIndices(): number[] {

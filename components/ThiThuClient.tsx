@@ -5,6 +5,7 @@ import Link from "next/link";
 import type { Question, TFQuestion } from "@/lib/types";
 import { saveAttempt, getLessonProgress } from "@/lib/progress";
 import { scrollIntoViewIfNeeded } from "@/components/QuizClient";
+import NopBai from "@/components/NopBai";
 import {
   taoDeThiThu,
   diemMotCauD2,
@@ -240,6 +241,7 @@ export default function ThiThuClient() {
     });
     const diemD2 = diemD2CacCau.reduce((s, x) => s + x.diem, 0);
     const diemTong = diemD1 + diemD2;
+    const phanTram = Math.round((diemTong / DIEM_TOI_DA) * 100);
     const emoji = diemTong >= 8 ? "🎉" : diemTong >= 5 ? "💪" : "📖";
 
     return (
@@ -284,6 +286,16 @@ export default function ThiThuClient() {
               </Link>
             </div>
           </div>
+
+          <NopBai
+            baiId="thi-thu"
+            tenBai="Đề thi thử tốt nghiệp THPT (QĐ 764)"
+            dang="Thi thử"
+            diem={phanTram}
+            soCauDung={soCauDungD1 + diemD2CacCau.reduce((s, x) => s + x.soYDung, 0)}
+            tongSoCau={de.d1.length + de.d2.length * 4}
+            diemChu={`${vn(diemTong, 2)}/10đ (${phanTram}%)`}
+          />
 
           <section className="mt-8">
             <h2 className="font-display text-lg font-semibold text-ink">

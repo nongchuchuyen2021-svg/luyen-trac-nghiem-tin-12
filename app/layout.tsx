@@ -24,6 +24,9 @@ export const metadata: Metadata = {
   title: "Ôn luyện Tin học 12 — THPT Na Rì",
   description:
     "Web ôn luyện Tin học 12 (Kết nối tri thức, định hướng Tin học ứng dụng) của Trường THPT Na Rì, tỉnh Thái Nguyên — lý thuyết tự học có hình minh hoạ, luyện trắc nghiệm tự chấm, xem giải thích, theo dõi tiến độ theo từng bài.",
+  icons: {
+    icon: "/icon.svg",
+  },
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

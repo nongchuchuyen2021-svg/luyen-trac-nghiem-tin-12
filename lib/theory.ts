@@ -20,7 +20,13 @@ import bai18 from "@/data/theory/bai-18";
 import bai19 from "@/data/theory/bai-19";
 import bai20 from "@/data/theory/bai-20";
 import bai21 from "@/data/theory/bai-21";
+import bai22 from "@/data/theory/bai-22";
 import bai23 from "@/data/theory/bai-23";
+import bai24 from "@/data/theory/bai-24";
+import bai25 from "@/data/theory/bai-25";
+import bai26 from "@/data/theory/bai-26";
+import bai27 from "@/data/theory/bai-27";
+import bai28 from "@/data/theory/bai-28";
 
 // Bài lí thuyết tự học của từng bài.
 // Thêm bài mới: tạo data/theory/<id>.ts rồi import và khai báo thêm một dòng
@@ -49,7 +55,13 @@ export const THEORY_BANK: Record<string, LessonTheory> = {
   "bai-19": bai19,
   "bai-20": bai20,
   "bai-21": bai21,
+  "bai-22": bai22,
   "bai-23": bai23,
+  "bai-24": bai24,
+  "bai-25": bai25,
+  "bai-26": bai26,
+  "bai-27": bai27,
+  "bai-28": bai28,
 };
 
 export function getTheory(lessonId: string): LessonTheory | null {
