@@ -684,14 +684,17 @@ const htmlContent = `<!DOCTYPE html>
           <!-- Cột Hiển thị trực tiếp -->
           <div class="preview-box reveal-item" style="border: 2px solid #38E1F0;">
             <div style="font-size: 11px; text-transform: uppercase; color: #64748B; font-weight: 700; margin-bottom: 8px;">
-              🌐 Trình duyệt hiển thị thực tế:
+              🌐 Trình duyệt hiển thị thực tế (Chữ đen mặc định, khác nhau về cỡ chữ):
             </div>
-            <h1 style="font-size: 24px; font-weight: 800; color: #0D7C86; margin-bottom: 4px;">Tin học 12 (h1)</h1>
-            <h2 style="font-size: 19px; font-weight: 700; color: #1E293B; margin-bottom: 4px;">Phần chung (h2)</h2>
-            <h3 style="font-size: 16px; font-weight: 600; color: #334155; margin-bottom: 4px;">Chủ đề 2. Mạng máy tính (h3)</h3>
-            <h4 style="font-size: 14px; font-weight: 600; color: #475569; margin-bottom: 4px;">Bài 8. Định dạng văn bản (h4)</h4>
-            <h5 style="font-size: 12px; font-weight: 600; color: #64748B; margin-bottom: 2px;">Mục nhỏ hơn (h5)</h5>
-            <h6 style="font-size: 11px; font-weight: 600; color: #94A3B8;">Mục nhỏ nhất (h6)</h6>
+            <h1 style="font-size: 24px; font-weight: 800; color: #111827; margin-bottom: 4px;">Tin học 12 (Cấp 1 - Lớn nhất)</h1>
+            <h2 style="font-size: 19px; font-weight: 700; color: #111827; margin-bottom: 4px;">Phần chung (Cấp 2)</h2>
+            <h3 style="font-size: 16px; font-weight: 600; color: #111827; margin-bottom: 4px;">Chủ đề 2. Mạng máy tính</h3>
+            <h4 style="font-size: 14px; font-weight: 600; color: #111827; margin-bottom: 4px;">Bài 8. Định dạng văn bản</h4>
+            <h5 style="font-size: 12px; font-weight: 600; color: #111827; margin-bottom: 2px;">Mục nhỏ hơn</h5>
+            <h6 style="font-size: 11px; font-weight: 600; color: #111827;">Mục nhỏ nhất (Cấp 6)</h6>
+            <div style="margin-top: 8px; padding-top: 6px; border-top: 1px dashed #CBD5E1; font-size: 11px; color: #64748B; font-style: italic;">
+              📌 Chú ý: Trình duyệt mặc định hiển thị toàn bộ chữ màu đen. Muốn đổi màu chữ cần dùng thuộc tính style="color:..." (Slide 10).
+            </div>
           </div>
         </div>
 
