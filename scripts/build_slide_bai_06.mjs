@@ -1,1538 +1,1327 @@
 import fs from 'node:fs';
 import path from 'node:path';
 
+// Trình biên soạn Slide bài giảng điện tử Bài 6: Giao tiếp và ứng xử trong không gian mạng
+// SGK Tin học 12 (ICT - Kết nối tri thức, trang 34–38).
+// Hiệu ứng chuyển động đỉnh cao: Bàn cân SVG cân bằng Được & Mất, mô phỏng tín hiệu phi ngôn ngữ,
+// phòng xử lý tình huống Chat giả lập, tứ trụ nhân văn tương tác, âm thanh Web Audio và pháo hoa.
+
 const htmlContent = `<!DOCTYPE html>
 <html lang="vi">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Bài 6: Giao tiếp và ứng xử trong không gian mạng — Bài giảng điện tử Tin học 12</title>
+  <title>Bài 6: Giao tiếp và ứng xử trong không gian mạng — Tin học 12</title>
   <style>
-    /* ─── RESET & HỆ THỐNG BIẾN MÀU SẮC CHUẨN 2026 ─── */
+    /* ─── RESET & BIẾN MÀU SẮC CHUẨN 2026 ─── */
     :root {
-      --bg: #090F15;
-      --bg-card: rgba(15, 26, 36, 0.92);
-      --border-card: rgba(201, 221, 224, 0.16);
+      --bg: #070E18;
+      --bg-card: rgba(13, 24, 38, 0.95);
+      --border-card: rgba(56, 225, 240, 0.18);
       --ink: #FFFFFF;
-      --ink-soft: #A2B7C7;
+      --ink-soft: #94A3B8;
       --sea: #0D7C86;
-      --sea-light: #16A8B6;
-      --sea-glow: rgba(13, 124, 134, 0.45);
+      --sea-light: #38E1F0;
       --coral: #F2683C;
-      --coral-light: #FF855D;
       --gold: #F5A623;
-      --gold-light: #FFC043;
       --leaf: #10B981;
       --leaf-light: #34D399;
       --berry: #EC4899;
+      --berry-light: #F472B6;
       --purple: #8B5CF6;
-      --radius-lg: 24px;
-      --radius-md: 16px;
       --font-main: system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
       --font-mono: 'Consolas', 'Fira Code', 'Courier New', monospace;
-      --transition-slide: transform 0.55s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.45s ease;
+      --ease-spring: cubic-bezier(0.16, 1, 0.3, 1);
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; }
 
     body {
       font-family: var(--font-main);
-      background-color: var(--bg);
+      background: var(--bg);
       color: var(--ink);
       overflow: hidden;
-      width: 100vw;
-      height: 100vh;
+      width: 100vw; height: 100vh;
       user-select: none;
       -webkit-font-smoothing: antialiased;
     }
 
-    /* ─── NỀN GRADIENT HIỆU ỨNG KHÔNG GIAN SỐ ─── */
+    /* ─── NỀN KHÔNG GIAN MẠNG VŨ TRỤ SỐ ─── */
     .bg-mesh {
-      position: fixed;
-      top: 0; left: 0; width: 100vw; height: 100vh;
-      background: radial-gradient(circle at 15% 15%, rgba(13, 124, 134, 0.30) 0%, transparent 45%),
-                  radial-gradient(circle at 85% 85%, rgba(236, 72, 153, 0.22) 0%, transparent 42%),
-                  radial-gradient(circle at 50% 50%, rgba(139, 92, 246, 0.15) 0%, transparent 60%);
-      z-index: 0;
-      pointer-events: none;
+      position: fixed; inset: 0;
+      background:
+        radial-gradient(circle at 14% 16%, rgba(13, 124, 134, 0.32) 0, transparent 45%),
+        radial-gradient(circle at 86% 84%, rgba(236, 72, 153, 0.25) 0, transparent 45%),
+        radial-gradient(circle at 50% 50%, rgba(139, 92, 246, 0.18) 0, transparent 60%);
+      animation: meshPulse 14s ease-in-out infinite alternate;
+      pointer-events: none; z-index: 0;
+    }
+    @keyframes meshPulse {
+      0%   { transform: scale(1) translate(0, 0); opacity: 0.9; }
+      100% { transform: scale(1.06) translate(-10px, 10px); opacity: 1; }
     }
 
-    /* ─── CONTAINER TRÌNH CHIẾU ─── */
+    /* Ký hiệu mạng xã hội trôi nổi */
+    .float-layer { position: fixed; inset: 0; pointer-events: none; z-index: 1; overflow: hidden; }
+    .float-icon {
+      position: absolute;
+      font-size: 19px;
+      color: rgba(56, 225, 240, 0.2);
+      border: 1px solid rgba(56, 225, 240, 0.12);
+      padding: 6px 12px; border-radius: 12px;
+      background: rgba(13, 124, 134, 0.05);
+      animation: floatUp 22s linear infinite;
+    }
+    @keyframes floatUp {
+      0%   { transform: translateY(108vh) rotate(0deg); opacity: 0; }
+      10%  { opacity: 0.5; }
+      90%  { opacity: 0.5; }
+      100% { transform: translateY(-10vh) rotate(360deg); opacity: 0; }
+    }
+
+    /* ─── DECK CONTAINER ─── */
     .deck-container {
-      position: relative;
-      width: 100vw;
-      height: 100vh;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      z-index: 1;
+      position: relative; width: 100vw; height: 100vh;
+      display: flex; justify-content: center; align-items: center; z-index: 2;
     }
 
-    /* ─── MỖI SLIDE ─── */
+    /* ─── SLIDE FRAME ─── */
     .slide {
       position: absolute;
-      width: 94vw;
-      max-width: 1320px;
-      height: 88vh;
-      max-height: 840px;
+      width: 95vw; max-width: 1380px;
+      height: 88vh; max-height: 870px;
       background: var(--bg-card);
       border: 1px solid var(--border-card);
-      border-radius: var(--radius-lg);
-      backdrop-filter: blur(24px);
-      -webkit-backdrop-filter: blur(24px);
-      box-shadow: 0 30px 70px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.12);
-      padding: 36px 48px;
-      display: flex;
-      flex-direction: column;
-      opacity: 0;
-      pointer-events: none;
-      transform: translateX(60px) scale(0.97);
-      transition: var(--transition-slide);
+      border-radius: 24px;
+      backdrop-filter: blur(28px);
+      box-shadow: 0 38px 85px rgba(0, 0, 0, 0.78), inset 0 1px 0 rgba(255, 255, 255, 0.12);
+      padding: 26px 42px;
+      display: flex; flex-direction: column;
+      opacity: 0; pointer-events: none;
+      transform: translateX(70px) scale(0.96);
+      transition: transform 0.6s var(--ease-spring), opacity 0.5s ease;
       overflow-y: auto;
     }
-
     .slide::-webkit-scrollbar { width: 6px; }
-    .slide::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 4px; }
+    .slide::-webkit-scrollbar-thumb { background: rgba(56, 225, 240, 0.25); border-radius: 4px; }
+    .slide.active  { opacity: 1; pointer-events: auto; transform: translateX(0) scale(1); z-index: 3; }
+    .slide.prev    { opacity: 0; pointer-events: none; transform: translateX(-70px) scale(0.96); }
 
-    .slide.active {
-      opacity: 1;
-      pointer-events: auto;
-      transform: translateX(0) scale(1);
-      z-index: 2;
-    }
-
-    .slide.prev {
-      opacity: 0;
-      pointer-events: none;
-      transform: translateX(-60px) scale(0.97);
-    }
-
-    /* ─── ĐẦU TRANG SLIDE ─── */
+    /* ─── SLIDE HEADER ─── */
     .slide-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-start;
-      margin-bottom: 20px;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-      padding-bottom: 14px;
-      flex-shrink: 0;
+      display: flex; justify-content: space-between; align-items: flex-start;
+      margin-bottom: 12px; border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      padding-bottom: 10px; flex-shrink: 0;
     }
-
     .slide-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      padding: 4px 14px;
-      border-radius: 20px;
-      font-size: 13px;
-      font-weight: 700;
-      letter-spacing: 0.5px;
-      text-transform: uppercase;
-      background: rgba(13, 124, 134, 0.25);
-      color: #38E1F0;
-      border: 1px solid rgba(56, 225, 240, 0.3);
-      margin-bottom: 6px;
+      display: inline-flex; align-items: center; gap: 5px;
+      padding: 3px 13px; border-radius: 20px;
+      font-size: 12px; font-weight: 700; letter-spacing: 0.5px; text-transform: uppercase;
+      background: rgba(13, 124, 134, 0.28); color: #38E1F0;
+      border: 1px solid rgba(56, 225, 240, 0.35); margin-bottom: 4px;
     }
-    .slide-badge.coral { background: rgba(242, 104, 60, 0.25); color: #FF855D; border-color: rgba(255, 133, 93, 0.35); }
-    .slide-badge.gold { background: rgba(245, 166, 35, 0.25); color: #FFC043; border-color: rgba(255, 192, 67, 0.35); }
-    .slide-badge.leaf { background: rgba(16, 185, 129, 0.25); color: #34D399; border-color: rgba(52, 211, 153, 0.35); }
-    .slide-badge.berry { background: rgba(236, 72, 153, 0.25); color: #F472B6; border-color: rgba(244, 114, 182, 0.35); }
+    .slide-badge.coral  { background: rgba(242, 104, 60, 0.25);  color: #FF855D; border-color: rgba(255, 133, 93, 0.35); }
+    .slide-badge.gold   { background: rgba(245, 166, 35, 0.25);  color: #FFC043; border-color: rgba(255, 192, 67, 0.35); }
+    .slide-badge.leaf   { background: rgba(16, 185, 129, 0.25);  color: #34D399; border-color: rgba(52, 211, 153, 0.35); }
+    .slide-badge.berry  { background: rgba(236, 72, 153, 0.25);  color: #F472B6; border-color: rgba(244, 114, 182, 0.35); }
 
     .slide-title {
-      font-size: 30px;
-      font-weight: 800;
-      letter-spacing: -0.5px;
-      background: linear-gradient(135deg, #FFFFFF 30%, #C9DDE0 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      line-height: 1.25;
+      font-size: 26px; font-weight: 800; letter-spacing: -0.4px; line-height: 1.25;
+      background: linear-gradient(135deg, #FFFFFF 40%, #BFEAF2 100%);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
     }
-
-    .slide-subtitle {
-      font-size: 15px;
-      color: var(--ink-soft);
-      margin-top: 3px;
-    }
+    .slide-subtitle { font-size: 13.5px; color: var(--ink-soft); margin-top: 2px; }
 
     .slide-body {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      gap: 18px;
-      position: relative;
+      flex: 1; display: flex; flex-direction: column;
+      justify-content: center; gap: 12px; position: relative;
     }
 
-    /* ─── GRID LAYOUT ─── */
-    .grid-2 {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 24px;
-      align-items: stretch;
-      width: 100%;
+    /* ─── REVEAL CONTROLLER ─── */
+    .reveal-ctrl {
+      display: flex; align-items: center; gap: 8px;
+      background: rgba(0, 0, 0, 0.35); padding: 5px 13px;
+      border-radius: 30px; border: 1px solid rgba(255, 255, 255, 0.1); font-size: 13px;
     }
-    .grid-3 {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 18px;
-      width: 100%;
+    .reveal-status { font-weight: 800; color: #38E1F0; font-family: var(--font-mono); }
+    .reveal-btn {
+      background: linear-gradient(135deg, #0D7C86, #16A8B6); color: #FFF; border: none;
+      padding: 5px 12px; border-radius: 16px; font-size: 12px; font-weight: 700;
+      cursor: pointer; transition: all 0.25s var(--ease-spring);
+      display: inline-flex; align-items: center; gap: 4px;
     }
-    .grid-4 {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 14px;
-      width: 100%;
+    .reveal-btn:hover { transform: translateY(-2px); box-shadow: 0 4px 14px rgba(56, 225, 240, 0.45); }
+
+    /* ─── REVEAL ITEMS ─── */
+    .reveal-item {
+      opacity: 0; transform: translateY(22px) scale(0.97);
+      transition: opacity 0.5s var(--ease-spring), transform 0.5s var(--ease-spring), box-shadow 0.4s;
+      will-change: opacity, transform;
+    }
+    .slide.active .reveal-item.visible { opacity: 1; transform: translateY(0) scale(1); }
+    .reveal-item.just-revealed {
+      box-shadow: 0 0 28px rgba(56, 225, 240, 0.4), inset 0 0 16px rgba(56, 225, 240, 0.15);
+      border-color: #38E1F0 !important;
     }
 
-    /* ─── CARD NỘI DUNG ─── */
+    /* ─── CARDS & GRIDS ─── */
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+    .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
     .card {
-      background: rgba(255, 255, 255, 0.04);
-      border: 1px solid rgba(255, 255, 255, 0.09);
-      border-radius: var(--radius-md);
-      padding: 20px 24px;
-      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      background: rgba(255, 255, 255, 0.04); border: 1px solid rgba(255, 255, 255, 0.09);
+      border-radius: 16px; padding: 14px 18px; position: relative; overflow: hidden;
+      transition: transform 0.3s var(--ease-spring), border-color 0.3s;
     }
-    .card:hover {
-      background: rgba(255, 255, 255, 0.07);
-      border-color: rgba(56, 225, 240, 0.4);
-      transform: translateY(-3px);
-    }
-
+    .card:hover { transform: translateY(-3px); border-color: rgba(56, 225, 240, 0.3); }
     .card-title {
-      font-size: 19px;
-      font-weight: 700;
-      margin-bottom: 10px;
-      display: flex;
-      align-items: center;
-      gap: 10px;
+      font-size: 15px; font-weight: 700; color: #FFF; margin-bottom: 6px;
+      display: flex; align-items: center; gap: 8px;
     }
 
-    .card p, .card li {
-      color: var(--ink-soft);
-      font-size: 15px;
-      line-height: 1.6;
+    /* NÚT THAO TÁC SIMULATOR */
+    .sim-btn {
+      background: rgba(255, 255, 255, 0.08); color: #E2E8F0;
+      border: 1px solid rgba(255, 255, 255, 0.18); padding: 5px 12px;
+      border-radius: 8px; font-size: 12px; font-weight: 600; cursor: pointer;
+      transition: all 0.2s var(--ease-spring); display: inline-flex; align-items: center; gap: 5px;
+    }
+    .sim-btn:hover { background: rgba(56, 225, 240, 0.2); border-color: #38E1F0; color: #FFF; transform: translateY(-1px); }
+    .sim-btn.active { background: #0D7C86; border-color: #38E1F0; color: #FFF; box-shadow: 0 0 12px rgba(56, 225, 240, 0.4); }
+
+    /* ─── BÀN CÂN ĐƯỢC & MẤT SVG ─── */
+    #balance-svg { width: 100%; height: 260px; }
+    .scale-beam { transition: transform 0.8s cubic-bezier(0.34, 1.56, 0.64, 1); transform-origin: 300px 70px; }
+    .scale-plate-left { transition: transform 0.8s cubic-bezier(0.34, 1.56, 0.64, 1); }
+    .scale-plate-right { transition: transform 0.8s cubic-bezier(0.34, 1.56, 0.64, 1); }
+
+    /* ─── PHÒNG CHAT GIẢ LẬP TÌNH HUỐNG ─── */
+    .chat-container {
+      background: #101924; border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 14px; overflow: hidden; display: flex; flex-direction: column;
+      box-shadow: 0 12px 28px rgba(0, 0, 0, 0.6); font-size: 13px;
+    }
+    .chat-header {
+      background: #1A2634; padding: 10px 14px; display: flex; align-items: center; justify-content: space-between;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08); font-weight: 700; color: #38E1F0;
+    }
+    .chat-messages {
+      padding: 14px; display: flex; flex-direction: column; gap: 10px; min-height: 180px; max-height: 220px; overflow-y: auto;
+    }
+    .chat-bubble {
+      max-width: 80%; padding: 8px 12px; border-radius: 12px; line-height: 1.45;
+      font-size: 13px; animation: popIn 0.3s var(--ease-spring);
+    }
+    .chat-bubble.them {
+      background: #243447; color: #E2E8F0; align-self: flex-start; border-bottom-left-radius: 2px;
+    }
+    .chat-bubble.me {
+      background: #0078D4; color: white; align-self: flex-end; border-bottom-right-radius: 2px;
+    }
+    @keyframes popIn {
+      0% { transform: scale(0.85); opacity: 0; }
+      100% { transform: scale(1); opacity: 1; }
     }
 
-    .highlight { color: #38E1F0; font-weight: 700; }
-    .coral-text { color: var(--coral-light); font-weight: 700; }
-    .gold-text { color: var(--gold); font-weight: 700; }
-    .leaf-text { color: var(--leaf); font-weight: 700; }
-    .berry-text { color: var(--berry); font-weight: 700; }
-
-    /* ─── CÁC BƯỚC / MỤC DANH SÁCH ─── */
-    .step-badge {
-      width: 34px;
-      height: 34px;
-      border-radius: 50%;
-      background: linear-gradient(135deg, #0D7C86, #16A8B6);
-      color: white;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-weight: 800;
-      font-size: 15px;
-      box-shadow: 0 4px 12px rgba(13, 124, 134, 0.4);
-      flex-shrink: 0;
+    /* QUIZ CARDS */
+    .quiz-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+    .quiz-card {
+      background: rgba(255, 255, 255, 0.04); border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 14px; padding: 14px; display: flex; flex-direction: column; gap: 8px;
     }
-
-    .step-item {
-      display: flex;
-      gap: 16px;
-      align-items: flex-start;
-      padding: 14px 16px;
-      background: rgba(255, 255, 255, 0.04);
-      border: 1px solid rgba(255, 255, 255, 0.08);
-      border-radius: var(--radius-md);
-      transition: all 0.2s;
-    }
-    .step-item:hover {
-      background: rgba(255, 255, 255, 0.07);
-      border-color: rgba(56, 225, 240, 0.3);
-    }
-
-    /* ─── HỘP MÔ PHỎNG SO SÁNH TRỰC QUAN ─── */
-    .compare-container {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 20px;
-      width: 100%;
-    }
-    .compare-col {
-      background: rgba(255, 255, 255, 0.03);
-      border-radius: var(--radius-md);
-      padding: 18px 22px;
-      border: 1px solid rgba(255, 255, 255, 0.08);
-    }
-    .compare-col.leaf-border {
-      border: 2px solid rgba(16, 185, 129, 0.6);
-      background: rgba(16, 185, 129, 0.06);
-    }
-    .compare-col.coral-border {
-      border: 2px solid rgba(242, 104, 60, 0.6);
-      background: rgba(242, 104, 60, 0.06);
-    }
-
-    /* ─── TÌNH HUỐNG TƯƠNG TÁC (SIMULATOR) ─── */
-    .dilemma-card {
-      background: #0F1A24;
-      border: 2px solid #0D7C86;
-      border-radius: var(--radius-md);
-      padding: 22px;
-      margin-bottom: 12px;
-    }
-    .dilemma-btn {
-      background: rgba(255, 255, 255, 0.06);
-      border: 1px solid rgba(255, 255, 255, 0.12);
-      border-radius: 8px;
-      padding: 10px 16px;
-      color: #E2E8F0;
-      font-size: 14px;
-      cursor: pointer;
-      text-align: left;
-      transition: all 0.2s;
-      width: 100%;
-      margin-bottom: 8px;
-    }
-    .dilemma-btn:hover {
-      background: rgba(13, 124, 134, 0.3);
-      border-color: #38E1F0;
-      transform: translateX(4px);
-    }
-    .dilemma-btn.chosen-good {
-      background: rgba(16, 185, 129, 0.25) !important;
-      border-color: #10B981 !important;
-      color: #34D399 !important;
-      font-weight: 700;
-    }
-    .dilemma-btn.chosen-bad {
-      background: rgba(242, 104, 60, 0.25) !important;
-      border-color: #F2683C !important;
-      color: #FF855D !important;
-    }
-
-    /* ─── QUIZ CARDS ─── */
-    .quiz-options {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 12px;
-    }
+    .quiz-q { font-size: 13.5px; font-weight: 700; color: #FFF; line-height: 1.4; }
     .quiz-btn {
-      background: rgba(255, 255, 255, 0.05);
-      border: 1px solid rgba(255, 255, 255, 0.12);
-      border-radius: var(--radius-md);
-      padding: 14px 18px;
-      font-size: 15px;
-      color: #E2E8F0;
-      text-align: left;
-      cursor: pointer;
-      transition: all 0.2s;
+      background: rgba(255, 255, 255, 0.06); color: #E2E8F0;
+      border: 1px solid rgba(255, 255, 255, 0.12); padding: 7px 11px;
+      border-radius: 8px; font-size: 12px; text-align: left; cursor: pointer;
+      transition: all 0.2s var(--ease-spring);
     }
-    .quiz-btn:hover {
-      background: rgba(255, 255, 255, 0.1);
-      border-color: rgba(56, 225, 240, 0.4);
-      transform: translateY(-2px);
-    }
-    .quiz-btn.correct {
-      background: rgba(16, 185, 129, 0.25) !important;
-      border-color: #10B981 !important;
-      color: #34D399 !important;
-      font-weight: 700;
-    }
-    .quiz-btn.wrong {
-      background: rgba(242, 104, 60, 0.25) !important;
-      border-color: #F2683C !important;
-      color: #FF855D !important;
-    }
-    .quiz-feedback {
-      padding: 12px 18px;
-      border-radius: var(--radius-md);
-      font-size: 14.5px;
-      display: none;
-      animation: fadeIn 0.3s ease;
-      line-height: 1.5;
-    }
-    @keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
+    .quiz-btn:hover { background: rgba(56, 225, 240, 0.15); border-color: #38E1F0; color: #FFF; transform: translateX(4px); }
+    .quiz-btn.correct { background: #059669 !important; border-color: #34D399 !important; color: #FFF !important; font-weight: 700; }
+    .quiz-btn.wrong   { background: #DC2626 !important; border-color: #F87171 !important; color: #FFF !important; animation: shake 0.4s ease; }
+    @keyframes shake { 0%, 100% { transform: translateX(0); } 20%, 60% { transform: translateX(-6px); } 40%, 80% { transform: translateX(6px); } }
+    .quiz-feedback { font-size: 12px; margin-top: 3px; padding: 5px 9px; border-radius: 6px; display: none; line-height: 1.4; }
 
-    /* ─── CHECKLIST THỰC HÀNH ─── */
+    /* CHECKLIST */
     .checklist-item {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      padding: 11px 16px;
-      background: rgba(255, 255, 255, 0.04);
-      border: 1px solid rgba(255, 255, 255, 0.08);
-      border-radius: 8px;
-      cursor: pointer;
-      transition: all 0.2s;
-      font-size: 14.5px;
+      display: flex; align-items: center; gap: 10px;
+      padding: 8px 12px; background: rgba(255, 255, 255, 0.04);
+      border-radius: 8px; cursor: pointer; transition: all 0.2s;
+      border: 1px solid rgba(255, 255, 255, 0.06); font-size: 13.5px;
     }
-    .checklist-item:hover {
-      background: rgba(255, 255, 255, 0.08);
-    }
+    .checklist-item:hover { background: rgba(56, 225, 240, 0.1); border-color: rgba(56, 225, 240, 0.3); }
     .checklist-item.done {
-      background: rgba(16, 185, 129, 0.15);
-      border-color: #10B981;
-      text-decoration: line-through;
-      color: #6EE7B7;
+      background: rgba(16, 185, 129, 0.15); border-color: #10B981; color: #34D399; text-decoration: line-through;
     }
 
-    /* ─── DECK CONTROLS ─── */
+    /* ─── DECK NAV DƯỚI CÙNG ─── */
     .deck-nav {
-      position: fixed;
-      bottom: 20px;
-      left: 50%;
-      transform: translateX(-50%);
-      display: flex;
-      align-items: center;
-      gap: 16px;
-      background: rgba(9, 15, 21, 0.88);
-      border: 1px solid rgba(255, 255, 255, 0.15);
-      border-radius: 40px;
-      padding: 8px 24px;
-      backdrop-filter: blur(20px);
-      -webkit-backdrop-filter: blur(20px);
-      z-index: 100;
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+      position: fixed; bottom: 13px; left: 50%; transform: translateX(-50%);
+      background: rgba(8, 15, 24, 0.9); border: 1px solid rgba(255, 255, 255, 0.14);
+      border-radius: 40px; padding: 6px 16px;
+      display: flex; align-items: center; gap: 12px;
+      backdrop-filter: blur(18px); z-index: 100;
+      box-shadow: 0 10px 32px rgba(0, 0, 0, 0.65);
     }
     .nav-btn {
-      background: rgba(255, 255, 255, 0.08);
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      border-radius: 50%;
-      width: 40px;
-      height: 40px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: white;
-      cursor: pointer;
-      font-size: 16px;
-      transition: all 0.2s;
+      background: transparent; border: none; color: #E2E8F0; font-size: 18px;
+      cursor: pointer; padding: 3px 9px; border-radius: 20px;
+      transition: all 0.2s; display: flex; align-items: center;
     }
-    .nav-btn:hover {
-      background: #0D7C86;
-      border-color: #38E1F0;
-      transform: scale(1.1);
-    }
-    .deck-progress {
-      width: 160px;
-      height: 6px;
-      background: rgba(255, 255, 255, 0.15);
-      border-radius: 3px;
-      overflow: hidden;
-    }
-    .deck-progress-bar {
-      height: 100%;
-      background: linear-gradient(90deg, #0D7C86, #38E1F0);
-      width: 6.25%;
-      transition: width 0.3s ease;
-    }
-    .deck-counter {
-      font-family: var(--font-mono);
-      font-size: 13px;
-      color: var(--ink-soft);
-      min-width: 60px;
-      text-align: center;
-    }
+    .nav-btn:hover { color: #38E1F0; background: rgba(255, 255, 255, 0.1); transform: scale(1.12); }
+    .deck-progress { width: 220px; height: 6px; background: rgba(255, 255, 255, 0.14); border-radius: 3px; overflow: hidden; }
+    .deck-progress-bar { height: 100%; width: 0; background: linear-gradient(90deg, #0D7C86, #EC4899, #38E1F0); transition: width 0.3s var(--ease-spring); }
+    .deck-counter { font-size: 13px; font-weight: 700; color: #94A3B8; font-family: var(--font-mono); min-width: 56px; text-align: center; }
 
-    #confettiCanvas {
-      position: fixed;
-      top: 0; left: 0; width: 100vw; height: 100vh;
-      pointer-events: none;
-      z-index: 999;
-    }
+    #confettiCanvas { position: fixed; inset: 0; pointer-events: none; z-index: 999; }
   </style>
 </head>
 <body>
 
   <div class="bg-mesh"></div>
-  <canvas id="confettiCanvas"></canvas>
+  <div class="float-layer">
+    <div class="float-icon" style="left: 6%; animation-delay: 0s;">🌐 Cyberspace</div>
+    <div class="float-icon" style="left: 18%; animation-delay: 4s;">🤝 Tôn trọng</div>
+    <div class="float-icon" style="left: 32%; animation-delay: 9s;">💬 Lịch sự</div>
+    <div class="float-icon" style="left: 48%; animation-delay: 2s;">💗 Thấu hiểu</div>
+    <div class="float-icon" style="left: 64%; animation-delay: 7s;">🫶 Hỗ trợ</div>
+    <div class="float-icon" style="left: 78%; animation-delay: 12s;">📜 QĐ 874/BTTTT</div>
+    <div class="float-icon" style="left: 88%; animation-delay: 16s;">⚖️ Đạo đức số</div>
+  </div>
 
+  <canvas id="confettiCanvas"></canvas>
   <div class="deck-container">
 
-    <!-- ════════════════════════════════════════════════════════════════════════
-         SLIDE 1: TRANG BÌA BÀI HỌC
-         ════════════════════════════════════════════════════════════════════════ -->
-    <section class="slide active" id="slide-1">
+    <!-- ══ SLIDE 1: TRANG BÌA ════════════════════════════════════════════════ -->
+    <section class="slide active" id="slide-1" data-total-reveal="3">
       <div class="slide-header">
         <div>
-          <span class="slide-badge">Tin học 12 · Sách Kết nối tri thức</span>
-          <div class="slide-title">BÀI 6: GIAO TIẾP VÀ ỨNG XỬ TRONG KHÔNG GIAN MẠNG</div>
-          <div class="slide-subtitle">Chủ đề B: Mạng máy tính và Internet · Trang 34–38 SGK</div>
+          <span class="slide-badge berry">Chủ đề B · Đạo đức, Pháp luật &amp; Văn hóa số · Tin học 12</span>
+          <div class="slide-title">Bài 6. Giao tiếp và ứng xử trong không gian mạng</div>
+          <div class="slide-subtitle">Sách giáo khoa Kết nối tri thức với cuộc sống (Trang 34 – 38)</div>
         </div>
-        <div style="text-align: right;">
-          <span style="font-size: 40px;">🌐 💬 🤝</span>
+        <div class="reveal-ctrl">
+          <span>✨ Hiệu ứng:</span>
+          <span class="reveal-status" id="slide-1-status">0 / 3</span>
+          <button class="reveal-btn" onclick="revealNext();">▶ Hiện ý (↓)</button>
+          <button class="reveal-btn" style="background: rgba(255,255,255,0.15);" onclick="revealAll();">Hiện hết</button>
         </div>
       </div>
       <div class="slide-body">
-        <div class="grid-2">
-          <div class="card" style="border-left: 4px solid #38E1F0;">
-            <div class="card-title">🎯 Mục tiêu & Giá trị cốt lõi</div>
-            <ul style="margin-left: 20px; display: flex; flex-direction: column; gap: 10px;">
-              <li>Hiểu rõ khái niệm <strong class="highlight">Không gian mạng</strong> (thế giới ảo) và các kênh giao tiếp phổ biến.</li>
-              <li>Phân tích sâu sắc <strong class="leaf-text">4 Ưu điểm</strong> và <strong class="coral-text">4 Nhược điểm</strong> của giao tiếp trực tuyến.</li>
-              <li>Nắm vững <strong class="gold-text">4 Trụ cột ứng xử nhân văn</strong>: <em>Tôn trọng — Lịch sự — Thấu hiểu — Hỗ trợ</em>.</li>
-              <li>Nắm rõ khung pháp lý: <strong class="highlight">Quyết định số 874/QĐ-BTTTT</strong> ngày 17/6/2021.</li>
-              <li>Rèn luyện thói quen vàng: <em>"Đối xử với người khác theo cách mình muốn được đối xử"</em>.</li>
+        <div class="grid-3" style="margin-top: 8px;">
+          <div class="card reveal-item" style="border-top: 4px solid #38E1F0; text-align: center; padding: 22px 16px;">
+            <div style="font-size: 42px; margin-bottom: 10px;">🌐</div>
+            <div style="font-size: 16px; font-weight: 700; color: #38E1F0; margin-bottom: 6px;">Không gian mạng là gì?</div>
+            <p style="font-size: 13.5px; color: #CBD5E1; line-height: 1.5;">Thế giới ảo được tạo ra nhờ mạng máy tính, trong đó Internet là không gian mạng lớn nhất của nhân loại.</p>
+          </div>
+          <div class="card reveal-item" style="border-top: 4px solid #F5A623; text-align: center; padding: 22px 16px;">
+            <div style="font-size: 42px; margin-bottom: 10px;">⚖️</div>
+            <div style="font-size: 16px; font-weight: 700; color: #FFC043; margin-bottom: 6px;">Bàn cân Được &amp; Mất</div>
+            <p style="font-size: 13.5px; color: #CBD5E1; line-height: 1.5;">4 Ưu điểm vượt trội đối chiếu với 4 Nhược điểm tiềm ẩn — đặc biệt là sự thiếu vắng tín hiệu phi ngôn ngữ.</p>
+          </div>
+          <div class="card reveal-item" style="border-top: 4px solid #EC4899; text-align: center; padding: 22px 16px;">
+            <div style="font-size: 42px; margin-bottom: 10px;">💗</div>
+            <div style="font-size: 16px; font-weight: 700; color: #F472B6; margin-bottom: 6px;">Ứng xử nhân văn</div>
+            <p style="font-size: 13.5px; color: #CBD5E1; line-height: 1.5;">Tứ trụ: <strong>Tôn trọng – Lịch sự – Thấu hiểu – Hỗ trợ</strong> theo chuẩn Quyết định số 874-QĐ-BTTTT.</p>
+          </div>
+        </div>
+
+        <div class="card reveal-item" style="background: rgba(236, 72, 153, 0.12); border: 1px dashed rgba(244, 114, 182, 0.4); padding: 10px 18px; display: flex; align-items: center; justify-content: space-between;">
+          <span style="font-size: 13.5px; color: #E2E8F0;">⌨️ <strong>Space/→</strong> chuyển slide · <strong>↓</strong> mở từng ý · <strong>F</strong> toàn màn hình · <strong>M</strong> bật/tắt âm thanh</span>
+          <button class="sim-btn" onclick="nextSlide();" style="background: #EC4899; color: white;">Bắt đầu bài học 🚀</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══ SLIDE 2: KHÁI NIỆM KHÔNG GIAN MẠNG ═════════════════════════════════ -->
+    <section class="slide" id="slide-2" data-total-reveal="3">
+      <div class="slide-header">
+        <div>
+          <span class="slide-badge berry">Khái niệm cốt lõi · Trang 34</span>
+          <div class="slide-title">Không gian mạng (Cyberspace) là gì?</div>
+          <div class="slide-subtitle">Môi trường sống thứ hai của con người trong kỷ nguyên số</div>
+        </div>
+        <div class="reveal-ctrl">
+          <span>✨</span><span class="reveal-status" id="slide-2-status">0 / 3</span>
+          <button class="reveal-btn" onclick="revealNext();">▶ Hiện ý</button>
+          <button class="reveal-btn" style="background: rgba(255,255,255,0.15);" onclick="revealAll();">Hiện hết</button>
+        </div>
+      </div>
+      <div class="slide-body">
+        <div class="card reveal-item" style="border-left: 5px solid #38E1F0; padding: 12px 18px;">
+          <div class="card-title">📖 Định nghĩa chuẩn SGK Tin học 12 (Trang 34):</div>
+          <p style="font-size: 14.5px; line-height: 1.6; color: #E2E8F0;">
+            <strong>Không gian mạng</strong> (còn được gọi là <strong>thế giới ảo</strong>) là môi trường được tạo ra nhờ sử dụng mạng máy tính, trong đó <strong>Internet có thể được coi là không gian mạng lớn nhất</strong>.
+          </p>
+        </div>
+
+        <div class="grid-2 reveal-item">
+          <!-- CÁC KÊNH GIAO TIẾP TRỰC TUYẾN -->
+          <div class="card" style="border-top: 4px solid #0078D4;">
+            <div class="card-title" style="color: #60CDFF;">🌐 Các kênh giao tiếp trên mạng:</div>
+            <ul style="margin-left: 18px; font-size: 13.5px; line-height: 1.7; color: #CBD5E1;">
+              <li><strong>Mạng xã hội:</strong> Facebook, TikTok, Instagram, Zalo...</li>
+              <li><strong>Ứng dụng nhắn tin &amp; gọi video:</strong> Messenger, Zalo, FaceTime, Zoom, Teams...</li>
+              <li><strong>Thư điện tử (Email):</strong> Trao đổi học tập và công việc chuyên nghiệp.</li>
+              <li><strong>Diễn đàn trực tuyến, Blog &amp; Sàn thương mại điện tử:</strong> Shopee, Tiki, Voz...</li>
             </ul>
           </div>
 
-          <div class="card" style="background: rgba(13, 124, 134, 0.12); border-color: rgba(56, 225, 240, 0.3);">
-            <div class="card-title">⚡ Thông điệp gửi học sinh lớp 12</div>
-            <p style="margin-bottom: 12px; font-size: 15.5px;">
-              "Mỗi ngày các em đều lướt mạng, nhắn tin, thả tim, bình luận. Không gian mạng tuy là <em>thế giới ảo</em>, nhưng cảm xúc bị tổn thương và hậu quả pháp lý là <strong>hoàn toàn có thật</strong>."
-            </p>
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; font-size: 13.5px;">
-              <div style="background: rgba(255,255,255,0.05); padding: 10px; border-radius: 8px;">
-                ⚖️ <strong>Cân nhắc cái được & mất:</strong> Hiểu rõ tại sao nhắn tin lại dễ gây hiểu lầm.
-              </div>
-              <div style="background: rgba(255,255,255,0.05); padding: 10px; border-radius: 8px;">
-                💡 <strong>Ứng xử nhân văn:</strong> Giữ văn hóa, bảo vệ danh dự & sự riêng tư của nhau.
-              </div>
-            </div>
-            <div style="margin-top: 14px; font-size: 13px; color: #A2B7C7;">
-              ⌨️ <em>Nhấn <strong>Phím mũi tên phải (→)</strong> hoặc <strong>Phím Space</strong> để tiếp tục bài giảng!</em>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- ════════════════════════════════════════════════════════════════════════
-         SLIDE 2: KHÔNG GIAN MẠNG LÀ GÌ?
-         ════════════════════════════════════════════════════════════════════════ -->
-    <section class="slide" id="slide-2">
-      <div class="slide-header">
-        <div>
-          <span class="slide-badge">Phần 1: Khái niệm mở đầu</span>
-          <div class="slide-title">Không gian mạng (Cyberspace) là gì?</div>
-          <div class="slide-subtitle">Môi trường giao tiếp được tạo ra nhờ sự kết nối của mạng máy tính toàn cầu</div>
-        </div>
-        <span style="font-size: 32px;">🌐</span>
-      </div>
-      <div class="slide-body">
-        <div class="grid-2">
-          <div>
-            <div class="card" style="margin-bottom: 16px; border-left: 4px solid #38E1F0;">
-              <div class="card-title">📖 Khái niệm chuẩn SGK</div>
-              <p style="font-size: 16px; line-height: 1.6; margin-bottom: 10px;">
-                <strong class="highlight">Không gian mạng</strong> (còn được gọi là <strong>thế giới ảo</strong>) là môi trường được tạo ra nhờ sử dụng mạng máy tính.
-              </p>
-              <div style="background: rgba(13, 124, 134, 0.2); padding: 12px; border-radius: 8px; font-size: 14.5px; border: 1px solid rgba(56, 225, 240, 0.3);">
-                ⭐ <strong>Internet</strong> có thể được coi là <strong>không gian mạng lớn nhất thế giới</strong> hiện nay.
-              </div>
-            </div>
-
-            <div class="card">
-              <div class="card-title">❓ Đố vui phân biệt (Bẫy đề thi)</div>
-              <p style="font-size: 14px; margin-bottom: 8px;">Trường hợp nào sau đây <strong>KHÔNG</strong> phải là giao tiếp trong không gian mạng?</p>
-              <div style="display: flex; flex-direction: column; gap: 6px; font-size: 13.5px;">
-                <div style="padding: 6px 10px; background: rgba(255,255,255,0.05); border-radius: 6px;">❌ A. Gọi điện thoại video (FaceTime/Zalo) qua Internet</div>
-                <div style="padding: 6px 10px; background: rgba(255,255,255,0.05); border-radius: 6px;">❌ B. Trò chuyện với trợ lý ảo Chatbot trường đại học</div>
-                <div style="padding: 6px 10px; background: rgba(16, 185, 129, 0.2); border: 1px solid #10B981; border-radius: 6px; font-weight: 700; color: #34D399;">
-                  ✅ C. Hẹn gặp bạn tại một quán cà phê Internet
-                </div>
-              </div>
-              <div style="font-size: 12px; color: #F5A623; margin-top: 8px;">
-                💡 <em>Giải thích: Hẹn nhau ở quán cà phê là <strong>gặp mặt trực tiếp ngoài đời</strong>, quán chỉ là địa điểm!</em>
-              </div>
-            </div>
-          </div>
-
-          <!-- Hình vẽ đồ họa SVG: Không gian mạng bao phủ -->
-          <div style="background: rgba(0,0,0,0.4); border: 1px solid rgba(255,255,255,0.12); border-radius: var(--radius-md); padding: 16px; display: flex; flex-direction: column; align-items: center; justify-content: center;">
-            <svg viewBox="0 0 480 320" style="width: 100%; max-width: 440px;">
-              <!-- Quả cầu Internet -->
-              <circle cx="240" cy="160" r="100" fill="none" stroke="#0D7C86" stroke-width="2" stroke-dasharray="4 4" opacity="0.6"/>
-              <circle cx="240" cy="160" r="65" fill="rgba(13, 124, 134, 0.15)" stroke="#38E1F0" stroke-width="2.5"/>
-              <text x="240" y="155" font-size="32" text-anchor="middle">🌐</text>
-              <text x="240" y="180" font-size="13" font-weight="800" fill="#38E1F0" text-anchor="middle">INTERNET</text>
-              <text x="240" y="195" font-size="10.5" fill="#A2B7C7" text-anchor="middle">Không gian mạng lớn nhất</text>
-
-              <!-- Các vệ tinh dịch vụ kết nối xung quanh -->
-              <!-- Vệ tinh 1: Mạng xã hội -->
-              <g transform="translate(90, 70)">
-                <rect x="-45" y="-22" width="90" height="44" rx="10" fill="#1E293B" stroke="#8B5CF6" stroke-width="1.5"/>
-                <text x="0" y="-2" font-size="16" text-anchor="middle">👥</text>
-                <text x="0" y="14" font-size="10" font-weight="700" fill="#C4B5FD" text-anchor="middle">Mạng xã hội</text>
-                <path d="M45 0 L 85 45" stroke="#8B5CF6" stroke-width="1.5" stroke-dasharray="2 2"/>
-              </g>
-
-              <!-- Vệ tinh 2: Email -->
-              <g transform="translate(390, 70)">
-                <rect x="-45" y="-22" width="90" height="44" rx="10" fill="#1E293B" stroke="#F5A623" stroke-width="1.5"/>
-                <text x="0" y="-2" font-size="16" text-anchor="middle">✉️</text>
-                <text x="0" y="14" font-size="10" font-weight="700" fill="#FDE047" text-anchor="middle">Thư điện tử</text>
-                <path d="M-45 0 L -85 45" stroke="#F5A623" stroke-width="1.5" stroke-dasharray="2 2"/>
-              </g>
-
-              <!-- Vệ tinh 3: Video Call -->
-              <g transform="translate(90, 250)">
-                <rect x="-45" y="-22" width="90" height="44" rx="10" fill="#1E293B" stroke="#10B981" stroke-width="1.5"/>
-                <text x="0" y="-2" font-size="16" text-anchor="middle">📹</text>
-                <text x="0" y="14" font-size="10" font-weight="700" fill="#6EE7B7" text-anchor="middle">Video Call</text>
-                <path d="M45 0 L 85 -45" stroke="#10B981" stroke-width="1.5" stroke-dasharray="2 2"/>
-              </g>
-
-              <!-- Vệ tinh 4: Diễn đàn & Chat -->
-              <g transform="translate(390, 250)">
-                <rect x="-45" y="-22" width="90" height="44" rx="10" fill="#1E293B" stroke="#EC4899" stroke-width="1.5"/>
-                <text x="0" y="-2" font-size="16" text-anchor="middle">💬</text>
-                <text x="0" y="14" font-size="10" font-weight="700" fill="#F472B6" text-anchor="middle">Diễn đàn / Chat</text>
-                <path d="M-45 0 L -85 -45" stroke="#EC4899" stroke-width="1.5" stroke-dasharray="2 2"/>
-              </g>
-            </svg>
-            <div style="font-size: 12.5px; color: #A2B7C7; text-align: center; margin-top: 8px;">
-              Sơ đồ: Các dịch vụ trực tuyến kết nối con người trong Không gian mạng
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- ════════════════════════════════════════════════════════════════════════
-         SLIDE 3: CÁC DỊCH VỤ GIAO TIẾP TRỰC TUYẾN
-         ════════════════════════════════════════════════════════════════════════ -->
-    <section class="slide" id="slide-3">
-      <div class="slide-header">
-        <div>
-          <span class="slide-badge">Công cụ giao tiếp</span>
-          <div class="slide-title">Các kênh giao tiếp phổ biến trong Không gian mạng</div>
-          <div class="slide-subtitle">Sự đa dạng cho phép con người lựa chọn phương thức trao đổi phù hợp nhất</div>
-        </div>
-        <span style="font-size: 32px;">📱</span>
-      </div>
-      <div class="slide-body">
-        <div class="grid-3" style="gap: 16px;">
-          <div class="card" style="border-top: 4px solid #38BDF8;">
-            <div class="card-title">
-              <span style="font-size: 24px;">🌐</span> Mạng xã hội (Social Media)
-            </div>
-            <p>Facebook, TikTok, Instagram, Zalo... Chia sẻ trạng thái, hình ảnh, video, kết nối bạn bè và xây dựng thương hiệu cá nhân.</p>
-          </div>
-
+          <!-- PHÂN BIỆT BẪY SGK -->
           <div class="card" style="border-top: 4px solid #F5A623;">
-            <div class="card-title">
-              <span style="font-size: 24px;">✉️</span> Thư điện tử (Email)
+            <div class="card-title" style="color: #FFC043;">⚠️ Bẫy phân biệt hay gặp nhất:</div>
+            <div style="font-size: 13.5px; line-height: 1.6; color: #CBD5E1;">
+              <p><strong>Ví dụ 1:</strong> Chat với trợ lý ảo (Chatbot) trên web tuyển sinh → <em>Là giao tiếp mạng</em>.</p>
+              <p style="margin-top: 6px;"><strong>Ví dụ 2:</strong> Học lớp học trực tuyến qua Zoom → <em>Là giao tiếp mạng</em>.</p>
+              <p style="margin-top: 6px; color: #F87171; font-weight: 700;">
+                ❌ Hẹn bạn ra quán Cà phê Internet ngồi nói chuyện trực tiếp → KHÔNG PHẢI giao tiếp mạng (đây là gặp mặt trực tiếp ngoài đời thực)!
+              </p>
             </div>
-            <p>Gmail, Outlook... Dùng trong công việc chính thức, gửi văn bản, hồ sơ tuyển sinh, trao đổi học tập có tính lưu trữ lâu dài.</p>
           </div>
+        </div>
 
-          <div class="card" style="border-top: 4px solid #10B981;">
-            <div class="card-title">
-              <span style="font-size: 24px;">💬</span> Ứng dụng nhắn tin nhanh
-            </div>
-            <p>Messenger, Zalo, Telegram, WhatsApp... Trao đổi tức thì, gọi điện thoại thoại và gửi tài liệu dung lượng nhỏ nhanh chóng.</p>
-          </div>
-
-          <div class="card" style="border-top: 4px solid #8B5CF6;">
-            <div class="card-title">
-              <span style="font-size: 24px;">📹</span> Hội nghị truyền hình
-            </div>
-            <p>Zoom, Google Meet, Microsoft Teams... Họp trực tuyến, học từ xa, làm việc cộng tác đa quốc gia mà không cần di chuyển.</p>
-          </div>
-
-          <div class="card" style="border-top: 4px solid #EC4899;">
-            <div class="card-title">
-              <span style="font-size: 24px;">🗣️</span> Diễn đàn & Blog cá nhân
-            </div>
-            <p>Voz, Reddit, Spiderum, WordPress... Thảo luận chuyên sâu theo từng chủ đề học thuật, công nghệ, sở thích và lối sống.</p>
-          </div>
-
-          <div class="card" style="border-top: 4px solid #F2683C;">
-            <div class="card-title">
-              <span style="font-size: 24px;">🛒</span> Trang thương mại điện tử
-            </div>
-            <p>Shopee, Lazada, Tiki... Trao đổi, hỏi đáp giữa người mua và người bán, đánh giá chất lượng sản phẩm trực tuyến.</p>
-          </div>
+        <div class="card reveal-item" style="background: rgba(13, 124, 134, 0.12); padding: 10px 16px; font-size: 13px;">
+          💡 <strong>Thông điệp:</strong> Không gian mạng tuy "ảo" về phương tiện kết nối, nhưng <em>con người và cảm xúc phía sau màn hình là hoàn toàn có thật</em>!
         </div>
       </div>
     </section>
 
-    <!-- ════════════════════════════════════════════════════════════════════════
-         SLIDE 4: 4 ƯU ĐIỂM CỦA GIAO TIẾP QUA MẠNG
-         ════════════════════════════════════════════════════════════════════════ -->
-    <section class="slide" id="slide-4">
+    <!-- ══ SLIDE 3: BỐN ƯU ĐIỂM NỔI BẬT ═══════════════════════════════════════ -->
+    <section class="slide" id="slide-3" data-total-reveal="4">
       <div class="slide-header">
         <div>
-          <span class="slide-badge leaf">Mặt tích cực (Được)</span>
-          <div class="slide-title">4 Ưu điểm Nổi bật của Giao tiếp qua mạng</div>
-          <div class="slide-subtitle">Công cụ hỗ trợ đắc lực cho đời sống, giáo dục, công việc và nghiên cứu khoa học</div>
+          <span class="slide-badge leaf">Mặt tích cực · Trang 34-35</span>
+          <div class="slide-title">Bốn Ưu điểm Nổi bật của Giao tiếp qua mạng</div>
+          <div class="slide-subtitle">Sức mạnh công nghệ giúp con người vượt qua mọi giới hạn khoảng cách và thời gian</div>
         </div>
-        <span style="font-size: 32px;">👍</span>
+        <div class="reveal-ctrl">
+          <span>✨</span><span class="reveal-status" id="slide-3-status">0 / 4</span>
+          <button class="reveal-btn" onclick="revealNext();">▶ Hiện ý</button>
+          <button class="reveal-btn" style="background: rgba(255,255,255,0.15);" onclick="revealAll();">Hiện hết</button>
+        </div>
+      </div>
+      <div class="slide-body">
+        <div class="grid-4">
+          <!-- ƯU ĐIỂM 1 -->
+          <div class="card reveal-item" style="border-top: 4px solid #38E1F0; text-align: center;">
+            <div style="font-size: 36px; margin-bottom: 8px;">📍</div>
+            <div style="font-size: 15px; font-weight: 700; color: #38E1F0; margin-bottom: 6px;">1. Thuận tiện</div>
+            <p style="font-size: 12.5px; color: #CBD5E1; line-height: 1.5;">
+              Thực hiện được <strong>mọi nơi, mọi lúc</strong> miễn là có mạng. Vô cùng hữu ích cho những người sống cách xa nhau nửa vòng Trái Đất.
+            </p>
+          </div>
+
+          <!-- ƯU ĐIỂM 2 -->
+          <div class="card reveal-item" style="border-top: 4px solid #10B981; text-align: center;">
+            <div style="font-size: 36px; margin-bottom: 8px;">💰</div>
+            <div style="font-size: 15px; font-weight: 700; color: #34D399; margin-bottom: 6px;">2. Tiết kiệm</div>
+            <p style="font-size: 12.5px; color: #CBD5E1; line-height: 1.5;">
+              Tiết kiệm tối đa <strong>thời gian và chi phí đi lại</strong>. Họp trực tuyến giúp doanh nghiệp giảm kinh phí vé máy bay, ăn ở.
+            </p>
+          </div>
+
+          <!-- ƯU ĐIỂM 3 -->
+          <div class="card reveal-item" style="border-top: 4px solid #F5A623; text-align: center;">
+            <div style="font-size: 36px; margin-bottom: 8px;">🤝</div>
+            <div style="font-size: 15px; font-weight: 700; color: #FFC043; margin-bottom: 6px;">3. Kết nối xã hội</div>
+            <p style="font-size: 12.5px; color: #CBD5E1; line-height: 1.5;">
+              Dễ dàng kết nối cộng đồng có <strong>cùng sở thích, chuyên môn</strong>. Xây dựng thương hiệu cá nhân và doanh nghiệp toàn cầu.
+            </p>
+          </div>
+
+          <!-- ƯU ĐIỂM 4 -->
+          <div class="card reveal-item" style="border-top: 4px solid #8B5CF6; text-align: center;">
+            <div style="font-size: 36px; margin-bottom: 8px;">🧰</div>
+            <div style="font-size: 15px; font-weight: 700; color: #C4B5FD; margin-bottom: 6px;">4. Đa dạng công cụ</div>
+            <p style="font-size: 12.5px; color: #CBD5E1; line-height: 1.5;">
+              Nhắn tin nhanh, gọi video, email, chia sẻ màn hình... Người dùng tự do <strong>chọn công cụ tối ưu nhất</strong> cho từng mục đích.
+            </p>
+          </div>
+        </div>
+
+        <div class="card reveal-item" style="background: rgba(16, 185, 129, 0.1); border-color: rgba(52, 211, 153, 0.3); padding: 10px 16px; font-size: 13px;">
+          📖 <strong>Nhận định SGK:</strong> Bốn ưu điểm trên biến không gian mạng thành công cụ hỗ trợ mang tính cách mạng cho khoa học, giáo dục và đời sống hiện đại.
+        </div>
+      </div>
+    </section>
+
+    <!-- ══ SLIDE 4: BỐN NHƯỢC ĐIỂM & RỦI RO TIỀM ẨN ════════════════════════════ -->
+    <section class="slide" id="slide-4" data-total-reveal="4">
+      <div class="slide-header">
+        <div>
+          <span class="slide-badge coral">Mặt trái &amp; Cạm bẫy · Trang 35</span>
+          <div class="slide-title">Bốn Nhược điểm &amp; Rủi ro khi Giao tiếp qua mạng</div>
+          <div class="slide-subtitle">Những hệ lụy tâm lý, an ninh dữ liệu và mâu thuẫn nảy sinh từ thế giới ảo</div>
+        </div>
+        <div class="reveal-ctrl">
+          <span>✨</span><span class="reveal-status" id="slide-4-status">0 / 4</span>
+          <button class="reveal-btn" onclick="revealNext();">▶ Hiện ý</button>
+          <button class="reveal-btn" style="background: rgba(255,255,255,0.15);" onclick="revealAll();">Hiện hết</button>
+        </div>
+      </div>
+      <div class="slide-body">
+        <div class="grid-4">
+          <!-- NHƯỢC ĐIỂM 1 -->
+          <div class="card reveal-item" style="border-top: 4px solid #EF4444; text-align: center;">
+            <div style="font-size: 36px; margin-bottom: 8px;">😐</div>
+            <div style="font-size: 14.5px; font-weight: 700; color: #F87171; margin-bottom: 6px;">Thiếu tín hiệu phi ngôn ngữ</div>
+            <p style="font-size: 12.5px; color: #CBD5E1; line-height: 1.5;">
+              Thiếu <strong>nét mặt, cử chỉ, ánh mắt và ngữ điệu giọng nói</strong>. Dễ gây hiểu lầm tai hại từ những câu chữ vô tình!
+            </p>
+          </div>
+
+          <!-- NHƯỢC ĐIỂM 2 -->
+          <div class="card reveal-item" style="border-top: 4px solid #F5A623; text-align: center;">
+            <div style="font-size: 36px; margin-bottom: 8px;">🔓</div>
+            <div style="font-size: 14.5px; font-weight: 700; color: #FFC043; margin-bottom: 6px;">Nguy cơ mất bảo mật</div>
+            <p style="font-size: 12.5px; color: #CBD5E1; line-height: 1.5;">
+              Lộ mật khẩu, bị tấn công mạng, <strong>xâm phạm quyền riêng tư</strong>, rò rỉ dữ liệu nhạy cảm rơi vào tay kẻ xấu tống tiền.
+            </p>
+          </div>
+
+          <!-- NHƯỢC ĐIỂM 3 -->
+          <div class="card reveal-item" style="border-top: 4px solid #EC4899; text-align: center;">
+            <div style="font-size: 36px; margin-bottom: 8px;">🎭</div>
+            <div style="font-size: 14.5px; font-weight: 700; color: #F472B6; margin-bottom: 6px;">Dễ giả mạo, thiếu tin cậy</div>
+            <p style="font-size: 12.5px; color: #CBD5E1; line-height: 1.5;">
+              Người dùng dễ dàng <strong>giấu mặt, tạo nick ảo hoặc giả danh</strong>. Khó đánh giá tính chân thật, thiếu gắn kết bền chặt.
+            </p>
+          </div>
+
+          <!-- NHƯỢC ĐIỂM 4 -->
+          <div class="card reveal-item" style="border-top: 4px solid #64748B; text-align: center;">
+            <div style="font-size: 36px; margin-bottom: 8px;">📵</div>
+            <div style="font-size: 14.5px; font-weight: 700; color: #94A3B8; margin-bottom: 6px;">Sự cố kỹ thuật</div>
+            <p style="font-size: 12.5px; color: #CBD5E1; line-height: 1.5;">
+              Mất kết nối mạng, giật lag, phần mềm không tương thích làm cuộc trò chuyện bị <strong>trì hoãn, gián đoạn</strong> lúc quan trọng.
+            </p>
+          </div>
+        </div>
+
+        <div class="card reveal-item" style="background: rgba(239, 68, 68, 0.1); border-color: rgba(248, 113, 113, 0.3); padding: 10px 16px; font-size: 13px;">
+          ⚠️ <strong>Hậu quả nghiện mạng:</strong> Ngoài 4 nhược điểm trên, việc lạm dụng thế giới ảo còn dẫn đến suy giảm thị lực, mất ngủ, xa rời thực tế và tổn hại sức khỏe tinh thần.
+        </div>
+      </div>
+    </section>
+
+    <!-- ══ SLIDE 5: BÀN CÂN SVG ĐƯỢC VÀ MẤT TƯƠNG TÁC ═════════════════════════ -->
+    <section class="slide" id="slide-5" data-total-reveal="3">
+      <div class="slide-header">
+        <div>
+          <span class="slide-badge gold">Mô phỏng tương tác</span>
+          <div class="slide-title">Bàn cân Được &amp; Mất — Đặt lên bàn cân lý trí</div>
+          <div class="slide-subtitle">Quan sát sự cân bằng giữa lợi ích to lớn và rủi ro rình rập trên không gian mạng</div>
+        </div>
+        <div class="reveal-ctrl">
+          <span>✨</span><span class="reveal-status" id="slide-5-status">0 / 3</span>
+          <button class="reveal-btn" onclick="revealNext();">▶ Hiện ý</button>
+          <button class="reveal-btn" style="background: rgba(255,255,255,0.15);" onclick="revealAll();">Hiện hết</button>
+        </div>
+      </div>
+      <div class="slide-body">
+        <div class="card reveal-item" style="padding: 10px; position: relative;">
+          <!-- SVG BÀN CÂN HOẠT HỌA -->
+          <svg id="balance-svg" viewBox="0 0 600 240">
+            <!-- TRỤ CÂN -->
+            <polygon points="300,50 280,210 320,210" fill="#334155"/>
+            <rect x="240" y="210" width="120" height="15" rx="4" fill="#1E293B" stroke="#475569"/>
+            <circle cx="300" cy="70" r="12" fill="#38E1F0" stroke="#0D7C86" stroke-width="3"/>
+
+            <!-- ĐÒN CÂN CHUYỂN ĐỘNG -->
+            <g id="scale-beam-group" class="scale-beam">
+              <rect x="100" y="66" width="400" height="8" rx="4" fill="#38E1F0"/>
+              <!-- DÂY CÂN TRÁI -->
+              <line x1="130" y1="74" x2="100" y2="150" stroke="#94A3B8" stroke-width="2"/>
+              <line x1="130" y1="74" x2="160" y2="150" stroke="#94A3B8" stroke-width="2"/>
+              <!-- ĐĨA CÂN TRÁI (ƯU ĐIỂM) -->
+              <g id="plate-left" class="scale-plate-left">
+                <path d="M 80 150 Q 130 180 180 150 Z" fill="#059669" opacity="0.8"/>
+                <text x="130" y="140" fill="#34D399" font-size="13" font-weight="700" text-anchor="middle">4 ƯU ĐIỂM</text>
+              </g>
+
+              <!-- DÂY CÂN PHẢI -->
+              <line x1="470" y1="74" x2="440" y2="150" stroke="#94A3B8" stroke-width="2"/>
+              <line x1="470" y1="74" x2="500" y2="150" stroke="#94A3B8" stroke-width="2"/>
+              <!-- ĐĨA CÂN PHẢI (NHƯỢC ĐIỂM) -->
+              <g id="plate-right" class="scale-plate-right">
+                <path d="M 420 150 Q 470 180 520 150 Z" fill="#DC2626" opacity="0.8"/>
+                <text x="470" y="140" fill="#F87171" font-size="13" font-weight="700" text-anchor="middle">4 NHƯỢC ĐIỂM</text>
+              </g>
+            </g>
+          </svg>
+
+          <div id="scale-status-text" style="text-align: center; font-size: 13.5px; font-weight: 700; color: #38E1F0; padding: 4px;">
+            ⚖️ Trạng thái: Cân bằng — Hiểu rõ cả hai mặt để làm chủ không gian mạng!
+          </div>
+        </div>
+
+        <div class="interact-panel reveal-item" style="display: flex; gap: 10px; justify-content: center;">
+          <button class="sim-btn active" onclick="tiltScale('balance');">⚖️ Giữ thế cân bằng</button>
+          <button class="sim-btn" onclick="tiltScale('left');">💚 Nghiêng về Ưu điểm (Tận dụng công nghệ)</button>
+          <button class="sim-btn" onclick="tiltScale('right');">⚠️ Nghiêng về Nhược điểm (Cảnh giác rủi ro)</button>
+        </div>
+
+        <div class="card reveal-item" style="background: rgba(13, 124, 134, 0.12); padding: 10px 16px; font-size: 13px;">
+          🔑 <strong>Kết luận SGK:</strong> Giao tiếp mạng có nhiều ưu điểm vượt trội song cũng tiềm ẩn rủi ro lớn. Để biến mạng thành lợi thế, người dùng <strong>bắt buộc phải có chuẩn mực ứng xử đúng đắn</strong>!
+        </div>
+      </div>
+    </section>
+
+    <!-- ══ SLIDE 6: MÔ PHỎNG TÍN HIỆU PHI NGÔN NGỮ ═══════════════════════════ -->
+    <section class="slide" id="slide-6" data-total-reveal="3">
+      <div class="slide-header">
+        <div>
+          <span class="slide-badge berry">Phân tích sâu sắc · Trang 35</span>
+          <div class="slide-title">Vì sao nhắn tin lại dễ gây hiểu lầm hơn nói trực tiếp?</div>
+          <div class="slide-subtitle">Sức mạnh bí mật của Tín hiệu phi ngôn ngữ (Ánh mắt, nét mặt, ngữ điệu)</div>
+        </div>
+        <div class="reveal-ctrl">
+          <span>✨</span><span class="reveal-status" id="slide-6-status">0 / 3</span>
+          <button class="reveal-btn" onclick="revealNext();">▶ Hiện ý</button>
+          <button class="reveal-btn" style="background: rgba(255,255,255,0.15);" onclick="revealAll();">Hiện hết</button>
+        </div>
       </div>
       <div class="slide-body">
         <div class="grid-2">
-          <!-- Ưu điểm 1 -->
-          <div class="card" style="border-left: 5px solid #10B981;">
-            <div class="card-title" style="color: #34D399;">
-              <span>📍</span> 1. Thuận tiện — Mọi lúc, mọi nơi
+          <!-- TRỰC DIỆN MẶT ĐỐI MẶT -->
+          <div class="card reveal-item" style="border-left: 5px solid #10B981;">
+            <div class="card-title" style="color: #34D399;">🗣️ Gặp mặt trực tiếp (Đầy đủ tín hiệu):</div>
+            <p style="font-size: 13px; line-height: 1.6; color: #CBD5E1;">
+              Khi nói câu: <em>"Bạn giỏi thật đấy!"</em>:
+            </p>
+            <div style="background: rgba(255,255,255,0.04); padding: 10px; border-radius: 8px; margin-top: 6px;">
+              <p>😊 <strong>Kèm nụ cười ấm áp, ánh mắt chân thành:</strong> → Người nghe hiểu là lời <strong>khen ngợi thật lòng</strong>.</p>
+              <p style="margin-top: 6px;">😒 <strong>Kèm cái bĩu môi, giọng điệu mỉa mai:</strong> → Người nghe hiểu ngay là <strong>châm chọc, mỉa mai</strong>.</p>
             </div>
-            <p style="font-size: 14.5px;">
-              Chỉ cần có mạng Internet là có thể trò chuyện, trao đổi công việc bất kể vị trí địa lý. Rất hữu ích cho người thân, bạn bè sống cách xa nhau nửa vòng trái đất.
+            <p style="font-size: 12.5px; color: #34D399; margin-top: 8px;">
+              ✓ Nhờ nét mặt và giọng nói, thông điệp được truyền tải chính xác 100%!
             </p>
           </div>
 
-          <!-- Ưu điểm 2 -->
-          <div class="card" style="border-left: 5px solid #10B981;">
-            <div class="card-title" style="color: #34D399;">
-              <span>💰</span> 2. Tiết kiệm thời gian và chi phí
+          <!-- NHẮN TIN CHAT TEXT -->
+          <div class="card reveal-item" style="border-left: 5px solid #EF4444;">
+            <div class="card-title" style="color: #F87171;">💬 Nhắn tin thuần văn bản (Mất tín hiệu):</div>
+            <p style="font-size: 13px; line-height: 1.6; color: #CBD5E1;">
+              Cũng gửi đúng dòng chữ: <em>"Bạn giỏi thật đấy!"</em>:
+            </p>
+            <div style="background: rgba(255,255,255,0.04); padding: 10px; border-radius: 8px; margin-top: 6px; color: #FCA5A5;">
+              Màn hình chỉ có chữ trơ trọi! Người đọc đang vui thì nghĩ là khen; người đọc đang mệt mỏi/tự ái thì <strong>suy diễn là đang khinh thường, xỏ xiên</strong>!
             </div>
-            <p style="font-size: 14.5px;">
-              Không mất thời gian đi lại, giảm chi phí xăng xe, vé máy bay hay khách sạn. Các cuộc họp hội nghị truyền hình giúp tiết kiệm hàng triệu đồng cho cơ quan, doanh nghiệp.
+            <p style="font-size: 12.5px; color: #FF855D; margin-top: 8px;">
+              ⚠️ Không có ngữ điệu và ánh mắt, người đọc tự gán cảm xúc tiêu cực vào câu chữ!
             </p>
           </div>
+        </div>
 
-          <!-- Ưu điểm 3 -->
-          <div class="card" style="border-left: 5px solid #10B981;">
-            <div class="card-title" style="color: #34D399;">
-              <span>🤝</span> 3. Mở rộng kết nối xã hội
-            </div>
-            <p style="font-size: 14.5px;">
-              Dễ dàng tìm kiếm những người có cùng đam mê, chuyên môn, ước mơ. Là công cụ tuyệt vời để xây dựng thương hiệu cá nhân và mở rộng cơ hội nghề nghiệp tương lai.
-            </p>
-          </div>
-
-          <!-- Ưu điểm 4 -->
-          <div class="card" style="border-left: 5px solid #10B981;">
-            <div class="card-title" style="color: #34D399;">
-              <span>🧰</span> 4. Công cụ giao tiếp đa dạng
-            </div>
-            <p style="font-size: 14.5px;">
-              Từ tin nhắn văn bản, ghi âm giọng nói, chia sẻ màn hình, gửi file đính kèm đến họp video... Người dùng linh hoạt chọn phương tiện phù hợp nhất với hoàn cảnh.
-            </p>
-          </div>
+        <div class="card reveal-item" style="background: rgba(245, 166, 35, 0.1); border-color: rgba(255, 192, 67, 0.35); padding: 10px 16px; font-size: 13px;">
+          💡 <strong>Giải pháp văn minh:</strong> Khi trao đổi việc quan trọng hoặc nhạy cảm, hãy gọi điện thoại hoặc gọi video; khi nhắn tin hãy dùng thêm biểu tượng cảm xúc (emoji) tích cực hoặc từ ngữ thật rõ ràng để tránh hiểu lầm!
         </div>
       </div>
     </section>
 
-    <!-- ════════════════════════════════════════════════════════════════════════
-         SLIDE 5: 4 NHƯỢC ĐIỂM & RỦI RO TIỀM ẨN
-         ════════════════════════════════════════════════════════════════════════ -->
-    <section class="slide" id="slide-5">
+    <!-- ══ SLIDE 7: MỐC PHÁP LÝ QUYẾT ĐỊNH 874/QĐ-BTTTT ════════════════════════ -->
+    <section class="slide" id="slide-7" data-total-reveal="3">
       <div class="slide-header">
         <div>
-          <span class="slide-badge coral">Mặt tiêu cực (Mất)</span>
-          <div class="slide-title">4 Nhược điểm & Rủi ro khi giao tiếp qua mạng</div>
-          <div class="slide-subtitle">Những hệ quả khôn lường đòi hỏi người dùng phải luôn tỉnh táo và cẩn trọng</div>
-        </div>
-        <span style="font-size: 32px;">👎</span>
-      </div>
-      <div class="slide-body">
-        <div class="grid-2">
-          <!-- Nhược điểm 1 -->
-          <div class="card" style="border-left: 5px solid #F2683C;">
-            <div class="card-title" style="color: #FF855D;">
-              <span>😐</span> 1. Thiếu tín hiệu phi ngôn ngữ
-            </div>
-            <p style="font-size: 14.5px;">
-              Tin nhắn không có nét mặt, ánh mắt, điệu bộ hay giọng điệu cảm xúc. Rất dễ khiến người đọc hiểu sai ý, suy diễn tiêu cực dẫn tới xung đột, cãi vã không đáng có.
-            </p>
-          </div>
-
-          <!-- Nhược điểm 2 -->
-          <div class="card" style="border-left: 5px solid #F2683C;">
-            <div class="card-title" style="color: #FF855D;">
-              <span>🔓</span> 2. Nguy cơ bảo mật & Quyền riêng tư
-            </div>
-            <p style="font-size: 14.5px;">
-              Dữ liệu cá nhân, ảnh chụp, tin nhắn riêng tư có thể bị rò rỉ, lộ lọt hoặc bị hacker tấn công, đánh cắp mật khẩu để tống tiền, lừa đảo người thân.
-            </p>
-          </div>
-
-          <!-- Nhược điểm 3 -->
-          <div class="card" style="border-left: 5px solid #F2683C;">
-            <div class="card-title" style="color: #FF855D;">
-              <span>🎭</span> 3. Thiếu kết nối cá nhân chặt chẽ
-            </div>
-            <p style="font-size: 14.5px;">
-              Người dùng dễ dàng "ẩn danh", tạo nick ảo, che giấu thân phận hoặc ngụy tạo thông tin giả. Rất khó xây dựng niềm tin chân thành như khi gặp mặt ngoài đời thực.
-            </p>
-          </div>
-
-          <!-- Nhược điểm 4 -->
-          <div class="card" style="border-left: 5px solid #F2683C;">
-            <div class="card-title" style="color: #FF855D;">
-              <span>📵</span> 4. Dễ bị gián đoạn do sự cố kỹ thuật
-            </div>
-            <p style="font-size: 14.5px;">
-              Mất kết nối mạng Internet, nghẽn đường truyền, máy hết pin, phần mềm bị lỗi... làm cuộc họp, buổi học trực tuyến bị trì hoãn, ngắt quãng giữa chừng.
-            </p>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- ════════════════════════════════════════════════════════════════════════
-         SLIDE 6: SƠ ĐỒ ĐỒ HỌA SO SÁNH: CÁN CÂN ĐƯỢC VÀ MẤT
-         ════════════════════════════════════════════════════════════════════════ -->
-    <section class="slide" id="slide-6">
-      <div class="slide-header">
-        <div>
-          <span class="slide-badge gold">Sơ đồ tổng hợp SGK</span>
-          <div class="slide-title">Sơ đồ Cân bằng: Ưu điểm vs Nhược điểm</div>
-          <div class="slide-subtitle">Bức tranh đối chiếu toàn cảnh giúp ghi nhớ trọn vẹn 8 luận điểm của bài</div>
-        </div>
-        <span style="font-size: 32px;">⚖️</span>
-      </div>
-      <div class="slide-body">
-        <div class="compare-container">
-          <!-- Cột Ưu điểm -->
-          <div class="compare-col leaf-border">
-            <div style="font-size: 20px; font-weight: 800; color: #34D399; margin-bottom: 14px; display: flex; align-items: center; gap: 8px;">
-              <span>👍</span> BỐN ƯU ĐIỂM (TÍCH CỰC)
-            </div>
-            <div style="display: flex; flex-direction: column; gap: 10px;">
-              <div style="padding: 10px 14px; background: rgba(255,255,255,0.05); border-radius: 8px; border-left: 4px solid #10B981;">
-                <strong>1. Thuận tiện:</strong> Mọi lúc, mọi nơi khi có mạng.
-              </div>
-              <div style="padding: 10px 14px; background: rgba(255,255,255,0.05); border-radius: 8px; border-left: 4px solid #10B981;">
-                <strong>2. Tiết kiệm:</strong> Giảm tối đa thời gian & chi phí đi lại.
-              </div>
-              <div style="padding: 10px 14px; background: rgba(255,255,255,0.05); border-radius: 8px; border-left: 4px solid #10B981;">
-                <strong>3. Kết nối xã hội:</strong> Mở rộng mạng lưới quan hệ, sở thích.
-              </div>
-              <div style="padding: 10px 14px; background: rgba(255,255,255,0.05); border-radius: 8px; border-left: 4px solid #10B981;">
-                <strong>4. Đa dạng công cụ:</strong> Nhắn tin, gọi video, email, blog...
-              </div>
-            </div>
-          </div>
-
-          <!-- Cột Nhược điểm -->
-          <div class="compare-col coral-border">
-            <div style="font-size: 20px; font-weight: 800; color: #FF855D; margin-bottom: 14px; display: flex; align-items: center; gap: 8px;">
-              <span>👎</span> BỐN NHƯỢC ĐIỂM (HẠN CHẾ)
-            </div>
-            <div style="display: flex; flex-direction: column; gap: 10px;">
-              <div style="padding: 10px 14px; background: rgba(255,255,255,0.05); border-radius: 8px; border-left: 4px solid #F2683C;">
-                <strong>1. Thiếu tín hiệu phi ngôn ngữ:</strong> Dễ dẫn tới hiểu lầm.
-              </div>
-              <div style="padding: 10px 14px; background: rgba(255,255,255,0.05); border-radius: 8px; border-left: 4px solid #F2683C;">
-                <strong>2. Nguy cơ an ninh & riêng tư:</strong> Bị lộ tin mật, hack nick.
-              </div>
-              <div style="padding: 10px 14px; background: rgba(255,255,255,0.05); border-radius: 8px; border-left: 4px solid #F2683C;">
-                <strong>3. Thiếu kết nối chặt chẽ:</strong> Nick ảo, thông tin bịa đặt.
-              </div>
-              <div style="padding: 10px 14px; background: rgba(255,255,255,0.05); border-radius: 8px; border-left: 4px solid #F2683C;">
-                <strong>4. Rủi ro sự cố kỹ thuật:</strong> Mất mạng, lỗi phần mềm.
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- ════════════════════════════════════════════════════════════════════════
-         SLIDE 7: TẠI SAO NHẮN TIN DỄ GÂY HIỂU LẦM?
-         ════════════════════════════════════════════════════════════════════════ -->
-    <section class="slide" id="slide-7">
-      <div class="slide-header">
-        <div>
-          <span class="slide-badge coral">Mổ xẻ tâm lý giao tiếp</span>
-          <div class="slide-title">Vì sao nhắn tin lại dễ gây hiểu lầm hơn nói chuyện trực tiếp?</div>
-          <div class="slide-subtitle">Sự thiếu hụt của các tín hiệu phi ngôn ngữ (Non-verbal communication cues)</div>
-        </div>
-        <span style="font-size: 32px;">💬 ⚡ 😡</span>
-      </div>
-      <div class="slide-body">
-        <div class="grid-2">
-          <!-- Gặp mặt trực tiếp -->
-          <div class="card" style="border: 2px solid #10B981; background: rgba(16, 185, 129, 0.08);">
-            <div class="card-title" style="color: #34D399;">
-              <span>🗣️</span> GẶP MẶT TRỰC TIẾP (Hiểu đúng 100%)
-            </div>
-            <p style="margin-bottom: 12px;">Khi nói chuyện mặt đối mặt, não bộ tiếp nhận đồng thời 3 kênh:</p>
-            <div style="display: flex; flex-direction: column; gap: 8px; font-size: 14px;">
-              <div style="background: rgba(255,255,255,0.06); padding: 8px 12px; border-radius: 6px;">
-                😊 <strong>Nét mặt & Nụ cười:</strong> Thấy rõ sự thân thiện, đùa vui hay nghiêm túc.
-              </div>
-              <div style="background: rgba(255,255,255,0.06); padding: 8px 12px; border-radius: 6px;">
-                🗣️ <strong>Ngữ điệu giọng nói:</strong> Giọng trầm ấm, nhẹ nhàng hay bực dọc.
-              </div>
-              <div style="background: rgba(255,255,255,0.06); padding: 8px 12px; border-radius: 6px;">
-                👋 <strong>Ngôn ngữ cơ thể:</strong> Cử chỉ tay, ánh mắt tạo sự tin cậy.
-              </div>
-            </div>
-          </div>
-
-          <!-- Nhắn tin màn hình phẳng -->
-          <div class="card" style="border: 2px solid #F2683C; background: rgba(242, 104, 60, 0.08);">
-            <div class="card-title" style="color: #FF855D;">
-              <span>📱</span> NHẮN TIN VĂN BẢN (Rất dễ hiểu lầm)
-            </div>
-            <p style="margin-bottom: 12px;">Khi chỉ đọc dòng chữ trên màn hình phẳng:</p>
-            <div style="display: flex; flex-direction: column; gap: 8px; font-size: 14px;">
-              <div style="background: rgba(255,255,255,0.06); padding: 8px 12px; border-radius: 6px;">
-                ❌ <strong>Mất sạch nét mặt:</strong> Không biết bạn đang cười đùa hay cáu gắt.
-              </div>
-              <div style="background: rgba(255,255,255,0.06); padding: 8px 12px; border-radius: 6px;">
-                ❌ <strong>Mất giọng điệu:</strong> Một câu đùa "Hay quá nhỉ!" dễ bị đọc thành mỉa mai!
-              </div>
-              <div style="background: rgba(255,255,255,0.06); padding: 8px 12px; border-radius: 6px;">
-                ⚠️ <strong>Suy diễn tiêu cực:</strong> Người đọc tự áp đặt tâm trạng buồn bực của mình vào tin nhắn của đối phương.
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div class="card" style="background: rgba(245, 166, 35, 0.12); border-color: rgba(245, 166, 35, 0.3); text-align: center; padding: 12px;">
-          💡 <strong>Lời khuyên cho học sinh:</strong> Khi trao đổi vấn đề nhạy cảm, hiểu lầm hoặc công việc quan trọng, hãy <strong>gọi điện thoại trực tiếp hoặc hẹn gặp mặt</strong> thay vì nhắn tin qua lại!
-        </div>
-      </div>
-    </section>
-
-    <!-- ════════════════════════════════════════════════════════════════════════
-         SLIDE 8: KHUNG PHÁP LÝ: QUYẾT ĐỊNH 874/QĐ-BTTTT
-         ════════════════════════════════════════════════════════════════════════ -->
-    <section class="slide" id="slide-8">
-      <div class="slide-header">
-        <div>
-          <span class="slide-badge gold">Căn cứ pháp lý quan trọng</span>
+          <span class="slide-badge gold">Hành lang pháp lý · Trang 36</span>
           <div class="slide-title">Quy tắc ứng xử trên mạng theo Pháp luật Việt Nam</div>
           <div class="slide-subtitle">Quyết định số 874/QĐ-BTTTT ngày 17/6/2021 của Bộ Thông tin và Truyền thông</div>
         </div>
-        <span style="font-size: 32px;">⚖️ 📜</span>
+        <div class="reveal-ctrl">
+          <span>✨</span><span class="reveal-status" id="slide-7-status">0 / 3</span>
+          <button class="reveal-btn" onclick="revealNext();">▶ Hiện ý</button>
+          <button class="reveal-btn" style="background: rgba(255,255,255,0.15);" onclick="revealAll();">Hiện hết</button>
+        </div>
       </div>
       <div class="slide-body">
-        <div class="grid-2">
-          <div class="card" style="border-left: 4px solid #F5A623;">
-            <div class="card-title">🏛️ Mốc pháp lý SGK Tin học 12</div>
-            <p style="font-size: 15px; line-height: 1.6; margin-bottom: 12px;">
-              Để xây dựng môi trường mạng an toàn, lành mạnh, ngày <strong class="gold-text">17/6/2021</strong>, Bộ Thông tin và Truyền thông đã ban hành:
-            </p>
-            <div style="background: rgba(245, 166, 35, 0.15); border: 1px solid #F5A623; border-radius: 8px; padding: 12px; font-weight: 700; color: #FDE047; text-align: center; margin-bottom: 12px;">
-              Quyết định số 874/QĐ-BTTTT <br>
-              <span style="font-size: 13.5px; font-weight: 500; color: #CBD5E1;">"Bộ quy tắc ứng xử trên mạng xã hội"</span>
-            </div>
-            <p style="font-size: 14px; color: #A2B7C7;">
-              Áp dụng cho mọi cơ quan, tổ chức, cán bộ, công chức và toàn thể người dân Việt Nam khi tham gia không gian mạng.
-            </p>
-          </div>
+        <div class="card reveal-item" style="border-left: 5px solid #F5A623; padding: 12px 18px;">
+          <div class="card-title" style="color: #FFC043;">📜 Mốc pháp lý quan trọng cần thuộc lòng:</div>
+          <p style="font-size: 14.5px; line-height: 1.6; color: #E2E8F0;">
+            Bộ Thông tin và Truyền thông đã ban hành <strong>Bộ Quy tắc ứng xử trên mạng xã hội</strong> theo <strong>Quyết định số 874/QĐ-BTTTT ngày 17/6/2021</strong>, áp dụng cho mọi cá nhân, tổ chức sử dụng mạng tại Việt Nam.
+          </p>
+        </div>
 
-          <div class="card" style="background: rgba(13, 124, 134, 0.12); border-color: rgba(56, 225, 240, 0.3);">
-            <div class="card-title">🛡️ 4 Quy tắc ứng xử chung cơ bản</div>
-            <div style="display: flex; flex-direction: column; gap: 8px; font-size: 14px;">
-              <div class="step-item" style="padding: 10px;">
-                <span style="color: #38E1F0; font-weight: 700;">1. Tôn trọng, tuân thủ pháp luật:</span> Tuân thủ Luật An ninh mạng, bảo vệ quyền lợi hợp pháp của người khác.
-              </div>
-              <div class="step-item" style="padding: 10px;">
-                <span style="color: #38E1F0; font-weight: 700;">2. Lành mạnh:</span> Hành vi ứng xử phù hợp với thuần phong mỹ tục, chuẩn mực đạo đức của dân tộc.
-              </div>
-              <div class="step-item" style="padding: 10px;">
-                <span style="color: #38E1F0; font-weight: 700;">3. An toàn, bảo mật thông tin:</span> Tự bảo vệ dữ liệu cá nhân, không chia sẻ thông tin bí mật.
-              </div>
-              <div class="step-item" style="padding: 10px;">
-                <span style="color: #38E1F0; font-weight: 700;">4. Trách nhiệm:</span> Chịu trách nhiệm về mọi bài đăng, bình luận do chính mình phát ngôn.
-              </div>
-            </div>
+        <div class="grid-4 reveal-item">
+          <div class="card" style="border-top: 3px solid #38E1F0; text-align: center;">
+            <div style="font-size: 32px;">⚖️</div>
+            <div style="font-size: 14px; font-weight: 700; color: #38E1F0; margin-top: 4px;">Tuân thủ pháp luật</div>
+            <p style="font-size: 12px; color: #CBD5E1; margin-top: 4px;">Chấp hành nghiêm luật an ninh mạng, chịu trách nhiệm về hành vi của mình.</p>
           </div>
+          <div class="card" style="border-top: 3px solid #10B981; text-align: center;">
+            <div style="font-size: 32px;">🌱</div>
+            <div style="font-size: 14px; font-weight: 700; color: #34D399; margin-top: 4px;">Lành mạnh</div>
+            <p style="font-size: 12px; color: #CBD5E1; margin-top: 4px;">Hành vi, ứng xử phù hợp với các giá trị đạo đức, truyền thống văn hóa tốt đẹp.</p>
+          </div>
+          <div class="card" style="border-top: 3px solid #0078D4; text-align: center;">
+            <div style="font-size: 32px;">🛡️</div>
+            <div style="font-size: 14px; font-weight: 700; color: #60CDFF; margin-top: 4px;">An toàn &amp; Bảo mật</div>
+            <p style="font-size: 12px; color: #CBD5E1; margin-top: 4px;">Bảo vệ dữ liệu cá nhân của mình và tôn trọng quyền riêng tư của người khác.</p>
+          </div>
+          <div class="card" style="border-top: 3px solid #EC4899; text-align: center;">
+            <div style="font-size: 32px;">🤝</div>
+            <div style="font-size: 14px; font-weight: 700; color: #F472B6; margin-top: 4px;">Trách nhiệm</div>
+            <p style="font-size: 12px; color: #CBD5E1; margin-top: 4px;">Không chia sẻ tin giả, chủ động thông báo cho cơ quan chức năng khi gặp tiêu cực.</p>
+          </div>
+        </div>
+
+        <div class="card reveal-item" style="background: rgba(139, 92, 246, 0.1); border-color: rgba(196, 181, 253, 0.3); padding: 10px 16px; font-size: 13px;">
+          💡 <strong>Nhớ ngày tháng:</strong> Đề thi trắc nghiệm thường hỏi: <em>"Bộ quy tắc ứng xử trên mạng xã hội được ban hành theo Quyết định số nào?"</em> → <strong>874/QĐ-BTTTT ngày 17/6/2021</strong>!
         </div>
       </div>
     </section>
 
-    <!-- ════════════════════════════════════════════════════════════════════════
-         SLIDE 9: BỐN YẾU TỐ ỨNG XỬ NHÂN VĂN
-         ════════════════════════════════════════════════════════════════════════ -->
-    <section class="slide" id="slide-9">
+    <!-- ══ SLIDE 8: BỐN YẾU TỐ ỨNG XỬ NHÂN VĂN ═════════════════════════════════ -->
+    <section class="slide" id="slide-8" data-total-reveal="4">
       <div class="slide-header">
         <div>
-          <span class="slide-badge berry">Trọng tâm đạo đức</span>
-          <div class="slide-title">Bốn yếu tố tạo nên Ứng xử nhân văn trên mạng</div>
-          <div class="slide-subtitle">Không chỉ đúng luật — Người tử tế còn biết đối xử ấm áp và nhân ái với nhau</div>
+          <span class="slide-badge berry">Cốt lõi nhân cách số · Trang 36</span>
+          <div class="slide-title">Bốn yếu tố làm nên Ứng xử nhân văn trên mạng</div>
+          <div class="slide-subtitle">Không chỉ tuân thủ luật pháp — người dùng văn minh luôn cư xử từ trái tim</div>
         </div>
-        <span style="font-size: 32px;">💗</span>
+        <div class="reveal-ctrl">
+          <span>✨</span><span class="reveal-status" id="slide-8-status">0 / 4</span>
+          <button class="reveal-btn" onclick="revealNext();">▶ Hiện ý</button>
+          <button class="reveal-btn" style="background: rgba(255,255,255,0.15);" onclick="revealAll();">Hiện hết</button>
+        </div>
       </div>
       <div class="slide-body">
-        <div class="grid-4" style="gap: 16px;">
-          <!-- Cột 1 -->
-          <div class="card" style="text-align: center; border-top: 5px solid #0D7C86;">
-            <div style="font-size: 40px; margin-bottom: 8px;">🤝</div>
-            <div class="card-title" style="justify-content: center; color: #38E1F0;">1. TÔN TRỌNG</div>
-            <p style="font-size: 13.5px; line-height: 1.55;">
-              Tôn trọng quyền riêng tư. Không phát tán thông tin riêng khi chưa cho phép. Tôn trọng quan điểm khác biệt, không bắt người khác theo ý mình.
+        <div class="grid-4">
+          <!-- TÔN TRỌNG -->
+          <div class="card reveal-item" style="border-top: 4px solid #38E1F0;">
+            <div style="font-size: 36px; text-align: center; margin-bottom: 6px;">🤝</div>
+            <div style="font-size: 15px; font-weight: 700; color: #38E1F0; text-align: center; margin-bottom: 6px;">1. Tôn trọng</div>
+            <p style="font-size: 12.5px; color: #CBD5E1; line-height: 1.5;">
+              Tôn trọng <strong>quyền riêng tư</strong>, không phát tán tin riêng của người khác. Tôn trọng quan điểm khác biệt, <strong>không ép buộc người khác theo ý mình</strong>.
             </p>
           </div>
 
-          <!-- Cột 2 -->
-          <div class="card" style="text-align: center; border-top: 5px solid #10B981;">
-            <div style="font-size: 40px; margin-bottom: 8px;">💬</div>
-            <div class="card-title" style="justify-content: center; color: #34D399;">2. LỊCH SỰ</div>
-            <p style="font-size: 13.5px; line-height: 1.55;">
-              Dùng ngôn từ đúng mực. Không lăng mạ, chửi thề, phỉ báng hay phân biệt đối xử. Chia sẻ thông tin chính xác, không lan truyền tin giả.
+          <!-- LỊCH SỰ -->
+          <div class="card reveal-item" style="border-top: 4px solid #F5A623;">
+            <div style="font-size: 36px; text-align: center; margin-bottom: 6px;">💬</div>
+            <div style="font-size: 15px; font-weight: 700; color: #FFC043; text-align: center; margin-bottom: 6px;">2. Lịch sự</div>
+            <p style="font-size: 12.5px; color: #CBD5E1; line-height: 1.5;">
+              Dùng <strong>ngôn từ đúng mực</strong>, không xúc phạm, phân biệt đối xử. Tránh từ lóng khó hiểu. Chia sẻ tin <strong>chính xác, đáng tin</strong>; không gửi thư rác.
             </p>
           </div>
 
-          <!-- Cột 3 -->
-          <div class="card" style="text-align: center; border-top: 5px solid #EC4899;">
-            <div style="font-size: 40px; margin-bottom: 8px;">💗</div>
-            <div class="card-title" style="justify-content: center; color: #F472B6;">3. THẤU HIỂU</div>
-            <p style="font-size: 13.5px; line-height: 1.55;">
-              Cảm thông với khó khăn của người khác. Đặt mình vào hoàn cảnh của họ để hiểu suy nghĩ, cảm xúc trước khi buông lời bình luận.
+          <!-- THẤU HIỂU -->
+          <div class="card reveal-item" style="border-top: 4px solid #EC4899;">
+            <div style="font-size: 36px; text-align: center; margin-bottom: 6px;">💗</div>
+            <div style="font-size: 15px; font-weight: 700; color: #F472B6; text-align: center; margin-bottom: 6px;">3. Thấu hiểu</div>
+            <p style="font-size: 12.5px; color: #CBD5E1; line-height: 1.5;">
+              Đặt mình vào <strong>hoàn cảnh của người khác</strong> để cảm thông với khó khăn họ đang trải qua. Thấu hiểu là chìa khóa để hỗ trợ đúng cách.
             </p>
           </div>
 
-          <!-- Cột 4 -->
-          <div class="card" style="text-align: center; border-top: 5px solid #F5A623;">
-            <div style="font-size: 40px; margin-bottom: 8px;">🫶</div>
-            <div class="card-title" style="justify-content: center; color: #FFC043;">4. HỖ TRỢ</div>
-            <p style="font-size: 13.5px; line-height: 1.55;">
-              Sẵn lòng giúp đỡ khi người khác gặp hoạn nạn. Đôi khi chỉ là một lời an ủi, lời động viên chân thành giúp nhau vượt qua khó khăn.
+          <!-- HỖ TRỢ -->
+          <div class="card reveal-item" style="border-top: 4px solid #10B981;">
+            <div style="font-size: 36px; text-align: center; margin-bottom: 6px;">🫶</div>
+            <div style="font-size: 15px; font-weight: 700; color: #34D399; text-align: center; margin-bottom: 6px;">4. Hỗ trợ</div>
+            <p style="font-size: 12.5px; color: #CBD5E1; line-height: 1.5;">
+              Sẵn lòng giúp đỡ khi người khác gặp nạn. Đôi khi chỉ là <strong>lời động viên chân thành, tin nhắn an ủi kịp thời</strong> cũng cứu vớt được một tâm hồn!
             </p>
           </div>
         </div>
 
-        <div style="margin-top: 10px; background: rgba(236, 72, 153, 0.12); border: 1px solid rgba(236, 72, 153, 0.3); border-radius: 12px; padding: 14px; text-align: center; font-size: 15px;">
-          ✨ <em>"Tôn trọng, lịch sự, thấu hiểu và hỗ trợ giúp tạo nên một môi trường mạng an toàn, lành mạnh và đáng tin cậy."</em>
+        <div class="card reveal-item" style="background: rgba(236, 72, 153, 0.12); padding: 10px 16px; font-size: 13px;">
+          📖 <strong>Ghi nhớ SGK:</strong> Bốn yếu tố <em>Tôn trọng – Lịch sự – Thấu hiểu – Sẵn sàng hỗ trợ</em> giúp xây dựng một cộng đồng trực tuyến an toàn, lành mạnh, không làm tổn thương người khác.
         </div>
       </div>
     </section>
 
-    <!-- ════════════════════════════════════════════════════════════════════════
-         SLIDE 10: TÔN TRỌNG VÀ LỊCH SỰ
-         ════════════════════════════════════════════════════════════════════════ -->
-    <section class="slide" id="slide-10">
+    <!-- ══ SLIDE 9: PHÒNG TÌNH HUỐNG 1 — TRÁI Ý KIẾN TRONG NHÓM LỚP ════════════ -->
+    <section class="slide" id="slide-9" data-total-reveal="1">
       <div class="slide-header">
         <div>
-          <span class="slide-badge">Phân tích yếu tố 1 & 2</span>
-          <div class="slide-title">Tôn trọng quyền riêng tư & Ngôn từ lịch sự</div>
-          <div class="slide-subtitle">Những ranh giới đạo đức tuyệt đối không được bước qua trong không gian mạng</div>
+          <span class="slide-badge coral">Thực hành tình huống thực tế</span>
+          <div class="slide-title">Phòng Tình huống 1: Khi bạn đăng ý kiến trái ngược</div>
+          <div class="slide-subtitle">Em sẽ chọn phản ứng thế nào trong nhóm chat lớp học?</div>
         </div>
-        <span style="font-size: 32px;">🤝 💬</span>
+        <div class="reveal-ctrl">
+          <button class="sim-btn" onclick="resetChatSim(1);">🔄 Làm lại tình huống</button>
+        </div>
       </div>
       <div class="slide-body">
-        <div class="grid-2">
-          <!-- Tôn trọng -->
-          <div class="card" style="border-left: 5px solid #0D7C86;">
-            <div class="card-title" style="color: #38E1F0;">
-              <span>🔒</span> TÔN TRỌNG QUYỀN RIÊNG TƯ
+        <div class="grid-2 reveal-item visible">
+          <!-- GIAO DIỆN CHAT NHÓM LỚP -->
+          <div class="chat-container">
+            <div class="chat-header">
+              <span>💬 Nhóm Chat Tin học 12A1 (42 thành viên)</span>
             </div>
-            <ul style="margin-left: 20px; font-size: 14px; display: flex; flex-direction: column; gap: 8px;">
-              <li><strong class="coral-text">Không chụp màn hình tin nhắn riêng</strong> của bạn đem phát tán lên nhóm lớp hoặc mạng xã hội khi chưa được sự đồng ý.</li>
-              <li>Không tự ý chia sẻ số điện thoại, địa chỉ nhà, điểm thi hay hình ảnh dìm hàng của người khác.</li>
-              <li>Không ép buộc bạn bè phải chấp nhận quan điểm chính trị, tôn giáo hay sở thích giống mình.</li>
-            </ul>
-          </div>
-
-          <!-- Lịch sự -->
-          <div class="card" style="border-left: 5px solid #10B981;">
-            <div class="card-title" style="color: #34D399;">
-              <span>✍️</span> LỊCH SỰ TRONG NGÔN TỪ
-            </div>
-            <ul style="margin-left: 20px; font-size: 14px; display: flex; flex-direction: column; gap: 8px;">
-              <li>Tuyệt đối không dùng từ ngữ khiêu khích, chửi bới, lăng mạ hay tấn công cá nhân khi tranh luận.</li>
-              <li>Tránh viết hoa toàn bộ câu (CAPSLOCK) vì tạo cảm giác như đang quát tháo vào mặt đối phương.</li>
-              <li>Hạn chế lạm dụng từ lóng hoặc tiếng lóng phản cảm trong các diễn đàn học tập, hội nhóm văn minh.</li>
-            </ul>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- ════════════════════════════════════════════════════════════════════════
-         SLIDE 11: THẤU HIỂU VÀ HỖ TRỢ
-         ════════════════════════════════════════════════════════════════════════ -->
-    <section class="slide" id="slide-11">
-      <div class="slide-header">
-        <div>
-          <span class="slide-badge berry">Phân tích yếu tố 3 & 4</span>
-          <div class="slide-title">Thấu hiểu người khác & Sẵn sàng hỗ trợ</div>
-          <div class="slide-subtitle">Sức mạnh của sự tử tế đẩy lùi bạo lực mạng và tạo dựng cộng đồng vững mạnh</div>
-        </div>
-        <span style="font-size: 32px;">💗 🫶</span>
-      </div>
-      <div class="slide-body">
-        <div class="grid-2">
-          <!-- Thấu hiểu -->
-          <div class="card" style="border-left: 5px solid #EC4899;">
-            <div class="card-title" style="color: #F472B6;">
-              <span>🧠</span> NGHỆ THUẬT THẤU HIỂU (Empathy)
-            </div>
-            <p style="font-size: 14.5px; margin-bottom: 8px;">
-              Khi thấy một người có ý kiến vụng về hoặc hành vi khác lạ, đừng vội vàng lao vào "ném đá" hay chế giễu:
-            </p>
-            <ul style="margin-left: 20px; font-size: 14px; display: flex; flex-direction: column; gap: 8px;">
-              <li>Hãy tự hỏi: <em>"Họ đang phải đối mặt với khó khăn hay áp lực gì mà viết như vậy?"</em></li>
-              <li>Đặt mình vào vị trí của họ để cảm nhận nỗi đau hoặc sự lúng túng.</li>
-              <li>Chỉ khi thấu hiểu được căn nguyên, lời khuyên của ta mới thực sự có giá trị.</li>
-            </ul>
-          </div>
-
-          <!-- Hỗ trợ -->
-          <div class="card" style="border-left: 5px solid #F5A623;">
-            <div class="card-title" style="color: #FFC043;">
-              <span>🌱</span> HỖ TRỢ LẪN NHAU (Support)
-            </div>
-            <p style="font-size: 14.5px; margin-bottom: 8px;">
-              Không cần phải làm điều gì quá to tát mới là hỗ trợ:
-            </p>
-            <ul style="margin-left: 20px; font-size: 14px; display: flex; flex-direction: column; gap: 8px;">
-              <li>Một tin nhắn riêng hỏi thăm: <em>"Cậu ổn không?"</em> khi thấy bạn bị công kích trên mạng.</li>
-              <li>Chia sẻ tài liệu học tập, hướng dẫn bạn giải một bài toán khó trong nhóm lớp.</li>
-              <li>Lên tiếng bảo vệ nạn nhân trước các hành vi bắt nạt trực tuyến (Cyberbullying).</li>
-            </ul>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- ════════════════════════════════════════════════════════════════════════
-         SLIDE 12: THỬ THÁCH TÌNH HUỐNG THỰC TẾ (SIMULATOR)
-         ════════════════════════════════════════════════════════════════════════ -->
-    <section class="slide" id="slide-12">
-      <div class="slide-header">
-        <div>
-          <span class="slide-badge leaf">Thực hành xử lý tình huống</span>
-          <div class="slide-title">Phòng Tình huống: Em sẽ làm gì?</div>
-          <div class="slide-subtitle">Nhấp chọn phương án ứng xử phù hợp nhất trong 2 tình huống phòng học dưới đây</div>
-        </div>
-        <span style="font-size: 32px;">🧪</span>
-      </div>
-      <div class="slide-body">
-        <div class="grid-2">
-          <!-- Tình huống 1 -->
-          <div class="dilemma-card" id="dilemma-1">
-            <div style="font-weight: 700; color: #38E1F0; margin-bottom: 8px; font-size: 15px;">
-              📌 TÌNH HUỐNG 1: Ý KIẾN TRÁI NGƯỢC TRONG NHÓM LỚP
-            </div>
-            <p style="font-size: 13.5px; margin-bottom: 12px; color: #CBD5E1;">
-              Một bạn đăng lên nhóm lớp ý kiến về buổi dã ngoại mà em thấy hoàn toàn sai và vô lý. Em sẽ:
-            </p>
-            <button class="dilemma-btn" onclick="handleDilemma(this, false, 'D1-feedback', '❌ Dùng từ ngữ gắt gỏng sẽ gây mâu thuẫn, làm rạn nứt tình cảm bạn bè!')">
-              A. Bình luận gắt gỏng, phản đối kịch liệt ngay lập tức
-            </button>
-            <button class="dilemma-btn" onclick="handleDilemma(this, true, 'D1-feedback', '🎉 Rất chuẩn mực! Nêu lý lẽ lịch sự và tôn trọng người khác là đỉnh cao của ứng xử nhân văn.')">
-              B. Trao đổi lịch sự, nêu rõ lý do và tôn trọng quan điểm của bạn
-            </button>
-            <button class="dilemma-btn" onclick="handleDilemma(this, false, 'D1-feedback', '❌ Chụp màn hình nói xấu sau lưng là vi phạm quyền riêng tư và thiếu văn minh!')">
-              C. Chụp màn hình gửi sang nhóm khác để mọi người cùng cười chê
-            </button>
-            <div id="D1-feedback" style="display: none; padding: 10px; border-radius: 6px; font-size: 13px; margin-top: 8px;"></div>
-          </div>
-
-          <!-- Tình huống 2 -->
-          <div class="dilemma-card" id="dilemma-2">
-            <div style="font-weight: 700; color: #38E1F0; margin-bottom: 8px; font-size: 15px;">
-              📌 TÌNH HUỐNG 2: BẮT GẶP TIN ĐỒN GIẬT GÂN TRÊN FACEBOOK
-            </div>
-            <p style="font-size: 13.5px; margin-bottom: 12px; color: #CBD5E1;">
-              Em thấy một bài viết giật gân về việc lộ đề thi học kỳ nhưng chưa có nguồn kiểm chứng rõ ràng. Em sẽ:
-            </p>
-            <button class="dilemma-btn" onclick="handleDilemma(this, false, 'D2-feedback', '❌ Chia sẻ tin giả chưa kiểm chứng có thể bị xử phạt hành chính từ 5-10 triệu đồng theo Nghị định 15!')">
-              A. Bấm nút Share ngay về trang cá nhân để bạn bè cùng biết
-            </button>
-            <button class="dilemma-btn" onclick="handleDilemma(this, true, 'D2-feedback', '🎉 Tuyệt vời! Kiểm chứng sự thật trước khi chia sẻ là quy tắc sống còn của công dân số.')">
-              B. Bỏ qua, kiểm tra lại trang chính thức của nhà trường, không lan truyền
-            </button>
-            <button class="dilemma-btn" onclick="handleDilemma(this, false, 'D2-feedback', '❌ Bình luận lan truyền thêm vào các nhóm khác cũng tiếp tay cho tin giả!')">
-              C. Copy nội dung gửi vào nhóm chat của lớp để hỏi cho xôn xao
-            </button>
-            <div id="D2-feedback" style="display: none; padding: 10px; border-radius: 6px; font-size: 13px; margin-top: 8px;"></div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- ════════════════════════════════════════════════════════════════════════
-         SLIDE 13: 5 CÁCH RÈN THÓI QUEN ỨNG XỬ VĂN MINH
-         ════════════════════════════════════════════════════════════════════════ -->
-    <section class="slide" id="slide-13">
-      <div class="slide-header">
-        <div>
-          <span class="slide-badge gold">Rèn luyện bản thân</span>
-          <div class="slide-title">5 Cách biến Ứng xử nhân văn thành Thói quen</div>
-          <div class="slide-subtitle">Biết là một chuyện, rèn luyện để thực hiện mỗi ngày mới là điều đáng quý</div>
-        </div>
-        <span style="font-size: 32px;">🔁 🌟</span>
-      </div>
-      <div class="slide-body">
-        <div style="display: flex; flex-direction: column; gap: 10px;">
-          <div class="step-item">
-            <div class="step-badge">1</div>
-            <div>
-              <strong>Tự kiểm tra và cải thiện hành vi trực tuyến của mình:</strong> Thường xuyên nhìn lại các bài viết, bình luận cũ. Nếu thấy lời nói nào chưa đúng mực, hãy dũng cảm sửa đổi hoặc xóa đi.
-            </div>
-          </div>
-
-          <div class="step-item">
-            <div class="step-badge">2</div>
-            <div>
-              <strong>Bình tĩnh lắng nghe và tôn trọng ý kiến người khác:</strong> Khi gặp quan điểm trái ngược, đừng nổi nóng. Hãy đưa ra dẫn chứng và phản bác với thái độ nhã nhặn.
-            </div>
-          </div>
-
-          <div class="step-item">
-            <div class="step-badge">3</div>
-            <div>
-              <strong>Học cách xử lý các tình huống khó xử:</strong> Khi bị người lạ lăng mạ hoặc bị tống tiền trên mạng, hãy tìm sự giúp đỡ từ thầy cô, cha mẹ hoặc cơ quan chức năng.
-            </div>
-          </div>
-
-          <div class="step-item">
-            <div class="step-badge">4</div>
-            <div>
-              <strong>Cẩn trọng với ngôn từ và cách viết:</strong> Đọc kỹ lại tin nhắn trước khi nhấn Enter gửi đi để đảm bảo không gây hiểu nhầm hoặc làm tổn thương ai.
-            </div>
-          </div>
-
-          <div class="step-item" style="background: rgba(245, 166, 35, 0.12); border: 2px solid #F5A623;">
-            <div class="step-badge" style="background: linear-gradient(135deg, #F5A623, #FF855D);">5</div>
-            <div>
-              <strong style="color: #FFC043; font-size: 16px;">NGUYÊN TẮC VÀNG: Đối xử với người khác theo cách mình muốn được đối xử!</strong>
-              <div style="font-size: 13.5px; color: #CBD5E1; margin-top: 3px;">
-                Nếu em không muốn bị người khác chụp trộm màn hình hay chế giễu, em tuyệt đối đừng làm điều đó với bất kỳ ai!
+            <div class="chat-messages" id="chat-box-1">
+              <div class="chat-bubble them">
+                <strong>Bạn Nam:</strong> "Mình thấy bài tập lập trình này vô ích quá, tốn thời gian, học làm gì chẳng bao giờ dùng đến!"
               </div>
             </div>
           </div>
+
+          <!-- LỰA CHỌN PHẢN ỨNG -->
+          <div class="card" style="display: flex; flex-direction: column; gap: 8px;">
+            <div class="card-title">🤔 Là một công dân số nhân văn, em chọn:</div>
+            <button class="sim-btn" onclick="chooseChatResponse(1, 'A');" style="text-align: left; padding: 10px;">
+              🔴 A. Bình luận gay gắt: "Ngu thì im đi, không học được thì ra khỏi nhóm lớp!"
+            </button>
+            <button class="sim-btn" onclick="chooseChatResponse(1, 'B');" style="text-align: left; padding: 10px;">
+              🟡 B. Chụp màn hình gửi sang nhóm khác để mọi người cùng vào cười cợt, cô lập bạn.
+            </button>
+            <button class="sim-btn" onclick="chooseChatResponse(1, 'C');" style="text-align: left; padding: 10px; background: rgba(16, 185, 129, 0.15); border-color: #10B981;">
+              🟢 C. Nhắn lịch sự: "Mình hiểu Nam đang gặp khó khăn khi làm bài. Nhưng lập trình rèn tư duy logic rất tốt đấy, chiều nay mình qua hướng dẫn bạn nhé!"
+            </button>
+            <div id="chat-feedback-1" style="margin-top: 8px; font-size: 13px; line-height: 1.5; color: #CBD5E1; padding: 8px; border-radius: 6px;"></div>
+          </div>
         </div>
       </div>
     </section>
 
-    <!-- ════════════════════════════════════════════════════════════════════════
-         SLIDE 14: CẨM NANG HÀNH ĐỘNG CỤ THỂ CHO HỌC SINH
-         ════════════════════════════════════════════════════════════════════════ -->
-    <section class="slide" id="slide-14">
+    <!-- ══ SLIDE 10: PHÒNG TÌNH HUỐNG 2 — BẢO VỆ QUYỀN RIÊNG TƯ & TIN ĐỒN ═════ -->
+    <section class="slide" id="slide-10" data-total-reveal="1">
       <div class="slide-header">
         <div>
-          <span class="slide-badge leaf">Cẩm nang thực tế</span>
-          <div class="slide-title">Ứng xử chuẩn mực trong 5 Hoàn cảnh thường gặp</div>
-          <div class="slide-subtitle">Quy tắc ứng xử nhanh gọn giúp học sinh luôn là người lịch thiệp trên không gian mạng</div>
+          <span class="slide-badge coral">Thực hành tình huống thực tế</span>
+          <div class="slide-title">Phòng Tình huống 2: Bức ảnh nhạy cảm &amp; Tin đồn thất thiệt</div>
+          <div class="slide-subtitle">Ứng xử chuẩn mực trước cám dỗ "hóng biến" và phát tán đời tư</div>
         </div>
-        <span style="font-size: 32px;">📱 💻 ✉️</span>
+        <div class="reveal-ctrl">
+          <button class="sim-btn" onclick="resetChatSim(2);">🔄 Làm lại tình huống</button>
+        </div>
       </div>
       <div class="slide-body">
-        <div class="grid-3" style="gap: 14px;">
-          <div class="card" style="border-top: 3px solid #38BDF8;">
-            <div class="card-title" style="font-size: 16px;">🗣️ Tranh luận diễn đàn</div>
-            <p style="font-size: 13px;">Tập trung vào vấn đề, không công kích cá nhân hay gia đình bạn. Biết nói lời cảm ơn khi được bạn chỉ ra điểm chưa đúng.</p>
+        <div class="grid-2 reveal-item visible">
+          <!-- GIAO DIỆN MẠNG XÃ HỘI -->
+          <div class="chat-container">
+            <div class="chat-header">
+              <span>📩 Tin nhắn riêng tư từ một người ẩn danh</span>
+            </div>
+            <div class="chat-messages" id="chat-box-2">
+              <div class="chat-bubble them">
+                <strong>Người lạ:</strong> "Này, mình có ảnh chụp tin nhắn riêng và ảnh dìm hàng của bạn Hoa trong lớp bạn nè. Có muốn xem không để gửi cho nhóm bóc phốt?"
+              </div>
+            </div>
+          </div>
+
+          <!-- LỰA CHỌN PHẢN ỨNG -->
+          <div class="card" style="display: flex; flex-direction: column; gap: 8px;">
+            <div class="card-title">🤔 Quyết định chuẩn mực của em là:</div>
+            <button class="sim-btn" onclick="chooseChatResponse(2, 'A');" style="text-align: left; padding: 10px;">
+              🔴 A. Háo hức xin link rồi chuyển tiếp ngay vào các nhóm chat khác để câu view.
+            </button>
+            <button class="sim-btn" onclick="chooseChatResponse(2, 'B');" style="text-align: left; padding: 10px;">
+              🟡 B. Im lặng không nói gì nhưng vẫn lưu lại xem một mình.
+            </button>
+            <button class="sim-btn" onclick="chooseChatResponse(2, 'C');" style="text-align: left; padding: 10px; background: rgba(16, 185, 129, 0.15); border-color: #10B981;">
+              🟢 C. Thẳng thắn từ chối, cảnh báo người đó hành vi phát tán đời tư là vi phạm pháp luật, đồng thời bí mật báo cho bạn Hoa và thầy cô biết để bảo vệ bạn!
+            </button>
+            <div id="chat-feedback-2" style="margin-top: 8px; font-size: 13px; line-height: 1.5; color: #CBD5E1; padding: 8px; border-radius: 6px;"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══ SLIDE 11: NĂM CÁCH BIẾN ỨNG XỬ THÀNH THÓI QUEN ═══════════════════════ -->
+    <section class="slide" id="slide-11" data-total-reveal="3">
+      <div class="slide-header">
+        <div>
+          <span class="slide-badge leaf">Rèn luyện bản thân · Trang 37</span>
+          <div class="slide-title">Năm cách biến Ứng xử nhân văn thành Thói quen</div>
+          <div class="slide-subtitle">Không chỉ là lý thuyết trên trang sách — hãy biến thành phản xạ tự nhiên mỗi ngày</div>
+        </div>
+        <div class="reveal-ctrl">
+          <span>✨</span><span class="reveal-status" id="slide-11-status">0 / 3</span>
+          <button class="reveal-btn" onclick="revealNext();">▶ Hiện ý</button>
+          <button class="reveal-btn" style="background: rgba(255,255,255,0.15);" onclick="revealAll();">Hiện hết</button>
+        </div>
+      </div>
+      <div class="slide-body">
+        <div class="card reveal-item" style="border-left: 5px solid #EC4899; padding: 12px 18px;">
+          <div class="card-title" style="color: #F472B6;">🌟 Tinh thần cốt lõi của bài học (Trang 37):</div>
+          <p style="font-size: 16px; font-weight: 800; color: white;">
+            "ĐỐI XỬ VỚI NGƯỜI KHÁC THEO CÁCH MÀ MÌNH MUỐN ĐƯỢC ĐỐI XỬ!"
+          </p>
+          <p style="font-size: 13px; color: #CBD5E1; margin-top: 4px;">Nếu em không muốn bị nói xấu, bị bóc phốt, bị lừa đảo — thì đừng bao giờ làm điều đó với bất kỳ ai trên mạng!</p>
+        </div>
+
+        <div class="grid-2 reveal-item">
+          <div class="card" style="border-top: 3px solid #38E1F0;">
+            <p style="font-size: 13.5px; line-height: 1.7; color: #E2E8F0;">
+              <strong>1. Tự kiểm tra hành vi:</strong> Thường xuyên rà soát lại các bình luận, bài đăng cũ của mình. Nếu thấy có lời lẽ chưa đúng mực, hãy dũng cảm xóa hoặc xin lỗi.
+            </p>
+            <p style="font-size: 13.5px; line-height: 1.7; color: #E2E8F0; margin-top: 8px;">
+              <strong>2. Bình tĩnh lắng nghe:</strong> Khi gặp quan điểm trái chiều, hãy hít thở sâu, không vội phản bác trong cơn giận. Phản hồi lịch sự bằng lý lẽ thuyết phục.
+            </p>
           </div>
 
           <div class="card" style="border-top: 3px solid #F5A623;">
-            <div class="card-title" style="font-size: 16px;">💭 Nhóm chat mạng xã hội</div>
-            <p style="font-size: 13px;">Đọc kỹ toàn bộ tin nhắn trước khi trả lời. Tránh spam tin nhắn liên tục hoặc gửi nhãn dán gây phiền toái cho cả nhóm.</p>
+            <p style="font-size: 13.5px; line-height: 1.7; color: #E2E8F0;">
+              <strong>3. Tìm trợ giúp khi khó xử:</strong> Khi bị quấy rối hoặc bạo lực mạng, đừng chịu đựng một mình — hãy chia sẻ với cha mẹ, thầy cô hoặc chuyên gia.
+            </p>
+            <p style="font-size: 13.5px; line-height: 1.7; color: #E2E8F0; margin-top: 8px;">
+              <strong>4. Cẩn trọng với ngôn từ:</strong> Uốn tay 7 lần trước khi gõ phím. Đọc lại tin nhắn trước khi nhấn nút Send để đảm bảo không gây hiểu lầm.
+            </p>
           </div>
+        </div>
 
-          <div class="card" style="border-top: 3px solid #10B981;">
-            <div class="card-title" style="font-size: 16px;">✉️ Viết thư / Tin nhắn riêng</div>
-            <p style="font-size: 13px;">Có lời chào hỏi đàng hoàng ở đầu và lời cảm ơn ở cuối thư. Giữ bí mật tuyệt đối nội dung trao đổi riêng tư của bạn.</p>
-          </div>
-
-          <div class="card" style="border-top: 3px solid #EC4899;">
-            <div class="card-title" style="font-size: 16px;">📹 Trò chuyện qua Video</div>
-            <p style="font-size: 13px;">Mặc trang phục lịch sự, chọn góc ngồi gọn gàng, tắt micro khi người khác đang phát biểu để tránh tiếng ồn.</p>
-          </div>
-
-          <div class="card" style="border-top: 3px solid #8B5CF6;">
-            <div class="card-title" style="font-size: 16px;">📤 Đăng bài & Chia sẻ tin</div>
-            <p style="font-size: 13px;">Kiểm tra nguồn tin trước khi chia sẻ. Không đăng ảnh thẻ học sinh, căn cước công dân của mình hoặc bạn bè lên mạng.</p>
-          </div>
-
-          <div class="card" style="border-top: 3px solid #F2683C;">
-            <div class="card-title" style="font-size: 16px;">🛡️ Khi bị làm phiền</div>
-            <p style="font-size: 13px;">Không đôi co cãi nhau. Chặn tài khoản độc hại, báo cáo vi phạm (Report) và lưu lại bằng chứng để báo người lớn xử lý.</p>
-          </div>
+        <div class="card reveal-item" style="background: rgba(16, 185, 129, 0.1); border-color: rgba(52, 211, 153, 0.3); padding: 10px 16px; font-size: 13px;">
+          💡 <strong>Quy tắc 3 giây:</strong> Trước khi đăng bất kỳ thứ gì lên mạng, hãy dừng lại 3 giây và tự hỏi: <em>"Điều này có đúng sự thật không? Có làm tổn thương ai không? Có tử tế không?"</em>
         </div>
       </div>
     </section>
 
-    <!-- ════════════════════════════════════════════════════════════════════════
-         SLIDE 15: MINI-QUIZ TƯƠNG TÁC CỦNG CỐ KIẾN THỨC
-         ════════════════════════════════════════════════════════════════════════ -->
-    <section class="slide" id="slide-15">
+    <!-- ══ SLIDE 12: NĂM HOÀN CẢNH GIAO TIẾP THƯỜNG GẶP ════════════════════════ -->
+    <section class="slide" id="slide-12" data-total-reveal="3">
       <div class="slide-header">
         <div>
-          <span class="slide-badge gold">Thử thách củng cố</span>
-          <div class="slide-title">Mini-Quiz: 2 Câu hỏi then chốt của bài học</div>
-          <div class="slide-subtitle">Nhấp chọn đáp án đúng để nhận pháo hoa chúc mừng nhé!</div>
+          <span class="slide-badge win">Cẩm nang đời sống số · Trang 37-38</span>
+          <div class="slide-title">Ứng xử chuẩn mực trong 5 Hoàn cảnh cụ thể</div>
+          <div class="slide-subtitle">Quy tắc ứng xử văn minh trong từng tình huống học tập và sinh hoạt mỗi ngày</div>
         </div>
-        <span style="font-size: 32px;">🏆</span>
+        <div class="reveal-ctrl">
+          <span>✨</span><span class="reveal-status" id="slide-12-status">0 / 3</span>
+          <button class="reveal-btn" onclick="revealNext();">▶ Hiện ý</button>
+          <button class="reveal-btn" style="background: rgba(255,255,255,0.15);" onclick="revealAll();">Hiện hết</button>
+        </div>
       </div>
       <div class="slide-body">
-        <div style="display: flex; flex-direction: column; gap: 14px;">
-          <!-- Câu 1 -->
-          <div class="card" style="padding: 16px 20px;">
-            <div style="font-size: 17px; font-weight: 700; margin-bottom: 8px; color: white;">
-              1. Bốn yếu tố làm nên ứng xử nhân văn trong không gian mạng theo SGK là gì?
-            </div>
-            <div class="quiz-options">
-              <button class="quiz-btn" onclick="checkQuiz(this, false, 'q1', 'Sai rồi! Kết bạn và trả phí không thuộc ứng xử nhân văn.')">
-                A. Kết bạn, trả phí, bảo mật và chia sẻ
-              </button>
-              <button class="quiz-btn" onclick="checkQuiz(this, true, 'q1', 'Chính xác! 4 trụ cột nhân văn là Tôn trọng — Lịch sự — Thấu hiểu — Hỗ trợ.')">
-                B. Tôn trọng, lịch sự, thấu hiểu và hỗ trợ
-              </button>
-              <button class="quiz-btn" onclick="checkQuiz(this, false, 'q1', 'Sai rồi! Im lặng và phớt lờ không phải là ứng xử nhân văn.')">
-                C. Tranh luận, im lặng, phớt lờ và phản kháng
-              </button>
-              <button class="quiz-btn" onclick="checkQuiz(this, false, 'q1', 'Sai rồi! Ẩn danh là nhược điểm chứ không phải yếu tố nhân văn.')">
-                D. Ẩn danh, bảo mật, tự do và giải trí
-              </button>
-            </div>
+        <div class="grid-3 reveal-item">
+          <!-- 1. DIỄN ĐÀN -->
+          <div class="card" style="border-top: 3px solid #38E1F0;">
+            <div class="card-title" style="color: #38E1F0;">🗣️ Tranh luận diễn đàn</div>
+            <p style="font-size: 12.5px; color: #CBD5E1; line-height: 1.5;">
+              Trao đổi lịch sự, tuyệt đối không công kích cá nhân, không phân biệt vùng miền, giới tính, tôn giáo.
+            </p>
+          </div>
+
+          <!-- 2. MẠNG XÃ HỘI -->
+          <div class="card" style="border-top: 3px solid #0078D4;">
+            <div class="card-title" style="color: #60CDFF;">💭 Thảo luận MXH</div>
+            <p style="font-size: 12.5px; color: #CBD5E1; line-height: 1.5;">
+              Đọc kỹ bài viết của người khác trước khi bình luận. Không ad-hominem (công kích người nói thay vì bàn luận vấn đề).
+            </p>
+          </div>
+
+          <!-- 3. EMAIL & TIN NHẮN -->
+          <div class="card" style="border-top: 3px solid #F5A623;">
+            <div class="card-title" style="color: #FFC043;">✉️ Email &amp; Tin nhắn</div>
+            <p style="font-size: 12.5px; color: #CBD5E1; line-height: 1.5;">
+              Có lời chào đầu và cảm ơn cuối thư. Tôn trọng tin nhắn riêng tư, không chụp màn hình gửi bên thứ ba.
+            </p>
+          </div>
+        </div>
+
+        <div class="grid-2 reveal-item">
+          <!-- 4. VIDEO CALL -->
+          <div class="card" style="border-top: 3px solid #10B981;">
+            <div class="card-title" style="color: #34D399;">📹 Trò chuyện qua Video (Zoom / Meet)</div>
+            <p style="font-size: 13px; color: #CBD5E1; line-height: 1.6;">
+              Mặc trang phục lịch sự, chọn góc ngồi có hậu cảnh gọn gàng, tránh để lọt hình ảnh nhạy cảm trong nhà vào khung hình camera.
+            </p>
+          </div>
+
+          <!-- 5. ĐĂNG BÀI -->
+          <div class="card" style="border-top: 3px solid #EC4899;">
+            <div class="card-title" style="color: #F472B6;">📤 Đăng bài &amp; Chia sẻ thông tin</div>
+            <p style="font-size: 13px; color: #CBD5E1; line-height: 1.6;">
+              Kiểm chứng nguồn tin trước khi share. Không chia sẻ tin giả, tin kích động bạo lực hay xúc phạm danh dự người khác.
+            </p>
+          </div>
+        </div>
+
+        <div class="card reveal-item" style="background: rgba(13, 124, 134, 0.12); padding: 10px 16px; font-size: 13px;">
+          💡 <strong>Vết chân số (Digital Footprint):</strong> Mọi bình luận, bài đăng hay bức ảnh em đưa lên mạng đều để lại dấu vết vĩnh viễn trên máy chủ Internet. Hãy để lại một vết chân số sạch đẹp và đáng tự hào!
+        </div>
+      </div>
+    </section>
+
+    <!-- ══ SLIDE 13: ĐẤU TRƯỜNG TRẮC NGHIỆM 4 CÂU ═════════════════════════════ -->
+    <section class="slide" id="slide-13" data-total-reveal="2">
+      <div class="slide-header">
+        <div>
+          <span class="slide-badge coral">Kiểm tra kiến thức</span>
+          <div class="slide-title">Đấu trường Trắc nghiệm — Bài 6 Tin học 12</div>
+          <div class="slide-subtitle">Nhấp chọn đáp án để nhận phản hồi phân tích chi tiết và tính điểm tức thì</div>
+        </div>
+        <div class="reveal-ctrl">
+          <span>✨</span><span class="reveal-status" id="slide-13-status">0 / 2</span>
+          <button class="reveal-btn" onclick="revealNext();">▶ Hiện ý</button>
+          <button class="reveal-btn" style="background: rgba(255,255,255,0.15);" onclick="revealAll();">Hiện hết</button>
+        </div>
+      </div>
+      <div class="slide-body">
+        <div class="quiz-grid">
+          <!-- CÂU 1 -->
+          <div class="quiz-card reveal-item">
+            <div class="quiz-q">Câu 1: Trường hợp nào sau đây KHÔNG PHẢI là giao tiếp trong không gian mạng?</div>
+            <button class="quiz-btn" onclick="checkQ(this, false, 'q1', 'Sai rồi! Chatbot trên web là dịch vụ trực tuyến.')">A. Giao tiếp với trợ lý ảo (chatbot) trên web tuyển sinh</button>
+            <button class="quiz-btn" onclick="checkQ(this, false, 'q1', 'Sai rồi! Học online Zoom là giao tiếp mạng máy tính.')">B. Tham gia một lớp học trực tuyến qua Zoom</button>
+            <button class="quiz-btn" onclick="checkQ(this, false, 'q1', 'Sai rồi! Gọi FaceTime là dịch vụ video trực tuyến.')">C. Hai người bạn gọi điện thoại video (FaceTime)</button>
+            <button class="quiz-btn" onclick="checkQ(this, true, 'q1', 'Chính xác! Hẹn gặp ở quán cà phê là gặp mặt trực tiếp ngoài đời, quán chỉ là địa điểm gặp!')">D. Hẹn gặp bạn trực tiếp tại một quán cà phê Internet</button>
             <div class="quiz-feedback" id="q1-feedback"></div>
           </div>
 
-          <!-- Câu 2 -->
-          <div class="card" style="padding: 16px 20px;">
-            <div style="font-size: 17px; font-weight: 700; margin-bottom: 8px; color: white;">
-              2. Quyết định số 874/QĐ-BTTTT ngày 17/6/2021 ban hành nội dung gì?
-            </div>
-            <div class="quiz-options">
-              <button class="quiz-btn" onclick="checkQuiz(this, true, 'q2', 'Chính xác! Quyết định số 874-QĐ-BTTTT ngày 17/6/2021 ban hành Bộ quy tắc ứng xử trên mạng xã hội.')">
-                A. Bộ quy tắc ứng xử trên mạng xã hội
-              </button>
-              <button class="quiz-btn" onclick="checkQuiz(this, false, 'q2', 'Sai rồi! Đây là quy định về ứng xử mạng xã hội, không phải phí cước viễn thông.')">
-                B. Khung giá cước dịch vụ viễn thông Internet
-              </button>
-              <button class="quiz-btn" onclick="checkQuiz(this, false, 'q2', 'Sai rồi! Nghị định về bản quyền phần mềm có số hiệu văn bản khác.')">
-                C. Quy chuẩn kỹ thuật sản xuất máy tính cá nhân
-              </button>
-              <button class="quiz-btn" onclick="checkQuiz(this, false, 'q2', 'Sai rồi!')">
-                D. Hướng dẫn cài đặt mạng máy tính trường học
-              </button>
-            </div>
+          <!-- CÂU 2 -->
+          <div class="quiz-card reveal-item">
+            <div class="quiz-q">Câu 2: Vì sao nhắn tin lại dễ gây hiểu lầm hơn nói chuyện trực tiếp?</div>
+            <button class="quiz-btn" onclick="checkQ(this, false, 'q2', 'Sai rồi! Tốc độ mạng ngày nay rất nhanh.')">A. Vì tin nhắn truyền đi chậm hơn giọng nói</button>
+            <button class="quiz-btn" onclick="checkQ(this, true, 'q2', 'Chính xác! Nhắn tin thiếu các tín hiệu phi ngôn ngữ như nét mặt, ánh mắt, ngữ điệu giọng nói!')">B. Vì thiếu các tín hiệu phi ngôn ngữ (nét mặt, biểu cảm giọng nói)</button>
+            <button class="quiz-btn" onclick="checkQ(this, false, 'q2', 'Sai rồi! Tin nhắn ngày nay gửi dài thoải mái.')">C. Vì tin nhắn bị giới hạn số ký tự mỗi lần gửi</button>
+            <button class="quiz-btn" onclick="checkQ(this, false, 'q2', 'Sai rồi! Tin nhắn lưu lại rất lâu trên app.')">D. Vì tin nhắn không lưu lại được để đọc lại</button>
             <div class="quiz-feedback" id="q2-feedback"></div>
+          </div>
+
+          <!-- CÂU 3 -->
+          <div class="quiz-card reveal-item">
+            <div class="quiz-q">Câu 3: Quy tắc ứng xử trên mạng xã hội được ban hành theo văn bản pháp lý nào?</div>
+            <button class="quiz-btn" onclick="checkQ(this, false, 'q3', 'Sai rồi! Không đúng số quyết định.')">A. Quyết định số 123/QĐ-BGDĐT năm 2020</button>
+            <button class="quiz-btn" onclick="checkQ(this, true, 'q3', 'Chính xác! Quyết định số 874/QĐ-BTTTT ngày 17/6/2021 của Bộ Thông tin và Truyền thông.')">B. Quyết định số 874/QĐ-BTTTT ngày 17/6/2021</button>
+            <button class="quiz-btn" onclick="checkQ(this, false, 'q3', 'Sai rồi! Quyết định này ban hành năm 2021.')">C. Quyết định số 874/QĐ-BTTTT ngày 17/6/2024</button>
+            <button class="quiz-btn" onclick="checkQ(this, false, 'q3', 'Sai rồi! Cơ quan ban hành là Bộ TTTT.')">D. Nghị định số 72/2013/NĐ-CP của Bộ Công an</button>
+            <div class="quiz-feedback" id="q3-feedback"></div>
+          </div>
+
+          <!-- CÂU 4 -->
+          <div class="quiz-card reveal-item">
+            <div class="quiz-q">Câu 4: Bốn yếu tố cốt lõi của Ứng xử nhân văn trong không gian mạng là gì?</div>
+            <button class="quiz-btn" onclick="checkQ(this, true, 'q4', 'Chính xác! Tôn trọng – Lịch sự – Thấu hiểu – Hỗ trợ là 4 trụ cột chuẩn SGK trang 36!')">A. Tôn trọng – Lịch sự – Thấu hiểu – Hỗ trợ</button>
+            <button class="quiz-btn" onclick="checkQ(this, false, 'q4', 'Sai rồi! Nhanh chóng không phải yếu tố nhân văn.')">B. Nhanh chóng – Tiết kiệm – Bí mật – Hỗ trợ</button>
+            <button class="quiz-btn" onclick="checkQ(this, false, 'q4', 'Sai rồi! Thiếu yếu tố thấu hiểu và hỗ trợ.')">C. Tôn trọng – Pháp luật – Kinh tế – Công nghệ</button>
+            <button class="quiz-btn" onclick="checkQ(this, false, 'q4', 'Sai rồi! Không liên quan đạo đức số.')">D. Im lặng – Thờ ơ – Đề phòng – Né tránh</button>
+            <div class="quiz-feedback" id="q4-feedback"></div>
           </div>
         </div>
       </div>
     </section>
 
-    <!-- ════════════════════════════════════════════════════════════════════════
-         SLIDE 16: HỒ SƠ CÔNG DÂN SỐ & TỔNG KẾT
-         ════════════════════════════════════════════════════════════════════════ -->
-    <section class="slide" id="slide-16">
+    <!-- ══ SLIDE 14: HỒ SƠ CÔNG DÂN SỐ VĂN MINH & TỔNG KẾT ═════════════════════ -->
+    <section class="slide" id="slide-14" data-total-reveal="3">
       <div class="slide-header">
         <div>
-          <span class="slide-badge leaf">Tổng kết & Cam kết</span>
-          <div class="slide-title">Bảng Tự đánh giá: Hồ sơ Công dân số Văn minh</div>
-          <div class="slide-subtitle">Nhấp chọn các ô để tự cam kết với bản thân khi tham gia thế giới mạng</div>
+          <span class="slide-badge gold">Tự đánh giá bản thân</span>
+          <div class="slide-title">🎉 Hồ sơ Công dân số Văn minh — Bản cam kết số</div>
+          <div class="slide-subtitle">Bấm để đánh dấu những nguyên tắc em quyết tâm thực hiện trên không gian mạng</div>
         </div>
-        <span style="font-size: 32px;">🎓</span>
+        <div class="reveal-ctrl">
+          <span>✨</span><span class="reveal-status" id="slide-14-status">0 / 3</span>
+          <button class="reveal-btn" onclick="revealNext();">▶ Hiện ý</button>
+          <button class="reveal-btn" style="background: rgba(255,255,255,0.15);" onclick="revealAll();">Hiện hết</button>
+        </div>
       </div>
       <div class="slide-body">
         <div class="grid-2">
-          <!-- Cột Checklist -->
-          <div class="card" style="border-left: 4px solid #10B981;">
-            <div class="card-title" style="color: #34D399;">
-              📋 Cam kết của em trên Không gian mạng:
+          <!-- BẢNG CAM KẾT VĂN HÓA MẠNG -->
+          <div class="card reveal-item" style="border-left: 5px solid #EC4899;">
+            <div class="card-title" style="color: #F472B6;">
+              🌟 Cam kết Công dân số Văn minh của em:
             </div>
-            <div style="display: flex; flex-direction: column; gap: 8px; margin-top: 10px;">
-              <div class="checklist-item" onclick="this.classList.toggle('done');">
-                <span>⬜</span> <span>1. Không chia sẻ tin nhắn riêng của người khác khi chưa được phép</span>
+            <div style="display: flex; flex-direction: column; gap: 6px; margin-top: 8px;">
+              <div class="checklist-item" onclick="toggleChecklistItem(this);">
+                <span>⬜</span> <span>1. Luôn dùng ngôn từ lịch sự, không chửi bậy, không công kích cá nhân</span>
               </div>
-              <div class="checklist-item" onclick="this.classList.toggle('done');">
-                <span>⬜</span> <span>2. Tranh luận lịch sự, không chửi thề hay lăng mạ người khác</span>
+              <div class="checklist-item" onclick="toggleChecklistItem(this);">
+                <span>⬜</span> <span>2. Tuyệt đối không phát tán tin nhắn, hình ảnh riêng tư của người khác</span>
               </div>
-              <div class="checklist-item" onclick="this.classList.toggle('done');">
-                <span>⬜</span> <span>3. Kiểm chứng thông tin trước khi nhấn nút Share bài viết</span>
+              <div class="checklist-item" onclick="toggleChecklistItem(this);">
+                <span>⬜</span> <span>3. Không like, share các thông tin bịa đặt, tin đồn chưa kiểm chứng</span>
               </div>
-              <div class="checklist-item" onclick="this.classList.toggle('done');">
-                <span>⬜</span> <span>4. Biết đặt mình vào hoàn cảnh của bạn để cảm thông và thấu hiểu</span>
+              <div class="checklist-item" onclick="toggleChecklistItem(this);">
+                <span>⬜</span> <span>4. Biết lắng nghe, tôn trọng quan điểm khác biệt trên tinh thần hòa nhã</span>
               </div>
-              <div class="checklist-item" onclick="this.classList.toggle('done');">
-                <span>⬜</span> <span>5. Không tiếp tay cho bạo lực mạng, sẵn lòng an ủi và hỗ trợ bạn bè</span>
-              </div>
-              <div class="checklist-item" onclick="this.classList.toggle('done');">
-                <span>⬜</span> <span>6. Luôn nhớ nguyên tắc: "Đối xử với người khác như mình muốn được đối xử"</span>
+              <div class="checklist-item" onclick="toggleChecklistItem(this);">
+                <span>⬜</span> <span>5. Sẵn sàng động viên, hỗ trợ người khác khi họ gặp khó khăn trên mạng</span>
               </div>
             </div>
           </div>
 
-          <!-- Cột Tổng kết -->
-          <div style="display: flex; flex-direction: column; gap: 14px;">
-            <div class="card" style="background: rgba(13, 124, 134, 0.15); border-color: rgba(56, 225, 240, 0.4);">
-              <div class="card-title">💡 Ghi nhớ trọng tâm Bài 6</div>
-              <ul style="margin-left: 18px; font-size: 14px; display: flex; flex-direction: column; gap: 8px; color: #E2E8F0;">
-                <li>Internet là <strong>không gian mạng lớn nhất</strong> hiện nay.</li>
-                <li>Nhớ 4 Ưu điểm (Thuận tiện, Tiết kiệm, Kết nối, Đa dạng) và 4 Nhược điểm (Mất tín hiệu phi ngôn ngữ, Bảo mật, Ít gắn kết sâu, Kỹ thuật).</li>
-                <li>4 Trụ cột nhân văn: <strong>Tôn trọng — Lịch sự — Thấu hiểu — Hỗ trợ</strong>.</li>
-                <li>Khung pháp lý: <strong>Quyết định 874/QĐ-BTTTT ngày 17/6/2021</strong>.</li>
-              </ul>
+          <!-- TỔNG KẾT BÀI HỌC -->
+          <div class="reveal-item" style="display: flex; flex-direction: column; gap: 10px;">
+            <div class="card" style="border-left: 5px solid #38E1F0;">
+              <div class="card-title" style="color: #38E1F0;">💡 Lời nhắn nhủ từ bài học:</div>
+              <p style="font-size: 13.5px; line-height: 1.6; color: #CBD5E1;">
+                Thế giới ảo có thể đem lại cho em sự nổi tiếng, nhưng sự tử tế và nhân văn mới là thứ định nghĩa giá trị đích thực của một con người. Hãy trở thành một nguồn năng lượng tích cực trên Internet!
+              </p>
             </div>
 
-            <div class="card" style="text-align: center; padding: 20px;">
-              <div style="font-size: 18px; font-weight: 700; color: white; margin-bottom: 12px;">
-                🎉 Em đã hoàn thành trọn vẹn bài học!
+            <div class="card" style="text-align: center; padding: 16px;">
+              <div style="font-size: 16px; font-weight: 700; color: white; margin-bottom: 10px;">
+                Luyện tập trắc nghiệm &amp; Xem SGK điện tử
               </div>
-              <div style="display: flex; gap: 12px; justify-content: center;">
-                <a href="/luyen/bai-06" style="display: inline-flex; align-items: center; gap: 6px; background: #0D7C86; color: white; text-decoration: none; padding: 10px 20px; border-radius: 10px; font-weight: 700; font-size: 14px;" onmouseover="this.style.background='#16A8B6';" onmouseout="this.style.background='#0D7C86';">
+              <div style="display: flex; gap: 10px; justify-content: center;">
+                <a href="/luyen/bai-06" style="display: inline-flex; align-items: center; gap: 6px; background: #EC4899; color: white; text-decoration: none; padding: 8px 16px; border-radius: 8px; font-weight: 700; font-size: 13px;">
                   ✍️ Luyện trắc nghiệm Bài 6
                 </a>
-                <a href="/sgk/bai-06.html" target="_blank" style="display: inline-flex; align-items: center; gap: 6px; background: rgba(255,255,255,0.08); color: white; text-decoration: none; padding: 10px 20px; border-radius: 10px; font-weight: 700; font-size: 14px; border: 1px solid rgba(255,255,255,0.15);">
+                <a href="/sgk/bai-06.html" target="_blank" style="display: inline-flex; align-items: center; gap: 6px; background: rgba(255,255,255,0.08); color: white; text-decoration: none; padding: 8px 16px; border-radius: 8px; font-weight: 700; font-size: 13px; border: 1px solid rgba(255,255,255,0.2);">
                   📖 Đọc SGK Điện tử
                 </a>
               </div>
             </div>
           </div>
         </div>
+
+        <div class="card reveal-item" style="text-align: center; padding: 12px; background: rgba(236, 72, 153, 0.12); border-color: rgba(244, 114, 182, 0.4);">
+          <button class="sim-btn" onclick="fireConfetti();" style="background: linear-gradient(135deg, #EC4899, #38E1F0); color: white; font-weight: 800; padding: 8px 22px; font-size: 14px;">
+            🎊 Bắn pháo hoa ăn mừng hoàn thành Bài 6!
+          </button>
+        </div>
       </div>
     </section>
 
-  </div>
+  </div><!-- .deck-container -->
 
-  <!-- ─── DECK NAV ─── -->
+  <!-- ─── DECK NAV DƯỚI CÙNG ─── -->
   <div class="deck-nav">
-    <button class="nav-btn" onclick="prevSlide();" title="Slide trước (← Phím Mũi tên trái)">‹</button>
-    <div class="deck-progress">
-      <div class="deck-progress-bar" id="progressBar"></div>
-    </div>
-    <div class="deck-counter" id="slideCounter">01 / 16</div>
-    <button class="nav-btn" onclick="nextSlide();" title="Slide tiếp (→ Phím Mũi tên phải hoặc Space)">›</button>
-    <button class="nav-btn" onclick="toggleFullScreen();" title="Bật/Tắt Toàn màn hình (F)">⛶</button>
+    <button class="nav-btn" onclick="prevSlide();" title="Slide trước (←)">‹</button>
+    <div class="deck-progress"><div class="deck-progress-bar" id="progressBar"></div></div>
+    <div class="deck-counter" id="slideCounter">01 / 14</div>
+    <button class="nav-btn" onclick="nextSlide();" title="Slide tiếp (→ / Space)">›</button>
+    <button class="nav-btn" onclick="toggleMute();" id="muteBtn" title="Bật/Tắt âm thanh (M)">🔊</button>
+    <button class="nav-btn" onclick="toggleFullScreen();" title="Toàn màn hình (F)">⛶</button>
   </div>
 
   <script>
     let currentSlide = 1;
-    const totalSlides = 16;
+    const TOTAL = 14;
+    let isMuted = false;
 
-    function updateSlide() {
-      document.querySelectorAll('.slide').forEach((s, idx) => {
-        const slideIndex = idx + 1;
-        s.classList.remove('active', 'prev');
-        if (slideIndex === currentSlide) {
-          s.classList.add('active');
-        } else if (slideIndex < currentSlide) {
-          s.classList.add('prev');
-        }
+    /* ─── WEB AUDIO API ─── */
+    const audioCtx = (typeof AudioContext !== 'undefined' || typeof webkitAudioContext !== 'undefined')
+      ? new (window.AudioContext || window.webkitAudioContext)() : null;
+
+    function _play(freq, type, dur, volPeak) {
+      if (isMuted || !audioCtx) return;
+      if (audioCtx.state === 'suspended') audioCtx.resume();
+      const osc = audioCtx.createOscillator();
+      const g = audioCtx.createGain();
+      osc.connect(g); g.connect(audioCtx.destination);
+      osc.type = type || 'sine';
+      osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+      g.gain.setValueAtTime(volPeak || 0.18, audioCtx.currentTime);
+      g.gain.linearRampToValueAtTime(0.001, audioCtx.currentTime + dur);
+      osc.start(); osc.stop(audioCtx.currentTime + dur);
+    }
+    function playClick()   { _play(620, 'sine', 0.05, 0.12); }
+    function playReveal()  { _play(440, 'triangle', 0.12, 0.18); setTimeout(() => _play(880, 'triangle', 0.1, 0.12), 70); }
+    function playSuccess() { _play(523, 'sine', 0.09, 0.18); setTimeout(() => _play(659, 'sine', 0.09, 0.16), 80); setTimeout(() => _play(784, 'sine', 0.22, 0.15), 160); }
+    function playWrong()   { _play(210, 'sawtooth', 0.18, 0.18); }
+    function playChat()    { _play(700, 'sine', 0.08, 0.15); setTimeout(() => _play(1050, 'sine', 0.12, 0.12), 60); }
+    function toggleMute()  { isMuted = !isMuted; document.getElementById('muteBtn').innerText = isMuted ? '🔇' : '🔊'; }
+
+    /* ─── REVEAL ENGINE ─── */
+    function getActiveSlide() { return document.getElementById('slide-' + currentSlide); }
+
+    function updateRevealStatus() {
+      const s = getActiveSlide(); if (!s) return;
+      const total = s.querySelectorAll('.reveal-item').length;
+      const visible = s.querySelectorAll('.reveal-item.visible').length;
+      const el = document.getElementById('slide-' + currentSlide + '-status');
+      if (el) el.innerText = visible + ' / ' + total;
+    }
+
+    function revealNext() {
+      const s = getActiveSlide(); if (!s) return false;
+      const hidden = [...s.querySelectorAll('.reveal-item:not(.visible)')];
+      if (hidden.length) {
+        hidden[0].classList.add('visible', 'just-revealed');
+        playReveal();
+        setTimeout(() => hidden[0].classList.remove('just-revealed'), 700);
+        updateRevealStatus(); return true;
+      }
+      return false;
+    }
+
+    function revealAll() {
+      const s = getActiveSlide(); if (!s) return;
+      s.querySelectorAll('.reveal-item').forEach(i => i.classList.add('visible'));
+      playClick(); updateRevealStatus();
+    }
+
+    function autoStagger(slide) {
+      const items = slide.querySelectorAll('.reveal-item');
+      items.forEach((item, i) => {
+        setTimeout(() => { item.classList.add('visible'); updateRevealStatus(); }, (i + 1) * 150);
       });
-
-      const progress = (currentSlide / totalSlides) * 100;
-      document.getElementById('progressBar').style.width = progress + '%';
-      document.getElementById('slideCounter').innerText = 
-        String(currentSlide).padStart(2, '0') + ' / ' + String(totalSlides).padStart(2, '0');
     }
 
-    function nextSlide() {
-      if (currentSlide < totalSlides) {
-        currentSlide++;
-        updateSlide();
-      }
+    /* ─── NAVIGATION ─── */
+    function updateSlide() {
+      document.querySelectorAll('.slide').forEach((s, i) => {
+        const idx = i + 1;
+        s.classList.remove('active', 'prev');
+        if (idx === currentSlide) {
+          s.classList.add('active');
+          s.querySelectorAll('.reveal-item').forEach(el => el.classList.remove('visible'));
+          autoStagger(s);
+        } else if (idx < currentSlide) s.classList.add('prev');
+      });
+      const pct = (currentSlide / TOTAL) * 100;
+      document.getElementById('progressBar').style.width = pct + '%';
+      document.getElementById('slideCounter').innerText =
+        String(currentSlide).padStart(2, '0') + ' / ' + String(TOTAL).padStart(2, '0');
+      if (currentSlide === 14) setTimeout(fireConfetti, 400);
     }
 
-    function prevSlide() {
-      if (currentSlide > 1) {
-        currentSlide--;
-        updateSlide();
-      }
-    }
+    function nextSlide() { if (currentSlide < TOTAL) { currentSlide++; playClick(); updateSlide(); } }
+    function prevSlide() { if (currentSlide > 1) { currentSlide--; playClick(); updateSlide(); } }
 
     function toggleFullScreen() {
-      if (!document.fullscreenElement) {
-        document.documentElement.requestFullscreen().catch(() => {});
-      } else {
-        if (document.exitFullscreen) document.exitFullscreen();
+      if (!document.fullscreenElement) document.documentElement.requestFullscreen().catch(() => {});
+      else document.exitFullscreen().catch(() => {});
+    }
+
+    window.addEventListener('keydown', e => {
+      if (e.target.tagName === 'TEXTAREA' || e.target.tagName === 'INPUT' || e.target.tagName === 'SELECT') return;
+      if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown') { e.preventDefault(); nextSlide(); }
+      else if (e.key === 'ArrowLeft' || e.key === 'PageUp')            { e.preventDefault(); prevSlide(); }
+      else if (e.key === 'ArrowDown')                               { e.preventDefault(); revealNext(); }
+      else if (e.key === 'f' || e.key === 'F')                         { e.preventDefault(); toggleFullScreen(); }
+      else if (e.key === 'm' || e.key === 'M')                         { e.preventDefault(); toggleMute(); }
+      else if (e.key === 'Home')  { currentSlide = 1; updateSlide(); }
+      else if (e.key === 'End')   { currentSlide = TOTAL; updateSlide(); }
+    });
+
+    /* ─── BÀN CÂN TƯƠNG TÁC (SLIDE 5) ─── */
+    function tiltScale(mode) {
+      playClick();
+      const beam = document.getElementById('scale-beam-group');
+      const plateL = document.getElementById('plate-left');
+      const plateR = document.getElementById('plate-right');
+      const st = document.getElementById('scale-status-text');
+
+      document.querySelectorAll('#slide-5 .sim-btn').forEach(b => b.classList.remove('active'));
+
+      if (mode === 'balance') {
+        beam.style.transform = 'rotate(0deg)';
+        plateL.style.transform = 'translateY(0px)';
+        plateR.style.transform = 'translateY(0px)';
+        st.innerText = '⚖️ Trạng thái: Cân bằng — Hiểu rõ cả hai mặt để làm chủ không gian mạng!';
+        st.style.color = '#38E1F0';
+      } else if (mode === 'left') {
+        beam.style.transform = 'rotate(-12deg)';
+        plateL.style.transform = 'translateY(25px)';
+        plateR.style.transform = 'translateY(-25px)';
+        st.innerText = '💚 Ưu điểm vượt trội: Tiện lợi, tiết kiệm, mở rộng quan hệ nếu biết sử dụng thông minh!';
+        st.style.color = '#34D399';
+      } else if (mode === 'right') {
+        beam.style.transform = 'rotate(12deg)';
+        plateL.style.transform = 'translateY(-25px)';
+        plateR.style.transform = 'translateY(25px)';
+        st.innerText = '⚠️ Cảnh báo rủi ro: Thiếu biểu cảm, lộ lọt riêng tư, nghiện mạng nếu lơ là cảnh giác!';
+        st.style.color = '#F87171';
       }
     }
 
-    window.addEventListener('keydown', (e) => {
-      if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown') nextSlide();
-      else if (e.key === 'ArrowLeft' || e.key === 'PageUp') prevSlide();
-      else if (e.key === 'f' || e.key === 'F') toggleFullScreen();
-      else if (e.key === 'Home') { currentSlide = 1; updateSlide(); }
-      else if (e.key === 'End') { currentSlide = totalSlides; updateSlide(); }
-    });
+    /* ─── CHATBOX TÌNH HUỐNG (SLIDE 9 & 10) ─── */
+    function chooseChatResponse(simId, choice) {
+      const box = document.getElementById('chat-box-' + simId);
+      const fb = document.getElementById('chat-feedback-' + simId);
 
-    let touchStartX = 0;
-    window.addEventListener('touchstart', e => { touchStartX = e.touches[0].clientX; });
-    window.addEventListener('touchend', e => {
-      const touchEndX = e.changedTouches[0].clientX;
-      if (touchStartX - touchEndX > 50) nextSlide();
-      if (touchEndX - touchStartX > 50) prevSlide();
-    });
+      if (simId === 1) {
+        if (choice === 'A') {
+          playWrong();
+          fb.innerHTML = '❌ <strong>Hành vi thiếu văn hóa:</strong> Dùng từ ngữ thô tục, xúc phạm bạn bè sẽ làm bùng nổ xung đột lớn trong lớp, vi phạm quy tắc ứng xử trên mạng!';
+          fb.style.color = '#F87171';
+          fb.style.background = 'rgba(239, 68, 68, 0.15)';
+        } else if (choice === 'B') {
+          playWrong();
+          fb.innerHTML = '❌ <strong>Bạo lực mạng (Cyberbullying):</strong> Chụp ảnh màn hình để cô lập, bêu riếu bạn là hành vi xâm phạm danh dự, gây tổn thương tâm lý nghiêm trọng cho bạn!';
+          fb.style.color = '#F87171';
+          fb.style.background = 'rgba(239, 68, 68, 0.15)';
+        } else if (choice === 'C') {
+          playSuccess();
+          playChat();
+          box.innerHTML += '<div class="chat-bubble me"><strong>Em:</strong> "Mình hiểu Nam đang nản vì bài khó. Nhưng lập trình rèn tư duy logic hay lắm, chiều nay chúng mình cùng làm nhé!"</div>';
+          box.innerHTML += '<div class="chat-bubble them"><strong>Bạn Nam:</strong> "Cảm ơn bạn nhiều nhé, may quá có bạn động viên! 😊"</div>';
+          fb.innerHTML = '🎉 <strong>Tuyệt vời!</strong> Em đã thể hiện trọn vẹn cả 4 yếu tố: Tôn trọng ý kiến bạn, Lịch sự trong từ ngữ, Thấu hiểu sự khó khăn và Sẵn sàng hỗ trợ!';
+          fb.style.color = '#34D399';
+          fb.style.background = 'rgba(16, 185, 129, 0.15)';
+        }
+      } else if (simId === 2) {
+        if (choice === 'A') {
+          playWrong();
+          fb.innerHTML = '❌ <strong>Vi phạm pháp luật:</strong> Lan truyền thông tin đời tư, bôi nhọ danh dự người khác có thể bị xử phạt hành chính hoặc truy cứu trách nhiệm hình sự theo Luật An ninh mạng!';
+          fb.style.color = '#F87171';
+          fb.style.background = 'rgba(239, 68, 68, 0.15)';
+        } else if (choice === 'B') {
+          playWrong();
+          fb.innerHTML = '⚠️ <strong>Chưa đủ:</strong> Im lặng xem một mình là dung túng cho cái xấu và chưa thể hiện tinh thần trách nhiệm bảo vệ bạn bè trong tập thể.';
+          fb.style.color = '#FFC043';
+          fb.style.background = 'rgba(245, 166, 35, 0.15)';
+        } else if (choice === 'C') {
+          playSuccess();
+          playChat();
+          box.innerHTML += '<div class="chat-bubble me"><strong>Em:</strong> "Tôi không xem! Việc phát tán đời tư là vi phạm pháp luật và đạo đức, xin hãy dừng ngay hành vi này lại!"</div>';
+          fb.innerHTML = '🎉 <strong>Bản lĩnh công dân số!</strong> Em đã dũng cảm bảo vệ quyền riêng tư của bạn bè, ngăn chặn cái xấu và tuân thủ đúng Quyết định 874/QĐ-BTTTT!';
+          fb.style.color = '#34D399';
+          fb.style.background = 'rgba(16, 185, 129, 0.15)';
+        }
+      }
+    }
 
-    /* ─── DILEMMA SIMULATOR (SLIDE 12) ─── */
-    function handleDilemma(btn, isGood, feedbackId, msg) {
-      const parent = btn.parentElement;
-      parent.querySelectorAll('.dilemma-btn').forEach(b => b.classList.remove('chosen-good', 'chosen-bad'));
-      const fb = document.getElementById(feedbackId);
+    function resetChatSim(simId) {
+      playClick();
+      const box = document.getElementById('chat-box-' + simId);
+      const fb = document.getElementById('chat-feedback-' + simId);
+      fb.innerHTML = '';
+      if (simId === 1) {
+        box.innerHTML = '<div class="chat-bubble them"><strong>Bạn Nam:</strong> "Mình thấy bài tập lập trình này vô ích quá, tốn thời gian, học làm gì chẳng bao giờ dùng đến!"</div>';
+      } else if (simId === 2) {
+        box.innerHTML = '<div class="chat-bubble them"><strong>Người lạ:</strong> "Này, mình có ảnh chụp tin nhắn riêng và ảnh dìm hàng của bạn Hoa trong lớp bạn nè. Có muốn xem không để gửi cho nhóm bóc phốt?"</div>';
+      }
+    }
+
+    /* ─── QUIZ ENGINE (SLIDE 13) ─── */
+    function checkQ(btn, ok, qId, explain) {
+      const parent = btn.closest('.quiz-card');
+      parent.querySelectorAll('.quiz-btn').forEach(b => { b.disabled = true; b.style.pointerEvents = 'none'; });
+      btn.classList.add(ok ? 'correct' : 'wrong');
+      ok ? playSuccess() : playWrong();
+      const fb = document.getElementById(qId + '-feedback');
       fb.style.display = 'block';
-
-      if (isGood) {
-        btn.classList.add('chosen-good');
-        fb.style.background = 'rgba(16, 185, 129, 0.2)';
-        fb.style.border = '1px solid #10B981';
-        fb.style.color = '#6EE7B7';
-        fb.innerHTML = msg;
-        triggerConfetti();
-      } else {
-        btn.classList.add('chosen-bad');
-        fb.style.background = 'rgba(242, 104, 60, 0.2)';
-        fb.style.border = '1px solid #F2683C';
-        fb.style.color = '#FCA5A5';
-        fb.innerHTML = msg;
-      }
+      fb.style.background = ok ? 'rgba(16, 185, 129, 0.15)' : 'rgba(239, 68, 68, 0.15)';
+      fb.style.border = '1px solid ' + (ok ? '#10B981' : '#EF4444');
+      fb.style.color  = ok ? '#34D399' : '#FCA5A5';
+      fb.innerHTML = (ok ? '🎉 <strong>Chính xác!</strong> ' : '❌ <strong>Chưa đúng!</strong> ') + explain;
     }
 
-    /* ─── QUIZ LOGIC (SLIDE 15) ─── */
-    function checkQuiz(btn, isCorrect, qId, msg) {
-      const parent = btn.parentElement;
-      parent.querySelectorAll('.quiz-btn').forEach(b => b.classList.remove('correct', 'wrong'));
-      const feedback = document.getElementById(qId + '-feedback');
-      feedback.style.display = 'block';
-
-      if (isCorrect) {
-        btn.classList.add('correct');
-        feedback.style.background = 'rgba(16, 185, 129, 0.2)';
-        feedback.style.border = '1px solid #10B981';
-        feedback.style.color = '#6EE7B7';
-        feedback.innerHTML = '🎉 ' + msg;
-        triggerConfetti();
-      } else {
-        btn.classList.add('wrong');
-        feedback.style.background = 'rgba(242, 104, 60, 0.2)';
-        feedback.style.border = '1px solid #F2683C';
-        feedback.style.color = '#FCA5A5';
-        feedback.innerHTML = '❌ ' + msg;
-      }
+    /* ─── CHECKLIST (SLIDE 14) ─── */
+    function toggleChecklistItem(item) {
+      playClick();
+      item.classList.toggle('done');
+      const box = item.querySelector('span:first-child');
+      box.innerText = item.classList.contains('done') ? '✅' : '⬜';
     }
 
     /* ─── CONFETTI CANVAS ─── */
-    function triggerConfetti() {
-      const canvas = document.getElementById('confettiCanvas');
-      const ctx = canvas.getContext('2d');
-      canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
-
-      const particles = [];
-      const colors = ['#38E1F0', '#F2683C', '#F5A623', '#10B981', '#EC4899', '#FFFFFF'];
-
-      for (let i = 0; i < 90; i++) {
-        particles.push({
-          x: canvas.width / 2,
-          y: canvas.height / 2,
-          r: Math.random() * 6 + 3,
-          color: colors[Math.floor(Math.random() * colors.length)],
-          vx: (Math.random() - 0.5) * 16,
-          vy: (Math.random() - 0.5) * 16 - 3,
-          alpha: 1,
-          gravity: 0.25
-        });
-      }
-
+    function fireConfetti() {
+      playSuccess();
+      const cvs = document.getElementById('confettiCanvas');
+      const ctx = cvs.getContext('2d');
+      cvs.width = window.innerWidth; cvs.height = window.innerHeight;
+      const colors = ['#EC4899', '#38E1F0', '#F2683C', '#F5A623', '#10B981', '#FFFFFF'];
+      const parts = Array.from({ length: 110 }, () => ({
+        x: window.innerWidth / 2, y: window.innerHeight * 0.42,
+        vx: (Math.random() - 0.5) * 18,
+        vy: (Math.random() - 0.65) * 18,
+        sz: Math.random() * 9 + 4,
+        color: colors[Math.floor(Math.random() * colors.length)],
+        alpha: 1, rot: Math.random() * 360, vrot: (Math.random() - 0.5) * 14
+      }));
       function render() {
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.clearRect(0, 0, cvs.width, cvs.height);
         let alive = false;
-        particles.forEach(p => {
-          p.x += p.vx;
-          p.y += p.vy;
-          p.vy += p.gravity;
-          p.alpha -= 0.015;
-
+        parts.forEach(p => {
+          p.x += p.vx; p.y += p.vy; p.vy += 0.38; p.alpha -= 0.013; p.rot += p.vrot;
           if (p.alpha > 0) {
-            alive = true;
-            ctx.save();
-            ctx.globalAlpha = p.alpha;
-            ctx.fillStyle = p.color;
-            ctx.beginPath();
-            ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
-            ctx.fill();
+            alive = true; ctx.save(); ctx.globalAlpha = p.alpha;
+            ctx.translate(p.x, p.y); ctx.rotate(p.rot * Math.PI / 180);
+            ctx.fillStyle = p.color; ctx.fillRect(-p.sz / 2, -p.sz / 2, p.sz, p.sz);
             ctx.restore();
           }
         });
-
         if (alive) requestAnimationFrame(render);
-        else ctx.clearRect(0, 0, canvas.width, canvas.height);
+        else ctx.clearRect(0, 0, cvs.width, cvs.height);
       }
       render();
     }
 
+    /* KHỞI ĐỘNG */
     updateSlide();
   </script>
 </body>
@@ -1546,6 +1335,6 @@ const rootPath = path.resolve('bai-06-trinh-chieu.html');
 fs.writeFileSync(publicPath, htmlContent, 'utf-8');
 fs.writeFileSync(rootPath, htmlContent, 'utf-8');
 
-console.log('Successfully generated:');
+console.log('✅ Successfully generated Bai 06 Slide Deck (v2 — Enhanced):');
 console.log(' - ' + publicPath);
 console.log(' - ' + rootPath);
