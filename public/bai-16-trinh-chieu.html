@@ -1,0 +1,1197 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bài 16: Định dạng khung — Bài giảng điện tử Tin học 12</title>
+  <style>
+    :root {
+      --bg: #070D14;
+      --bg-card: rgba(13, 23, 35, 0.94);
+      --border-card: rgba(56, 225, 240, 0.18);
+      --ink: #FFFFFF;
+      --ink-soft: #94A3B8;
+      --sea: #0D7C86;
+      --sea-light: #38E1F0;
+      --coral: #F2683C;
+      --gold: #F5A623;
+      --leaf: #10B981;
+      --purple: #8B5CF6;
+      --radius-lg: 24px;
+      --radius-md: 16px;
+      --font-main: system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      --font-mono: 'Consolas', 'Fira Code', 'Courier New', monospace;
+      --transition-slide: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.5s ease;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: var(--font-main);
+      background-color: var(--bg);
+      color: var(--ink);
+      overflow: hidden;
+      width: 100vw;
+      height: 100vh;
+      user-select: none;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .bg-mesh {
+      position: fixed;
+      top: 0; left: 0; width: 100vw; height: 100vh;
+      background: radial-gradient(circle at 15% 15%, rgba(16, 185, 129, 0.28) 0%, transparent 45%),
+                  radial-gradient(circle at 85% 80%, rgba(56, 225, 240, 0.25) 0%, transparent 45%),
+                  radial-gradient(circle at 50% 50%, rgba(245, 166, 35, 0.16) 0%, transparent 60%);
+      z-index: 0;
+      pointer-events: none;
+      animation: meshPulse 12s ease-in-out infinite alternate;
+    }
+
+    @keyframes meshPulse {
+      0% { transform: scale(1) translate(0, 0); opacity: 0.9; }
+      100% { transform: scale(1.06) translate(-10px, 10px); opacity: 1; }
+    }
+
+    .floating-symbols {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 1;
+      overflow: hidden;
+    }
+
+    .float-tag {
+      position: absolute;
+      font-family: var(--font-mono);
+      font-size: 14px;
+      font-weight: 700;
+      color: rgba(16, 185, 129, 0.2);
+      border: 1px solid rgba(16, 185, 129, 0.15);
+      padding: 4px 10px;
+      border-radius: 8px;
+      background: rgba(16, 185, 129, 0.05);
+      animation: floatUp 20s linear infinite;
+    }
+
+    @keyframes floatUp {
+      0% { transform: translateY(105vh) rotate(0deg); opacity: 0; }
+      10% { opacity: 0.45; }
+      90% { opacity: 0.45; }
+      100% { transform: translateY(-10vh) rotate(360deg); opacity: 0; }
+    }
+
+    .deck-container {
+      position: relative;
+      width: 100vw;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 10;
+    }
+
+    .slide {
+      position: absolute;
+      width: 92vw;
+      max-width: 1280px;
+      height: 86vh;
+      background: var(--bg-card);
+      border: 1px solid var(--border-card);
+      border-radius: var(--radius-lg);
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6);
+      backdrop-filter: blur(20px);
+      padding: 36px 48px;
+      display: flex;
+      flex-direction: column;
+      opacity: 0;
+      transform: scale(0.96) translateY(24px);
+      pointer-events: none;
+      transition: var(--transition-slide);
+      overflow-y: auto;
+    }
+
+    .slide.active {
+      opacity: 1;
+      transform: scale(1) translateY(0);
+      pointer-events: auto;
+    }
+
+    .slide-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 22px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      padding-bottom: 14px;
+    }
+
+    .slide-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(16, 185, 129, 0.2);
+      border: 1px solid rgba(16, 185, 129, 0.35);
+      color: #34D399;
+      font-size: 11.5px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      padding: 4px 12px;
+      border-radius: 20px;
+      margin-bottom: 6px;
+    }
+
+    .slide-title {
+      font-size: 28px;
+      font-weight: 800;
+      color: #FFFFFF;
+      line-height: 1.25;
+      background: linear-gradient(90deg, #FFFFFF, #E2E8F0);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .slide-subtitle {
+      font-size: 14px;
+      color: var(--ink-soft);
+      margin-top: 3px;
+    }
+
+    .reveal-controller {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 30px;
+      padding: 4px 12px;
+      font-size: 12px;
+      color: var(--ink-soft);
+    }
+
+    .reveal-status {
+      font-family: var(--font-mono);
+      font-weight: 700;
+      color: #34D399;
+    }
+
+    .reveal-btn {
+      background: rgba(16, 185, 129, 0.4);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      color: white;
+      padding: 4px 10px;
+      border-radius: 14px;
+      font-size: 11px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .reveal-btn:hover {
+      background: var(--leaf);
+      color: white;
+    }
+
+    .slide-body {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+
+    .reveal-item {
+      opacity: 0.18;
+      transform: translateY(10px);
+      transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+      filter: blur(1px);
+    }
+
+    .reveal-item.revealed {
+      opacity: 1;
+      transform: translateY(0);
+      filter: blur(0);
+    }
+
+    .reveal-item.just-revealed {
+      box-shadow: 0 0 25px rgba(16, 185, 129, 0.4);
+      border-color: #10B981 !important;
+    }
+
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+    .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+
+    .card {
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.09);
+      border-radius: var(--radius-md);
+      padding: 18px 22px;
+      transition: transform 0.3s, border-color 0.3s;
+    }
+
+    .card:hover {
+      transform: translateY(-3px);
+      border-color: rgba(16, 185, 129, 0.3);
+    }
+
+    .card-title {
+      font-size: 16px;
+      font-weight: 700;
+      color: #FFFFFF;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .code-box {
+      background: #0D1520;
+      border: 1px solid rgba(16, 185, 129, 0.25);
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .code-header {
+      background: rgba(255, 255, 255, 0.06);
+      padding: 8px 14px;
+      display: flex;
+      justify-content: space-between;
+      font-size: 12px;
+      font-family: var(--font-mono);
+      color: #94A3B8;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .code-content {
+      padding: 14px 18px;
+      font-family: var(--font-mono);
+      font-size: 13.5px;
+      line-height: 1.6;
+      color: #E2E8F0;
+      white-space: pre-wrap;
+    }
+
+    .tag-kw { color: #38E1F0; font-weight: 700; }
+    .prop-kw { color: #FF9A64; }
+    .val-kw { color: #56E39F; }
+
+    /* MÔ HÌNH HỘP BOX MODEL TRỰC QUAN */
+    .box-model-diagram {
+      background: #0B131E;
+      border-radius: 16px;
+      padding: 20px;
+      text-align: center;
+      font-family: var(--font-mono);
+      font-weight: bold;
+    }
+
+    .layer-margin {
+      background: rgba(245, 166, 35, 0.18);
+      border: 2px dashed #F5A623;
+      border-radius: 14px;
+      padding: 18px;
+      color: #FBBF24;
+    }
+
+    .layer-border {
+      background: rgba(242, 104, 60, 0.2);
+      border: 2px solid #F2683C;
+      border-radius: 10px;
+      padding: 16px;
+      color: #FF855D;
+    }
+
+    .layer-padding {
+      background: rgba(16, 185, 129, 0.2);
+      border: 2px dashed #10B981;
+      border-radius: 8px;
+      padding: 14px;
+      color: #34D399;
+    }
+
+    .layer-content {
+      background: #0D7C86;
+      color: white;
+      border-radius: 6px;
+      padding: 14px;
+      font-size: 14px;
+    }
+
+    .playground-wrapper {
+      display: grid;
+      grid-template-columns: 1.1fr 1fr;
+      gap: 16px;
+      height: 480px;
+    }
+
+    .editor-pane {
+      background: #0A1118;
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      border-radius: var(--radius-md);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    .editor-bar {
+      background: rgba(255, 255, 255, 0.05);
+      padding: 8px 14px;
+      display: flex;
+      justify-content: space-between;
+      font-size: 12px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .live-code-area {
+      flex: 1;
+      background: transparent;
+      border: none;
+      color: #F8FAFC;
+      font-family: var(--font-mono);
+      font-size: 13.5px;
+      line-height: 1.6;
+      padding: 14px;
+      resize: none;
+      outline: none;
+      white-space: pre;
+    }
+
+    .preview-pane {
+      background: #FFFFFF;
+      border-radius: var(--radius-md);
+      border: 2px solid #10B981;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .preview-pane-bar {
+      background: #F1F5F9;
+      padding: 8px 14px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      border-bottom: 1px solid #CBD5E1;
+      font-size: 11px;
+      font-weight: 700;
+      color: #64748B;
+      text-transform: uppercase;
+    }
+
+    .preview-iframe {
+      flex: 1;
+      border: none;
+      width: 100%;
+      height: 100%;
+      background: #FFFFFF;
+    }
+
+    .quiz-card {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 12px;
+      padding: 14px 18px;
+      margin-bottom: 12px;
+    }
+
+    .quiz-q {
+      font-size: 14.5px;
+      font-weight: 600;
+      color: #F1F5F9;
+      margin-bottom: 10px;
+    }
+
+    .quiz-options {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+
+    .quiz-btn {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      color: #CBD5E1;
+      padding: 8px 12px;
+      border-radius: 8px;
+      font-size: 13px;
+      text-align: left;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .quiz-btn:hover {
+      background: rgba(16, 185, 129, 0.15);
+      border-color: #10B981;
+      color: #FFFFFF;
+      transform: translateX(4px);
+    }
+
+    .quiz-btn.correct {
+      background: #059669 !important;
+      border-color: #34D399 !important;
+      color: white !important;
+      font-weight: 700;
+    }
+
+    .quiz-btn.wrong {
+      background: #DC2626 !important;
+      border-color: #F87171 !important;
+      color: white !important;
+      animation: shake 0.4s ease;
+    }
+
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      20%, 60% { transform: translateX(-6px); }
+      40%, 80% { transform: translateX(6px); }
+    }
+
+    .quiz-feedback {
+      font-size: 12.5px;
+      margin-top: 6px;
+      padding: 6px 10px;
+      border-radius: 6px;
+      display: none;
+      line-height: 1.4;
+    }
+
+    .deck-nav {
+      position: fixed;
+      bottom: 14px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(10, 17, 24, 0.88);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 40px;
+      padding: 7px 18px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      backdrop-filter: blur(16px);
+      z-index: 100;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
+    }
+
+    .nav-btn {
+      background: transparent;
+      border: none;
+      color: #E2E8F0;
+      font-size: 18px;
+      cursor: pointer;
+      padding: 4px 10px;
+      border-radius: 20px;
+      transition: all 0.2s;
+    }
+
+    .nav-btn:hover {
+      color: #10B981;
+      background: rgba(255, 255, 255, 0.1);
+      transform: scale(1.1);
+    }
+
+    .deck-progress {
+      width: 220px;
+      height: 6px;
+      background: rgba(255, 255, 255, 0.15);
+      border-radius: 3px;
+      overflow: hidden;
+    }
+
+    .deck-progress-bar {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, #10B981, #38E1F0, #F2683C);
+      transition: width 0.3s;
+    }
+
+    .deck-counter {
+      font-size: 13px;
+      font-weight: 700;
+      color: #94A3B8;
+      font-family: var(--font-mono);
+      min-width: 60px;
+      text-align: center;
+    }
+
+    #confettiCanvas {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100vw; height: 100vh;
+      pointer-events: none;
+      z-index: 999;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="bg-mesh"></div>
+  <div class="floating-symbols">
+    <div class="float-tag" style="left: 6%; animation-delay: 0s;">box-model</div>
+    <div class="float-tag" style="left: 20%; animation-delay: 3s;">padding: 20px;</div>
+    <div class="float-tag" style="left: 36%; animation-delay: 7s;">margin: 0 auto;</div>
+    <div class="float-tag" style="left: 52%; animation-delay: 2s;">border: 2px solid;</div>
+    <div class="float-tag" style="left: 68%; animation-delay: 5s;">border-radius: 12px;</div>
+    <div class="float-tag" style="left: 82%; animation-delay: 10s;">content-box</div>
+    <div class="float-tag" style="left: 92%; animation-delay: 14s;">width / height</div>
+  </div>
+
+  <canvas id="confettiCanvas"></canvas>
+
+  <div class="deck-container">
+
+    <!-- SLIDE 1: TRANG BÌA -->
+    <section class="slide active" id="slide-1" data-total-reveal="3">
+      <div class="slide-header">
+        <div>
+          <span class="slide-badge">Tin học 12 · Định hướng Tin học ứng dụng (ICT)</span>
+          <div class="slide-title">Bài 16. Định dạng khung (Box Model)</div>
+          <div class="slide-subtitle">Sách giáo khoa Kết nối tri thức với cuộc sống (Trang 85 – 89)</div>
+        </div>
+        <div class="reveal-controller">
+          <span>✨ Hiệu ứng:</span>
+          <span class="reveal-status" id="slide-1-status">0 / 3</span>
+          <button class="reveal-btn" onclick="revealNextInCurrentSlide();">▶ Hiện ý (↓)</button>
+          <button class="reveal-btn" style="background: rgba(255,255,255,0.15);" onclick="revealAllInCurrentSlide();">Hiện hết</button>
+        </div>
+      </div>
+      <div class="slide-body">
+        <div class="grid-3" style="margin-top: 10px;">
+          <div class="card reveal-item" style="border-top: 4px solid #10B981;">
+            <div class="card-title"><span>📦</span> Mô hình hộp (Box Model)</div>
+            <p style="color: #94A3B8; font-size: 14px; line-height: 1.6;">
+              Bí mật bố cục: Trình duyệt coi <strong>mọi phần tử</strong> trên trang web đều là một chiếc hộp hình chữ nhật gồm 4 lớp.
+            </p>
+          </div>
+          <div class="card reveal-item" style="border-top: 4px solid #F5A623;">
+            <div class="card-title"><span>📐</span> Padding vs Margin</div>
+            <p style="color: #94A3B8; font-size: 14px; line-height: 1.6;">
+              Phân biệt rõ ràng: <strong style="color: #34D399;">Padding</strong> (khoảng đệm bên trong) và <strong style="color: #FBBF24;">Margin</strong> (lề cách biệt bên ngoài).
+            </p>
+          </div>
+          <div class="card reveal-item" style="border-top: 4px solid #38E1F0;">
+            <div class="card-title"><span>🖼️</span> Border & Bo góc</div>
+            <p style="color: #94A3B8; font-size: 14px; line-height: 1.6;">
+              Tạo đường viền cá tính và bo tròn các góc khung bằng <code style="color: #38E1F0;">border-radius</code> tạo giao diện mềm mại.
+            </p>
+          </div>
+        </div>
+        <div class="card" style="margin-top: 15px; background: rgba(16, 185, 129, 0.1); border: 1px dashed #10B981;">
+          <p style="font-size: 14.5px; color: #E2E8F0; line-height: 1.6;">
+            💡 <strong>Tư duy cốt lõi của lập trình viên Front-end:</strong> Muốn căn chỉnh hai khối cạnh nhau không bị dính sát, muốn chữ trong nút không chạm mép viền, muốn căn giữa một bài viết... tất cả đều nằm ở kỹ năng làm chủ <strong>Box Model</strong>!
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 2: BỐN LỚP CỦA MÔ HÌNH HỘP -->
+    <section class="slide" id="slide-2" data-total-reveal="4">
+      <div class="slide-header">
+        <div>
+          <span class="slide-badge">1. Cấu trúc mô hình hộp</span>
+          <div class="slide-title">Bốn lớp cấu thành CSS Box Model</div>
+          <div class="slide-subtitle">Content → Padding → Border → Margin từ trong ra ngoài</div>
+        </div>
+        <div class="reveal-controller">
+          <span>✨ Hiệu ứng:</span>
+          <span class="reveal-status" id="slide-2-status">0 / 4</span>
+          <button class="reveal-btn" onclick="revealNextInCurrentSlide();">▶ Hiện ý (↓)</button>
+          <button class="reveal-btn" style="background: rgba(255,255,255,0.15);" onclick="revealAllInCurrentSlide();">Hiện hết</button>
+        </div>
+      </div>
+      <div class="slide-body">
+        <div class="grid-2">
+          <div class="box-model-diagram reveal-item">
+            <div class="layer-margin">
+              MARGIN (Lề ngoài cách phần tử khác)
+              <div class="layer-border" style="margin-top: 8px;">
+                BORDER (Đường viền bao bọc)
+                <div class="layer-padding" style="margin-top: 8px;">
+                  PADDING (Vùng đệm bảo vệ chữ)
+                  <div class="layer-content" style="margin-top: 8px;">
+                    CONTENT (Chữ, Hình ảnh thực tế)
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div style="display: flex; flex-direction: column; gap: 10px;">
+            <div class="card reveal-item" style="border-left: 4px solid #0D7C86;">
+              <div class="card-title" style="color: #38E1F0;">1. Content (Nội dung)</div>
+              <p style="font-size: 13px; color: #CBD5E1;">Vùng chứa văn bản hoặc ảnh. Kích thước do <code style="color: #56E39F;">width</code> và <code style="color: #56E39F;">height</code> quy định.</p>
+            </div>
+            <div class="card reveal-item" style="border-left: 4px solid #10B981;">
+              <div class="card-title" style="color: #34D399;">2. Padding (Vùng đệm)</div>
+              <p style="font-size: 13px; color: #CBD5E1;">Khoảng trống trong suốt giữa nội dung và đường viền (làm chữ không bị dính vào viền).</p>
+            </div>
+            <div class="card reveal-item" style="border-left: 4px solid #F2683C;">
+              <div class="card-title" style="color: #FF855D;">3. Border (Đường viền)</div>
+              <p style="font-size: 13px; color: #CBD5E1;">Vách ngăn bao quanh vùng đệm, có thể đặt độ dày, kiểu dáng và màu sắc.</p>
+            </div>
+            <div class="card reveal-item" style="border-left: 4px solid #F5A623;">
+              <div class="card-title" style="color: #FBBF24;">4. Margin (Lề ngoài)</div>
+              <p style="font-size: 13px; color: #CBD5E1;">Khoảng cách bên ngoài đường viền, dùng để tách biệt hộp này với các hộp khác.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 3: CÚ PHÁP PADDING & MARGIN -->
+    <section class="slide" id="slide-3" data-total-reveal="3">
+      <div class="slide-header">
+        <div>
+          <span class="slide-badge">2. Cú pháp viết tắt</span>
+          <div class="slide-title">Quy tắc 4 cạnh theo chiều kim đồng hồ</div>
+          <div class="slide-subtitle">Cách khai báo nhanh Padding và Margin: TRÊN → PHẢI → DƯỚI → TRÁI</div>
+        </div>
+        <div class="reveal-controller">
+          <span>✨ Hiệu ứng:</span>
+          <span class="reveal-status" id="slide-3-status">0 / 3</span>
+          <button class="reveal-btn" onclick="revealNextInCurrentSlide();">▶ Hiện ý (↓)</button>
+          <button class="reveal-btn" style="background: rgba(255,255,255,0.15);" onclick="revealAllInCurrentSlide();">Hiện hết</button>
+        </div>
+      </div>
+      <div class="slide-body">
+        <div class="grid-2">
+          <div class="code-box reveal-item">
+            <div class="code-header">
+              <span>CÁC CÁCH KHAI BÁO PADDING / MARGIN</span>
+              <span>CSS3</span>
+            </div>
+            <div class="code-content"><span class="comm-kw">/* 1 giá trị: Cả 4 cạnh bằng nhau */</span>
+<span class="prop-kw">padding</span>: <span class="val-kw">20px</span>;
+
+<span class="comm-kw">/* 2 giá trị: Trên/Dưới - Trái/Phải */</span>
+<span class="prop-kw">padding</span>: <span class="val-kw">10px 20px</span>;
+
+<span class="comm-kw">/* 4 giá trị: Trên - Phải - Dưới - Trái */</span>
+<span class="prop-kw">margin</span>: <span class="val-kw">10px 20px 15px 5px</span>;
+
+<span class="comm-kw">/* Bí kíp căn giữa khối ra chính giữa trang: */</span>
+<span class="prop-kw">margin</span>: <span class="val-kw">0 auto</span>;</div>
+          </div>
+
+          <div class="card reveal-item">
+            <div class="card-title"><span>🧭</span> Mẹo ghi nhớ: Chiều kim đồng hồ</div>
+            <p style="font-size: 14px; color: #CBD5E1; line-height: 1.7;">
+              Khi viết 4 số, thứ tự luôn bắt đầu từ đỉnh 12 giờ quay theo chiều kim đồng hồ:<br>
+              <strong>1. Top (Trên)</strong> → <strong>2. Right (Phải)</strong> → <strong>3. Bottom (Dưới)</strong> → <strong>4. Left (Trái)</strong>.
+            </p>
+            <div style="background: rgba(56, 225, 240, 0.1); border: 1px solid #38E1F0; padding: 12px; border-radius: 8px; margin-top: 12px;">
+              <strong style="color: #38E1F0;">Mẹo "margin: 0 auto;":</strong> Cho phép trình duyệt tự động chia đều khoảng cách lề trái và lề phải, giúp căn khối hộp ra chính giữa màn hình cực kỳ tiện lợi!
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 4: ĐƯỜNG VIỀN & BO GÓC BORDER-RADIUS -->
+    <section class="slide" id="slide-4" data-total-reveal="3">
+      <div class="slide-header">
+        <div>
+          <span class="slide-badge">3. Làm đẹp đường viền</span>
+          <div class="slide-title">border và border-radius</div>
+          <div class="slide-subtitle">Tùy biến viền liền nét, nét đứt và kỹ thuật bo góc hình tròn</div>
+        </div>
+        <div class="reveal-controller">
+          <span>✨ Hiệu ứng:</span>
+          <span class="reveal-status" id="slide-4-status">0 / 3</span>
+          <button class="reveal-btn" onclick="revealNextInCurrentSlide();">▶ Hiện ý (↓)</button>
+          <button class="reveal-btn" style="background: rgba(255,255,255,0.15);" onclick="revealAllInCurrentSlide();">Hiện hết</button>
+        </div>
+      </div>
+      <div class="slide-body">
+        <div class="grid-2">
+          <div class="card reveal-item">
+            <div class="card-title"><span>🖼️</span> Thuộc tính border</div>
+            <p style="font-size: 13.5px; color: #CBD5E1; line-height: 1.6;">
+              Viết tắt 3 trong 1: <strong style="color: #38E1F0;">Độ dày</strong> + <strong style="color: #FF9A64;">Kiểu dáng</strong> + <strong style="color: #56E39F;">Màu sắc</strong>.
+            </p>
+            <div class="code-box" style="margin-top: 8px;">
+              <div class="code-content"><span class="prop-kw">border</span>: <span class="val-kw">2px solid #38E1F0</span>; <span class="comm-kw">/* Viền liền */</span>
+<span class="prop-kw">border</span>: <span class="val-kw">1px dashed #F2683C</span>; <span class="comm-kw">/* Nét đứt */</span>
+<span class="prop-kw">border</span>: <span class="val-kw">3px dotted #10B981</span>; <span class="comm-kw">/* Chấm bi */</span></div>
+            </div>
+          </div>
+
+          <div class="card reveal-item">
+            <div class="card-title"><span>🔘</span> Thuộc tính border-radius</div>
+            <p style="font-size: 13.5px; color: #CBD5E1; line-height: 1.6;">
+              Tạo độ cong cho 4 góc nhọn của hình chữ nhật:
+            </p>
+            <div class="code-box" style="margin-top: 8px;">
+              <div class="code-content"><span class="prop-kw">border-radius</span>: <span class="val-kw">12px</span>; <span class="comm-kw">/* Bo tròn nhẹ */</span>
+<span class="prop-kw">border-radius</span>: <span class="val-kw">50%</span>; <span class="comm-kw">/* Tròn xoe hoàn hảo */</span></div>
+            </div>
+            <p style="font-size: 12.5px; color: #34D399; margin-top: 6px;">
+              💡 Đặt <code style="color: #34D399;">border-radius: 50%;</code> cho ảnh vuông sẽ biến ảnh đại diện thành hình tròn như Facebook, TikTok!
+            </p>
+          </div>
+        </div>
+
+        <div class="card reveal-item" style="background: rgba(255, 255, 255, 0.05); display: flex; align-items: center; justify-content: space-around;">
+          <div style="border: 2px solid #38E1F0; border-radius: 8px; padding: 12px 20px; font-size: 13px; color: #38E1F0;">Bo 8px</div>
+          <div style="border: 2px solid #F2683C; border-radius: 20px; padding: 12px 20px; font-size: 13px; color: #F2683C;">Bo 20px (Pill)</div>
+          <div style="width: 50px; height: 50px; background: #10B981; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: bold; color: white;">50%</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 5: LIVE PLAYGROUND -->
+    <section class="slide" id="slide-5" data-total-reveal="1">
+      <div class="slide-header">
+        <div>
+          <span class="slide-badge">4. Phòng thực hành</span>
+          <div class="slide-title">Live Code Playground — Nghệ thuật đóng khung</div>
+          <div class="slide-subtitle">Trực tiếp điều chỉnh Padding, Margin, Border và Border-radius</div>
+        </div>
+        <div class="reveal-controller">
+          <button class="reveal-btn" onclick="loadTemplate('card')">Mẫu: Thẻ khoá học</button>
+          <button class="reveal-btn" onclick="loadTemplate('avatar')">Mẫu: Avatar tròn</button>
+          <button class="reveal-btn" onclick="loadTemplate('coupon')">Mẫu: Phiếu quà tặng</button>
+        </div>
+      </div>
+      <div class="slide-body">
+        <div class="playground-wrapper">
+          <div class="editor-pane">
+            <div class="editor-bar">
+              <span style="color: #10B981; font-weight: 700; font-family: var(--font-mono);">&lt;/&gt; Mã nguồn HTML + CSS</span>
+              <button class="reveal-btn" onclick="updateLivePlayground()">⚡ Cập nhật</button>
+            </div>
+            <textarea id="playground-code" class="live-code-area" oninput="updateLivePlayground()"></textarea>
+          </div>
+          <div class="preview-pane">
+            <div class="preview-pane-bar">
+              <span style="color: #10B981;">●</span> Kết quả hiển thị (Live Preview)
+            </div>
+            <iframe id="playground-frame" class="preview-iframe"></iframe>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 6: ĐỐ VUI TRẮC NGHIỆM -->
+    <section class="slide" id="slide-6" data-total-reveal="1">
+      <div class="slide-header">
+        <div>
+          <span class="slide-badge">5. Kiểm tra nhanh</span>
+          <div class="slide-title">Đố vui củng cố kiến thức Bài 16</div>
+          <div class="slide-subtitle">3 thử thách kiểm tra nắm vững mô hình hộp Box Model</div>
+        </div>
+      </div>
+      <div class="slide-body">
+        <div class="quiz-card">
+          <div class="quiz-q">Câu 1: Thuộc tính nào quy định khoảng đệm bên TRONG đường viền (giữa nội dung và viền)?</div>
+          <div class="quiz-options">
+            <button class="quiz-btn" onclick="checkQuiz(this, false, 'q1', 'Margin là lề bên ngoài đường viền.')">A. margin</button>
+            <button class="quiz-btn" onclick="checkQuiz(this, true, 'q1', 'Chính xác! Padding là vùng đệm bên trong đường viền.')">B. padding</button>
+            <button class="quiz-btn" onclick="checkQuiz(this, false, 'q1', 'Border là bản thân đường viền.')">C. border</button>
+            <button class="quiz-btn" onclick="checkQuiz(this, false, 'q1', 'Width là chiều rộng vùng nội dung.')">D. width</button>
+          </div>
+          <div class="quiz-feedback"></div>
+        </div>
+
+        <div class="quiz-card">
+          <div class="quiz-q">Câu 2: Khai báo margin: 10px 20px; sẽ áp dụng lề như thế nào?</div>
+          <div class="quiz-options">
+            <button class="quiz-btn" onclick="checkQuiz(this, false, 'q2', 'Cả 4 cạnh bằng nhau khi chỉ khai báo 1 số.')">A. Cả 4 cạnh đều 10px</button>
+            <button class="quiz-btn" onclick="checkQuiz(this, true, 'q2', 'Chính xác! Cặp 2 giá trị là Trên/Dưới (10px) và Trái/Phải (20px).')">B. Trên/Dưới 10px, Trái/Phải 20px</button>
+            <button class="quiz-btn" onclick="checkQuiz(this, false, 'q2', 'Thứ tự đầu tiên là trên/dưới.')">C. Trái/Phải 10px, Trên/Dưới 20px</button>
+            <button class="quiz-btn" onclick="checkQuiz(this, false, 'q2', 'Chỉ áp dụng cạnh trên và cạnh phải là sai.')">D. Chỉ áp dụng cạnh trên và phải</button>
+          </div>
+          <div class="quiz-feedback"></div>
+        </div>
+
+        <div class="quiz-card">
+          <div class="quiz-q">Câu 3: Để biến một khung ảnh hình vuông thành hình tròn xoe hoàn hảo, ta đặt border-radius bằng bao nhiêu?</div>
+          <div class="quiz-options">
+            <button class="quiz-btn" onclick="checkQuiz(this, false, 'q3', '10px chỉ bo tròn nhẹ 4 góc.')">A. 10px</button>
+            <button class="quiz-btn" onclick="checkQuiz(this, false, 'q3', '100px nếu ảnh lớn hơn 200px thì chưa thành hình tròn xoe.')">B. 100px</button>
+            <button class="quiz-btn" onclick="checkQuiz(this, true, 'q3', 'Chính xác! Đặt 50% sẽ biến mọi hình vuông thành hình tròn hoàn hảo.')">C. 50%</button>
+            <button class="quiz-btn" onclick="checkQuiz(this, false, 'q3', '0% là giữ nguyên 4 góc vuông sắc cạnh.')">D. 0%</button>
+          </div>
+          <div class="quiz-feedback"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 7: GHI NHỚ TRỌNG TÂM -->
+    <section class="slide" id="slide-7" data-total-reveal="3">
+      <div class="slide-header">
+        <div>
+          <span class="slide-badge">6. Tổng kết bài học</span>
+          <div class="slide-title">Ghi nhớ trọng tâm Bài 16</div>
+          <div class="slide-subtitle">Các nguyên tắc vàng về Box Model</div>
+        </div>
+        <div class="reveal-controller">
+          <span>✨ Hiệu ứng:</span>
+          <span class="reveal-status" id="slide-7-status">0 / 3</span>
+          <button class="reveal-btn" onclick="revealNextInCurrentSlide();">▶ Hiện ý (↓)</button>
+          <button class="reveal-btn" style="background: rgba(255,255,255,0.15);" onclick="revealAllInCurrentSlide();">Hiện hết</button>
+        </div>
+      </div>
+      <div class="slide-body">
+        <div class="grid-3">
+          <div class="card reveal-item" style="border-top: 4px solid #10B981;">
+            <div class="card-title">1. Bốn lớp tuần tự</div>
+            <p style="font-size: 13.5px; color: #CBD5E1; line-height: 1.6;">
+              Nhớ như in: <strong>Content → Padding → Border → Margin</strong>.
+            </p>
+          </div>
+          <div class="card reveal-item" style="border-top: 4px solid #F5A623;">
+            <div class="card-title">2. Thuộc lòng kim đồng hồ</div>
+            <p style="font-size: 13.5px; color: #CBD5E1; line-height: 1.6;">
+              Thứ tự 4 cạnh luôn là: <strong>Trên → Phải → Dưới → Trái</strong>.
+            </p>
+          </div>
+          <div class="card reveal-item" style="border-top: 4px solid #38E1F0;">
+            <div class="card-title">3. Bo tròn linh hoạt</div>
+            <p style="font-size: 13.5px; color: #CBD5E1; line-height: 1.6;">
+              Sử dụng <code style="color: #38E1F0;">border-radius</code> để tạo giao diện bo tròn mềm mại và hiện đại.
+            </p>
+          </div>
+        </div>
+        <div class="card reveal-item" style="text-align: center; padding: 26px; background: rgba(16, 185, 129, 0.15); border: 1px solid #10B981;">
+          <h3 style="font-size: 20px; color: #FFFFFF;">🎉 Chúc mừng các em đã làm chủ Mô hình hộp CSS!</h3>
+          <p style="color: #94A3B8; font-size: 14px; margin-top: 6px;">
+            Ở <strong>Bài 17</strong> tiếp theo, chúng ta sẽ khám phá bài học then chốt: <strong>Các mức ưu tiên của bộ chọn</strong> — giải mã xem quy tắc CSS nào sẽ chiến thắng khi có xung đột!
+          </p>
+          <div style="margin-top: 14px;">
+            <button class="reveal-btn" style="font-size: 14px; padding: 8px 20px; background: #10B981;" onclick="fireConfetti()">🎊 Bắn pháo hoa ăn mừng</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </div>
+
+  <!-- THANH ĐIỀU HƯỚNG DECK -->
+  <div class="deck-nav">
+    <button class="nav-btn" onclick="prevSlide()" title="Slide trước (←)">◀</button>
+    <div class="deck-progress">
+      <div class="deck-progress-bar" id="deckProgressBar"></div>
+    </div>
+    <div class="deck-counter" id="deckCounter">1 / 7</div>
+    <button class="nav-btn" onclick="nextSlide()" title="Slide tiếp theo (→)">▶</button>
+    <button class="nav-btn" onclick="toggleFullScreen()" title="Toàn màn hình (F)">⛶</button>
+    <button class="nav-btn" id="soundBtn" onclick="toggleSound()" title="Bật/Tắt âm thanh (M)">🔊</button>
+  </div>
+
+  <script>
+    let currentSlide = 1;
+    const totalSlides = 7;
+    let soundEnabled = true;
+    let audioCtx = null;
+
+    function getAudioCtx() {
+      if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      if (audioCtx.state === 'suspended') audioCtx.resume();
+      return audioCtx;
+    }
+
+    function playSound(type) {
+      if (!soundEnabled) return;
+      try {
+        const ctx = getAudioCtx();
+        const now = ctx.currentTime;
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+
+        if (type === 'click') {
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(520, now);
+          osc.frequency.exponentialRampToValueAtTime(800, now + 0.08);
+          gain.gain.setValueAtTime(0.12, now);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.08);
+          osc.start(now);
+          osc.stop(now + 0.08);
+        } else if (type === 'success') {
+          osc.type = 'triangle';
+          osc.frequency.setValueAtTime(523, now);
+          osc.frequency.setValueAtTime(659, now + 0.08);
+          osc.frequency.setValueAtTime(783, now + 0.16);
+          gain.gain.setValueAtTime(0.2, now);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.3);
+          osc.start(now);
+          osc.stop(now + 0.3);
+        } else if (type === 'wrong') {
+          osc.type = 'sawtooth';
+          osc.frequency.setValueAtTime(220, now);
+          gain.gain.setValueAtTime(0.2, now);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.25);
+          osc.start(now);
+          osc.stop(now + 0.25);
+        }
+      } catch (e) {}
+    }
+
+    function toggleSound() {
+      soundEnabled = !soundEnabled;
+      document.getElementById('soundBtn').innerText = soundEnabled ? '🔊' : '🔇';
+    }
+
+    function toggleFullScreen() {
+      if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen().catch(() => {});
+      } else {
+        document.exitFullscreen().catch(() => {});
+      }
+    }
+
+    function updateSlide() {
+      document.querySelectorAll('.slide').forEach((s, idx) => {
+        s.classList.toggle('active', idx + 1 === currentSlide);
+      });
+      document.getElementById('deckCounter').innerText = currentSlide + ' / ' + totalSlides;
+      document.getElementById('deckProgressBar').style.width = ((currentSlide - 1) / (totalSlides - 1) * 100) + '%';
+      if (currentSlide === 5) initPlaygroundOnce();
+    }
+
+    function nextSlide() {
+      if (currentSlide < totalSlides) {
+        currentSlide++;
+        playSound('click');
+        updateSlide();
+      }
+    }
+
+    function prevSlide() {
+      if (currentSlide > 1) {
+        currentSlide--;
+        playSound('click');
+        updateSlide();
+      }
+    }
+
+    function revealNextInCurrentSlide() {
+      const slide = document.getElementById('slide-' + currentSlide);
+      if (!slide) return;
+      const items = slide.querySelectorAll('.reveal-item');
+      for (let item of items) {
+        if (!item.classList.contains('revealed')) {
+          item.classList.add('revealed', 'just-revealed');
+          setTimeout(() => item.classList.remove('just-revealed'), 600);
+          playSound('click');
+          updateRevealStatus(slide);
+          return;
+        }
+      }
+    }
+
+    function revealAllInCurrentSlide() {
+      const slide = document.getElementById('slide-' + currentSlide);
+      if (!slide) return;
+      slide.querySelectorAll('.reveal-item').forEach(item => item.classList.add('revealed'));
+      playSound('success');
+      updateRevealStatus(slide);
+    }
+
+    function updateRevealStatus(slide) {
+      const items = slide.querySelectorAll('.reveal-item');
+      const revealed = slide.querySelectorAll('.reveal-item.revealed').length;
+      const statusEl = document.getElementById(slide.id + '-status');
+      if (statusEl) statusEl.innerText = revealed + ' / ' + items.length;
+    }
+
+    document.addEventListener('keydown', (e) => {
+      if (e.target.tagName === 'TEXTAREA' || e.target.tagName === 'INPUT') return;
+      if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown') {
+        e.preventDefault(); nextSlide();
+      } else if (e.key === 'ArrowLeft' || e.key === 'PageUp') {
+        e.preventDefault(); prevSlide();
+      } else if (e.key === 'ArrowDown' || e.key === 'Enter') {
+        e.preventDefault(); revealNextInCurrentSlide();
+      } else if (e.key.toLowerCase() === 'f') {
+        toggleFullScreen();
+      } else if (e.key.toLowerCase() === 'm') {
+        toggleSound();
+      }
+    });
+
+    function checkQuiz(btn, isCorrect, qId, explanation) {
+      const parent = btn.parentElement;
+      const feedback = parent.parentElement.querySelector('.quiz-feedback');
+      parent.querySelectorAll('.quiz-btn').forEach(b => {
+        b.disabled = true;
+        b.style.pointerEvents = 'none';
+      });
+
+      if (isCorrect) {
+        btn.classList.add('correct');
+        playSound('success');
+        feedback.style.display = 'block';
+        feedback.style.background = 'rgba(16, 185, 129, 0.15)';
+        feedback.style.border = '1px solid #10B981';
+        feedback.style.color = '#34D399';
+        feedback.innerHTML = '🎉 <strong>Chính xác!</strong> ' + explanation;
+      } else {
+        btn.classList.add('wrong');
+        playSound('wrong');
+        feedback.style.display = 'block';
+        feedback.style.background = 'rgba(239, 68, 68, 0.15)';
+        feedback.style.border = '1px solid #EF4444';
+        feedback.style.color = '#FCA5A5';
+        feedback.innerHTML = '❌ <strong>Chưa đúng!</strong> ' + explanation;
+      }
+    }
+
+    let playgroundInited = false;
+    const templates = {
+      card: `<style>
+  .product-card {
+    background: #0F172A;
+    color: white;
+    border: 2px solid #10B981;
+    border-radius: 16px;
+    padding: 24px;
+    margin: 20px auto;
+    max-width: 320px;
+    font-family: sans-serif;
+    text-align: center;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+  }
+  .buy-btn {
+    background: #10B981;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 20px;
+    font-weight: bold;
+    cursor: pointer;
+    margin-top: 14px;
+  }
+</style>
+
+<div class="product-card">
+  <h3 style="color: #34D399; margin: 0;">Miến Dong Na Rì</h3>
+  <p style="color: #94A3B8; font-size: 14px; margin: 10px 0;">Đặc sản OCOP 5 sao nguyên chất</p>
+  <button class="buy-btn">Thêm vào giỏ hàng 🛒</button>
+</div>`,
+
+      avatar: `<style>
+  .avatar-box {
+    text-align: center;
+    padding: 30px;
+    font-family: sans-serif;
+  }
+  .avatar-circle {
+    width: 100px;
+    height: 100px;
+    background: linear-gradient(135deg, #10B981, #38E1F0);
+    border-radius: 50%;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 40px;
+    border: 4px solid #0F172A;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+  }
+</style>
+
+<div class="avatar-box">
+  <div class="avatar-circle">🎓</div>
+  <h4 style="margin: 12px 0 4px; color: #0F172A;">Học Sinh Lớp 12</h4>
+  <p style="color: #64748B; font-size: 13px; margin: 0;">Trường THPT Na Rì</p>
+</div>`,
+
+      coupon: `<style>
+  .coupon {
+    border: 3px dashed #F5A623;
+    background: #FFFBEB;
+    padding: 20px 30px;
+    border-radius: 12px;
+    font-family: sans-serif;
+    text-align: center;
+    margin: 20px auto;
+    max-width: 360px;
+  }
+</style>
+
+<div class="coupon">
+  <h3 style="color: #D97706; margin: 0;">🎟️ PHIẾU KHUYẾN HỌC</h3>
+  <p style="color: #92400E; font-size: 14px; margin: 8px 0 0;">Giảm 100% học phí khóa học Tin học 12</p>
+</div>`
+    };
+
+    function initPlaygroundOnce() {
+      if (playgroundInited) return;
+      playgroundInited = true;
+      loadTemplate('card');
+    }
+
+    function loadTemplate(key) {
+      playSound('click');
+      document.getElementById('playground-code').value = templates[key];
+      updateLivePlayground();
+    }
+
+    function updateLivePlayground() {
+      const code = document.getElementById('playground-code').value;
+      const frame = document.getElementById('playground-frame');
+      const doc = frame.contentDocument || frame.contentWindow.document;
+      doc.open();
+      doc.write(code);
+      doc.close();
+    }
+
+    function fireConfetti() {
+      playSound('success');
+      const canvas = document.getElementById('confettiCanvas');
+      const ctx = canvas.getContext('2d');
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+
+      const particles = [];
+      const colors = ['#10B981', '#38E1F0', '#F2683C', '#F5A623', '#8B5CF6'];
+
+      for (let i = 0; i < 90; i++) {
+        particles.push({
+          x: canvas.width / 2,
+          y: canvas.height * 0.45,
+          vx: (Math.random() - 0.5) * 16,
+          vy: (Math.random() - 0.7) * 16,
+          size: Math.random() * 8 + 4,
+          color: colors[Math.floor(Math.random() * colors.length)],
+          alpha: 1,
+          rot: Math.random() * 360,
+          vrot: (Math.random() - 0.5) * 12
+        });
+      }
+
+      function render() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        let alive = false;
+        particles.forEach(p => {
+          p.x += p.vx;
+          p.y += p.vy;
+          p.vy += 0.35;
+          p.alpha -= 0.012;
+          p.rot += p.vrot;
+
+          if (p.alpha > 0) {
+            alive = true;
+            ctx.save();
+            ctx.globalAlpha = p.alpha;
+            ctx.translate(p.x, p.y);
+            ctx.rotate(p.rot * Math.PI / 180);
+            ctx.fillStyle = p.color;
+            ctx.fillRect(-p.size / 2, -p.size / 2, p.size, p.size);
+            ctx.restore();
+          }
+        });
+        if (alive) requestAnimationFrame(render);
+        else ctx.clearRect(0, 0, canvas.width, canvas.height);
+      }
+      render();
+    }
+
+    updateSlide();
+  </script>
+</body>
+</html>
