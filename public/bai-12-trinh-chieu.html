@@ -1,0 +1,1421 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bài 12: Tạo biểu mẫu — Bài giảng điện tử Tin học 12</title>
+  <style>
+    :root {
+      --bg: #070D14;
+      --bg-card: rgba(13, 23, 35, 0.94);
+      --border-card: rgba(56, 225, 240, 0.18);
+      --ink: #FFFFFF;
+      --ink-soft: #94A3B8;
+      --sea: #0D7C86;
+      --sea-light: #38E1F0;
+      --sea-glow: rgba(56, 225, 240, 0.35);
+      --coral: #F2683C;
+      --coral-light: #FF855D;
+      --gold: #F5A623;
+      --gold-light: #FFC043;
+      --leaf: #10B981;
+      --leaf-light: #34D399;
+      --purple: #8B5CF6;
+      --purple-light: #C4B5FD;
+      --rose: #F43F5E;
+      --radius-lg: 24px;
+      --radius-md: 16px;
+      --radius-sm: 10px;
+      --font-main: system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      --font-mono: 'Consolas', 'Fira Code', 'Courier New', monospace;
+      --transition-slide: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.5s ease;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: var(--font-main);
+      background-color: var(--bg);
+      color: var(--ink);
+      overflow: hidden;
+      width: 100vw;
+      height: 100vh;
+      user-select: none;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .bg-mesh {
+      position: fixed;
+      top: 0; left: 0; width: 100vw; height: 100vh;
+      background: radial-gradient(circle at 15% 15%, rgba(13, 124, 134, 0.32) 0%, transparent 45%),
+                  radial-gradient(circle at 85% 80%, rgba(242, 104, 60, 0.25) 0%, transparent 45%),
+                  radial-gradient(circle at 50% 50%, rgba(139, 92, 246, 0.16) 0%, transparent 60%);
+      z-index: 0;
+      pointer-events: none;
+      animation: meshPulse 12s ease-in-out infinite alternate;
+    }
+
+    @keyframes meshPulse {
+      0% { transform: scale(1) translate(0, 0); opacity: 0.9; }
+      100% { transform: scale(1.06) translate(-10px, 10px); opacity: 1; }
+    }
+
+    .floating-symbols {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 1;
+      overflow: hidden;
+    }
+
+    .float-tag {
+      position: absolute;
+      font-family: var(--font-mono);
+      font-size: 14px;
+      font-weight: 700;
+      color: rgba(56, 225, 240, 0.16);
+      border: 1px solid rgba(56, 225, 240, 0.12);
+      padding: 4px 10px;
+      border-radius: 8px;
+      background: rgba(13, 124, 134, 0.05);
+      animation: floatUp 20s linear infinite;
+    }
+
+    @keyframes floatUp {
+      0% { transform: translateY(105vh) rotate(0deg); opacity: 0; }
+      10% { opacity: 0.45; }
+      90% { opacity: 0.45; }
+      100% { transform: translateY(-10vh) rotate(360deg); opacity: 0; }
+    }
+
+    .deck-container {
+      position: relative;
+      width: 100vw;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 10;
+    }
+
+    .slide {
+      position: absolute;
+      width: 92vw;
+      max-width: 1280px;
+      height: 86vh;
+      background: var(--bg-card);
+      border: 1px solid var(--border-card);
+      border-radius: var(--radius-lg);
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6), 0 0 30px rgba(56, 225, 240, 0.08);
+      backdrop-filter: blur(20px);
+      padding: 36px 48px;
+      display: flex;
+      flex-direction: column;
+      opacity: 0;
+      transform: scale(0.96) translateY(24px);
+      pointer-events: none;
+      transition: var(--transition-slide);
+      overflow-y: auto;
+    }
+
+    .slide.active {
+      opacity: 1;
+      transform: scale(1) translateY(0);
+      pointer-events: auto;
+    }
+
+    .slide-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 22px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      padding-bottom: 14px;
+    }
+
+    .slide-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(13, 124, 134, 0.2);
+      border: 1px solid rgba(56, 225, 240, 0.35);
+      color: var(--sea-light);
+      font-size: 11.5px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      padding: 4px 12px;
+      border-radius: 20px;
+      margin-bottom: 6px;
+    }
+
+    .slide-title {
+      font-size: 28px;
+      font-weight: 800;
+      color: #FFFFFF;
+      line-height: 1.25;
+      background: linear-gradient(90deg, #FFFFFF, #E2E8F0);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .slide-subtitle {
+      font-size: 14px;
+      color: var(--ink-soft);
+      margin-top: 3px;
+    }
+
+    .reveal-controller {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 30px;
+      padding: 4px 12px;
+      font-size: 12px;
+      color: var(--ink-soft);
+    }
+
+    .reveal-status {
+      font-family: var(--font-mono);
+      font-weight: 700;
+      color: var(--sea-light);
+    }
+
+    .reveal-btn {
+      background: rgba(13, 124, 134, 0.4);
+      border: 1px solid rgba(56, 225, 240, 0.3);
+      color: white;
+      padding: 4px 10px;
+      border-radius: 14px;
+      font-size: 11px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .reveal-btn:hover {
+      background: var(--sea);
+      color: white;
+    }
+
+    .slide-body {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+
+    .reveal-item {
+      opacity: 0.18;
+      transform: translateY(10px);
+      transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+      filter: blur(1px);
+    }
+
+    .reveal-item.revealed {
+      opacity: 1;
+      transform: translateY(0);
+      filter: blur(0);
+    }
+
+    .reveal-item.just-revealed {
+      box-shadow: 0 0 25px rgba(56, 225, 240, 0.4), inset 0 0 15px rgba(56, 225, 240, 0.15);
+      border-color: #38E1F0 !important;
+    }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 18px;
+    }
+
+    .grid-3 {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+    }
+
+    .card {
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.09);
+      border-radius: var(--radius-md);
+      padding: 18px 22px;
+      position: relative;
+      overflow: hidden;
+      transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.3s;
+    }
+
+    .card:hover {
+      transform: translateY(-3px);
+      border-color: rgba(56, 225, 240, 0.3);
+    }
+
+    .card-title {
+      font-size: 16px;
+      font-weight: 700;
+      color: #FFFFFF;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .code-box {
+      background: #0D1520;
+      border: 1px solid rgba(56, 225, 240, 0.25);
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 12px 28px rgba(0,0,0,0.5);
+    }
+
+    .code-header {
+      background: rgba(255, 255, 255, 0.06);
+      padding: 8px 14px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 12px;
+      font-family: var(--font-mono);
+      color: #94A3B8;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .code-content {
+      padding: 14px 18px;
+      font-family: var(--font-mono);
+      font-size: 13.5px;
+      line-height: 1.6;
+      color: #E2E8F0;
+      white-space: pre-wrap;
+      overflow-x: auto;
+    }
+
+    .tag-kw { color: #38E1F0; font-weight: 700; }
+    .attr-kw { color: #FF9A64; font-weight: 600; }
+    .val-kw { color: #56E39F; }
+    .comm-kw { color: #64748B; font-style: italic; }
+
+    .sim-panel {
+      background: rgba(13, 23, 35, 0.9);
+      border: 1px solid rgba(56, 225, 240, 0.25);
+      border-radius: var(--radius-md);
+      padding: 16px 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .sim-controls {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .sim-btn {
+      background: rgba(255, 255, 255, 0.07);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      color: #E2E8F0;
+      padding: 7px 14px;
+      border-radius: 8px;
+      font-size: 13px;
+      cursor: pointer;
+      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .sim-btn:hover, .sim-btn.active {
+      background: rgba(56, 225, 240, 0.2);
+      border-color: #38E1F0;
+      color: #38E1F0;
+      font-weight: 700;
+    }
+
+    .live-demo-box {
+      background: #FFFFFF;
+      color: #1E293B;
+      border-radius: 12px;
+      padding: 18px 24px;
+      border: 2px solid #38E1F0;
+      font-size: 14px;
+    }
+
+    .live-demo-box input[type="text"],
+    .live-demo-box input[type="password"],
+    .live-demo-box input[type="email"],
+    .live-demo-box select,
+    .live-demo-box textarea {
+      width: 100%;
+      padding: 8px 12px;
+      border: 1.5px solid #CBD5E1;
+      border-radius: 6px;
+      margin-top: 4px;
+      margin-bottom: 12px;
+      font-family: inherit;
+      font-size: 13.5px;
+    }
+
+    .live-demo-box input:focus,
+    .live-demo-box select:focus,
+    .live-demo-box textarea:focus {
+      border-color: #0D7C86;
+      outline: none;
+      box-shadow: 0 0 0 3px rgba(13, 124, 134, 0.15);
+    }
+
+    .live-demo-box .demo-btn {
+      background: #0D7C86;
+      color: white;
+      border: none;
+      padding: 8px 18px;
+      border-radius: 6px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .playground-wrapper {
+      display: grid;
+      grid-template-columns: 1.1fr 1fr;
+      gap: 16px;
+      height: 480px;
+    }
+
+    .editor-pane {
+      background: #0A1118;
+      border: 1px solid rgba(56, 225, 240, 0.3);
+      border-radius: var(--radius-md);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    .editor-bar {
+      background: rgba(255, 255, 255, 0.05);
+      padding: 8px 14px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      font-size: 12px;
+    }
+
+    .live-code-area {
+      flex: 1;
+      background: transparent;
+      border: none;
+      color: #F8FAFC;
+      font-family: var(--font-mono);
+      font-size: 13.5px;
+      line-height: 1.6;
+      padding: 14px;
+      resize: none;
+      outline: none;
+      white-space: pre;
+    }
+
+    .preview-pane {
+      background: #FFFFFF;
+      border-radius: var(--radius-md);
+      border: 2px solid #38E1F0;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .preview-pane-bar {
+      background: #F1F5F9;
+      padding: 8px 14px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      border-bottom: 1px solid #CBD5E1;
+      font-size: 11px;
+      font-weight: 700;
+      color: #64748B;
+      text-transform: uppercase;
+    }
+
+    .preview-iframe {
+      flex: 1;
+      border: none;
+      width: 100%;
+      height: 100%;
+      background: #FFFFFF;
+    }
+
+    .quiz-card {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 12px;
+      padding: 14px 18px;
+      margin-bottom: 12px;
+    }
+
+    .quiz-q {
+      font-size: 14.5px;
+      font-weight: 600;
+      color: #F1F5F9;
+      margin-bottom: 10px;
+    }
+
+    .quiz-options {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+
+    .quiz-btn {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      color: #CBD5E1;
+      padding: 8px 12px;
+      border-radius: 8px;
+      font-size: 13px;
+      text-align: left;
+      cursor: pointer;
+      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .quiz-btn:hover {
+      background: rgba(56, 225, 240, 0.15);
+      border-color: #38E1F0;
+      color: #FFFFFF;
+      transform: translateX(4px);
+    }
+
+    .quiz-btn.correct {
+      background: #059669 !important;
+      border-color: #34D399 !important;
+      color: white !important;
+      font-weight: 700;
+    }
+
+    .quiz-btn.wrong {
+      background: #DC2626 !important;
+      border-color: #F87171 !important;
+      color: white !important;
+      animation: shake 0.4s ease;
+    }
+
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      20%, 60% { transform: translateX(-6px); }
+      40%, 80% { transform: translateX(6px); }
+    }
+
+    .quiz-feedback {
+      font-size: 12.5px;
+      margin-top: 6px;
+      padding: 6px 10px;
+      border-radius: 6px;
+      display: none;
+      line-height: 1.4;
+    }
+
+    .deck-nav {
+      position: fixed;
+      bottom: 14px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(10, 17, 24, 0.88);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 40px;
+      padding: 7px 18px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      backdrop-filter: blur(16px);
+      z-index: 100;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
+    }
+
+    .nav-btn {
+      background: transparent;
+      border: none;
+      color: #E2E8F0;
+      font-size: 18px;
+      cursor: pointer;
+      padding: 4px 10px;
+      border-radius: 20px;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .nav-btn:hover {
+      color: #38E1F0;
+      background: rgba(255, 255, 255, 0.1);
+      transform: scale(1.1);
+    }
+
+    .deck-progress {
+      width: 220px;
+      height: 6px;
+      background: rgba(255, 255, 255, 0.15);
+      border-radius: 3px;
+      overflow: hidden;
+    }
+
+    .deck-progress-bar {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, #0D7C86, #38E1F0, #F2683C);
+      transition: width 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .deck-counter {
+      font-size: 13px;
+      font-weight: 700;
+      color: #94A3B8;
+      font-family: var(--font-mono);
+      min-width: 60px;
+      text-align: center;
+    }
+
+    #confettiCanvas {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100vw; height: 100vh;
+      pointer-events: none;
+      z-index: 999;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="bg-mesh"></div>
+  <div class="floating-symbols">
+    <div class="float-tag" style="left: 6%; animation-delay: 0s;">&lt;form&gt;</div>
+    <div class="float-tag" style="left: 18%; animation-delay: 3s;">&lt;input&gt;</div>
+    <div class="float-tag" style="left: 32%; animation-delay: 7s;">&lt;label&gt;</div>
+    <div class="float-tag" style="left: 47%; animation-delay: 2s;">type="text"</div>
+    <div class="float-tag" style="left: 62%; animation-delay: 5s;">type="radio"</div>
+    <div class="float-tag" style="left: 76%; animation-delay: 10s;">&lt;select&gt;</div>
+    <div class="float-tag" style="left: 88%; animation-delay: 13s;">&lt;textarea&gt;</div>
+    <div class="float-tag" style="left: 94%; animation-delay: 16s;">type="submit"</div>
+  </div>
+
+  <canvas id="confettiCanvas"></canvas>
+
+  <div class="deck-container">
+
+    <!-- SLIDE 1: TRANG BÌA -->
+    <section class="slide active" id="slide-1" data-total-reveal="3">
+      <div class="slide-header">
+        <div>
+          <span class="slide-badge">Tin học 12 · Định hướng Tin học ứng dụng (ICT)</span>
+          <div class="slide-title">Bài 12. Tạo biểu mẫu</div>
+          <div class="slide-subtitle">Sách giáo khoa Kết nối tri thức với cuộc sống (Trang 67 – 70)</div>
+        </div>
+        <div class="reveal-controller">
+          <span>✨ Hiệu ứng:</span>
+          <span class="reveal-status" id="slide-1-status">0 / 3</span>
+          <button class="reveal-btn" onclick="revealNextInCurrentSlide();">▶ Hiện ý (↓)</button>
+          <button class="reveal-btn" style="background: rgba(255,255,255,0.15);" onclick="revealAllInCurrentSlide();">Hiện hết</button>
+        </div>
+      </div>
+      <div class="slide-body">
+        <div class="grid-3" style="margin-top: 10px;">
+          <div class="card reveal-item" style="border-top: 4px solid #38E1F0;">
+            <div class="card-title"><span>📋</span> Khái niệm Biểu mẫu</div>
+            <p style="color: #94A3B8; font-size: 14px; line-height: 1.6;">
+              Hiểu bản chất biểu mẫu (form) là cầu nối <strong style="color: #fff;">thu thập thông tin</strong> từ người dùng gửi về máy chủ xử lý.
+            </p>
+          </div>
+          <div class="card reveal-item" style="border-top: 4px solid #F2683C;">
+            <div class="card-title"><span>⌨️</span> Thẻ & Thuộc tính</div>
+            <p style="color: #94A3B8; font-size: 14px; line-height: 1.6;">
+              Nắm vững thẻ <code style="color: #FF9A64;">&lt;form&gt;</code>, thẻ nhãn <code style="color: #FF9A64;">&lt;label&gt;</code> và các dạng <code style="color: #FF9A64;">&lt;input&gt;</code>, <code style="color: #FF9A64;">&lt;select&gt;</code>, <code style="color: #FF9A64;">&lt;textarea&gt;</code>.
+            </p>
+          </div>
+          <div class="card reveal-item" style="border-top: 4px solid #10B981;">
+            <div class="card-title"><span>💻</span> Trực hành Biểu mẫu</div>
+            <p style="color: #94A3B8; font-size: 14px; line-height: 1.6;">
+              Tự tay thiết kế phiếu khảo sát, form đăng nhập, form đăng ký câu lạc bộ và chạy thử trực tiếp trên trình duyệt.
+            </p>
+          </div>
+        </div>
+        <div class="card" style="margin-top: 15px; background: rgba(13, 124, 134, 0.1); border: 1px dashed #38E1F0;">
+          <p style="font-size: 14.5px; color: #E2E8F0; line-height: 1.6;">
+            💡 <strong>Bước ngoặt của khóa học:</strong> Từ Bài 7 đến Bài 11, trang web chỉ <em>đưa thông tin một chiều</em> cho người xem đọc. Từ Bài 12, trang web bắt đầu <strong>tương tác hai chiều</strong>: người dùng nhập liệu, chọn lựa và tương tác trực tiếp!
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 2: BIỂU MẪU LÀ GÌ -->
+    <section class="slide" id="slide-2" data-total-reveal="3">
+      <div class="slide-header">
+        <div>
+          <span class="slide-badge">1. Khái niệm cơ bản</span>
+          <div class="slide-title">Biểu mẫu web là gì?</div>
+          <div class="slide-subtitle">Khái niệm, mục đích và cấu trúc 2 phần của biểu mẫu</div>
+        </div>
+        <div class="reveal-controller">
+          <span>✨ Hiệu ứng:</span>
+          <span class="reveal-status" id="slide-2-status">0 / 3</span>
+          <button class="reveal-btn" onclick="revealNextInCurrentSlide();">▶ Hiện ý (↓)</button>
+          <button class="reveal-btn" style="background: rgba(255,255,255,0.15);" onclick="revealAllInCurrentSlide();">Hiện hết</button>
+        </div>
+      </div>
+      <div class="slide-body">
+        <div class="grid-2">
+          <div class="card reveal-item">
+            <div class="card-title"><span>🎯</span> Định nghĩa SGK (Trang 67)</div>
+            <p style="color: #E2E8F0; font-size: 14.5px; line-height: 1.7;">
+              <strong>Biểu mẫu web</strong> (phần tử <code style="color: #38E1F0;">form</code>) là một công cụ dùng để <strong style="color: #F5A623;">thu thập dữ liệu</strong> từ người dùng.
+            </p>
+            <p style="color: #94A3B8; font-size: 13.5px; margin-top: 8px;">
+              Dữ liệu được người dùng nhập vào form sẽ được xử lý tại chỗ hoặc chuyển tiếp về máy chủ web (Server).
+            </p>
+          </div>
+          <div class="card reveal-item">
+            <div class="card-title"><span>🌟</span> Tình huống bắt gặp hằng ngày</div>
+            <ul style="color: #CBD5E1; font-size: 13.5px; line-height: 1.7; padding-left: 20px;">
+              <li>Đăng nhập tài khoản Facebook / Zalo / Gmail</li>
+              <li>Ô tìm kiếm thông tin trên Google</li>
+              <li>Phiếu đăng ký xét tuyển đại học trực tuyến</li>
+              <li>Giỏ hàng và thông tin giao hàng khi mua sắm online</li>
+            </ul>
+          </div>
+        </div>
+        <div class="card reveal-item" style="background: rgba(242, 104, 60, 0.08); border-color: rgba(242, 104, 60, 0.3);">
+          <div class="card-title" style="color: #FF855D;"><span>⚖️</span> Hai thành phần của một biểu mẫu hoàn chỉnh</div>
+          <div class="grid-2" style="margin-top: 10px;">
+            <div style="background: rgba(0,0,0,0.3); padding: 12px; border-radius: 8px;">
+              <strong style="color: #38E1F0;">1. Phần nhìn thấy (Giao diện HTML):</strong><br>
+              <span style="color: #94A3B8; font-size: 13px;">Là các ô nhập, nút bấm hiển thị cho người dùng tương tác. <em>Đây là phạm vi bài học Tin 12.</em></span>
+            </div>
+            <div style="background: rgba(0,0,0,0.3); padding: 12px; border-radius: 8px;">
+              <strong style="color: #F5A623;">2. Phần xử lý (Backend / Server Script):</strong><br>
+              <span style="color: #94A3B8; font-size: 13px;">Ứng dụng máy chủ nhận dữ liệu, lưu vào CSDL (MySQL, PHP, Node.js...). <em>Không thuộc phạm vi HTML.</em></span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 3: CẤU TRÚC THẺ FORM & LABEL -->
+    <section class="slide" id="slide-3" data-total-reveal="3">
+      <div class="slide-header">
+        <div>
+          <span class="slide-badge">2. Cú pháp cốt lõi</span>
+          <div class="slide-title">Thẻ &lt;form&gt; và Thẻ nhãn &lt;label&gt;</div>
+          <div class="slide-subtitle">Khung bao bọc biểu mẫu và cơ chế trợ năng liên kết nhãn với ô nhập</div>
+        </div>
+        <div class="reveal-controller">
+          <span>✨ Hiệu ứng:</span>
+          <span class="reveal-status" id="slide-3-status">0 / 3</span>
+          <button class="reveal-btn" onclick="revealNextInCurrentSlide();">▶ Hiện ý (↓)</button>
+          <button class="reveal-btn" style="background: rgba(255,255,255,0.15);" onclick="revealAllInCurrentSlide();">Hiện hết</button>
+        </div>
+      </div>
+      <div class="slide-body">
+        <div class="grid-2">
+          <div class="code-box reveal-item">
+            <div class="code-header">
+              <span>CÚ PHÁP CHUẨN THẺ &lt;form&gt; & &lt;label&gt;</span>
+              <span>HTML5</span>
+            </div>
+            <div class="code-content">&lt;<span class="tag-kw">form</span> <span class="attr-kw">action</span>=<span class="val-kw">"xuly.php"</span> <span class="attr-kw">method</span>=<span class="val-kw">"post"</span>&gt;
+  &lt;<span class="tag-kw">label</span> <span class="attr-kw">for</span>=<span class="val-kw">"hoten"</span>&gt;Họ và tên:&lt;/<span class="tag-kw">label</span>&gt;
+  &lt;<span class="tag-kw">input</span> <span class="attr-kw">type</span>=<span class="val-kw">"text"</span> <span class="attr-kw">id</span>=<span class="val-kw">"hoten"</span> <span class="attr-kw">name</span>=<span class="val-kw">"user_name"</span>&gt;
+&lt;/<span class="tag-kw">form</span>&gt;</div>
+          </div>
+          <div class="card reveal-item">
+            <div class="card-title"><span>🏷️</span> Vai trò của thẻ &lt;label&gt;</div>
+            <p style="color: #E2E8F0; font-size: 13.5px; line-height: 1.6;">
+              Dùng để hiển thị <strong>nhãn tiêu đề</strong> cho ô nhập liệu.
+            </p>
+            <p style="color: #94A3B8; font-size: 13.5px; line-height: 1.6; margin-top: 8px;">
+              ⚡ <strong style="color: #38E1F0;">Quy tắc vàng:</strong> Thuộc tính <code style="color: #FF9A64;">for</code> của <code style="color: #38E1F0;">&lt;label&gt;</code> phải <strong>trùng khớp chính xác</strong> với thuộc tính <code style="color: #FF9A64;">id</code> của thẻ <code style="color: #38E1F0;">&lt;input&gt;</code>.
+            </p>
+            <div style="background: rgba(16, 185, 129, 0.1); border: 1px solid #10B981; border-radius: 8px; padding: 10px; margin-top: 10px; font-size: 13px; color: #34D399;">
+              ✅ <strong>Lợi ích lớn:</strong> Khi người dùng click chuột vào chữ của nhãn, trình duyệt sẽ tự động kích hoạt con trỏ nhảy ngay vào ô nhập!
+            </div>
+          </div>
+        </div>
+        <div class="live-demo-box reveal-item">
+          <strong>Trải nghiệm thử tính năng liên kết Label:</strong> Click thử vào chữ "Họ và tên của em:" xem con trỏ chuột có tự động nhảy vào ô không nhé!
+          <div style="margin-top: 10px; display: flex; align-items: center; gap: 12px;">
+            <label for="demo-input-name" style="font-weight: 600; cursor: pointer; color: #0D7C86;">👉 Họ và tên của em (Bấm vào đây):</label>
+            <input type="text" id="demo-input-name" placeholder="Con trỏ sẽ tự nhảy vào đây..." style="margin: 0; max-width: 320px;">
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 4: CÁC DẠNG INPUT THÔNG DỤNG -->
+    <section class="slide" id="slide-4" data-total-reveal="4">
+      <div class="slide-header">
+        <div>
+          <span class="slide-badge">3. Phần tử quan trọng nhất</span>
+          <div class="slide-title">Các dạng &lt;input&gt; thông dụng</div>
+          <div class="slide-subtitle">Khám phá các giá trị của thuộc tính type: text, password, number, email, date</div>
+        </div>
+        <div class="reveal-controller">
+          <span>✨ Hiệu ứng:</span>
+          <span class="reveal-status" id="slide-4-status">0 / 4</span>
+          <button class="reveal-btn" onclick="revealNextInCurrentSlide();">▶ Hiện ý (↓)</button>
+          <button class="reveal-btn" style="background: rgba(255,255,255,0.15);" onclick="revealAllInCurrentSlide();">Hiện hết</button>
+        </div>
+      </div>
+      <div class="slide-body">
+        <div class="grid-2">
+          <div class="card reveal-item">
+            <div class="card-title"><span>📝</span> type="text" & type="password"</div>
+            <p style="font-size: 13.5px; color: #CBD5E1; line-height: 1.6;">
+              • <code style="color: #38E1F0;">type="text"</code>: Nhập một dòng văn bản tự do (họ tên, địa chỉ, trường lớp).<br>
+              • <code style="color: #F2683C;">type="password"</code>: Nhập mật khẩu — các ký tự tự động biến thành dấu chấm tròn (•) hoặc dấu sao (*) để bảo mật.
+            </p>
+          </div>
+          <div class="card reveal-item">
+            <div class="card-title"><span>🔢</span> type="number" & type="email"</div>
+            <p style="font-size: 13.5px; color: #CBD5E1; line-height: 1.6;">
+              • <code style="color: #10B981;">type="number"</code>: Chỉ cho phép nhập số (có mũi tên tăng giảm).<br>
+              • <code style="color: #F5A623;">type="email"</code>: Trình duyệt tự kiểm tra có chứa ký tự <code style="color: #F5A623;">@</code> hợp lệ hay không.
+            </p>
+          </div>
+        </div>
+        <div class="grid-2">
+          <div class="card reveal-item">
+            <div class="card-title"><span>📅</span> type="date" & type="color"</div>
+            <p style="font-size: 13.5px; color: #CBD5E1; line-height: 1.6;">
+              • <code style="color: #A78BFA;">type="date"</code>: Tự động mở hộp lịch chọn ngày tháng năm sinh.<br>
+              • <code style="color: #EC4899;">type="color"</code>: Mở bảng chọn màu sắc trực quan.
+            </p>
+          </div>
+          <div class="card reveal-item" style="background: rgba(56, 225, 240, 0.08); border-color: #38E1F0;">
+            <div class="card-title" style="color: #38E1F0;"><span>⚡</span> Thuộc tính hỗ trợ đắc lực</div>
+            <p style="font-size: 13px; color: #CBD5E1; line-height: 1.6;">
+              • <code style="color: #FF9A64;">placeholder="..."</code>: Văn bản gợi ý mờ mờ trong ô.<br>
+              • <code style="color: #FF9A64;">required</code>: Bắt buộc người dùng phải điền, không được bỏ trống!
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 5: RADIO & CHECKBOX -->
+    <section class="slide" id="slide-5" data-total-reveal="3">
+      <div class="slide-header">
+        <div>
+          <span class="slide-badge">4. Lựa chọn phương án</span>
+          <div class="slide-title">Nút chọn Radio vs Hộp kiểm Checkbox</div>
+          <div class="slide-subtitle">Phân biệt chọn duy nhất 1 phương án và chọn nhiều phương án cùng lúc</div>
+        </div>
+        <div class="reveal-controller">
+          <span>✨ Hiệu ứng:</span>
+          <span class="reveal-status" id="slide-5-status">0 / 3</span>
+          <button class="reveal-btn" onclick="revealNextInCurrentSlide();">▶ Hiện ý (↓)</button>
+          <button class="reveal-btn" style="background: rgba(255,255,255,0.15);" onclick="revealAllInCurrentSlide();">Hiện hết</button>
+        </div>
+      </div>
+      <div class="slide-body">
+        <div class="grid-2">
+          <div class="card reveal-item" style="border-top: 4px solid #38E1F0;">
+            <div class="card-title"><span>🔘</span> Radio Button (Chọn 1 trong nhiều)</div>
+            <p style="font-size: 13.5px; color: #CBD5E1; line-height: 1.6;">
+              Dùng khi người dùng <strong>chỉ được chọn duy nhất 1 phương án</strong> trong danh sách (vd: Giới tính Nam/Nữ, Hình thức giao hàng).
+            </p>
+            <div class="code-box" style="margin-top: 10px;">
+              <div class="code-content" style="font-size: 12.5px;">&lt;<span class="tag-kw">input</span> <span class="attr-kw">type</span>=<span class="val-kw">"radio"</span> <span class="attr-kw">id</span>=<span class="val-kw">"nam"</span> <span class="attr-kw">name</span>=<span class="val-kw">"gioitinh"</span>&gt;
+&lt;<span class="tag-kw">input</span> <span class="attr-kw">type</span>=<span class="val-kw">"radio"</span> <span class="attr-kw">id</span>=<span class="val-kw">"nu"</span> <span class="attr-kw">name</span>=<span class="val-kw">"gioitinh"</span>&gt;</div>
+            </div>
+            <p style="font-size: 12px; color: #F5A623; margin-top: 6px;">
+              ⚠️ <strong>Lưu ý chí mạng:</strong> Các nút radio trong cùng một nhóm <strong>phải có chung thuộc tính name</strong>!
+            </p>
+          </div>
+          <div class="card reveal-item" style="border-top: 4px solid #F2683C;">
+            <div class="card-title"><span>☑️</span> Checkbox (Chọn nhiều tùy chọn)</div>
+            <p style="font-size: 13.5px; color: #CBD5E1; line-height: 1.6;">
+              Dùng khi người dùng có thể <strong>chọn nhiều mục cùng lúc hoặc không chọn mục nào</strong> (vd: Sở thích thể thao, âm nhạc, đọc sách).
+            </p>
+            <div class="code-box" style="margin-top: 10px;">
+              <div class="code-content" style="font-size: 12.5px;">&lt;<span class="tag-kw">input</span> <span class="attr-kw">type</span>=<span class="val-kw">"checkbox"</span> <span class="attr-kw">id</span>=<span class="val-kw">"bongda"</span>&gt;
+&lt;<span class="tag-kw">input</span> <span class="attr-kw">type</span>=<span class="val-kw">"checkbox"</span> <span class="attr-kw">id</span>=<span class="val-kw">"amnhac"</span>&gt;</div>
+            </div>
+            <p style="font-size: 12px; color: #10B981; margin-top: 6px;">
+              💡 Người dùng có thể tích chọn tự do nhiều ô mà không ảnh hưởng lẫn nhau.
+            </p>
+          </div>
+        </div>
+        <div class="live-demo-box reveal-item">
+          <div class="grid-2">
+            <div>
+              <strong style="color: #0D7C86;">Demo Radio (Chọn 1 giới tính):</strong><br>
+              <label style="margin-right: 15px;"><input type="radio" name="demo-gt" checked> Nam</label>
+              <label style="margin-right: 15px;"><input type="radio" name="demo-gt"> Nữ</label>
+              <label><input type="radio" name="demo-gt"> Khác</label>
+            </div>
+            <div>
+              <strong style="color: #F2683C;">Demo Checkbox (Chọn nhiều sở thích):</strong><br>
+              <label style="margin-right: 12px;"><input type="checkbox" checked> Đá bóng</label>
+              <label style="margin-right: 12px;"><input type="checkbox"> Lập trình</label>
+              <label><input type="checkbox" checked> Nghe nhạc</label>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 6: SELECT & TEXTAREA -->
+    <section class="slide" id="slide-6" data-total-reveal="3">
+      <div class="slide-header">
+        <div>
+          <span class="slide-badge">5. Danh sách & Văn bản dài</span>
+          <div class="slide-title">Danh sách thả xuống & Vùng nhập nhiều dòng</div>
+          <div class="slide-subtitle">Sử dụng &lt;select&gt; với &lt;option&gt; và thẻ &lt;textarea&gt;</div>
+        </div>
+        <div class="reveal-controller">
+          <span>✨ Hiệu ứng:</span>
+          <span class="reveal-status" id="slide-6-status">0 / 3</span>
+          <button class="reveal-btn" onclick="revealNextInCurrentSlide();">▶ Hiện ý (↓)</button>
+          <button class="reveal-btn" style="background: rgba(255,255,255,0.15);" onclick="revealAllInCurrentSlide();">Hiện hết</button>
+        </div>
+      </div>
+      <div class="slide-body">
+        <div class="grid-2">
+          <div class="card reveal-item">
+            <div class="card-title"><span>🔽</span> Danh sách thả xuống: &lt;select&gt;</div>
+            <p style="font-size: 13.5px; color: #CBD5E1; line-height: 1.6;">
+              Dùng khi danh sách có rất nhiều phương án (vd: 63 Tỉnh/Thành phố), giúp tiết kiệm diện tích màn hình.
+            </p>
+            <div class="code-box" style="margin-top: 10px;">
+              <div class="code-content" style="font-size: 12px;">&lt;<span class="tag-kw">select</span> <span class="attr-kw">id</span>=<span class="val-kw">"tinh"</span>&gt;
+  &lt;<span class="tag-kw">option</span> <span class="attr-kw">value</span>=<span class="val-kw">"tn"</span> <span class="attr-kw">selected</span>&gt;Thái Nguyên&lt;/<span class="tag-kw">option</span>&gt;
+  &lt;<span class="tag-kw">option</span> <span class="attr-kw">value</span>=<span class="val-kw">"hn"</span>&gt;Hà Nội&lt;/<span class="tag-kw">option</span>&gt;
+&lt;/<span class="tag-kw">select</span>&gt;</div>
+            </div>
+          </div>
+          <div class="card reveal-item">
+            <div class="card-title"><span>📝</span> Vùng văn bản nhiều dòng: &lt;textarea&gt;</div>
+            <p style="font-size: 13.5px; color: #CBD5E1; line-height: 1.6;">
+              Khác với <code style="color: #38E1F0;">&lt;input type="text"&gt;</code> chỉ có 1 dòng, <code style="color: #FF9A64;">&lt;textarea&gt;</code> cho phép nhập đoạn văn dài, có thể xuống dòng thoải mái.
+            </p>
+            <div class="code-box" style="margin-top: 10px;">
+              <div class="code-content" style="font-size: 12px;">&lt;<span class="tag-kw">textarea</span> <span class="attr-kw">rows</span>=<span class="val-kw">"4"</span> <span class="attr-kw">cols</span>=<span class="val-kw">"40"</span>&gt;
+Ý kiến đóng góp...
+&lt;/<span class="tag-kw">textarea</span>&gt;</div>
+            </div>
+          </div>
+        </div>
+        <div class="live-demo-box reveal-item">
+          <div class="grid-2">
+            <div>
+              <label style="font-weight: 600; color: #0D7C86;">Chọn Tỉnh/Thành phố:</label>
+              <select style="margin-top: 4px;">
+                <option>Thái Nguyên (THPT Na Rì)</option>
+                <option>Bắc Kạn</option>
+                <option>Hà Nội</option>
+                <option>Cao Bằng</option>
+              </select>
+            </div>
+            <div>
+              <label style="font-weight: 600; color: #F2683C;">Góp ý của em (nhiều dòng):</label>
+              <textarea rows="2" placeholder="Gõ thử cảm nhận của em vào đây..." style="margin-top: 4px;"></textarea>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 7: CÁC NÚT ĐIỀU KHIỂN SUBMIT & RESET -->
+    <section class="slide" id="slide-7" data-total-reveal="3">
+      <div class="slide-header">
+        <div>
+          <span class="slide-badge">6. Hoàn tất & Gửi dữ liệu</span>
+          <div class="slide-title">Nút gửi Submit và Nút xoá Reset</div>
+          <div class="slide-subtitle">Cách thức gửi dữ liệu form đi và thiết lập lại trạng thái ban đầu</div>
+        </div>
+        <div class="reveal-controller">
+          <span>✨ Hiệu ứng:</span>
+          <span class="reveal-status" id="slide-7-status">0 / 3</span>
+          <button class="reveal-btn" onclick="revealNextInCurrentSlide();">▶ Hiện ý (↓)</button>
+          <button class="reveal-btn" style="background: rgba(255,255,255,0.15);" onclick="revealAllInCurrentSlide();">Hiện hết</button>
+        </div>
+      </div>
+      <div class="slide-body">
+        <div class="grid-2">
+          <div class="card reveal-item" style="border-top: 4px solid #10B981;">
+            <div class="card-title"><span>🚀</span> Nút Submit (Gửi dữ liệu)</div>
+            <p style="font-size: 13.5px; color: #CBD5E1; line-height: 1.6;">
+              Khi người dùng bấm nút này, trình duyệt sẽ gom toàn bộ dữ liệu đã nhập và đóng gói gửi tới địa chỉ máy chủ khai báo trong <code style="color: #38E1F0;">action</code> của form.
+            </p>
+            <div class="code-box" style="margin-top: 10px;">
+              <div class="code-content">&lt;<span class="tag-kw">input</span> <span class="attr-kw">type</span>=<span class="val-kw">"submit"</span> <span class="attr-kw">value</span>=<span class="val-kw">"Gửi thông tin"</span>&gt;</div>
+            </div>
+          </div>
+          <div class="card reveal-item" style="border-top: 4px solid #F43F5E;">
+            <div class="card-title"><span>🔄</span> Nút Reset (Nhập lại từ đầu)</div>
+            <p style="font-size: 13.5px; color: #CBD5E1; line-height: 1.6;">
+              Xóa sạch toàn bộ những gì người dùng vừa nhập và đưa tất cả các ô trong form trở về trạng thái mặc định ban đầu.
+            </p>
+            <div class="code-box" style="margin-top: 10px;">
+              <div class="code-content">&lt;<span class="tag-kw">input</span> <span class="attr-kw">type</span>=<span class="val-kw">"reset"</span> <span class="attr-kw">value</span>=<span class="val-kw">"Làm lại"</span>&gt;</div>
+            </div>
+          </div>
+        </div>
+        <div class="card reveal-item" style="background: rgba(255, 255, 255, 0.05);">
+          <div class="card-title"><span>💡</span> Thuộc tính quan trọng name của thẻ &lt;input&gt;</div>
+          <p style="font-size: 14px; color: #E2E8F0; line-height: 1.6;">
+            Nếu ô nhập <strong>không có thuộc tính name</strong>, máy chủ sẽ hoàn toàn <strong>bỏ qua</strong> giá trị của ô đó khi nhận dữ liệu! Tên thuộc tính `name` chính là từ khóa định danh để phân biệt từng trường thông tin.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 8: LIVE CODE PLAYGROUND -->
+    <section class="slide" id="slide-8" data-total-reveal="1">
+      <div class="slide-header">
+        <div>
+          <span class="slide-badge">7. Phòng thực hành</span>
+          <div class="slide-title">Live Code Playground — Biểu mẫu trực tiếp</div>
+          <div class="slide-subtitle">Thực hành gõ mã HTML và quan sát biểu mẫu hoạt động ngay trên màn hình</div>
+        </div>
+        <div class="reveal-controller">
+          <button class="reveal-btn" onclick="loadTemplate('form1')">Mẫu: Đăng ký CLB</button>
+          <button class="reveal-btn" onclick="loadTemplate('form2')">Mẫu: Khảo sát</button>
+          <button class="reveal-btn" onclick="loadTemplate('form3')">Mẫu: Đặt hàng</button>
+        </div>
+      </div>
+      <div class="slide-body">
+        <div class="playground-wrapper">
+          <div class="editor-pane">
+            <div class="editor-bar">
+              <span style="color: #38E1F0; font-weight: 700; font-family: var(--font-mono);">&lt;/&gt; Mã nguồn HTML</span>
+              <button class="reveal-btn" onclick="updateLivePlayground()">⚡ Chạy lại</button>
+            </div>
+            <textarea id="playground-code" class="live-code-area" oninput="updateLivePlayground()"></textarea>
+          </div>
+          <div class="preview-pane">
+            <div class="preview-pane-bar">
+              <span style="color: #10B981;">●</span> Kết quả hiển thị (Live Preview)
+            </div>
+            <iframe id="playground-frame" class="preview-iframe"></iframe>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 9: ĐỐ VUI TRẮC NGHIỆM -->
+    <section class="slide" id="slide-9" data-total-reveal="1">
+      <div class="slide-header">
+        <div>
+          <span class="slide-badge">8. Kiểm tra nhanh</span>
+          <div class="slide-title">Đố vui củng cố kiến thức</div>
+          <div class="slide-subtitle">3 thử thách trắc nghiệm giúp khắc sâu kiến thức trọng tâm Bài 12</div>
+        </div>
+      </div>
+      <div class="slide-body">
+        <div class="quiz-card">
+          <div class="quiz-q">Câu 1: Thuộc tính nào của thẻ &lt;label&gt; liên kết trực tiếp với id của ô nhập &lt;input&gt;?</div>
+          <div class="quiz-options">
+            <button class="quiz-btn" onclick="checkQuiz(this, false, 'q1', 'Thuộc tính name dùng để gửi dữ liệu về máy chủ, không liên kết với label.')">A. name</button>
+            <button class="quiz-btn" onclick="checkQuiz(this, true, 'q1', 'Chính xác! Thuộc tính for của label khớp với id của input.')">B. for</button>
+            <button class="quiz-btn" onclick="checkQuiz(this, false, 'q1', 'Thuộc tính type quy định kiểu nhập liệu (text, password...), không liên kết label.')">C. type</button>
+            <button class="quiz-btn" onclick="checkQuiz(this, false, 'q1', 'Thuộc tính action nằm ở thẻ form, chỉ đường dẫn máy chủ nhận dữ liệu.')">D. action</button>
+          </div>
+          <div class="quiz-feedback"></div>
+        </div>
+
+        <div class="quiz-card">
+          <div class="quiz-q">Câu 2: Để người dùng CHỈ ĐƯỢC CHỌN 1 trong các phương án, các nút radio phải có điểm gì chung?</div>
+          <div class="quiz-options">
+            <button class="quiz-btn" onclick="checkQuiz(this, false, 'q2', 'Mỗi phần tử phải có id riêng biệt, không được đặt id giống nhau.')">A. Chung thuộc tính id</button>
+            <button class="quiz-btn" onclick="checkQuiz(this, true, 'q2', 'Chính xác! Các nút radio cùng nhóm bắt buộc phải có chung thuộc tính name.')">B. Chung thuộc tính name</button>
+            <button class="quiz-btn" onclick="checkQuiz(this, false, 'q2', 'Nếu chung value thì không phân biệt được người dùng chọn mục nào.')">C. Chung thuộc tính value</button>
+            <button class="quiz-btn" onclick="checkQuiz(this, false, 'q2', 'Nút radio nào cũng có type=\"radio\", điểm đó chưa đủ để gộp thành 1 nhóm.')">D. Chung thuộc tính type</button>
+          </div>
+          <div class="quiz-feedback"></div>
+        </div>
+
+        <div class="quiz-card">
+          <div class="quiz-q">Câu 3: Muốn cho phép người dùng nhập đoạn văn bản dài có xuống dòng, ta dùng thẻ nào?</div>
+          <div class="quiz-options">
+            <button class="quiz-btn" onclick="checkQuiz(this, false, 'q3', 'type=\"text\" chỉ cho phép nhập 1 dòng duy nhất.')">A. &lt;input type="text"&gt;</button>
+            <button class="quiz-btn" onclick="checkQuiz(this, false, 'q3', '&lt;select&gt; dùng để tạo danh sách chọn thả xuống.')">B. &lt;select&gt;</button>
+            <button class="quiz-btn" onclick="checkQuiz(this, true, 'q3', 'Chính xác! Thẻ &lt;textarea&gt; cho phép nhập văn bản nhiều dòng thoải mái.')">C. &lt;textarea&gt;</button>
+            <button class="quiz-btn" onclick="checkQuiz(this, false, 'q3', 'Trong HTML không có thẻ &lt;input type=\"paragraph\"&gt;.')">D. &lt;input type="paragraph"&gt;</button>
+          </div>
+          <div class="quiz-feedback"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 10: TỔNG KẾT & GHI NHỚ -->
+    <section class="slide" id="slide-10" data-total-reveal="3">
+      <div class="slide-header">
+        <div>
+          <span class="slide-badge">9. Tổng kết bài học</span>
+          <div class="slide-title">Ghi nhớ trọng tâm Bài 12</div>
+          <div class="slide-subtitle">Các nguyên tắc cốt lõi cần nhớ khi thiết kế biểu mẫu web</div>
+        </div>
+        <div class="reveal-controller">
+          <span>✨ Hiệu ứng:</span>
+          <span class="reveal-status" id="slide-10-status">0 / 3</span>
+          <button class="reveal-btn" onclick="revealNextInCurrentSlide();">▶ Hiện ý (↓)</button>
+          <button class="reveal-btn" style="background: rgba(255,255,255,0.15);" onclick="revealAllInCurrentSlide();">Hiện hết</button>
+        </div>
+      </div>
+      <div class="slide-body">
+        <div class="grid-3">
+          <div class="card reveal-item" style="border-top: 4px solid #38E1F0;">
+            <div class="card-title">1. Bao bọc thẻ &lt;form&gt;</div>
+            <p style="font-size: 13.5px; color: #CBD5E1; line-height: 1.6;">
+              Mọi phần tử thu thập thông tin đều phải nằm bên trong cặp thẻ <code style="color: #38E1F0;">&lt;form&gt;...&lt;/form&gt;</code>.
+            </p>
+          </div>
+          <div class="card reveal-item" style="border-top: 4px solid #F2683C;">
+            <div class="card-title">2. Phân loại đúng Input</div>
+            <p style="font-size: 13.5px; color: #CBD5E1; line-height: 1.6;">
+              Chọn đúng <code style="color: #FF9A64;">type</code>: text (chữ), password (mật khẩu), radio (1 lựa chọn), checkbox (nhiều lựa chọn).
+            </p>
+          </div>
+          <div class="card reveal-item" style="border-top: 4px solid #10B981;">
+            <div class="card-title">3. Trợ năng với Label</div>
+            <p style="font-size: 13.5px; color: #CBD5E1; line-height: 1.6;">
+              Luôn liên kết <code style="color: #56E39F;">for</code> của label với <code style="color: #56E39F;">id</code> của input để tăng trải nghiệm tiện lợi cho người dùng.
+            </p>
+          </div>
+        </div>
+        <div class="card reveal-item" style="text-align: center; padding: 26px; background: rgba(13, 124, 134, 0.15); border: 1px solid #38E1F0;">
+          <h3 style="font-size: 20px; color: #FFFFFF;">🎉 Chúc mừng các em đã làm chủ Tạo biểu mẫu HTML!</h3>
+          <p style="color: #94A3B8; font-size: 14px; margin-top: 6px;">
+            Tiếp theo ở <strong>Bài 13</strong>, chúng ta sẽ bắt đầu học <strong>CSS</strong> — chiếc đũa thần biến trang web thô sơ thành tác phẩm nghệ thuật tuyệt đẹp!
+          </p>
+          <div style="margin-top: 14px;">
+            <button class="reveal-btn" style="font-size: 14px; padding: 8px 20px; background: #0D7C86;" onclick="fireConfetti()">🎊 Bắn pháo hoa ăn mừng</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </div>
+
+  <!-- THANH ĐIỀU HƯỚNG DECK -->
+  <div class="deck-nav">
+    <button class="nav-btn" onclick="prevSlide()" title="Slide trước (←)">◀</button>
+    <div class="deck-progress">
+      <div class="deck-progress-bar" id="deckProgressBar"></div>
+    </div>
+    <div class="deck-counter" id="deckCounter">1 / 10</div>
+    <button class="nav-btn" onclick="nextSlide()" title="Slide tiếp theo (→ hoặc Phím cách)">▶</button>
+    <button class="nav-btn" onclick="toggleFullScreen()" title="Toàn màn hình (F)">⛶</button>
+    <button class="nav-btn" id="soundBtn" onclick="toggleSound()" title="Bật/Tắt âm thanh (M)">🔊</button>
+  </div>
+
+  <script>
+    let currentSlide = 1;
+    const totalSlides = 10;
+    let soundEnabled = true;
+    let audioCtx = null;
+
+    function getAudioCtx() {
+      if (!audioCtx) {
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      }
+      if (audioCtx.state === 'suspended') audioCtx.resume();
+      return audioCtx;
+    }
+
+    function playSound(type) {
+      if (!soundEnabled) return;
+      try {
+        const ctx = getAudioCtx();
+        const now = ctx.currentTime;
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+
+        if (type === 'click') {
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(440, now);
+          osc.frequency.exponentialRampToValueAtTime(880, now + 0.08);
+          gain.gain.setValueAtTime(0.12, now);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.08);
+          osc.start(now);
+          osc.stop(now + 0.08);
+        } else if (type === 'success') {
+          osc.type = 'triangle';
+          osc.frequency.setValueAtTime(523.25, now);
+          osc.frequency.setValueAtTime(659.25, now + 0.08);
+          osc.frequency.setValueAtTime(783.99, now + 0.16);
+          gain.gain.setValueAtTime(0.2, now);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.3);
+          osc.start(now);
+          osc.stop(now + 0.3);
+        } else if (type === 'wrong') {
+          osc.type = 'sawtooth';
+          osc.frequency.setValueAtTime(220, now);
+          osc.frequency.setValueAtTime(160, now + 0.12);
+          gain.gain.setValueAtTime(0.2, now);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.25);
+          osc.start(now);
+          osc.stop(now + 0.25);
+        }
+      } catch (e) {}
+    }
+
+    function toggleSound() {
+      soundEnabled = !soundEnabled;
+      document.getElementById('soundBtn').innerText = soundEnabled ? '🔊' : '🔇';
+    }
+
+    function toggleFullScreen() {
+      if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen().catch(() => {});
+      } else {
+        document.exitFullscreen().catch(() => {});
+      }
+    }
+
+    function updateSlide() {
+      document.querySelectorAll('.slide').forEach((s, idx) => {
+        s.classList.toggle('active', idx + 1 === currentSlide);
+      });
+      document.getElementById('deckCounter').innerText = currentSlide + ' / ' + totalSlides;
+      document.getElementById('deckProgressBar').style.width = ((currentSlide - 1) / (totalSlides - 1) * 100) + '%';
+
+      if (currentSlide === 8) {
+        initPlaygroundOnce();
+      }
+    }
+
+    function nextSlide() {
+      if (currentSlide < totalSlides) {
+        currentSlide++;
+        playSound('click');
+        updateSlide();
+      }
+    }
+
+    function prevSlide() {
+      if (currentSlide > 1) {
+        currentSlide--;
+        playSound('click');
+        updateSlide();
+      }
+    }
+
+    function revealNextInCurrentSlide() {
+      const slide = document.getElementById('slide-' + currentSlide);
+      if (!slide) return;
+      const items = slide.querySelectorAll('.reveal-item');
+      for (let item of items) {
+        if (!item.classList.contains('revealed')) {
+          item.classList.add('revealed', 'just-revealed');
+          setTimeout(() => item.classList.remove('just-revealed'), 600);
+          playSound('click');
+          updateRevealStatus(slide);
+          return;
+        }
+      }
+    }
+
+    function revealAllInCurrentSlide() {
+      const slide = document.getElementById('slide-' + currentSlide);
+      if (!slide) return;
+      slide.querySelectorAll('.reveal-item').forEach(item => {
+        item.classList.add('revealed');
+      });
+      playSound('success');
+      updateRevealStatus(slide);
+    }
+
+    function updateRevealStatus(slide) {
+      const items = slide.querySelectorAll('.reveal-item');
+      const revealed = slide.querySelectorAll('.reveal-item.revealed').length;
+      const statusEl = document.getElementById(slide.id + '-status');
+      if (statusEl) {
+        statusEl.innerText = revealed + ' / ' + items.length;
+      }
+    }
+
+    document.addEventListener('keydown', (e) => {
+      if (e.target.tagName === 'TEXTAREA' || e.target.tagName === 'INPUT') return;
+      if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown') {
+        e.preventDefault();
+        nextSlide();
+      } else if (e.key === 'ArrowLeft' || e.key === 'PageUp') {
+        e.preventDefault();
+        prevSlide();
+      } else if (e.key === 'ArrowDown' || e.key === 'Enter') {
+        e.preventDefault();
+        revealNextInCurrentSlide();
+      } else if (e.key.toLowerCase() === 'f') {
+        toggleFullScreen();
+      } else if (e.key.toLowerCase() === 'm') {
+        toggleSound();
+      }
+    });
+
+    function checkQuiz(btn, isCorrect, qId, explanation) {
+      const parent = btn.parentElement;
+      const feedback = parent.parentElement.querySelector('.quiz-feedback');
+      parent.querySelectorAll('.quiz-btn').forEach(b => {
+        b.disabled = true;
+        b.style.pointerEvents = 'none';
+      });
+
+      if (isCorrect) {
+        btn.classList.add('correct');
+        playSound('success');
+        feedback.style.display = 'block';
+        feedback.style.background = 'rgba(16, 185, 129, 0.15)';
+        feedback.style.border = '1px solid #10B981';
+        feedback.style.color = '#34D399';
+        feedback.innerHTML = '🎉 <strong>Chính xác!</strong> ' + explanation;
+      } else {
+        btn.classList.add('wrong');
+        playSound('wrong');
+        feedback.style.display = 'block';
+        feedback.style.background = 'rgba(239, 68, 68, 0.15)';
+        feedback.style.border = '1px solid #EF4444';
+        feedback.style.color = '#FCA5A5';
+        feedback.innerHTML = '❌ <strong>Chưa đúng!</strong> ' + explanation;
+      }
+    }
+
+    let playgroundInited = false;
+    const formTemplates = {
+      form1: `<h3>Phiếu Đăng Ký CLB Tin Học Na Rì</h3>
+<form style="font-family: sans-serif; line-height: 1.6;">
+  <label for="name"><b>Họ và tên:</b></label><br>
+  <input type="text" id="name" placeholder="Nguyễn Văn A" style="width: 100%; padding: 6px; margin: 4px 0 10px;"><br>
+
+  <label for="pwd"><b>Mật khẩu đăng nhập:</b></label><br>
+  <input type="password" id="pwd" style="width: 100%; padding: 6px; margin: 4px 0 10px;"><br>
+
+  <b>Giới tính:</b><br>
+  <label><input type="radio" name="sex" checked> Nam</label>
+  <label style="margin-left: 10px;"><input type="radio" name="sex"> Nữ</label><br><br>
+
+  <label for="class"><b>Khối lớp:</b></label><br>
+  <select id="class" style="width: 100%; padding: 6px; margin: 4px 0 10px;">
+    <option>Lớp 12A1</option>
+    <option>Lớp 12A2</option>
+    <option>Lớp 12A3</option>
+  </select><br>
+
+  <input type="submit" value="Xác Nhận Đăng Ký" style="background: #0D7C86; color: white; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer;">
+</form>`,
+
+      form2: `<h3>Khảo Sát Ý Kiến Học Sinh Về Web Tin 12</h3>
+<form style="font-family: sans-serif;">
+  <label><b>Em thích tính năng nào nhất?</b></label><br>
+  <label><input type="checkbox" checked> Lý thuyết tóm tắt</label><br>
+  <label><input type="checkbox" checked> Trắc nghiệm tự chấm</label><br>
+  <label><input type="checkbox"> Đấu trường đại chiến</label><br><br>
+
+  <label for="rate"><b>Đánh giá độ hữu ích (1-10):</b></label><br>
+  <input type="number" id="rate" value="10" min="1" max="10" style="padding: 6px; width: 80px;"><br><br>
+
+  <label for="feedback"><b>Góp ý thêm:</b></label><br>
+  <textarea id="feedback" rows="3" style="width: 100%; padding: 6px;">Web học rất hay và trực quan ạ!</textarea><br><br>
+
+  <input type="submit" value="Gửi Đánh Giá" style="background: #F2683C; color: white; border: none; padding: 8px 16px; border-radius: 4px;">
+</form>`,
+
+      form3: `<h3>Đặt Mua Nông Sản Na Rì — Thái Nguyên</h3>
+<form style="font-family: sans-serif;">
+  <label for="item"><b>Chọn đặc sản:</b></label><br>
+  <select id="item" style="width: 100%; padding: 6px; margin: 4px 0 8px;">
+    <option>Miến dong Na Rì (1 kg)</option>
+    <option>Trà Thái Nguyên Thượng Hạng</option>
+    <option>Mật ong rừng nguyên chất</option>
+  </select><br>
+
+  <label for="qty"><b>Số lượng:</b></label><br>
+  <input type="number" id="qty" value="2" min="1" style="width: 80px; padding: 6px; margin: 4px 0 8px;"><br>
+
+  <label for="phone"><b>Số điện thoại:</b></label><br>
+  <input type="text" id="phone" placeholder="09xx..." style="width: 100%; padding: 6px; margin: 4px 0 8px;"><br>
+
+  <label for="addr"><b>Địa chỉ nhận hàng:</b></label><br>
+  <textarea id="addr" rows="2" style="width: 100%; padding: 6px; margin: 4px 0 12px;"></textarea><br>
+
+  <input type="submit" value="Đặt Hàng Ngay" style="background: #10B981; color: white; border: none; padding: 8px 20px; border-radius: 4px;">
+</form>`
+    };
+
+    function initPlaygroundOnce() {
+      if (playgroundInited) return;
+      playgroundInited = true;
+      loadTemplate('form1');
+    }
+
+    function loadTemplate(key) {
+      playSound('click');
+      document.getElementById('playground-code').value = formTemplates[key];
+      updateLivePlayground();
+    }
+
+    function updateLivePlayground() {
+      const code = document.getElementById('playground-code').value;
+      const frame = document.getElementById('playground-frame');
+      const doc = frame.contentDocument || frame.contentWindow.document;
+      doc.open();
+      doc.write(code);
+      doc.close();
+    }
+
+    function fireConfetti() {
+      playSound('success');
+      const canvas = document.getElementById('confettiCanvas');
+      const ctx = canvas.getContext('2d');
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+
+      const particles = [];
+      const colors = ['#38E1F0', '#F2683C', '#F5A623', '#10B981', '#8B5CF6', '#EC4899'];
+
+      for (let i = 0; i < 90; i++) {
+        particles.push({
+          x: canvas.width / 2,
+          y: canvas.height * 0.45,
+          vx: (Math.random() - 0.5) * 16,
+          vy: (Math.random() - 0.7) * 16,
+          size: Math.random() * 8 + 4,
+          color: colors[Math.floor(Math.random() * colors.length)],
+          alpha: 1,
+          rot: Math.random() * 360,
+          vrot: (Math.random() - 0.5) * 12
+        });
+      }
+
+      function render() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        let alive = false;
+        particles.forEach(p => {
+          p.x += p.vx;
+          p.y += p.vy;
+          p.vy += 0.35;
+          p.alpha -= 0.012;
+          p.rot += p.vrot;
+
+          if (p.alpha > 0) {
+            alive = true;
+            ctx.save();
+            ctx.globalAlpha = p.alpha;
+            ctx.translate(p.x, p.y);
+            ctx.rotate(p.rot * Math.PI / 180);
+            ctx.fillStyle = p.color;
+            ctx.fillRect(-p.size / 2, -p.size / 2, p.size, p.size);
+            ctx.restore();
+          }
+        });
+        if (alive) requestAnimationFrame(render);
+        else ctx.clearRect(0, 0, canvas.width, canvas.height);
+      }
+      render();
+    }
+
+    updateSlide();
+  </script>
+</body>
+</html>

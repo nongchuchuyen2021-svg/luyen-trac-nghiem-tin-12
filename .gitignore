@@ -21,3 +21,5 @@ khoa-google*.json
 Key JSon/
 *.json.key
 
+.claude/
+

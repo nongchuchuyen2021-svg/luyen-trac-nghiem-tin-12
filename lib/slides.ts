@@ -8,6 +8,7 @@ const SLIDE_MAP: Record<string, string> = {
   "bai-09": "/bai-09-trinh-chieu.html",
   "bai-10": "/bai-10-trinh-chieu.html",
   "bai-11": "/bai-11-trinh-chieu.html",
+  "bai-12": "/bai-12-trinh-chieu.html",
 };
 
 export function getSlideUrl(lessonId: string): string | null {
