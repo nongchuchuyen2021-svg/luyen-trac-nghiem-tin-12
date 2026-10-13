@@ -1,0 +1,1160 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bài 17: Các mức ưu tiên của bộ chọn — Bài giảng điện tử Tin học 12</title>
+  <style>
+    :root {
+      --bg: #070D14;
+      --bg-card: rgba(13, 23, 35, 0.94);
+      --border-card: rgba(56, 225, 240, 0.18);
+      --ink: #FFFFFF;
+      --ink-soft: #94A3B8;
+      --sea: #0D7C86;
+      --sea-light: #38E1F0;
+      --coral: #F2683C;
+      --gold: #F5A623;
+      --leaf: #10B981;
+      --purple: #8B5CF6;
+      --rose: #F43F5E;
+      --radius-lg: 24px;
+      --radius-md: 16px;
+      --font-main: system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      --font-mono: 'Consolas', 'Fira Code', 'Courier New', monospace;
+      --transition-slide: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.5s ease;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: var(--font-main);
+      background-color: var(--bg);
+      color: var(--ink);
+      overflow: hidden;
+      width: 100vw;
+      height: 100vh;
+      user-select: none;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .bg-mesh {
+      position: fixed;
+      top: 0; left: 0; width: 100vw; height: 100vh;
+      background: radial-gradient(circle at 15% 15%, rgba(245, 166, 35, 0.28) 0%, transparent 45%),
+                  radial-gradient(circle at 85% 80%, rgba(244, 63, 94, 0.25) 0%, transparent 45%),
+                  radial-gradient(circle at 50% 50%, rgba(139, 92, 246, 0.16) 0%, transparent 60%);
+      z-index: 0;
+      pointer-events: none;
+      animation: meshPulse 12s ease-in-out infinite alternate;
+    }
+
+    @keyframes meshPulse {
+      0% { transform: scale(1) translate(0, 0); opacity: 0.9; }
+      100% { transform: scale(1.06) translate(-10px, 10px); opacity: 1; }
+    }
+
+    .floating-symbols {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 1;
+      overflow: hidden;
+    }
+
+    .float-tag {
+      position: absolute;
+      font-family: var(--font-mono);
+      font-size: 14px;
+      font-weight: 700;
+      color: rgba(245, 166, 35, 0.2);
+      border: 1px solid rgba(245, 166, 35, 0.15);
+      padding: 4px 10px;
+      border-radius: 8px;
+      background: rgba(245, 166, 35, 0.05);
+      animation: floatUp 20s linear infinite;
+    }
+
+    @keyframes floatUp {
+      0% { transform: translateY(105vh) rotate(0deg); opacity: 0; }
+      10% { opacity: 0.45; }
+      90% { opacity: 0.45; }
+      100% { transform: translateY(-10vh) rotate(360deg); opacity: 0; }
+    }
+
+    .deck-container {
+      position: relative;
+      width: 100vw;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 10;
+    }
+
+    .slide {
+      position: absolute;
+      width: 92vw;
+      max-width: 1280px;
+      height: 86vh;
+      background: var(--bg-card);
+      border: 1px solid var(--border-card);
+      border-radius: var(--radius-lg);
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6);
+      backdrop-filter: blur(20px);
+      padding: 36px 48px;
+      display: flex;
+      flex-direction: column;
+      opacity: 0;
+      transform: scale(0.96) translateY(24px);
+      pointer-events: none;
+      transition: var(--transition-slide);
+      overflow-y: auto;
+    }
+
+    .slide.active {
+      opacity: 1;
+      transform: scale(1) translateY(0);
+      pointer-events: auto;
+    }
+
+    .slide-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 22px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      padding-bottom: 14px;
+    }
+
+    .slide-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(245, 166, 35, 0.2);
+      border: 1px solid rgba(245, 166, 35, 0.35);
+      color: #FFC043;
+      font-size: 11.5px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      padding: 4px 12px;
+      border-radius: 20px;
+      margin-bottom: 6px;
+    }
+
+    .slide-title {
+      font-size: 28px;
+      font-weight: 800;
+      color: #FFFFFF;
+      line-height: 1.25;
+      background: linear-gradient(90deg, #FFFFFF, #E2E8F0);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .slide-subtitle {
+      font-size: 14px;
+      color: var(--ink-soft);
+      margin-top: 3px;
+    }
+
+    .reveal-controller {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 30px;
+      padding: 4px 12px;
+      font-size: 12px;
+      color: var(--ink-soft);
+    }
+
+    .reveal-status {
+      font-family: var(--font-mono);
+      font-weight: 700;
+      color: #FFC043;
+    }
+
+    .reveal-btn {
+      background: rgba(245, 166, 35, 0.4);
+      border: 1px solid rgba(245, 166, 35, 0.3);
+      color: white;
+      padding: 4px 10px;
+      border-radius: 14px;
+      font-size: 11px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .reveal-btn:hover {
+      background: var(--gold);
+      color: white;
+    }
+
+    .slide-body {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+
+    .reveal-item {
+      opacity: 0.18;
+      transform: translateY(10px);
+      transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+      filter: blur(1px);
+    }
+
+    .reveal-item.revealed {
+      opacity: 1;
+      transform: translateY(0);
+      filter: blur(0);
+    }
+
+    .reveal-item.just-revealed {
+      box-shadow: 0 0 25px rgba(245, 166, 35, 0.4);
+      border-color: #F5A623 !important;
+    }
+
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+    .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+
+    .card {
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.09);
+      border-radius: var(--radius-md);
+      padding: 18px 22px;
+      transition: transform 0.3s, border-color 0.3s;
+    }
+
+    .card:hover {
+      transform: translateY(-3px);
+      border-color: rgba(245, 166, 35, 0.3);
+    }
+
+    .card-title {
+      font-size: 16px;
+      font-weight: 700;
+      color: #FFFFFF;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .code-box {
+      background: #0D1520;
+      border: 1px solid rgba(245, 166, 35, 0.25);
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .code-header {
+      background: rgba(255, 255, 255, 0.06);
+      padding: 8px 14px;
+      display: flex;
+      justify-content: space-between;
+      font-size: 12px;
+      font-family: var(--font-mono);
+      color: #94A3B8;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .code-content {
+      padding: 14px 18px;
+      font-family: var(--font-mono);
+      font-size: 13.5px;
+      line-height: 1.6;
+      color: #E2E8F0;
+      white-space: pre-wrap;
+    }
+
+    .tag-kw { color: #38E1F0; font-weight: 700; }
+    .selector-kw { color: #F5A623; font-weight: 700; }
+    .prop-kw { color: #FF9A64; }
+    .val-kw { color: #56E39F; }
+
+    /* BẢNG ĐIỂM ƯU TIÊN SPECIFICITY */
+    .score-ladder {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .ladder-step {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 10px;
+      padding: 10px 16px;
+    }
+
+    .ladder-points {
+      font-family: var(--font-mono);
+      font-weight: 900;
+      font-size: 16px;
+      padding: 4px 12px;
+      border-radius: 20px;
+    }
+
+    .playground-wrapper {
+      display: grid;
+      grid-template-columns: 1.1fr 1fr;
+      gap: 16px;
+      height: 480px;
+    }
+
+    .editor-pane {
+      background: #0A1118;
+      border: 1px solid rgba(245, 166, 35, 0.3);
+      border-radius: var(--radius-md);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    .editor-bar {
+      background: rgba(255, 255, 255, 0.05);
+      padding: 8px 14px;
+      display: flex;
+      justify-content: space-between;
+      font-size: 12px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .live-code-area {
+      flex: 1;
+      background: transparent;
+      border: none;
+      color: #F8FAFC;
+      font-family: var(--font-mono);
+      font-size: 13.5px;
+      line-height: 1.6;
+      padding: 14px;
+      resize: none;
+      outline: none;
+      white-space: pre;
+    }
+
+    .preview-pane {
+      background: #FFFFFF;
+      border-radius: var(--radius-md);
+      border: 2px solid #F5A623;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .preview-pane-bar {
+      background: #F1F5F9;
+      padding: 8px 14px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      border-bottom: 1px solid #CBD5E1;
+      font-size: 11px;
+      font-weight: 700;
+      color: #64748B;
+      text-transform: uppercase;
+    }
+
+    .preview-iframe {
+      flex: 1;
+      border: none;
+      width: 100%;
+      height: 100%;
+      background: #FFFFFF;
+    }
+
+    .quiz-card {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 12px;
+      padding: 14px 18px;
+      margin-bottom: 12px;
+    }
+
+    .quiz-q {
+      font-size: 14.5px;
+      font-weight: 600;
+      color: #F1F5F9;
+      margin-bottom: 10px;
+    }
+
+    .quiz-options {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+
+    .quiz-btn {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      color: #CBD5E1;
+      padding: 8px 12px;
+      border-radius: 8px;
+      font-size: 13px;
+      text-align: left;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .quiz-btn:hover {
+      background: rgba(245, 166, 35, 0.15);
+      border-color: #F5A623;
+      color: #FFFFFF;
+      transform: translateX(4px);
+    }
+
+    .quiz-btn.correct {
+      background: #059669 !important;
+      border-color: #34D399 !important;
+      color: white !important;
+      font-weight: 700;
+    }
+
+    .quiz-btn.wrong {
+      background: #DC2626 !important;
+      border-color: #F87171 !important;
+      color: white !important;
+      animation: shake 0.4s ease;
+    }
+
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      20%, 60% { transform: translateX(-6px); }
+      40%, 80% { transform: translateX(6px); }
+    }
+
+    .quiz-feedback {
+      font-size: 12.5px;
+      margin-top: 6px;
+      padding: 6px 10px;
+      border-radius: 6px;
+      display: none;
+      line-height: 1.4;
+    }
+
+    .deck-nav {
+      position: fixed;
+      bottom: 14px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(10, 17, 24, 0.88);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 40px;
+      padding: 7px 18px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      backdrop-filter: blur(16px);
+      z-index: 100;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
+    }
+
+    .nav-btn {
+      background: transparent;
+      border: none;
+      color: #E2E8F0;
+      font-size: 18px;
+      cursor: pointer;
+      padding: 4px 10px;
+      border-radius: 20px;
+      transition: all 0.2s;
+    }
+
+    .nav-btn:hover {
+      color: #F5A623;
+      background: rgba(255, 255, 255, 0.1);
+      transform: scale(1.1);
+    }
+
+    .deck-progress {
+      width: 220px;
+      height: 6px;
+      background: rgba(255, 255, 255, 0.15);
+      border-radius: 3px;
+      overflow: hidden;
+    }
+
+    .deck-progress-bar {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, #F5A623, #F43F5E, #10B981);
+      transition: width 0.3s;
+    }
+
+    .deck-counter {
+      font-size: 13px;
+      font-weight: 700;
+      color: #94A3B8;
+      font-family: var(--font-mono);
+      min-width: 60px;
+      text-align: center;
+    }
+
+    #confettiCanvas {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100vw; height: 100vh;
+      pointer-events: none;
+      z-index: 999;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="bg-mesh"></div>
+  <div class="floating-symbols">
+    <div class="float-tag" style="left: 6%; animation-delay: 0s;">Specificity</div>
+    <div class="float-tag" style="left: 20%; animation-delay: 3s;">!important</div>
+    <div class="float-tag" style="left: 36%; animation-delay: 7s;">#id (100)</div>
+    <div class="float-tag" style="left: 52%; animation-delay: 2s;">.class (10)</div>
+    <div class="float-tag" style="left: 68%; animation-delay: 5s;">tag (1)</div>
+    <div class="float-tag" style="left: 82%; animation-delay: 10s;">style="..." (1000)</div>
+    <div class="float-tag" style="left: 92%; animation-delay: 14s;">Cascade</div>
+  </div>
+
+  <canvas id="confettiCanvas"></canvas>
+
+  <div class="deck-container">
+
+    <!-- SLIDE 1: TRANG BÌA -->
+    <section class="slide active" id="slide-1" data-total-reveal="3">
+      <div class="slide-header">
+        <div>
+          <span class="slide-badge">Tin học 12 · Định hướng Tin học ứng dụng (ICT)</span>
+          <div class="slide-title">Bài 17. Các mức ưu tiên của bộ chọn</div>
+          <div class="slide-subtitle">Sách giáo khoa Kết nối tri thức với cuộc sống (Trang 90 – 94)</div>
+        </div>
+        <div class="reveal-controller">
+          <span>✨ Hiệu ứng:</span>
+          <span class="reveal-status" id="slide-1-status">0 / 3</span>
+          <button class="reveal-btn" onclick="revealNextInCurrentSlide();">▶ Hiện ý (↓)</button>
+          <button class="reveal-btn" style="background: rgba(255,255,255,0.15);" onclick="revealAllInCurrentSlide();">Hiện hết</button>
+        </div>
+      </div>
+      <div class="slide-body">
+        <div class="grid-3" style="margin-top: 10px;">
+          <div class="card reveal-item" style="border-top: 4px solid #F5A623;">
+            <div class="card-title"><span>⚔️</span> Xung đột định dạng</div>
+            <p style="color: #94A3B8; font-size: 14px; line-height: 1.6;">
+              Khi nhiều quy tắc CSS cùng nhắm vào một phần tử nhưng đặt thuộc tính trái ngược nhau.
+            </p>
+          </div>
+          <div class="card reveal-item" style="border-top: 4px solid #F43F5E;">
+            <div class="card-title"><span>📊</span> Thang điểm Specificity</div>
+            <p style="color: #94A3B8; font-size: 14px; line-height: 1.6;">
+              Quy tắc tính điểm trọng số: <strong style="color: #fff;">Thẻ (1) &lt; Class (10) &lt; ID (100) &lt; Inline (1000)</strong>.
+            </p>
+          </div>
+          <div class="card reveal-item" style="border-top: 4px solid #10B981;">
+            <div class="card-title"><span>⚡</span> Vũ khí !important</div>
+            <p style="color: #94A3B8; font-size: 14px; line-height: 1.6;">
+              Khám phá từ khóa tối thượng ghi đè mọi quy tắc và cách dùng thông minh không gây lỗi hệ thống.
+            </p>
+          </div>
+        </div>
+        <div class="card" style="margin-top: 15px; background: rgba(245, 166, 35, 0.1); border: 1px dashed #F5A623;">
+          <p style="font-size: 14.5px; color: #E2E8F0; line-height: 1.6;">
+            💡 <strong>Quy luật Thác đổ (Cascading):</strong> Chữ "C" đầu tiên trong CSS chính là Cascading (xếp tầng / thác đổ). Trình duyệt luôn tuân theo một bộ luật trọng tài cực kỳ công bằng để quyết định kiểu dáng nào sẽ chiến thắng hiển thị ra màn hình!
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 2: NGUYÊN TẮC THỨ TỰ XUẤT HIỆN -->
+    <section class="slide" id="slide-2" data-total-reveal="3">
+      <div class="slide-header">
+        <div>
+          <span class="slide-badge">1. Luật ghi đè sau cùng</span>
+          <div class="slide-title">Nguyên tắc thứ tự xuất hiện</div>
+          <div class="slide-subtitle">Khi hai bộ chọn CÙNG CẤP ĐỘ nhắm vào một phần tử</div>
+        </div>
+        <div class="reveal-controller">
+          <span>✨ Hiệu ứng:</span>
+          <span class="reveal-status" id="slide-2-status">0 / 3</span>
+          <button class="reveal-btn" onclick="revealNextInCurrentSlide();">▶ Hiện ý (↓)</button>
+          <button class="reveal-btn" style="background: rgba(255,255,255,0.15);" onclick="revealAllInCurrentSlide();">Hiện hết</button>
+        </div>
+      </div>
+      <div class="slide-body">
+        <div class="grid-2">
+          <div class="code-box reveal-item">
+            <div class="code-header">
+              <span>HAI QUY TẮC CÙNG BỘ CHỌN THẺ P</span>
+              <span>style.css</span>
+            </div>
+            <div class="code-content"><span class="comm-kw">/* Khai báo trước: màu xanh */</span>
+<span class="selector-kw">p</span> {
+  <span class="prop-kw">color</span>: <span class="val-kw">blue</span>;
+}
+
+<span class="comm-kw">/* Khai báo sau: màu đỏ */</span>
+<span class="selector-kw">p</span> {
+  <span class="prop-kw">color</span>: <span class="val-kw">red</span>;
+}</div>
+          </div>
+
+          <div class="card reveal-item">
+            <div class="card-title"><span>🏆</span> Kết quả: Màu ĐỎ chiến thắng!</div>
+            <p style="font-size: 14px; color: #CBD5E1; line-height: 1.7;">
+              <strong>Nguyên tắc:</strong> Khi hai quy tắc có cùng độ ưu tiên, quy tắc nào được trình duyệt <strong>đọc sau cùng sẽ ghi đè (overwrite)</strong> lên quy tắc trước đó.
+            </p>
+            <div style="background: rgba(239, 68, 68, 0.1); border: 1px solid #EF4444; padding: 12px; border-radius: 8px; margin-top: 12px; font-size: 13.5px; color: #FCA5A5;">
+              Đoạn văn &lt;p&gt; trên màn hình sẽ hiển thị màu <strong>ĐỎ (red)</strong>!
+            </div>
+          </div>
+        </div>
+
+        <div class="card reveal-item" style="background: rgba(255, 255, 255, 0.05);">
+          <p style="font-size: 13.5px; color: #E2E8F0; line-height: 1.6;">
+            📌 <strong>Áp dụng cho tệp ngoài:</strong> Nếu có 2 tệp CSS ngoài cùng được liên kết, tệp nào đặt thẻ <code style="color: #38E1F0;">&lt;link&gt;</code> ở phía dưới trong phần <code style="color: #38E1F0;">&lt;head&gt;</code> sẽ có quyền ghi đè tệp ở phía trên!
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 3: THANG ĐIỂM ĐỘ ƯU TIÊN SPECIFICITY -->
+    <section class="slide" id="slide-3" data-total-reveal="4">
+      <div class="slide-header">
+        <div>
+          <span class="slide-badge">2. Thang điểm trọng số</span>
+          <div class="slide-title">Bảng xếp hạng độ ưu tiên Specificity</div>
+          <div class="slide-subtitle">Thang điểm quyết định: Thẻ (1) &lt; Class (10) &lt; ID (100) &lt; Inline (1000)</div>
+        </div>
+        <div class="reveal-controller">
+          <span>✨ Hiệu ứng:</span>
+          <span class="reveal-status" id="slide-3-status">0 / 4</span>
+          <button class="reveal-btn" onclick="revealNextInCurrentSlide();">▶ Hiện ý (↓)</button>
+          <button class="reveal-btn" style="background: rgba(255,255,255,0.15);" onclick="revealAllInCurrentSlide();">Hiện hết</button>
+        </div>
+      </div>
+      <div class="slide-body">
+        <div class="score-ladder">
+          <div class="ladder-step reveal-item" style="border-left: 4px solid #64748B;">
+            <div>
+              <strong style="color: #E2E8F0;">1. Bộ chọn Tên thẻ (Element Selector)</strong>
+              <div style="font-size: 12px; color: #94A3B8; font-family: var(--font-mono);">p, h1, div, a, button</div>
+            </div>
+            <span class="ladder-points" style="background: rgba(100, 116, 139, 0.2); color: #94A3B8;">1 ĐIỂM</span>
+          </div>
+
+          <div class="ladder-step reveal-item" style="border-left: 4px solid #38E1F0;">
+            <div>
+              <strong style="color: #E2E8F0;">2. Bộ chọn Lớp (Class Selector)</strong>
+              <div style="font-size: 12px; color: #38E1F0; font-family: var(--font-mono);">.tieude, .nutbam, .highlight</div>
+            </div>
+            <span class="ladder-points" style="background: rgba(56, 225, 240, 0.2); color: #38E1F0;">10 ĐIỂM</span>
+          </div>
+
+          <div class="ladder-step reveal-item" style="border-left: 4px solid #F5A623;">
+            <div>
+              <strong style="color: #E2E8F0;">3. Bộ chọn Mã định danh (ID Selector)</strong>
+              <div style="font-size: 12px; color: #F5A623; font-family: var(--font-mono);">#banner, #menu, #footer</div>
+            </div>
+            <span class="ladder-points" style="background: rgba(245, 166, 35, 0.2); color: #F5A623;">100 ĐIỂM</span>
+          </div>
+
+          <div class="ladder-step reveal-item" style="border-left: 4px solid #F43F5E;">
+            <div>
+              <strong style="color: #E2E8F0;">4. CSS Nội tuyến (Inline Style)</strong>
+              <div style="font-size: 12px; color: #F43F5E; font-family: var(--font-mono);">&lt;h1 style="color: red;"&gt;</div>
+            </div>
+            <span class="ladder-points" style="background: rgba(244, 63, 94, 0.2); color: #F43F5E;">1000 ĐIỂM</span>
+          </div>
+        </div>
+
+        <div class="card reveal-item" style="background: rgba(16, 185, 129, 0.1); border-color: #10B981;">
+          <p style="font-size: 13.5px; color: #E2E8F0;">
+            ⚡ <strong>Ví dụ so găng:</strong> Một thẻ <code style="color: #38E1F0;">&lt;p class="info"&gt;</code> được đặt: <code style="color: #94A3B8;">p { color: black; }</code> (1 điểm) và <code style="color: #38E1F0;">.info { color: blue; }</code> (10 điểm) → <strong>Màu xanh (.info) chiến thắng áp đảo</strong> vì có điểm ưu tiên cao hơn!
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 4: TRÙM CUỐI !IMPORTANT -->
+    <section class="slide" id="slide-4" data-total-reveal="3">
+      <div class="slide-header">
+        <div>
+          <span class="slide-badge">3. Quyền năng tối thượng</span>
+          <div class="slide-title">Từ khóa !important</div>
+          <div class="slide-subtitle">Vũ khí phá vỡ mọi quy tắc thang điểm trong CSS</div>
+        </div>
+        <div class="reveal-controller">
+          <span>✨ Hiệu ứng:</span>
+          <span class="reveal-status" id="slide-4-status">0 / 3</span>
+          <button class="reveal-btn" onclick="revealNextInCurrentSlide();">▶ Hiện ý (↓)</button>
+          <button class="reveal-btn" style="background: rgba(255,255,255,0.15);" onclick="revealAllInCurrentSlide();">Hiện hết</button>
+        </div>
+      </div>
+      <div class="slide-body">
+        <div class="grid-2">
+          <div class="code-box reveal-item" style="border-color: #F43F5E;">
+            <div class="code-header">
+              <span>SỬ DỤNG TỪ KHÓA !IMPORTANT</span>
+              <span>CÚ PHÁP</span>
+            </div>
+            <div class="code-content"><span class="selector-kw">p</span> {
+  <span class="prop-kw">color</span>: <span class="val-kw">red !important</span>;
+}
+
+<span class="selector-kw">#tieude</span> {
+  <span class="prop-kw">color</span>: <span class="val-kw">blue</span>;
+}</div>
+          </div>
+
+          <div class="card reveal-item">
+            <div class="card-title" style="color: #F43F5E;"><span>👑</span> Sức mạnh tối cao</div>
+            <p style="font-size: 13.5px; color: #CBD5E1; line-height: 1.6;">
+              Bất kỳ thuộc tính nào gắn đuôi <code style="color: #F43F5E;">!important</code> sẽ lập tức <strong>vượt mặt mọi quy tắc khác</strong>, bất kể quy tắc kia là ID hay Style nội tuyến!
+            </p>
+            <div style="background: rgba(244, 63, 94, 0.1); border: 1px solid #F43F5E; padding: 12px; border-radius: 8px; margin-top: 12px; font-size: 13px; color: #FDA4AF;">
+              ⚠️ <strong>Cảnh báo của SGK (Trang 93):</strong> Tránh lạm dụng <code style="color: #fff;">!important</code> bừa bãi vì nó sẽ phá vỡ quy luật tự nhiên của CSS, khiến việc sửa lỗi và bảo trì trang web sau này vô cùng khó khăn.
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 5: LIVE PLAYGROUND -->
+    <section class="slide" id="slide-5" data-total-reveal="1">
+      <div class="slide-header">
+        <div>
+          <span class="slide-badge">4. Phòng thực hành</span>
+          <div class="slide-title">Live Code Playground — Đấu trường ưu tiên</div>
+          <div class="slide-subtitle">Trực tiếp quan sát xung đột giữa Tag vs Class vs ID vs !important</div>
+        </div>
+        <div class="reveal-controller">
+          <button class="reveal-btn" onclick="loadTemplate('conflict1')">Mẫu: Tag vs Class</button>
+          <button class="reveal-btn" onclick="loadTemplate('conflict2')">Mẫu: Class vs ID</button>
+          <button class="reveal-btn" onclick="loadTemplate('important')">Mẫu: Vũ khí !important</button>
+        </div>
+      </div>
+      <div class="slide-body">
+        <div class="playground-wrapper">
+          <div class="editor-pane">
+            <div class="editor-bar">
+              <span style="color: #F5A623; font-weight: 700; font-family: var(--font-mono);">&lt;/&gt; Mã nguồn HTML + CSS</span>
+              <button class="reveal-btn" onclick="updateLivePlayground()">⚡ Cập nhật</button>
+            </div>
+            <textarea id="playground-code" class="live-code-area" oninput="updateLivePlayground()"></textarea>
+          </div>
+          <div class="preview-pane">
+            <div class="preview-pane-bar">
+              <span style="color: #10B981;">●</span> Kết quả hiển thị (Live Preview)
+            </div>
+            <iframe id="playground-frame" class="preview-iframe"></iframe>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 6: ĐỐ VUI TRẮC NGHIỆM -->
+    <section class="slide" id="slide-6" data-total-reveal="1">
+      <div class="slide-header">
+        <div>
+          <span class="slide-badge">5. Kiểm tra nhanh</span>
+          <div class="slide-title">Đố vui củng cố kiến thức Bài 17</div>
+          <div class="slide-subtitle">3 câu hỏi kiểm tra kỹ năng phân giải xung đột CSS</div>
+        </div>
+      </div>
+      <div class="slide-body">
+        <div class="quiz-card">
+          <div class="quiz-q">Câu 1: Giữa bộ chọn Lớp (.class) và bộ chọn Mã định danh (#id), bộ chọn nào có độ ưu tiên cao hơn?</div>
+          <div class="quiz-options">
+            <button class="quiz-btn" onclick="checkQuiz(this, false, 'q1', 'Class chỉ có 10 điểm, thấp hơn ID.')">A. Bộ chọn Lớp (.class)</button>
+            <button class="quiz-btn" onclick="checkQuiz(this, true, 'q1', 'Chính xác! Bộ chọn ID có 100 điểm, cao gấp 10 lần bộ chọn Class (10 điểm).')">B. Bộ chọn Mã định danh (#id)</button>
+            <button class="quiz-btn" onclick="checkQuiz(this, false, 'q1', 'Hai bộ chọn có trọng số hoàn toàn khác nhau.')">C. Hai bộ chọn bằng điểm nhau</button>
+            <button class="quiz-btn" onclick="checkQuiz(this, false, 'q1', 'Trình duyệt không xét độ dài tên.')">D. Tùy thuộc tên nào dài hơn</button>
+          </div>
+          <div class="quiz-feedback"></div>
+        </div>
+
+        <div class="quiz-card">
+          <div class="quiz-q">Câu 2: Khi hai quy tắc CSS cùng cấp độ định dạng cho 1 thẻ, quy tắc nào sẽ được áp dụng?</div>
+          <div class="quiz-options">
+            <button class="quiz-btn" onclick="checkQuiz(this, false, 'q2', 'Quy tắc viết trước sẽ bị quy tắc viết sau ghi đè.')">A. Quy tắc viết trước</button>
+            <button class="quiz-btn" onclick="checkQuiz(this, true, 'q2', 'Chính xác! Quy tắc viết sau cùng sẽ ghi đè lên các quy tắc trước đó (luật thác đổ).')">B. Quy tắc viết sau cùng</button>
+            <button class="quiz-btn" onclick="checkQuiz(this, false, 'q2', 'Trình duyệt không chọn ngẫu nhiên.')">C. Trình duyệt chọn ngẫu nhiên</button>
+            <button class="quiz-btn" onclick="checkQuiz(this, false, 'q2', 'Trình duyệt vẫn áp dụng bình thường theo luật cascade.')">D. Cả hai đều bị hủy bỏ</button>
+          </div>
+          <div class="quiz-feedback"></div>
+        </div>
+
+        <div class="quiz-card">
+          <div class="quiz-q">Câu 3: Mục đích chính của từ khóa !important là gì?</div>
+          <div class="quiz-options">
+            <button class="quiz-btn" onclick="checkQuiz(this, false, 'q3', 'font-weight: bold mới làm chữ in đậm.')">A. Làm chữ in đậm hơn</button>
+            <button class="quiz-btn" onclick="checkQuiz(this, false, 'q3', '!important không giúp tăng tốc độ tải.')">B. Tăng tốc độ hiển thị trang web</button>
+            <button class="quiz-btn" onclick="checkQuiz(this, true, 'q3', 'Chính xác! !important buộc trình duyệt ưu tiên quy tắc đó cao nhất, vượt qua mọi trọng số khác.')">C. Ép buộc ưu tiên tuyệt đối, ghi đè mọi quy tắc khác</button>
+            <button class="quiz-btn" onclick="checkQuiz(this, false, 'q3', '!important không liên quan đến bảo mật.')">D. Khóa mã nguồn không cho sao chép</button>
+          </div>
+          <div class="quiz-feedback"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 7: GHI NHỚ TRỌNG TÂM -->
+    <section class="slide" id="slide-7" data-total-reveal="3">
+      <div class="slide-header">
+        <div>
+          <span class="slide-badge">6. Tổng kết bài học</span>
+          <div class="slide-title">Ghi nhớ trọng tâm Bài 17</div>
+          <div class="slide-subtitle">Các nguyên tắc vàng giải quyết xung đột CSS</div>
+        </div>
+        <div class="reveal-controller">
+          <span>✨ Hiệu ứng:</span>
+          <span class="reveal-status" id="slide-7-status">0 / 3</span>
+          <button class="reveal-btn" onclick="revealNextInCurrentSlide();">▶ Hiện ý (↓)</button>
+          <button class="reveal-btn" style="background: rgba(255,255,255,0.15);" onclick="revealAllInCurrentSlide();">Hiện hết</button>
+        </div>
+      </div>
+      <div class="slide-body">
+        <div class="grid-3">
+          <div class="card reveal-item" style="border-top: 4px solid #F5A623;">
+            <div class="card-title">1. Thứ tự xuất hiện</div>
+            <p style="font-size: 13.5px; color: #CBD5E1; line-height: 1.6;">
+              Cùng cấp độ ưu tiên thì <strong>viết sau thắng viết trước</strong>.
+            </p>
+          </div>
+          <div class="card reveal-item" style="border-top: 4px solid #38E1F0;">
+            <div class="card-title">2. Thang điểm 1 - 10 - 100</div>
+            <p style="font-size: 13.5px; color: #CBD5E1; line-height: 1.6;">
+              <strong>Tên thẻ (1) &lt; Class (10) &lt; ID (100) &lt; Inline (1000)</strong>.
+            </p>
+          </div>
+          <div class="card reveal-item" style="border-top: 4px solid #F43F5E;">
+            <div class="card-title">3. Cẩn trọng !important</div>
+            <p style="font-size: 13.5px; color: #CBD5E1; line-height: 1.6;">
+              Chỉ dùng khi bắt buộc, không lạm dụng làm rối loạn cấu trúc CSS.
+            </p>
+          </div>
+        </div>
+        <div class="card reveal-item" style="text-align: center; padding: 26px; background: rgba(245, 166, 35, 0.15); border: 1px solid #F5A623;">
+          <h3 style="font-size: 20px; color: #FFFFFF;">🎉 Chúc mừng các em đã làm chủ Mức độ ưu tiên CSS!</h3>
+          <p style="color: #94A3B8; font-size: 14px; margin-top: 6px;">
+            Ở <strong>Bài 18</strong> tiếp theo, chúng ta sẽ bước vào <strong>Thực hành tổng hợp thiết kế trang web</strong> — bài kết tinh toàn bộ kiến thức của Chủ đề 4 để dựng nên một website hoàn chỉnh!
+          </p>
+          <div style="margin-top: 14px;">
+            <button class="reveal-btn" style="font-size: 14px; padding: 8px 20px; background: #F5A623; color: black; font-weight: bold;" onclick="fireConfetti()">🎊 Bắn pháo hoa ăn mừng</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </div>
+
+  <!-- THANH ĐIỀU HƯỚNG DECK -->
+  <div class="deck-nav">
+    <button class="nav-btn" onclick="prevSlide()" title="Slide trước (←)">◀</button>
+    <div class="deck-progress">
+      <div class="deck-progress-bar" id="deckProgressBar"></div>
+    </div>
+    <div class="deck-counter" id="deckCounter">1 / 7</div>
+    <button class="nav-btn" onclick="nextSlide()" title="Slide tiếp theo (→)">▶</button>
+    <button class="nav-btn" onclick="toggleFullScreen()" title="Toàn màn hình (F)">⛶</button>
+    <button class="nav-btn" id="soundBtn" onclick="toggleSound()" title="Bật/Tắt âm thanh (M)">🔊</button>
+  </div>
+
+  <script>
+    let currentSlide = 1;
+    const totalSlides = 7;
+    let soundEnabled = true;
+    let audioCtx = null;
+
+    function getAudioCtx() {
+      if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      if (audioCtx.state === 'suspended') audioCtx.resume();
+      return audioCtx;
+    }
+
+    function playSound(type) {
+      if (!soundEnabled) return;
+      try {
+        const ctx = getAudioCtx();
+        const now = ctx.currentTime;
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+
+        if (type === 'click') {
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(520, now);
+          osc.frequency.exponentialRampToValueAtTime(800, now + 0.08);
+          gain.gain.setValueAtTime(0.12, now);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.08);
+          osc.start(now);
+          osc.stop(now + 0.08);
+        } else if (type === 'success') {
+          osc.type = 'triangle';
+          osc.frequency.setValueAtTime(523, now);
+          osc.frequency.setValueAtTime(659, now + 0.08);
+          osc.frequency.setValueAtTime(783, now + 0.16);
+          gain.gain.setValueAtTime(0.2, now);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.3);
+          osc.start(now);
+          osc.stop(now + 0.3);
+        } else if (type === 'wrong') {
+          osc.type = 'sawtooth';
+          osc.frequency.setValueAtTime(220, now);
+          gain.gain.setValueAtTime(0.2, now);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.25);
+          osc.start(now);
+          osc.stop(now + 0.25);
+        }
+      } catch (e) {}
+    }
+
+    function toggleSound() {
+      soundEnabled = !soundEnabled;
+      document.getElementById('soundBtn').innerText = soundEnabled ? '🔊' : '🔇';
+    }
+
+    function toggleFullScreen() {
+      if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen().catch(() => {});
+      } else {
+        document.exitFullscreen().catch(() => {});
+      }
+    }
+
+    function updateSlide() {
+      document.querySelectorAll('.slide').forEach((s, idx) => {
+        s.classList.toggle('active', idx + 1 === currentSlide);
+      });
+      document.getElementById('deckCounter').innerText = currentSlide + ' / ' + totalSlides;
+      document.getElementById('deckProgressBar').style.width = ((currentSlide - 1) / (totalSlides - 1) * 100) + '%';
+      if (currentSlide === 5) initPlaygroundOnce();
+    }
+
+    function nextSlide() {
+      if (currentSlide < totalSlides) {
+        currentSlide++;
+        playSound('click');
+        updateSlide();
+      }
+    }
+
+    function prevSlide() {
+      if (currentSlide > 1) {
+        currentSlide--;
+        playSound('click');
+        updateSlide();
+      }
+    }
+
+    function revealNextInCurrentSlide() {
+      const slide = document.getElementById('slide-' + currentSlide);
+      if (!slide) return;
+      const items = slide.querySelectorAll('.reveal-item');
+      for (let item of items) {
+        if (!item.classList.contains('revealed')) {
+          item.classList.add('revealed', 'just-revealed');
+          setTimeout(() => item.classList.remove('just-revealed'), 600);
+          playSound('click');
+          updateRevealStatus(slide);
+          return;
+        }
+      }
+    }
+
+    function revealAllInCurrentSlide() {
+      const slide = document.getElementById('slide-' + currentSlide);
+      if (!slide) return;
+      slide.querySelectorAll('.reveal-item').forEach(item => item.classList.add('revealed'));
+      playSound('success');
+      updateRevealStatus(slide);
+    }
+
+    function updateRevealStatus(slide) {
+      const items = slide.querySelectorAll('.reveal-item');
+      const revealed = slide.querySelectorAll('.reveal-item.revealed').length;
+      const statusEl = document.getElementById(slide.id + '-status');
+      if (statusEl) statusEl.innerText = revealed + ' / ' + items.length;
+    }
+
+    document.addEventListener('keydown', (e) => {
+      if (e.target.tagName === 'TEXTAREA' || e.target.tagName === 'INPUT') return;
+      if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown') {
+        e.preventDefault(); nextSlide();
+      } else if (e.key === 'ArrowLeft' || e.key === 'PageUp') {
+        e.preventDefault(); prevSlide();
+      } else if (e.key === 'ArrowDown' || e.key === 'Enter') {
+        e.preventDefault(); revealNextInCurrentSlide();
+      } else if (e.key.toLowerCase() === 'f') {
+        toggleFullScreen();
+      } else if (e.key.toLowerCase() === 'm') {
+        toggleSound();
+      }
+    });
+
+    function checkQuiz(btn, isCorrect, qId, explanation) {
+      const parent = btn.parentElement;
+      const feedback = parent.parentElement.querySelector('.quiz-feedback');
+      parent.querySelectorAll('.quiz-btn').forEach(b => {
+        b.disabled = true;
+        b.style.pointerEvents = 'none';
+      });
+
+      if (isCorrect) {
+        btn.classList.add('correct');
+        playSound('success');
+        feedback.style.display = 'block';
+        feedback.style.background = 'rgba(16, 185, 129, 0.15)';
+        feedback.style.border = '1px solid #10B981';
+        feedback.style.color = '#34D399';
+        feedback.innerHTML = '🎉 <strong>Chính xác!</strong> ' + explanation;
+      } else {
+        btn.classList.add('wrong');
+        playSound('wrong');
+        feedback.style.display = 'block';
+        feedback.style.background = 'rgba(239, 68, 68, 0.15)';
+        feedback.style.border = '1px solid #EF4444';
+        feedback.style.color = '#FCA5A5';
+        feedback.innerHTML = '❌ <strong>Chưa đúng!</strong> ' + explanation;
+      }
+    }
+
+    let playgroundInited = false;
+    const templates = {
+      conflict1: `<style>
+  /* 1. Bộ chọn thẻ: 1 điểm */
+  p {
+    color: blue;
+    font-size: 16px;
+  }
+  /* 2. Bộ chọn class: 10 điểm -> THẮNG BỘ CHỌN THẺ */
+  .highlight {
+    color: #F2683C;
+    font-weight: bold;
+  }
+</style>
+
+<div style="padding: 20px; font-family: sans-serif;">
+  <p>Đoạn văn này chỉ có thẻ p nên hiển thị màu Xanh dương.</p>
+  <p class="highlight">Đoạn văn này có class="highlight" nên màu Cam chiến thắng!</p>
+</div>`,
+
+      conflict2: `<style>
+  /* 1. Class: 10 điểm */
+  .my-btn {
+    background-color: #38E1F0;
+    color: black;
+  }
+  /* 2. ID: 100 điểm -> THẮNG CLASS */
+  #vip-btn {
+    background-color: #F43F5E;
+    color: white;
+  }
+</style>
+
+<div style="padding: 20px; font-family: sans-serif;">
+  <button class="my-btn" id="vip-btn" style="padding: 10px 20px; border: none; border-radius: 8px; font-size: 15px; cursor: pointer;">
+    Nút này có màu Đỏ (#vip-btn) vì ID 100đ thắng Class 10đ!
+  </button>
+</div>`,
+
+      important: `<style>
+  /* Thẻ p có 1 điểm nhưng có !important -> THẮNG CẢ ID 100 ĐIỂM! */
+  p {
+    color: #10B981 !important;
+    font-size: 18px;
+    font-weight: bold;
+  }
+  #super-id {
+    color: #F43F5E;
+  }
+</style>
+
+<div style="padding: 20px; font-family: sans-serif;">
+  <p id="super-id">
+    Đoạn này màu Xanh lá dù có #super-id màu đỏ, nhờ quyền năng của !important!
+  </p>
+</div>`
+    };
+
+    function initPlaygroundOnce() {
+      if (playgroundInited) return;
+      playgroundInited = true;
+      loadTemplate('conflict1');
+    }
+
+    function loadTemplate(key) {
+      playSound('click');
+      document.getElementById('playground-code').value = templates[key];
+      updateLivePlayground();
+    }
+
+    function updateLivePlayground() {
+      const code = document.getElementById('playground-code').value;
+      const frame = document.getElementById('playground-frame');
+      const doc = frame.contentDocument || frame.contentWindow.document;
+      doc.open();
+      doc.write(code);
+      doc.close();
+    }
+
+    function fireConfetti() {
+      playSound('success');
+      const canvas = document.getElementById('confettiCanvas');
+      const ctx = canvas.getContext('2d');
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+
+      const particles = [];
+      const colors = ['#F5A623', '#F43F5E', '#10B981', '#38E1F0', '#A78BFA'];
+
+      for (let i = 0; i < 90; i++) {
+        particles.push({
+          x: canvas.width / 2,
+          y: canvas.height * 0.45,
+          vx: (Math.random() - 0.5) * 16,
+          vy: (Math.random() - 0.7) * 16,
+          size: Math.random() * 8 + 4,
+          color: colors[Math.floor(Math.random() * colors.length)],
+          alpha: 1,
+          rot: Math.random() * 360,
+          vrot: (Math.random() - 0.5) * 12
+        });
+      }
+
+      function render() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        let alive = false;
+        particles.forEach(p => {
+          p.x += p.vx;
+          p.y += p.vy;
+          p.vy += 0.35;
+          p.alpha -= 0.012;
+          p.rot += p.vrot;
+
+          if (p.alpha > 0) {
+            alive = true;
+            ctx.save();
+            ctx.globalAlpha = p.alpha;
+            ctx.translate(p.x, p.y);
+            ctx.rotate(p.rot * Math.PI / 180);
+            ctx.fillStyle = p.color;
+            ctx.fillRect(-p.size / 2, -p.size / 2, p.size, p.size);
+            ctx.restore();
+          }
+        });
+        if (alive) requestAnimationFrame(render);
+        else ctx.clearRect(0, 0, canvas.width, canvas.height);
+      }
+      render();
+    }
+
+    updateSlide();
+  </script>
+</body>
+</html>
