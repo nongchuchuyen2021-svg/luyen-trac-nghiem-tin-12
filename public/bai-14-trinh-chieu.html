@@ -1,0 +1,1211 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bài 14: Định dạng văn bản bằng CSS — Bài giảng điện tử Tin học 12</title>
+  <style>
+    :root {
+      --bg: #070D14;
+      --bg-card: rgba(13, 23, 35, 0.94);
+      --border-card: rgba(56, 225, 240, 0.18);
+      --ink: #FFFFFF;
+      --ink-soft: #94A3B8;
+      --sea: #0D7C86;
+      --sea-light: #38E1F0;
+      --sea-glow: rgba(56, 225, 240, 0.35);
+      --coral: #F2683C;
+      --coral-light: #FF855D;
+      --gold: #F5A623;
+      --gold-light: #FFC043;
+      --leaf: #10B981;
+      --leaf-light: #34D399;
+      --purple: #8B5CF6;
+      --radius-lg: 24px;
+      --radius-md: 16px;
+      --font-main: system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      --font-mono: 'Consolas', 'Fira Code', 'Courier New', monospace;
+      --transition-slide: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.5s ease;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: var(--font-main);
+      background-color: var(--bg);
+      color: var(--ink);
+      overflow: hidden;
+      width: 100vw;
+      height: 100vh;
+      user-select: none;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .bg-mesh {
+      position: fixed;
+      top: 0; left: 0; width: 100vw; height: 100vh;
+      background: radial-gradient(circle at 15% 15%, rgba(13, 124, 134, 0.35) 0%, transparent 45%),
+                  radial-gradient(circle at 85% 80%, rgba(245, 166, 35, 0.22) 0%, transparent 45%),
+                  radial-gradient(circle at 50% 50%, rgba(56, 225, 240, 0.15) 0%, transparent 60%);
+      z-index: 0;
+      pointer-events: none;
+      animation: meshPulse 12s ease-in-out infinite alternate;
+    }
+
+    @keyframes meshPulse {
+      0% { transform: scale(1) translate(0, 0); opacity: 0.9; }
+      100% { transform: scale(1.06) translate(-10px, 10px); opacity: 1; }
+    }
+
+    .floating-symbols {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 1;
+      overflow: hidden;
+    }
+
+    .float-tag {
+      position: absolute;
+      font-family: var(--font-mono);
+      font-size: 14px;
+      font-weight: 700;
+      color: rgba(56, 225, 240, 0.16);
+      border: 1px solid rgba(56, 225, 240, 0.12);
+      padding: 4px 10px;
+      border-radius: 8px;
+      background: rgba(13, 124, 134, 0.05);
+      animation: floatUp 20s linear infinite;
+    }
+
+    @keyframes floatUp {
+      0% { transform: translateY(105vh) rotate(0deg); opacity: 0; }
+      10% { opacity: 0.45; }
+      90% { opacity: 0.45; }
+      100% { transform: translateY(-10vh) rotate(360deg); opacity: 0; }
+    }
+
+    .deck-container {
+      position: relative;
+      width: 100vw;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 10;
+    }
+
+    .slide {
+      position: absolute;
+      width: 92vw;
+      max-width: 1280px;
+      height: 86vh;
+      background: var(--bg-card);
+      border: 1px solid var(--border-card);
+      border-radius: var(--radius-lg);
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6);
+      backdrop-filter: blur(20px);
+      padding: 36px 48px;
+      display: flex;
+      flex-direction: column;
+      opacity: 0;
+      transform: scale(0.96) translateY(24px);
+      pointer-events: none;
+      transition: var(--transition-slide);
+      overflow-y: auto;
+    }
+
+    .slide.active {
+      opacity: 1;
+      transform: scale(1) translateY(0);
+      pointer-events: auto;
+    }
+
+    .slide-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 22px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      padding-bottom: 14px;
+    }
+
+    .slide-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(13, 124, 134, 0.2);
+      border: 1px solid rgba(56, 225, 240, 0.35);
+      color: var(--sea-light);
+      font-size: 11.5px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      padding: 4px 12px;
+      border-radius: 20px;
+      margin-bottom: 6px;
+    }
+
+    .slide-title {
+      font-size: 28px;
+      font-weight: 800;
+      color: #FFFFFF;
+      line-height: 1.25;
+      background: linear-gradient(90deg, #FFFFFF, #E2E8F0);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .slide-subtitle {
+      font-size: 14px;
+      color: var(--ink-soft);
+      margin-top: 3px;
+    }
+
+    .reveal-controller {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 30px;
+      padding: 4px 12px;
+      font-size: 12px;
+      color: var(--ink-soft);
+    }
+
+    .reveal-status {
+      font-family: var(--font-mono);
+      font-weight: 700;
+      color: var(--sea-light);
+    }
+
+    .reveal-btn {
+      background: rgba(13, 124, 134, 0.4);
+      border: 1px solid rgba(56, 225, 240, 0.3);
+      color: white;
+      padding: 4px 10px;
+      border-radius: 14px;
+      font-size: 11px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .reveal-btn:hover {
+      background: var(--sea);
+      color: white;
+    }
+
+    .slide-body {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+
+    .reveal-item {
+      opacity: 0.18;
+      transform: translateY(10px);
+      transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+      filter: blur(1px);
+    }
+
+    .reveal-item.revealed {
+      opacity: 1;
+      transform: translateY(0);
+      filter: blur(0);
+    }
+
+    .reveal-item.just-revealed {
+      box-shadow: 0 0 25px rgba(56, 225, 240, 0.4);
+      border-color: #38E1F0 !important;
+    }
+
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+    .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+
+    .card {
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.09);
+      border-radius: var(--radius-md);
+      padding: 18px 22px;
+      transition: transform 0.3s, border-color 0.3s;
+    }
+
+    .card:hover {
+      transform: translateY(-3px);
+      border-color: rgba(56, 225, 240, 0.3);
+    }
+
+    .card-title {
+      font-size: 16px;
+      font-weight: 700;
+      color: #FFFFFF;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .code-box {
+      background: #0D1520;
+      border: 1px solid rgba(56, 225, 240, 0.25);
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .code-header {
+      background: rgba(255, 255, 255, 0.06);
+      padding: 8px 14px;
+      display: flex;
+      justify-content: space-between;
+      font-size: 12px;
+      font-family: var(--font-mono);
+      color: #94A3B8;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .code-content {
+      padding: 14px 18px;
+      font-family: var(--font-mono);
+      font-size: 13.5px;
+      line-height: 1.6;
+      color: #E2E8F0;
+      white-space: pre-wrap;
+    }
+
+    .tag-kw { color: #38E1F0; font-weight: 700; }
+    .selector-kw { color: #A78BFA; font-weight: 700; }
+    .prop-kw { color: #FF9A64; }
+    .val-kw { color: #56E39F; }
+
+    .sim-panel {
+      background: rgba(13, 23, 35, 0.9);
+      border: 1px solid rgba(56, 225, 240, 0.25);
+      border-radius: var(--radius-md);
+      padding: 16px 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .sim-controls {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .sim-btn {
+      background: rgba(255, 255, 255, 0.07);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      color: #E2E8F0;
+      padding: 7px 14px;
+      border-radius: 8px;
+      font-size: 13px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .sim-btn:hover, .sim-btn.active {
+      background: rgba(56, 225, 240, 0.2);
+      border-color: #38E1F0;
+      color: #38E1F0;
+      font-weight: 700;
+    }
+
+    .typography-preview {
+      background: #FFFFFF;
+      color: #1E293B;
+      padding: 22px;
+      border-radius: 12px;
+      border: 2px solid #38E1F0;
+      transition: all 0.3s;
+    }
+
+    .playground-wrapper {
+      display: grid;
+      grid-template-columns: 1.1fr 1fr;
+      gap: 16px;
+      height: 480px;
+    }
+
+    .editor-pane {
+      background: #0A1118;
+      border: 1px solid rgba(56, 225, 240, 0.3);
+      border-radius: var(--radius-md);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    .editor-bar {
+      background: rgba(255, 255, 255, 0.05);
+      padding: 8px 14px;
+      display: flex;
+      justify-content: space-between;
+      font-size: 12px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .live-code-area {
+      flex: 1;
+      background: transparent;
+      border: none;
+      color: #F8FAFC;
+      font-family: var(--font-mono);
+      font-size: 13.5px;
+      line-height: 1.6;
+      padding: 14px;
+      resize: none;
+      outline: none;
+      white-space: pre;
+    }
+
+    .preview-pane {
+      background: #FFFFFF;
+      border-radius: var(--radius-md);
+      border: 2px solid #38E1F0;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .preview-pane-bar {
+      background: #F1F5F9;
+      padding: 8px 14px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      border-bottom: 1px solid #CBD5E1;
+      font-size: 11px;
+      font-weight: 700;
+      color: #64748B;
+      text-transform: uppercase;
+    }
+
+    .preview-iframe {
+      flex: 1;
+      border: none;
+      width: 100%;
+      height: 100%;
+      background: #FFFFFF;
+    }
+
+    .quiz-card {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 12px;
+      padding: 14px 18px;
+      margin-bottom: 12px;
+    }
+
+    .quiz-q {
+      font-size: 14.5px;
+      font-weight: 600;
+      color: #F1F5F9;
+      margin-bottom: 10px;
+    }
+
+    .quiz-options {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+
+    .quiz-btn {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      color: #CBD5E1;
+      padding: 8px 12px;
+      border-radius: 8px;
+      font-size: 13px;
+      text-align: left;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .quiz-btn:hover {
+      background: rgba(56, 225, 240, 0.15);
+      border-color: #38E1F0;
+      color: #FFFFFF;
+      transform: translateX(4px);
+    }
+
+    .quiz-btn.correct {
+      background: #059669 !important;
+      border-color: #34D399 !important;
+      color: white !important;
+      font-weight: 700;
+    }
+
+    .quiz-btn.wrong {
+      background: #DC2626 !important;
+      border-color: #F87171 !important;
+      color: white !important;
+      animation: shake 0.4s ease;
+    }
+
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      20%, 60% { transform: translateX(-6px); }
+      40%, 80% { transform: translateX(6px); }
+    }
+
+    .quiz-feedback {
+      font-size: 12.5px;
+      margin-top: 6px;
+      padding: 6px 10px;
+      border-radius: 6px;
+      display: none;
+      line-height: 1.4;
+    }
+
+    .deck-nav {
+      position: fixed;
+      bottom: 14px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(10, 17, 24, 0.88);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 40px;
+      padding: 7px 18px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      backdrop-filter: blur(16px);
+      z-index: 100;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
+    }
+
+    .nav-btn {
+      background: transparent;
+      border: none;
+      color: #E2E8F0;
+      font-size: 18px;
+      cursor: pointer;
+      padding: 4px 10px;
+      border-radius: 20px;
+      transition: all 0.2s;
+    }
+
+    .nav-btn:hover {
+      color: #38E1F0;
+      background: rgba(255, 255, 255, 0.1);
+      transform: scale(1.1);
+    }
+
+    .deck-progress {
+      width: 220px;
+      height: 6px;
+      background: rgba(255, 255, 255, 0.15);
+      border-radius: 3px;
+      overflow: hidden;
+    }
+
+    .deck-progress-bar {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, #0D7C86, #38E1F0, #F2683C);
+      transition: width 0.3s;
+    }
+
+    .deck-counter {
+      font-size: 13px;
+      font-weight: 700;
+      color: #94A3B8;
+      font-family: var(--font-mono);
+      min-width: 60px;
+      text-align: center;
+    }
+
+    #confettiCanvas {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100vw; height: 100vh;
+      pointer-events: none;
+      z-index: 999;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="bg-mesh"></div>
+  <div class="floating-symbols">
+    <div class="float-tag" style="left: 6%; animation-delay: 0s;">font-family</div>
+    <div class="float-tag" style="left: 20%; animation-delay: 3s;">font-size: 16px;</div>
+    <div class="float-tag" style="left: 36%; animation-delay: 7s;">text-align: center;</div>
+    <div class="float-tag" style="left: 50%; animation-delay: 2s;">line-height: 1.6;</div>
+    <div class="float-tag" style="left: 66%; animation-delay: 5s;">font-weight: bold;</div>
+    <div class="float-tag" style="left: 80%; animation-delay: 10s;">text-indent: 20px;</div>
+    <div class="float-tag" style="left: 92%; animation-delay: 14s;">letter-spacing</div>
+  </div>
+
+  <canvas id="confettiCanvas"></canvas>
+
+  <div class="deck-container">
+
+    <!-- SLIDE 1: TRANG BÌA -->
+    <section class="slide active" id="slide-1" data-total-reveal="3">
+      <div class="slide-header">
+        <div>
+          <span class="slide-badge">Tin học 12 · Định hướng Tin học ứng dụng (ICT)</span>
+          <div class="slide-title">Bài 14. Định dạng văn bản bằng CSS</div>
+          <div class="slide-subtitle">Sách giáo khoa Kết nối tri thức với cuộc sống (Trang 76 – 80)</div>
+        </div>
+        <div class="reveal-controller">
+          <span>✨ Hiệu ứng:</span>
+          <span class="reveal-status" id="slide-1-status">0 / 3</span>
+          <button class="reveal-btn" onclick="revealNextInCurrentSlide();">▶ Hiện ý (↓)</button>
+          <button class="reveal-btn" style="background: rgba(255,255,255,0.15);" onclick="revealAllInCurrentSlide();">Hiện hết</button>
+        </div>
+      </div>
+      <div class="slide-body">
+        <div class="grid-3" style="margin-top: 10px;">
+          <div class="card reveal-item" style="border-top: 4px solid #38E1F0;">
+            <div class="card-title"><span>🔤</span> Định dạng Phông chữ</div>
+            <p style="color: #94A3B8; font-size: 14px; line-height: 1.6;">
+              Làm chủ các thuộc tính <code style="color: #38E1F0;">font-family</code>, <code style="color: #38E1F0;">font-size</code>, <code style="color: #38E1F0;">font-weight</code>, <code style="color: #38E1F0;">font-style</code>.
+            </p>
+          </div>
+          <div class="card reveal-item" style="border-top: 4px solid #F2683C;">
+            <div class="card-title"><span>📄</span> Định dạng Đoạn văn</div>
+            <p style="color: #94A3B8; font-size: 14px; line-height: 1.6;">
+              Căn chỉnh lề văn bản <code style="color: #FF9A64;">text-align</code>, giãn dòng <code style="color: #FF9A64;">line-height</code>, thụt lề đầu dòng <code style="color: #FF9A64;">text-indent</code>.
+            </p>
+          </div>
+          <div class="card reveal-item" style="border-top: 4px solid #10B981;">
+            <div class="card-title"><span>🌐</span> Phông chữ Trực tuyến</div>
+            <p style="color: #94A3B8; font-size: 14px; line-height: 1.6;">
+              Cách nhúng Google Fonts đẹp mắt, hỗ trợ hiển thị tiếng Việt hoàn hảo trên mọi thiết bị.
+            </p>
+          </div>
+        </div>
+        <div class="card" style="margin-top: 15px; background: rgba(13, 124, 134, 0.1); border: 1px dashed #38E1F0;">
+          <p style="font-size: 14.5px; color: #E2E8F0; line-height: 1.6;">
+            💡 <strong>Tầm quan trọng của Typography:</strong> Hơn 85% thông tin trên trang web là chữ viết. Một trang web có kiểu chữ đẹp, khoảng cách dòng hợp lý sẽ giúp người đọc tiếp thu kiến thức nhẹ nhàng mà không mỏi mắt!
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 2: CÁC THUỘC TÍNH FONT-FAMILY & FONT-SIZE -->
+    <section class="slide" id="slide-2" data-total-reveal="3">
+      <div class="slide-header">
+        <div>
+          <span class="slide-badge">1. Nhóm thuộc tính Phông chữ</span>
+          <div class="slide-title">font-family và font-size</div>
+          <div class="slide-subtitle">Chọn phông chữ dự phòng và các đơn vị đo kích thước chữ trên web</div>
+        </div>
+        <div class="reveal-controller">
+          <span>✨ Hiệu ứng:</span>
+          <span class="reveal-status" id="slide-2-status">0 / 3</span>
+          <button class="reveal-btn" onclick="revealNextInCurrentSlide();">▶ Hiện ý (↓)</button>
+          <button class="reveal-btn" style="background: rgba(255,255,255,0.15);" onclick="revealAllInCurrentSlide();">Hiện hết</button>
+        </div>
+      </div>
+      <div class="slide-body">
+        <div class="grid-2">
+          <div class="card reveal-item">
+            <div class="card-title"><span>🔤</span> Thuộc tính font-family</div>
+            <p style="font-size: 13.5px; color: #CBD5E1; line-height: 1.6;">
+              Chỉ định họ phông chữ hiển thị. Vì không phải máy tính nào cũng cài sẵn mọi loại phông, ta luôn khai báo <strong>danh sách dự phòng</strong>:
+            </p>
+            <div class="code-box" style="margin-top: 8px;">
+              <div class="code-content" style="font-size: 12.5px;"><span class="selector-kw">p</span> {
+  <span class="prop-kw">font-family</span>: <span class="val-kw">'Segoe UI', Arial, sans-serif</span>;
+}</div>
+            </div>
+            <p style="font-size: 12px; color: #94A3B8; margin-top: 6px;">
+              Trình duyệt sẽ tìm font Segoe UI trước, nếu máy không có thì tìm tiếp Arial, cuối cùng dùng font không chân (sans-serif) mặc định.
+            </p>
+          </div>
+
+          <div class="card reveal-item">
+            <div class="card-title"><span>📏</span> Thuộc tính font-size</div>
+            <p style="font-size: 13.5px; color: #CBD5E1; line-height: 1.6;">
+              Quy định kích cỡ hiển thị của chữ. Các đơn vị thông dụng nhất:
+            </p>
+            <ul style="font-size: 13px; color: #CBD5E1; line-height: 1.7; padding-left: 20px; margin-top: 6px;">
+              <li><strong style="color: #38E1F0;">px (Pixel):</strong> Kích thước tuyệt đối (vd: <code style="color: #56E39F;">16px</code>, <code style="color: #56E39F;">24px</code>). Rất dễ kiểm soát.</li>
+              <li><strong style="color: #F5A623;">% (Phần trăm):</strong> Kích thước tỷ lệ so với phần tử cha (vd: <code style="color: #56E39F;">120%</code>).</li>
+              <li><strong style="color: #10B981;">rem / em:</strong> Tỷ lệ tương đối linh hoạt, rất phổ biến cho thiết kế web trên điện thoại.</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="card reveal-item" style="background: rgba(13, 124, 134, 0.1);">
+          <div class="card-title" style="color: #38E1F0;"><span>🎨</span> font-weight & font-style</div>
+          <div class="grid-2" style="font-size: 13.5px; color: #CBD5E1;">
+            <div>• <code style="color: #FF9A64;">font-weight: bold;</code> (chữ đậm) hoặc <code style="color: #FF9A64;">normal;</code> (bình thường).</div>
+            <div>• <code style="color: #FF9A64;">font-style: italic;</code> (chữ nghiêng) dùng để trích dẫn, chú thích.</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 3: CĂN LỀ & GIÃN DÒNG -->
+    <section class="slide" id="slide-3" data-total-reveal="3">
+      <div class="slide-header">
+        <div>
+          <span class="slide-badge">2. Nhóm thuộc tính Đoạn văn</span>
+          <div class="slide-title">text-align, line-height & text-indent</div>
+          <div class="slide-subtitle">Các kỹ thuật bố cục dòng và đoạn văn bản chuẩn mực theo SGK</div>
+        </div>
+        <div class="reveal-controller">
+          <span>✨ Hiệu ứng:</span>
+          <span class="reveal-status" id="slide-3-status">0 / 3</span>
+          <button class="reveal-btn" onclick="revealNextInCurrentSlide();">▶ Hiện ý (↓)</button>
+          <button class="reveal-btn" style="background: rgba(255,255,255,0.15);" onclick="revealAllInCurrentSlide();">Hiện hết</button>
+        </div>
+      </div>
+      <div class="slide-body">
+        <div class="grid-3">
+          <div class="card reveal-item" style="border-top: 4px solid #38E1F0;">
+            <div class="card-title">text-align (Căn lề)</div>
+            <p style="font-size: 13px; color: #CBD5E1; line-height: 1.6;">
+              • <code style="color: #38E1F0;">left</code>: Căn lề trái (mặc định)<br>
+              • <code style="color: #38E1F0;">center</code>: Căn giữa (cho tiêu đề)<br>
+              • <code style="color: #38E1F0;">right</code>: Căn phải (chữ ký, ngày tháng)<br>
+              • <code style="color: #38E1F0;">justify</code>: Căn đều 2 bên (bài báo)
+            </p>
+          </div>
+
+          <div class="card reveal-item" style="border-top: 4px solid #F2683C;">
+            <div class="card-title">line-height (Độ cao dòng)</div>
+            <p style="font-size: 13px; color: #CBD5E1; line-height: 1.6;">
+              Quy định khoảng cách giữa các dòng chữ trong đoạn.<br>
+              Ví dụ: <code style="color: #FF9A64;">line-height: 1.6;</code> hoặc <code style="color: #FF9A64;">150%;</code> giúp chữ không bị dính sát vào nhau, tăng tốc độ đọc 30%.
+            </p>
+          </div>
+
+          <div class="card reveal-item" style="border-top: 4px solid #10B981;">
+            <div class="card-title">text-indent (Thụt lề)</div>
+            <p style="font-size: 13px; color: #CBD5E1; line-height: 1.6;">
+              Thụt lề ký tự đầu tiên của đoạn văn bản vào trong.<br>
+              Ví dụ: <code style="color: #56E39F;">text-indent: 20px;</code> giúp định dạng trang sách văn học hoặc tiểu luận chuẩn chỉ.
+            </p>
+          </div>
+        </div>
+
+        <div class="card reveal-item">
+          <div class="card-title"><span>✨</span> text-decoration (Trang trí gạch chân / gạch ngang)</div>
+          <p style="font-size: 13.5px; color: #CBD5E1; line-height: 1.6;">
+            • <code style="color: #38E1F0;">text-decoration: underline;</code> Gạch chân văn bản.<br>
+            • <code style="color: #F2683C;">text-decoration: line-through;</code> Gạch ngang chữ (thường dùng hiển thị giá cũ giảm giá).<br>
+            • <code style="color: #10B981;">text-decoration: none;</code> <strong>Bí kíp:</strong> Xóa bỏ đường gạch chân mặc định của thẻ liên kết <code style="color: #10B981;">&lt;a&gt;</code>!
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 4: BỘ GIẢ LẬP TYPOGRAPHY TRỰC TIẾP -->
+    <section class="slide" id="slide-4" data-total-reveal="1">
+      <div class="slide-header">
+        <div>
+          <span class="slide-badge">3. Mô phỏng tương tác</span>
+          <div class="slide-title">Bộ giả lập Typography trực quan</div>
+          <div class="slide-subtitle">Bấm nút để thay đổi kiểu chữ, căn lề và độ giãn dòng của đoạn văn bản mẫu</div>
+        </div>
+      </div>
+      <div class="slide-body">
+        <div class="sim-panel">
+          <div class="sim-controls">
+            <span style="font-size: 13px; color: #94A3B8; align-self: center;">Font:</span>
+            <button class="sim-btn active" onclick="setFontFamily('system-ui, sans-serif')">Sans-serif (Hiện đại)</button>
+            <button class="sim-btn" onclick="setFontFamily('Georgia, serif')">Serif (Trang nhã)</button>
+            <button class="sim-btn" onclick="setFontFamily('Consolas, monospace')">Monospace (Lập trình)</button>
+
+            <span style="font-size: 13px; color: #94A3B8; align-self: center; margin-left: 10px;">Căn lề:</span>
+            <button class="sim-btn active" onclick="setTextAlign('left')">Trái (left)</button>
+            <button class="sim-btn" onclick="setTextAlign('center')">Giữa (center)</button>
+            <button class="sim-btn" onclick="setTextAlign('justify')">Đều 2 bên (justify)</button>
+
+            <span style="font-size: 13px; color: #94A3B8; align-self: center; margin-left: 10px;">Giãn dòng:</span>
+            <button class="sim-btn" onclick="setLineHeight('1.2')">1.2 (Sát)</button>
+            <button class="sim-btn active" onclick="setLineHeight('1.7')">1.7 (Thoáng)</button>
+          </div>
+
+          <div id="typography-box" class="typography-preview" style="font-family: system-ui, sans-serif; text-align: left; line-height: 1.7;">
+            <h3 style="font-size: 20px; color: #0D7C86; margin-bottom: 8px;">Trường THPT Na Rì — Khát Vọng Tri Thức</h3>
+            <p style="font-size: 15px; color: #334155; margin-bottom: 0;">
+              Nằm giữa thung lũng xanh mướt của vùng cao Thái Nguyên, ngôi trường là cái nôi nuôi dưỡng ước mơ của biết bao thế hệ học sinh. Với tinh thần đổi mới sáng tạo trong thời đại số, học sinh Na Rì tự tin làm chủ công nghệ thông tin, vươn cao và hội nhập cùng đất nước.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 5: LIVE PLAYGROUND -->
+    <section class="slide" id="slide-5" data-total-reveal="1">
+      <div class="slide-header">
+        <div>
+          <span class="slide-badge">4. Phòng thực hành</span>
+          <div class="slide-title">Live Code Playground — Nghệ thuật chữ</div>
+          <div class="slide-subtitle">Thử nghiệm định dạng font chữ và văn bản cho blog hoặc bài viết trực tuyến</div>
+        </div>
+        <div class="reveal-controller">
+          <button class="reveal-btn" onclick="loadTemplate('news')">Mẫu: Báo điện tử</button>
+          <button class="reveal-btn" onclick="loadTemplate('poem')">Mẫu: Bài thơ kỷ yếu</button>
+          <button class="reveal-btn" onclick="loadTemplate('quote')">Mẫu: Danh ngôn</button>
+        </div>
+      </div>
+      <div class="slide-body">
+        <div class="playground-wrapper">
+          <div class="editor-pane">
+            <div class="editor-bar">
+              <span style="color: #38E1F0; font-weight: 700; font-family: var(--font-mono);">&lt;/&gt; Mã nguồn HTML + CSS</span>
+              <button class="reveal-btn" onclick="updateLivePlayground()">⚡ Cập nhật</button>
+            </div>
+            <textarea id="playground-code" class="live-code-area" oninput="updateLivePlayground()"></textarea>
+          </div>
+          <div class="preview-pane">
+            <div class="preview-pane-bar">
+              <span style="color: #10B981;">●</span> Kết quả hiển thị (Live Preview)
+            </div>
+            <iframe id="playground-frame" class="preview-iframe"></iframe>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 6: ĐỐ VUI TRẮC NGHIỆM -->
+    <section class="slide" id="slide-6" data-total-reveal="1">
+      <div class="slide-header">
+        <div>
+          <span class="slide-badge">5. Kiểm tra nhanh</span>
+          <div class="slide-title">Đố vui củng cố kiến thức Bài 14</div>
+          <div class="slide-subtitle">3 câu hỏi giúp kiểm tra nhanh mức độ hiểu bài</div>
+        </div>
+      </div>
+      <div class="slide-body">
+        <div class="quiz-card">
+          <div class="quiz-q">Câu 1: Thuộc tính nào trong CSS dùng để căn chỉnh lề văn bản (trái, phải, giữa, đều hai bên)?</div>
+          <div class="quiz-options">
+            <button class="quiz-btn" onclick="checkQuiz(this, true, 'q1', 'Chính xác! text-align dùng để căn lề văn bản (left, right, center, justify).')">A. text-align</button>
+            <button class="quiz-btn" onclick="checkQuiz(this, false, 'q1', 'text-indent dùng để thụt lề dòng đầu tiên của đoạn văn.')">B. text-indent</button>
+            <button class="quiz-btn" onclick="checkQuiz(this, false, 'q1', 'line-height quy định độ cao giữa các dòng.')">C. line-height</button>
+            <button class="quiz-btn" onclick="checkQuiz(this, false, 'q1', 'font-style quy định chữ đứng hay nghiêng.')">D. font-style</button>
+          </div>
+          <div class="quiz-feedback"></div>
+        </div>
+
+        <div class="quiz-card">
+          <div class="quiz-q">Câu 2: Để xóa bỏ đường gạch chân mặc định của thẻ liên kết &lt;a&gt;, ta sử dụng cú pháp nào?</div>
+          <div class="quiz-options">
+            <button class="quiz-btn" onclick="checkQuiz(this, false, 'q2', 'text-decoration: underline sẽ tạo thêm gạch chân.')">A. text-decoration: underline;</button>
+            <button class="quiz-btn" onclick="checkQuiz(this, true, 'q2', 'Chính xác! text-decoration: none loại bỏ hoàn toàn đường gạch chân.')">B. text-decoration: none;</button>
+            <button class="quiz-btn" onclick="checkQuiz(this, false, 'q2', 'font-style: normal chỉ làm chữ đứng thẳng, không xóa gạch chân.')">C. font-style: normal;</button>
+            <button class="quiz-btn" onclick="checkQuiz(this, false, 'q2', 'border: none xóa đường viền ngoài, không tác động đến gạch chân chữ.')">D. border: none;</button>
+          </div>
+          <div class="quiz-feedback"></div>
+        </div>
+
+        <div class="quiz-card">
+          <div class="quiz-q">Câu 3: Thuộc tính line-height: 1.6; có ý nghĩa gì đối với đoạn văn bản?</div>
+          <div class="quiz-options">
+            <button class="quiz-btn" onclick="checkQuiz(this, false, 'q3', 'Kích cỡ phông chữ do font-size quyết định.')">A. Tăng kích cỡ chữ lên 1.6 lần</button>
+            <button class="quiz-btn" onclick="checkQuiz(this, true, 'q3', 'Chính xác! line-height quy định khoảng cách độ cao giữa các dòng bằng 1.6 lần cỡ chữ.')">B. Khoảng cách dòng bằng 1.6 lần cỡ chữ</button>
+            <button class="quiz-btn" onclick="checkQuiz(this, false, 'q3', 'Thụt lề do text-indent quy định.')">C. Thụt lề dòng đầu vào 1.6 cm</button>
+            <button class="quiz-btn" onclick="checkQuiz(this, false, 'q3', 'Khoảng cách giữa các chữ do letter-spacing quy định.')">D. Giãn khoảng cách giữa các ký tự</button>
+          </div>
+          <div class="quiz-feedback"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 7: GHI NHỚ TRỌNG TÂM -->
+    <section class="slide" id="slide-7" data-total-reveal="3">
+      <div class="slide-header">
+        <div>
+          <span class="slide-badge">6. Tổng kết bài học</span>
+          <div class="slide-title">Ghi nhớ trọng tâm Bài 14</div>
+          <div class="slide-subtitle">Các nguyên tắc vàng trong nghệ thuật chữ Typography web</div>
+        </div>
+        <div class="reveal-controller">
+          <span>✨ Hiệu ứng:</span>
+          <span class="reveal-status" id="slide-7-status">0 / 3</span>
+          <button class="reveal-btn" onclick="revealNextInCurrentSlide();">▶ Hiện ý (↓)</button>
+          <button class="reveal-btn" style="background: rgba(255,255,255,0.15);" onclick="revealAllInCurrentSlide();">Hiện hết</button>
+        </div>
+      </div>
+      <div class="slide-body">
+        <div class="grid-3">
+          <div class="card reveal-item" style="border-top: 4px solid #38E1F0;">
+            <div class="card-title">1. Họ phông dự phòng</div>
+            <p style="font-size: 13.5px; color: #CBD5E1; line-height: 1.6;">
+              Luôn khai báo chuỗi phông dự phòng kết thúc bằng họ phông chung (vd: <code style="color: #38E1F0;">sans-serif</code>).
+            </p>
+          </div>
+          <div class="card reveal-item" style="border-top: 4px solid #F2683C;">
+            <div class="card-title">2. Độ thoáng dòng</div>
+            <p style="font-size: 13.5px; color: #CBD5E1; line-height: 1.6;">
+              Luôn đặt <code style="color: #FF9A64;">line-height: 1.5 - 1.8;</code> cho các đoạn văn dài để người đọc không bị mỏi mắt.
+            </p>
+          </div>
+          <div class="card reveal-item" style="border-top: 4px solid #10B981;">
+            <div class="card-title">3. Tối ưu liên kết</div>
+            <p style="font-size: 13.5px; color: #CBD5E1; line-height: 1.6;">
+              Dùng <code style="color: #56E39F;">text-decoration: none;</code> khi muốn biến link thành nút bấm hiện đại.
+            </p>
+          </div>
+        </div>
+        <div class="card reveal-item" style="text-align: center; padding: 26px; background: rgba(13, 124, 134, 0.15); border: 1px solid #38E1F0;">
+          <h3 style="font-size: 20px; color: #FFFFFF;">🎉 Chúc mừng các em đã làm chủ Định dạng văn bản CSS!</h3>
+          <p style="color: #94A3B8; font-size: 14px; margin-top: 6px;">
+            Ở <strong>Bài 15</strong> tiếp theo, chúng ta sẽ học cách <strong>Tạo màu cho chữ và nền</strong> — phối màu HEX, RGB, HSL và tạo độ tương phản cuốn hút!
+          </p>
+          <div style="margin-top: 14px;">
+            <button class="reveal-btn" style="font-size: 14px; padding: 8px 20px; background: #0D7C86;" onclick="fireConfetti()">🎊 Bắn pháo hoa ăn mừng</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </div>
+
+  <!-- THANH ĐIỀU HƯỚNG DECK -->
+  <div class="deck-nav">
+    <button class="nav-btn" onclick="prevSlide()" title="Slide trước (←)">◀</button>
+    <div class="deck-progress">
+      <div class="deck-progress-bar" id="deckProgressBar"></div>
+    </div>
+    <div class="deck-counter" id="deckCounter">1 / 7</div>
+    <button class="nav-btn" onclick="nextSlide()" title="Slide tiếp theo (→)">▶</button>
+    <button class="nav-btn" onclick="toggleFullScreen()" title="Toàn màn hình (F)">⛶</button>
+    <button class="nav-btn" id="soundBtn" onclick="toggleSound()" title="Bật/Tắt âm thanh (M)">🔊</button>
+  </div>
+
+  <script>
+    let currentSlide = 1;
+    const totalSlides = 7;
+    let soundEnabled = true;
+    let audioCtx = null;
+
+    function getAudioCtx() {
+      if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      if (audioCtx.state === 'suspended') audioCtx.resume();
+      return audioCtx;
+    }
+
+    function playSound(type) {
+      if (!soundEnabled) return;
+      try {
+        const ctx = getAudioCtx();
+        const now = ctx.currentTime;
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+
+        if (type === 'click') {
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(520, now);
+          osc.frequency.exponentialRampToValueAtTime(800, now + 0.08);
+          gain.gain.setValueAtTime(0.12, now);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.08);
+          osc.start(now);
+          osc.stop(now + 0.08);
+        } else if (type === 'success') {
+          osc.type = 'triangle';
+          osc.frequency.setValueAtTime(523, now);
+          osc.frequency.setValueAtTime(659, now + 0.08);
+          osc.frequency.setValueAtTime(783, now + 0.16);
+          gain.gain.setValueAtTime(0.2, now);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.3);
+          osc.start(now);
+          osc.stop(now + 0.3);
+        } else if (type === 'wrong') {
+          osc.type = 'sawtooth';
+          osc.frequency.setValueAtTime(220, now);
+          gain.gain.setValueAtTime(0.2, now);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.25);
+          osc.start(now);
+          osc.stop(now + 0.25);
+        }
+      } catch (e) {}
+    }
+
+    function toggleSound() {
+      soundEnabled = !soundEnabled;
+      document.getElementById('soundBtn').innerText = soundEnabled ? '🔊' : '🔇';
+    }
+
+    function toggleFullScreen() {
+      if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen().catch(() => {});
+      } else {
+        document.exitFullscreen().catch(() => {});
+      }
+    }
+
+    function updateSlide() {
+      document.querySelectorAll('.slide').forEach((s, idx) => {
+        s.classList.toggle('active', idx + 1 === currentSlide);
+      });
+      document.getElementById('deckCounter').innerText = currentSlide + ' / ' + totalSlides;
+      document.getElementById('deckProgressBar').style.width = ((currentSlide - 1) / (totalSlides - 1) * 100) + '%';
+      if (currentSlide === 5) initPlaygroundOnce();
+    }
+
+    function nextSlide() {
+      if (currentSlide < totalSlides) {
+        currentSlide++;
+        playSound('click');
+        updateSlide();
+      }
+    }
+
+    function prevSlide() {
+      if (currentSlide > 1) {
+        currentSlide--;
+        playSound('click');
+        updateSlide();
+      }
+    }
+
+    function revealNextInCurrentSlide() {
+      const slide = document.getElementById('slide-' + currentSlide);
+      if (!slide) return;
+      const items = slide.querySelectorAll('.reveal-item');
+      for (let item of items) {
+        if (!item.classList.contains('revealed')) {
+          item.classList.add('revealed', 'just-revealed');
+          setTimeout(() => item.classList.remove('just-revealed'), 600);
+          playSound('click');
+          updateRevealStatus(slide);
+          return;
+        }
+      }
+    }
+
+    function revealAllInCurrentSlide() {
+      const slide = document.getElementById('slide-' + currentSlide);
+      if (!slide) return;
+      slide.querySelectorAll('.reveal-item').forEach(item => item.classList.add('revealed'));
+      playSound('success');
+      updateRevealStatus(slide);
+    }
+
+    function updateRevealStatus(slide) {
+      const items = slide.querySelectorAll('.reveal-item');
+      const revealed = slide.querySelectorAll('.reveal-item.revealed').length;
+      const statusEl = document.getElementById(slide.id + '-status');
+      if (statusEl) statusEl.innerText = revealed + ' / ' + items.length;
+    }
+
+    document.addEventListener('keydown', (e) => {
+      if (e.target.tagName === 'TEXTAREA' || e.target.tagName === 'INPUT') return;
+      if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown') {
+        e.preventDefault(); nextSlide();
+      } else if (e.key === 'ArrowLeft' || e.key === 'PageUp') {
+        e.preventDefault(); prevSlide();
+      } else if (e.key === 'ArrowDown' || e.key === 'Enter') {
+        e.preventDefault(); revealNextInCurrentSlide();
+      } else if (e.key.toLowerCase() === 'f') {
+        toggleFullScreen();
+      } else if (e.key.toLowerCase() === 'm') {
+        toggleSound();
+      }
+    });
+
+    function setFontFamily(font) {
+      playSound('click');
+      document.getElementById('typography-box').style.fontFamily = font;
+    }
+
+    function setTextAlign(align) {
+      playSound('click');
+      document.getElementById('typography-box').style.textAlign = align;
+    }
+
+    function setLineHeight(lh) {
+      playSound('click');
+      document.getElementById('typography-box').style.lineHeight = lh;
+    }
+
+    function checkQuiz(btn, isCorrect, qId, explanation) {
+      const parent = btn.parentElement;
+      const feedback = parent.parentElement.querySelector('.quiz-feedback');
+      parent.querySelectorAll('.quiz-btn').forEach(b => {
+        b.disabled = true;
+        b.style.pointerEvents = 'none';
+      });
+
+      if (isCorrect) {
+        btn.classList.add('correct');
+        playSound('success');
+        feedback.style.display = 'block';
+        feedback.style.background = 'rgba(16, 185, 129, 0.15)';
+        feedback.style.border = '1px solid #10B981';
+        feedback.style.color = '#34D399';
+        feedback.innerHTML = '🎉 <strong>Chính xác!</strong> ' + explanation;
+      } else {
+        btn.classList.add('wrong');
+        playSound('wrong');
+        feedback.style.display = 'block';
+        feedback.style.background = 'rgba(239, 68, 68, 0.15)';
+        feedback.style.border = '1px solid #EF4444';
+        feedback.style.color = '#FCA5A5';
+        feedback.innerHTML = '❌ <strong>Chưa đúng!</strong> ' + explanation;
+      }
+    }
+
+    let playgroundInited = false;
+    const templates = {
+      news: `<style>
+  .article-title {
+    font-family: Georgia, serif;
+    font-size: 24px;
+    font-weight: bold;
+    color: #0F172A;
+    text-align: center;
+    border-bottom: 2px solid #0D7C86;
+    padding-bottom: 10px;
+  }
+  .article-body {
+    font-family: 'Segoe UI', Arial, sans-serif;
+    font-size: 15px;
+    line-height: 1.7;
+    color: #334155;
+    text-align: justify;
+    text-indent: 25px;
+  }
+</style>
+
+<div style="padding: 16px;">
+  <div class="article-title">Đổi Mới Giáo Dục Số Tại Vùng Cao</div>
+  <p class="article-body">
+    Việc áp dụng phương pháp học tập trực tuyến kết hợp thực hành trực tiếp đã mang lại luồng sinh khí mới cho học sinh các trường THPT miền núi. Các em không chỉ hiểu lý thuyết mà còn tự tay tạo nên các sản phẩm web thực thụ.
+  </p>
+</div>`,
+
+      poem: `<style>
+  .poem-container {
+    text-align: center;
+    font-family: 'Times New Roman', serif;
+    font-style: italic;
+    font-size: 17px;
+    line-height: 2.0;
+    color: #1E3A8A;
+    background: #EFF6FF;
+    padding: 24px;
+    border-radius: 12px;
+  }
+  .poem-title {
+    font-style: normal;
+    font-weight: bold;
+    font-size: 20px;
+    color: #1D4ED8;
+    margin-bottom: 12px;
+  }
+</style>
+
+<div class="poem-container">
+  <div class="poem-title">Hạt Mầm Tri Thức</div>
+  Tháng năm trôi theo dòng suối nhỏ,<br>
+  Bảng đen còn in dấu phấn bay.<br>
+  Mai này tung cánh muôn phương gió,<br>
+  Vẫn nhớ Na Rì những sớm mai.
+</div>`,
+
+      quote: `<style>
+  .tech-card {
+    background: #0F172A;
+    color: #38E1F0;
+    font-family: 'Consolas', monospace;
+    padding: 20px;
+    border-radius: 10px;
+    line-height: 1.6;
+    letter-spacing: 1px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.4);
+  }
+</style>
+
+<div class="tech-card">
+  &lt;!-- Lời nhắn của lập trình viên --&gt;<br>
+  console.log("Chào mừng bạn đến với thế giới lập trình Web!");<br>
+  function learn() {<br>
+  &nbsp;&nbsp;return "Kiên trì = Thành công";<br>
+  }
+</div>`
+    };
+
+    function initPlaygroundOnce() {
+      if (playgroundInited) return;
+      playgroundInited = true;
+      loadTemplate('news');
+    }
+
+    function loadTemplate(key) {
+      playSound('click');
+      document.getElementById('playground-code').value = templates[key];
+      updateLivePlayground();
+    }
+
+    function updateLivePlayground() {
+      const code = document.getElementById('playground-code').value;
+      const frame = document.getElementById('playground-frame');
+      const doc = frame.contentDocument || frame.contentWindow.document;
+      doc.open();
+      doc.write(code);
+      doc.close();
+    }
+
+    function fireConfetti() {
+      playSound('success');
+      const canvas = document.getElementById('confettiCanvas');
+      const ctx = canvas.getContext('2d');
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+
+      const particles = [];
+      const colors = ['#38E1F0', '#F2683C', '#F5A623', '#10B981', '#8B5CF6'];
+
+      for (let i = 0; i < 90; i++) {
+        particles.push({
+          x: canvas.width / 2,
+          y: canvas.height * 0.45,
+          vx: (Math.random() - 0.5) * 16,
+          vy: (Math.random() - 0.7) * 16,
+          size: Math.random() * 8 + 4,
+          color: colors[Math.floor(Math.random() * colors.length)],
+          alpha: 1,
+          rot: Math.random() * 360,
+          vrot: (Math.random() - 0.5) * 12
+        });
+      }
+
+      function render() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        let alive = false;
+        particles.forEach(p => {
+          p.x += p.vx;
+          p.y += p.vy;
+          p.vy += 0.35;
+          p.alpha -= 0.012;
+          p.rot += p.vrot;
+
+          if (p.alpha > 0) {
+            alive = true;
+            ctx.save();
+            ctx.globalAlpha = p.alpha;
+            ctx.translate(p.x, p.y);
+            ctx.rotate(p.rot * Math.PI / 180);
+            ctx.fillStyle = p.color;
+            ctx.fillRect(-p.size / 2, -p.size / 2, p.size, p.size);
+            ctx.restore();
+          }
+        });
+        if (alive) requestAnimationFrame(render);
+        else ctx.clearRect(0, 0, canvas.width, canvas.height);
+      }
+      render();
+    }
+
+    updateSlide();
+  </script>
+</body>
+</html>
