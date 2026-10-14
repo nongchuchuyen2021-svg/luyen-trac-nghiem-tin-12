@@ -1,0 +1,1361 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bài 23: Chuẩn bị xây dựng trang web — Bài giảng điện tử Tin học 12</title>
+  <style>
+    :root {
+      --bg: #060913;
+      --bg-card: rgba(10, 18, 34, 0.94);
+      --border-card: rgba(99, 102, 241, 0.22);
+      --ink: #FFFFFF;
+      --ink-soft: #94A3B8;
+      --sea: #0D7C86;
+      --sea-light: #38E1F0;
+      --coral: #F2683C;
+      --coral-light: #FF855D;
+      --gold: #F5A623;
+      --gold-light: #FFC043;
+      --leaf: #10B981;
+      --leaf-light: #34D399;
+      --purple: #8B5CF6;
+      --purple-light: #C4B5FD;
+      --indigo: #6366F1;
+      --indigo-light: #A5B4FC;
+      --radius-lg: 24px;
+      --radius-md: 16px;
+      --radius-sm: 10px;
+      --font-main: system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      --font-mono: 'Consolas', 'Fira Code', 'Courier New', monospace;
+      --transition-slide: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.5s ease;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: var(--font-main);
+      background-color: var(--bg);
+      color: var(--ink);
+      overflow: hidden;
+      width: 100vw;
+      height: 100vh;
+      user-select: none;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .bg-mesh {
+      position: fixed;
+      top: 0; left: 0; width: 100vw; height: 100vh;
+      background: radial-gradient(circle at 14% 16%, rgba(99, 102, 241, 0.28) 0%, transparent 45%),
+                  radial-gradient(circle at 86% 82%, rgba(56, 225, 240, 0.22) 0%, transparent 45%),
+                  radial-gradient(circle at 50% 50%, rgba(245, 166, 35, 0.16) 0%, transparent 60%);
+      z-index: 0;
+      pointer-events: none;
+      animation: meshPulse 14s ease-in-out infinite alternate;
+    }
+
+    @keyframes meshPulse {
+      0% { transform: scale(1) translate(0, 0); opacity: 0.9; }
+      100% { transform: scale(1.06) translate(-10px, 12px); opacity: 1; }
+    }
+
+    .floating-symbols {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 1;
+      overflow: hidden;
+    }
+
+    .float-tag {
+      position: absolute;
+      font-family: var(--font-mono);
+      font-size: 13.5px;
+      font-weight: 700;
+      color: rgba(165, 180, 252, 0.35);
+      border: 1px solid rgba(165, 180, 252, 0.22);
+      padding: 5px 12px;
+      border-radius: 8px;
+      background: rgba(99, 102, 241, 0.06);
+      animation: floatUp 24s linear infinite;
+    }
+
+    @keyframes floatUp {
+      0% { transform: translateY(105vh) rotate(0deg); opacity: 0; }
+      10% { opacity: 0.55; }
+      90% { opacity: 0.55; }
+      100% { transform: translateY(-10vh) rotate(360deg); opacity: 0; }
+    }
+
+    .deck-container {
+      position: relative;
+      width: 100vw;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 10;
+    }
+
+    .slide {
+      position: absolute;
+      width: 92vw;
+      max-width: 1280px;
+      height: 86vh;
+      background: var(--bg-card);
+      border: 1px solid var(--border-card);
+      border-radius: var(--radius-lg);
+      box-shadow: 0 24px 70px rgba(0, 0, 0, 0.7);
+      backdrop-filter: blur(22px);
+      padding: 34px 46px;
+      display: flex;
+      flex-direction: column;
+      opacity: 0;
+      transform: scale(0.96) translateY(24px);
+      pointer-events: none;
+      transition: var(--transition-slide);
+      overflow-y: auto;
+    }
+
+    .slide.active {
+      opacity: 1;
+      transform: scale(1) translateY(0);
+      pointer-events: auto;
+    }
+
+    .slide::-webkit-scrollbar { width: 6px; }
+    .slide::-webkit-scrollbar-thumb { background: rgba(99, 102, 241, 0.3); border-radius: 4px; }
+
+    .slide-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 20px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      padding-bottom: 14px;
+      flex-shrink: 0;
+    }
+
+    .slide-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(99, 102, 241, 0.16);
+      border: 1px solid rgba(99, 102, 241, 0.38);
+      color: var(--indigo-light);
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      padding: 4px 12px;
+      border-radius: 20px;
+      margin-bottom: 6px;
+    }
+
+    .slide-title {
+      font-size: 27px;
+      font-weight: 800;
+      color: #FFFFFF;
+      line-height: 1.25;
+      background: linear-gradient(90deg, #FFFFFF, #C7D2FE);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .slide-subtitle {
+      font-size: 13.5px;
+      color: var(--ink-soft);
+      margin-top: 3px;
+    }
+
+    .reveal-controller {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 30px;
+      padding: 4px 12px;
+      font-size: 12px;
+      color: var(--ink-soft);
+      flex-shrink: 0;
+    }
+
+    .reveal-status {
+      font-family: var(--font-mono);
+      font-weight: 700;
+      color: var(--indigo-light);
+    }
+
+    .reveal-btn {
+      background: rgba(99, 102, 241, 0.25);
+      border: 1px solid rgba(99, 102, 241, 0.45);
+      color: white;
+      padding: 4px 10px;
+      border-radius: 14px;
+      font-size: 11px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .reveal-btn:hover {
+      background: var(--indigo);
+      color: #FFFFFF;
+    }
+
+    .slide-body {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .reveal-item {
+      opacity: 0.15;
+      transform: translateY(10px);
+      transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+      filter: blur(1.5px);
+    }
+
+    .reveal-item.revealed {
+      opacity: 1;
+      transform: translateY(0);
+      filter: blur(0);
+    }
+
+    .reveal-item.just-revealed {
+      box-shadow: 0 0 25px rgba(99, 102, 241, 0.4);
+      border-color: var(--indigo-light) !important;
+    }
+
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+    .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
+
+    .card {
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.09);
+      border-radius: var(--radius-md);
+      padding: 16px 20px;
+      transition: transform 0.3s, border-color 0.3s, background 0.3s;
+    }
+
+    .card:hover {
+      transform: translateY(-3px);
+      border-color: rgba(99, 102, 241, 0.4);
+      background: rgba(255, 255, 255, 0.06);
+    }
+
+    .card-title {
+      font-size: 15.5px;
+      font-weight: 700;
+      color: #FFFFFF;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .card-desc {
+      font-size: 13.5px;
+      color: var(--ink-soft);
+      line-height: 1.55;
+    }
+
+    .highlight-box {
+      background: rgba(99, 102, 241, 0.14);
+      border: 1px solid rgba(99, 102, 241, 0.35);
+      border-radius: var(--radius-md);
+      padding: 16px 20px;
+      font-size: 14.5px;
+      line-height: 1.6;
+      color: #E0E7FF;
+    }
+
+    .highlight-box strong { color: #C7D2FE; }
+
+    /* FOOTER THANH ĐIỀU HƯỚNG */
+    .deck-footer {
+      position: fixed;
+      bottom: 14px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background: rgba(10, 16, 28, 0.92);
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      border-radius: 40px;
+      padding: 8px 20px;
+      backdrop-filter: blur(20px);
+      z-index: 100;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
+    }
+
+    .nav-btn {
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      color: white;
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 15px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .nav-btn:hover {
+      background: var(--indigo);
+      color: #FFFFFF;
+      border-color: var(--indigo-light);
+      transform: scale(1.08);
+    }
+
+    .deck-progress-container {
+      width: 140px;
+      height: 6px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 3px;
+      overflow: hidden;
+    }
+
+    .deck-progress-bar {
+      height: 100%;
+      background: linear-gradient(90deg, var(--indigo), var(--sea-light));
+      width: 0%;
+      transition: width 0.3s ease;
+    }
+
+    .deck-counter {
+      font-family: var(--font-mono);
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--indigo-light);
+      min-width: 52px;
+      text-align: center;
+    }
+
+    /* MINI QUIZ */
+    .quiz-options {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-top: 12px;
+    }
+
+    .quiz-btn {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: var(--radius-sm);
+      padding: 12px 18px;
+      color: #FFFFFF;
+      font-size: 14px;
+      text-align: left;
+      cursor: pointer;
+      transition: all 0.25s;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .quiz-btn:hover {
+      background: rgba(99, 102, 241, 0.18);
+      border-color: var(--indigo-light);
+      transform: translateX(4px);
+    }
+
+    .quiz-btn.correct {
+      background: rgba(16, 185, 129, 0.25) !important;
+      border-color: #10B981 !important;
+      color: #34D399 !important;
+    }
+
+    .quiz-btn.wrong {
+      background: rgba(239, 68, 68, 0.25) !important;
+      border-color: #EF4444 !important;
+      color: #FCA5A5 !important;
+    }
+
+    .quiz-feedback {
+      margin-top: 12px;
+      padding: 12px 16px;
+      border-radius: var(--radius-sm);
+      font-size: 13.5px;
+      line-height: 1.5;
+      display: none;
+    }
+
+    /* WEB INSPECTOR MOCKUP */
+    .web-mockup {
+      background: #0D1524;
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      border-radius: 12px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .browser-bar {
+      background: rgba(255, 255, 255, 0.06);
+      padding: 8px 14px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      font-family: var(--font-mono);
+      font-size: 12px;
+    }
+
+    .mock-zone {
+      padding: 14px;
+      border: 1px dashed rgba(255, 255, 255, 0.15);
+      border-radius: 8px;
+      margin: 8px;
+      transition: all 0.2s;
+      cursor: pointer;
+    }
+
+    .mock-zone:hover, .mock-zone.active {
+      border-color: var(--indigo-light);
+      background: rgba(99, 102, 241, 0.15);
+    }
+
+    #confettiCanvas {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 999;
+    }
+  </style>
+</head>
+<body>
+  <div class="bg-mesh"></div>
+  <canvas id="confettiCanvas"></canvas>
+
+  <div class="floating-symbols">
+    <div class="float-tag" style="left: 6%; animation-delay: 0s;">Header & Favicon 🌐</div>
+    <div class="float-tag" style="left: 26%; animation-delay: 5s;">Body Blocks 🧩</div>
+    <div class="float-tag" style="left: 48%; animation-delay: 2s;">Footer & Copyright 📜</div>
+    <div class="float-tag" style="left: 70%; animation-delay: 8s;">Sans Serif Arial 🔤</div>
+    <div class="float-tag" style="left: 88%; animation-delay: 3s;">Google Sites Studio 🏗️</div>
+  </div>
+
+  <div class="deck-container">
+    <!-- SLIDE 1: BÌA BÀI GIẢNG -->
+    <div class="slide active" id="slide-1">
+      <div style="flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; gap: 20px;">
+        <div class="slide-badge" style="font-size: 13px; padding: 6px 18px;">CHỦ ĐỀ 7: ỨNG DỤNG TIN HỌC · THIẾT KẾ WEB GOOGLE SITES</div>
+        <h1 style="font-size: 44px; font-weight: 900; line-height: 1.2; max-width: 960px; background: linear-gradient(135deg, #FFFFFF 30%, #A5B4FC 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">
+          Bài 23: Chuẩn Bị Xây Dựng Trang Web
+        </h1>
+        <p style="font-size: 18px; color: var(--ink-soft); max-width: 780px; line-height: 1.6;">
+          Nắm vững 3 thành phần cốt lõi của một trang web (Đầu trang, Thân trang, Chân trang) và quy trình 3 bước chuẩn bị bài bản trước khi dựng website bằng Google Sites
+        </p>
+        <div style="display: flex; gap: 14px; margin-top: 10px;">
+          <button onclick="nextSlide()" class="reveal-btn" style="padding: 12px 30px; font-size: 15px; border-radius: 30px; background: linear-gradient(135deg, #6366F1, #38E1F0); color: #060913; font-weight: 800; box-shadow: 0 10px 25px rgba(99, 102, 241, 0.4);">
+            Bắt đầu khám phá 🚀
+          </button>
+        </div>
+        <div style="font-size: 13px; color: rgba(255, 255, 255, 0.4); margin-top: 20px;">
+          Trường THPT Na Rì · Dành cho giáo viên & học sinh lớp 12
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 2: KHỞI ĐỘNG - BƯỚC ĐI CỦA WEB CREATOR -->
+    <div class="slide" id="slide-2">
+      <div class="slide-header">
+        <div>
+          <div class="slide-badge">01 · KHỞI ĐỘNG</div>
+          <div class="slide-title">Trước Khi Xây Dựng Một Ngôi Nhà Số...</div>
+          <div class="slide-subtitle">Vì sao người kiến trúc sư trang web phải chuẩn bị trước khi vẽ?</div>
+        </div>
+        <div class="reveal-controller">
+          <span>Bước: <strong class="reveal-status" id="slide-2-status">0 / 3</strong></span>
+          <button class="reveal-btn" onclick="revealNextInCurrentSlide()">Tiếp ⤓</button>
+          <button class="reveal-btn" onclick="revealAllInCurrentSlide()">Hiện hết</button>
+        </div>
+      </div>
+      <div class="slide-body">
+        <div class="highlight-box reveal-item" style="font-size: 15.5px;">
+          🤔 <strong>Tình huống:</strong> Nếu bạn được giao làm trang web giới thiệu trường THPT Na Rì hoặc quảng bá danh lam thắng cảnh quê hương Bắc Kạn, bạn sẽ mở máy tính kéo thả bừa bãi hay cần phác thảo ý tưởng trước?
+        </div>
+        <div class="grid-3">
+          <div class="card reveal-item">
+            <div style="font-size: 26px; margin-bottom: 6px;">🎯 Xác định Mục đích</div>
+            <div class="card-desc">Làm trang web để làm gì? Để giới thiệu thông tin, bán hàng, chia sẻ ảnh hay kêu gọi sự kiện?</div>
+          </div>
+          <div class="card reveal-item">
+            <div style="font-size: 26px; margin-bottom: 6px;">👥 Thấu hiểu Người xem</div>
+            <div class="card-desc">Ai là người sẽ đọc trang web? Học sinh, phụ huynh, du khách hay đối tác nước ngoài?</div>
+          </div>
+          <div class="card reveal-item">
+            <div style="font-size: 26px; margin-bottom: 6px;">🎨 Quy chuẩn Thẩm mỹ</div>
+            <div class="card-desc">Chọn phông chữ nào dễ đọc nhất? Phối hợp bảng màu 5 màu thế nào để trang nhã, không chói mắt?</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 3: BỨC TRANH GIẢI PHẪU 3 PHẦN TRANG WEB -->
+    <div class="slide" id="slide-3">
+      <div class="slide-header">
+        <div>
+          <div class="slide-badge">02 · CẤU TRÚC TỔNG THỂ</div>
+          <div class="slide-title">Giải Phẫu Cấu Trúc 3 Phần Chính Của Trang Web</div>
+          <div class="slide-subtitle">Bất kỳ trang web chuyên nghiệp nào trên thế giới cũng tuân thủ cấu trúc này</div>
+        </div>
+        <div class="reveal-controller">
+          <span>Bước: <strong class="reveal-status" id="slide-3-status">0 / 3</strong></span>
+          <button class="reveal-btn" onclick="revealNextInCurrentSlide()">Tiếp ⤓</button>
+          <button class="reveal-btn" onclick="revealAllInCurrentSlide()">Hiện hết</button>
+        </div>
+      </div>
+      <div class="slide-body">
+        <div class="grid-3" style="flex: 1;">
+          <div class="card reveal-item" style="border-top: 4px solid var(--sea-light);">
+            <div class="card-title" style="color: var(--sea-light);">1. Phần Đầu Trang (Header)</div>
+            <div class="card-desc">
+              Như trang bìa thu gọn của một cuốn sách:<br>
+              • Logo & Tên website.<br>
+              • Thanh điều hướng (Menu).<br>
+              • Chức năng tìm kiếm.<br>
+              • Tiêu đề & Thông tin tóm tắt.<br>
+              • Biểu tượng Favicon trên tab.
+            </div>
+          </div>
+          <div class="card reveal-item" style="border-top: 4px solid var(--indigo);">
+            <div class="card-title" style="color: var(--indigo-light);">2. Phần Thân Trang (Body)</div>
+            <div class="card-desc">
+              Trái tim chứa nội dung chính:<br>
+              • Tổ chức thành các khối hình chữ nhật.<br>
+              • Mỗi khối có tiêu đề riêng biệt.<br>
+              • Chứa văn bản, hình ảnh, video.<br>
+              • Nhúng bản đồ Google Maps, biểu mẫu...
+            </div>
+          </div>
+          <div class="card reveal-item" style="border-top: 4px solid var(--gold);">
+            <div class="card-title" style="color: var(--gold-light);">3. Phần Chân Trang (Footer)</div>
+            <div class="card-desc">
+              Khép lại trang web chuyên nghiệp:<br>
+              • Thông tin thương hiệu & bản quyền ©.<br>
+              • Chính sách bảo mật & điều khoản.<br>
+              • Địa chỉ, điện thoại, email liên hệ.<br>
+              • Liên kết mạng xã hội (Facebook, Zalo).
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 4: CHI TIẾT PHẦN ĐẦU TRANG (HEADER) -->
+    <div class="slide" id="slide-4">
+      <div class="slide-header">
+        <div>
+          <div class="slide-badge">03 · ĐẦU TRANG (HEADER)</div>
+          <div class="slide-title">Khám Phá Chi Tiết Phần Đầu Trang (Header)</div>
+          <div class="slide-subtitle">Điểm chạm đầu tiên giữ chân người dùng trong 5 giây đầu tiên</div>
+        </div>
+        <div class="reveal-controller">
+          <span>Bước: <strong class="reveal-status" id="slide-4-status">0 / 4</strong></span>
+          <button class="reveal-btn" onclick="revealNextInCurrentSlide()">Tiếp ⤓</button>
+          <button class="reveal-btn" onclick="revealAllInCurrentSlide()">Hiện hết</button>
+        </div>
+      </div>
+      <div class="slide-body">
+        <div class="grid-2">
+          <div class="card reveal-item">
+            <div class="card-title" style="color: var(--sea-light);">Logo & Tên trang web</div>
+            <div class="card-desc">Đặt ở góc trên bên trái, định vị thương hiệu; thường có liên kết bấm vào để trở về Trang chủ (Home).</div>
+          </div>
+          <div class="card reveal-item">
+            <div class="card-title" style="color: var(--indigo-light);">Thanh điều hướng (Navigation Bar)</div>
+            <div class="card-desc">Bảng chọn các chuyên mục chính; kèm theo kính lúp tìm kiếm (Search) giúp tìm bài viết nhanh chóng.</div>
+          </div>
+          <div class="card reveal-item">
+            <div class="card-title" style="color: var(--gold-light);">Hình nền Banner & Tiêu đề lớn</div>
+            <div class="card-desc">Bức ảnh khổ lớn truyền tải cảm xúc và thông điệp chào mừng nổi bật nhất của trang web.</div>
+          </div>
+          <div class="card reveal-item">
+            <div class="card-title" style="color: var(--coral-light);">Phần thông báo (Announcement Bar)</div>
+            <div class="card-desc">Dải thông báo hẹp đặt trên cùng đầu trang (ví dụ thông báo bảo trì, lịch thi mới, khuyến mãi đặc biệt).</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 5: FAVICON VÀ URL -->
+    <div class="slide" id="slide-5">
+      <div class="slide-header">
+        <div>
+          <div class="slide-badge">04 · FAVICON & URL</div>
+          <div class="slide-title">Bí Mật Về Favicon & Địa Chỉ URL Của Website</div>
+          <div class="slide-subtitle">Nhận diện thương hiệu nhỏ bé nhưng có sức mạnh phi thường</div>
+        </div>
+        <div class="reveal-controller">
+          <span>Bước: <strong class="reveal-status" id="slide-5-status">0 / 3</strong></span>
+          <button class="reveal-btn" onclick="revealNextInCurrentSlide()">Tiếp ⤓</button>
+          <button class="reveal-btn" onclick="revealAllInCurrentSlide()">Hiện hết</button>
+        </div>
+      </div>
+      <div class="slide-body">
+        <div class="highlight-box reveal-item" style="font-size: 15.5px;">
+          🏷️ <strong>Khái niệm Favicon (Favorite Icon):</strong><br>
+          <em>"Favicon là biểu tượng nhỏ hiển thị ở phía trước tiêu đề trang web trên tab của trình duyệt web. <strong>Favicon đại diện cho cả website</strong> (chứa nhiều trang web liên quan), không nhất thiết chỉ thu gọn từ logo của một trang đơn lẻ."</em>
+        </div>
+        <div class="grid-2">
+          <div class="card reveal-item">
+            <div class="card-title" style="color: var(--sea-light);">🌟 Tác dụng của Favicon</div>
+            <div class="card-desc">
+              Khi người dùng mở 20-30 tab trình duyệt cùng lúc, tiêu đề chữ bị co hẹp lại, chỉ có biểu tượng Favicon giúp họ nhận diện ngay tab Facebook, YouTube hay trang web trường học.
+            </div>
+          </div>
+          <div class="card reveal-item">
+            <div class="card-title" style="color: var(--gold-light);">🔗 Địa chỉ truy cập URL</div>
+            <div class="card-desc">
+              Mỗi trang web có một địa chỉ URL duy nhất (Uniform Resource Locator) dạng <code>https://sites.google.com/view/thptnari</code> để trình duyệt tìm và nạp trang web từ máy chủ.
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 6: CHI TIẾT PHẦN THÂN TRANG (BODY) -->
+    <div class="slide" id="slide-6">
+      <div class="slide-header">
+        <div>
+          <div class="slide-badge">05 · THÂN TRANG (BODY)</div>
+          <div class="slide-title">Bố Cục Khối Hình Chữ Nhật Trong Thân Trang</div>
+          <div class="slide-subtitle">Cách tổ chức nội dung khoa học giúp mắt người đọc quét thông tin dễ dàng</div>
+        </div>
+        <div class="reveal-controller">
+          <span>Bước: <strong class="reveal-status" id="slide-6-status">0 / 3</strong></span>
+          <button class="reveal-btn" onclick="revealNextInCurrentSlide()">Tiếp ⤓</button>
+          <button class="reveal-btn" onclick="revealAllInCurrentSlide()">Hiện hết</button>
+        </div>
+      </div>
+      <div class="slide-body">
+        <div class="card reveal-item" style="border-left: 4px solid var(--indigo);">
+          <div class="card-title" style="color: var(--indigo-light); font-size: 17px;">
+            🧱 Cấu trúc khối hình chữ nhật độc lập (Content Blocks)
+          </div>
+          <div class="card-desc" style="font-size: 14.5px;">
+            SGK mô tả: Thân trang được tổ chức thành nhiều khối hình chữ nhật nối tiếp nhau. <strong>Mỗi khối trình bày một nội dung cụ thể với tiêu đề riêng</strong>. Điều này giúp bố cục mạch lạc, người xem không bị ngợp chữ.
+          </div>
+        </div>
+        <div class="grid-3">
+          <div class="card reveal-item">
+            <div class="card-title">📝 Khối Văn bản & Ảnh</div>
+            <div class="card-desc">Bố cục 1 cột hoặc 2-3 cột đối xứng, kết hợp bài viết và ảnh chụp trực quan.</div>
+          </div>
+          <div class="card reveal-item">
+            <div class="card-title">🗺️ Khối Ứng dụng nhúng</div>
+            <div class="card-desc">Nhúng bản đồ chỉ đường Google Maps, dự báo thời tiết, video bài giảng YouTube.</div>
+          </div>
+          <div class="card reveal-item">
+            <div class="card-title">📋 Khối Biểu mẫu thu thập</div>
+            <div class="card-desc">Nhúng Google Forms khảo sát ý kiến, đăng ký câu lạc bộ hoặc form liên hệ góp ý.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 7: CHI TIẾT PHẦN CHÂN TRANG (FOOTER) -->
+    <div class="slide" id="slide-7">
+      <div class="slide-header">
+        <div>
+          <div class="slide-badge">06 · CHÂN TRANG (FOOTER)</div>
+          <div class="slide-title">Chân Trang (Footer) — Sự Khép Lại Chuyên Nghiệp</div>
+          <div class="slide-subtitle">Nơi tạo dựng uy tín pháp lý và kênh liên lạc cho người dùng</div>
+        </div>
+        <div class="reveal-controller">
+          <span>Bước: <strong class="reveal-status" id="slide-7-status">0 / 3</strong></span>
+          <button class="reveal-btn" onclick="revealNextInCurrentSlide()">Tiếp ⤓</button>
+          <button class="reveal-btn" onclick="revealAllInCurrentSlide()">Hiện hết</button>
+        </div>
+      </div>
+      <div class="slide-body">
+        <div class="grid-3">
+          <div class="card reveal-item">
+            <div class="card-title" style="color: var(--gold-light);">⚖️ Bản quyền & Pháp lý</div>
+            <div class="card-desc">Dòng thông báo bản quyền: <code>© 2026 Trường THPT Na Rì. All rights reserved.</code> cùng điều khoản bảo mật thông tin.</div>
+          </div>
+          <div class="card reveal-item">
+            <div class="card-title" style="color: var(--sea-light);">📞 Thông tin liên hệ</div>
+            <div class="card-desc">Địa chỉ cơ quan, số điện thoại văn phòng, email liên hệ chính thức và giờ làm việc đón tiếp phụ huynh.</div>
+          </div>
+          <div class="card reveal-item">
+            <div class="card-title" style="color: var(--leaf-light);">🌐 Kênh mạng xã hội</div>
+            <div class="card-desc">Các biểu tượng icon liên kết dẫn đến trang Fanpage Facebook, kênh YouTube hoặc nhóm Zalo chính thức của nhà trường.</div>
+          </div>
+        </div>
+        <div class="highlight-box reveal-item" style="font-size: 13.5px;">
+          💡 <strong>Quy tắc cỡ chữ:</strong> Phần chân trang thường sử dụng <strong>cỡ chữ nhỏ nhất</strong> trong toàn bộ trang web vì chứa các thông tin bổ trợ, không cần nhấn mạnh quá mức.
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 8: TRẠM TƯƠNG TÁC GIẢI PHẪU TRANG WEB MẪU -->
+    <div class="slide" id="slide-8">
+      <div class="slide-header">
+        <div>
+          <div class="slide-badge">07 · TRẠM TƯƠNG TÁC</div>
+          <div class="slide-title">Trạm Tương Tác: Soi Kính Lúp Vào Trang Web</div>
+          <div class="slide-subtitle">Nhấp vào từng vùng trên trang web mô phỏng để xem phân tích thành phần</div>
+        </div>
+        <div class="reveal-controller">
+          <span style="color: var(--indigo-light); font-weight: 700;">Tương tác mô phỏng</span>
+        </div>
+      </div>
+      <div class="slide-body">
+        <div class="grid-2" style="flex: 1;">
+          <div class="web-mockup">
+            <div class="browser-bar mock-zone" onclick="inspectZone('tab', this)">
+              <span style="color: #EF4444;">●</span> <span style="color: #F5A623;">●</span> <span style="color: #10B981;">●</span>
+              <span style="margin-left: 10px;">⭐ [Favicon] THPT Na Rì — Cổng Thông Tin</span>
+            </div>
+            <div class="mock-zone" onclick="inspectZone('header', this)" style="background: rgba(13, 124, 134, 0.2);">
+              <div style="display: flex; justify-content: space-between; font-size: 12px; font-weight: 700;">
+                <span>🏫 LOGO · THPT NA RÌ</span>
+                <span>Trang Chủ | Giới Thiệu | Tin Tức | 🔍</span>
+              </div>
+              <div style="font-size: 16px; font-weight: 800; text-align: center; margin: 16px 0; color: #38E1F0;">
+                CHÀO MỪNG NĂM HỌC MỚI 2026 - 2027
+              </div>
+            </div>
+            <div class="mock-zone" onclick="inspectZone('body', this)" style="background: rgba(99, 102, 241, 0.1);">
+              <div style="font-size: 12px; font-weight: 700; color: #A5B4FC;">KHỐI NỘI DUNG 1: TIN HOẠT ĐỘNG ĐOÀN</div>
+              <div style="font-size: 11.5px; color: var(--ink-soft); margin-top: 4px;">Hội thảo hướng nghiệp CNTT lớp 12 diễn ra sôi nổi...</div>
+            </div>
+            <div class="mock-zone" onclick="inspectZone('footer', this)" style="background: rgba(245, 166, 35, 0.1);">
+              <div style="font-size: 11px; text-align: center; color: #CBD5E1;">
+                © 2026 THPT Na Rì · Hotline: 0209.xxx.xxx · Facebook | Zalo
+              </div>
+            </div>
+          </div>
+          <div class="card" id="inspectorBox" style="display: flex; flex-direction: column; justify-content: center; border-color: var(--indigo);">
+            <div style="font-size: 18px; font-weight: 800; color: #FFFFFF;" id="inspTitle">👉 Nhấp vào một vùng bên trái</div>
+            <div style="font-size: 14px; color: var(--ink-soft); line-height: 1.6; margin-top: 10px;" id="inspDesc">
+              Khám phá cấu trúc chuẩn SGK của từng thành phần trên trang web!
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 9: QUY TRÌNH 3 BƯỚC CHUẨN BỊ -->
+    <div class="slide" id="slide-9">
+      <div class="slide-header">
+        <div>
+          <div class="slide-badge">08 · QUY TRÌNH CHUẨN BỊ</div>
+          <div class="slide-title">Ba Bước Chuẩn Bị Xây Dựng Trang Web Chuẩn SGK</div>
+          <div class="slide-subtitle">Quy trình chuyên nghiệp từ ý tưởng trên giấy đến sản phẩm số</div>
+        </div>
+        <div class="reveal-controller">
+          <span>Bước: <strong class="reveal-status" id="slide-9-status">0 / 3</strong></span>
+          <button class="reveal-btn" onclick="revealNextInCurrentSlide()">Tiếp ⤓</button>
+          <button class="reveal-btn" onclick="revealAllInCurrentSlide()">Hiện hết</button>
+        </div>
+      </div>
+      <div class="slide-body">
+        <div class="grid-3" style="flex: 1;">
+          <div class="card reveal-item" style="border-top: 4px solid var(--sea-light);">
+            <div style="font-size: 26px; margin-bottom: 6px;">💡 BƯỚC 1</div>
+            <div class="card-title" style="color: var(--sea-light);">Định hình ý tưởng</div>
+            <div class="card-desc" style="line-height: 1.6;">
+              • Xác định <strong>Mục đích</strong> của trang web.<br>
+              • Xác định <strong>Đối tượng phục vụ</strong>.<br>
+              • Thiết lập các yêu cầu về nội dung, kiến trúc và mỹ thuật cần đạt được.
+            </div>
+          </div>
+          <div class="card reveal-item" style="border-top: 4px solid var(--indigo);">
+            <div style="font-size: 26px; margin-bottom: 6px;">📐 BƯỚC 2</div>
+            <div class="card-title" style="color: var(--indigo-light);">Xây dựng thiết kế</div>
+            <div class="card-desc" style="line-height: 1.6;">
+              • Xây dựng <strong>dàn ý tổng thể</strong> (sơ đồ cây cấu trúc các trang).<br>
+              • Thiết kế bố cục thân trang.<br>
+              • Thiết kế mỹ thuật: Chọn <strong>định dạng chữ</strong> và <strong>bảng màu 5 màu</strong> hài hoà.
+            </div>
+          </div>
+          <div class="card reveal-item" style="border-top: 4px solid var(--leaf);">
+            <div style="font-size: 26px; margin-bottom: 6px;">📁 BƯỚC 3</div>
+            <div class="card-title" style="color: var(--leaf-light);">Chuẩn bị tư liệu & Chọn phần mềm</div>
+            <div class="card-desc" style="line-height: 1.6;">
+              • Lựa chọn nền tảng <strong>Google Sites</strong>.<br>
+              • Chuẩn bị logo, favicon, ảnh banner đầu trang.<br>
+              • Viết bài, thu thập ảnh tư liệu, video cho phần thân và chân trang.
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 10: DỰ ÁN MẪU SGK "VIỆT NAM - VẺ ĐẸP TIỀM ẨN" -->
+    <div class="slide" id="slide-10">
+      <div class="slide-header">
+        <div>
+          <div class="slide-badge">09 · VÍ DỤ THỰC HÀNH</div>
+          <div class="slide-title">Dự Án Mẫu: "Việt Nam — Vẻ Đẹp Tiềm Ẩn"</div>
+          <div class="slide-subtitle">Cách nhóm thiện nguyện trong SGK phân tích ý tưởng trang web</div>
+        </div>
+        <div class="reveal-controller">
+          <span>Bước: <strong class="reveal-status" id="slide-10-status">0 / 3</strong></span>
+          <button class="reveal-btn" onclick="revealNextInCurrentSlide()">Tiếp ⤓</button>
+          <button class="reveal-btn" onclick="revealAllInCurrentSlide()">Hiện hết</button>
+        </div>
+      </div>
+      <div class="slide-body">
+        <div class="grid-3">
+          <div class="card reveal-item">
+            <div class="card-title" style="color: var(--sea-light);">1. Mục đích trang web</div>
+            <div class="card-desc">Quảng bá vẻ đẹp phong cảnh thiên nhiên, di sản văn hoá, ẩm thực đặc sắc và con người thân thiện của các vùng miền Việt Nam.</div>
+          </div>
+          <div class="card reveal-item">
+            <div class="card-title" style="color: var(--gold-light);">2. Đối tượng phục vụ</div>
+            <div class="card-desc">Những người đam mê du lịch, khám phá văn hoá nghệ thuật, ẩm thực vùng miền trong nước và du khách quốc tế.</div>
+          </div>
+          <div class="card reveal-item">
+            <div class="card-title" style="color: var(--leaf-light);">3. Yêu cầu nội dung & mỹ thuật</div>
+            <div class="card-desc">Định dạng đa phương tiện (ảnh, âm thanh, bản đồ kèm mùa đẹp nhất); màu sắc trang nhã, có form tương tác thu thập nhu cầu người đọc.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 11: NGHỆ THUẬT CHỌN PHÔNG CHỮ (TYPOGRAPHY) -->
+    <div class="slide" id="slide-11">
+      <div class="slide-header">
+        <div>
+          <div class="slide-badge">10 · THIẾT KẾ MỸ THUẬT</div>
+          <div class="slide-title">Nghệ Thuật Chọn Phông Chữ Trên Màn Hình Web</div>
+          <div class="slide-subtitle">Phân biệt phông Sans Serif (không chân) và Serif (có chân) chuẩn thiết kế</div>
+        </div>
+        <div class="reveal-controller">
+          <span>Bước: <strong class="reveal-status" id="slide-11-status">0 / 3</strong></span>
+          <button class="reveal-btn" onclick="revealNextInCurrentSlide()">Tiếp ⤓</button>
+          <button class="reveal-btn" onclick="revealAllInCurrentSlide()">Hiện hết</button>
+        </div>
+      </div>
+      <div class="slide-body">
+        <div class="grid-2" style="flex: 1;">
+          <div class="card reveal-item" style="border-color: var(--sea-light); background: rgba(13, 124, 134, 0.12);">
+            <div style="font-size: 24px; margin-bottom: 6px;">🔤 PHÔNG SANS SERIF (KHÔNG CHÂN) ⭐</div>
+            <div class="card-title" style="color: var(--sea-light);">Vua của màn hình kỹ thuật số</div>
+            <div class="card-desc" style="font-size: 14.5px; line-height: 1.7;">
+              • Ví dụ: <strong>Arial, Calibri, Verdana, Tahoma, Roboto, Arial Condensed</strong>.<br>
+              • Nét chữ thẳng, hẹp ngang, không có gạch chân rườm rà.<br>
+              • <strong>Cực kỳ dễ đọc trên màn hình điện thoại/máy tính</strong>, tiết kiệm diện tích hiển thị.<br>
+              • Khuyên dùng làm thanh điều hướng (Menu) và toàn bộ nội dung bài viết.
+            </div>
+          </div>
+          <div class="card reveal-item" style="border-color: var(--gold); background: rgba(245, 166, 35, 0.1);">
+            <div style="font-size: 24px; margin-bottom: 6px;">🖋️ PHÔNG SERIF (CÓ CHÂN)</div>
+            <div class="card-title" style="color: var(--gold-light);">Hạn chế trên màn hình số</div>
+            <div class="card-desc" style="font-size: 14.5px; line-height: 1.7;">
+              • Ví dụ: <strong>Times New Roman, Georgia</strong>.<br>
+              • Có các móc chân ở đầu và cuối nét chữ.<br>
+              • Rất tốt cho sách báo in giấy nhưng <strong>khó đọc trên màn hình máy tính</strong> khi hiển thị ở cỡ nhỏ.<br>
+              • SGK lưu ý: <em>Chỉ nên dùng cho tiêu đề cỡ lớn mang tính cổ điển, trang trọng</em>.
+            </div>
+          </div>
+        </div>
+        <div class="highlight-box reveal-item" style="font-size: 13.5px;">
+          📌 <strong>Quy ước 4 cỡ chữ:</strong> Cỡ nhỏ nhất (chú thích chân trang) → Cỡ thường (nội dung) → Cỡ lớn (tiêu đề) → Rất lớn (tiêu đề nổi bật Banner).
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 12: QUY TẮC BẢNG MÀU 5 MÀU (COLOR PALETTE) -->
+    <div class="slide" id="slide-12">
+      <div class="slide-header">
+        <div>
+          <div class="slide-badge">11 · BẢNG MÀU MỸ THUẬT</div>
+          <div class="slide-title">Quy Tắc Bảng Màu 5 Màu Hài Hoà (Color Palette)</div>
+          <div class="slide-subtitle">Trang web tinh tế là trang web không gây chói mắt người xem</div>
+        </div>
+        <div class="reveal-controller">
+          <span>Bước: <strong class="reveal-status" id="slide-12-status">0 / 3</strong></span>
+          <button class="reveal-btn" onclick="revealNextInCurrentSlide()">Tiếp ⤓</button>
+          <button class="reveal-btn" onclick="revealAllInCurrentSlide()">Hiện hết</button>
+        </div>
+      </div>
+      <div class="slide-body">
+        <div class="highlight-box reveal-item" style="font-size: 15.5px;">
+          🎨 <strong>Lời khuyên thiết kế từ SGK:</strong><br>
+          <em>"Một trang web với những màu sắc tương phản quá gắt hay không hài hoà sẽ gây phản cảm với người đọc. Mỗi bảng màu tiêu chuẩn thường có <strong>5 màu</strong> pha trộn giữa các màu gam ấm, lạnh và trung tính (chưa kể hai màu trắng và đen)."</em>
+        </div>
+        <div class="grid-3">
+          <div class="card reveal-item">
+            <div class="card-title" style="color: var(--coral-light);">🔥 Màu Gam Ấm (Đỏ, Cam, Vàng)</div>
+            <div class="card-desc">Tạo cảm giác năng động, ấm áp, kêu gọi hành động; thường dùng cho các nút bấm CTA hoặc điểm nhấn tiêu đề.</div>
+          </div>
+          <div class="card reveal-item">
+            <div class="card-title" style="color: var(--sea-light);">❄️ Màu Gam Lạnh (Xanh dương, Lục)</div>
+            <div class="card-desc">Tạo cảm giác tin cậy, bình yên, chuyên nghiệp và công nghệ; thích hợp cho trang giáo dục, y tế, cơ quan nhà nước.</div>
+          </div>
+          <div class="card reveal-item">
+            <div class="card-title" style="color: var(--ink-soft);">⚪ Màu Trung Tính (Xám, Be, Nâu)</div>
+            <div class="card-desc">Làm nền tảng dịu mắt cho các khối nội dung, giúp văn bản nổi bật mà không làm mỏi mắt người đọc lâu dài.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 13: TRẠM TƯƠNG TÁC THỬ NGHIỆM GIAO DIỆN -->
+    <div class="slide" id="slide-13">
+      <div class="slide-header">
+        <div>
+          <div class="slide-badge">12 · WEB THEME STUDIO</div>
+          <div class="slide-title">Trạm Tương Tác: Thử Nghiệm Bảng Màu & Phông Chữ</div>
+          <div class="slide-subtitle">Nhấp chọn bảng màu bên trái để xem giao diện web mẫu biến đổi tức thì</div>
+        </div>
+        <div class="reveal-controller">
+          <span style="color: var(--indigo-light); font-weight: 700;">Theme Studio trực tiếp</span>
+        </div>
+      </div>
+      <div class="slide-body">
+        <div class="grid-2" style="flex: 1;">
+          <div style="display: flex; flex-direction: column; gap: 10px;">
+            <div style="font-size: 14px; font-weight: 700; color: var(--indigo-light);">Chọn Bảng Màu (Color Palette):</div>
+            <button class="quiz-btn correct" id="palBtn1" onclick="applyTheme('ocean', this)">
+              🌊 Đại Dương Xanh (Ocean Blue) — Chuyên nghiệp, tin cậy
+            </button>
+            <button class="quiz-btn" id="palBtn2" onclick="applyTheme('forest', this)">
+              🍃 Rừng Xanh Tươi Mới (Forest Green) — Thiên nhiên, du lịch
+            </button>
+            <button class="quiz-btn" id="palBtn3" onclick="applyTheme('sunset', this)">
+              🌅 Hoàng Hôn Rực Rỡ (Sunset Warm) — Năng động, ẩm thực
+            </button>
+            <div style="margin-top: 6px; font-size: 13.5px;">
+              <span>Kiểu phông chữ: </span>
+              <button class="reveal-btn" onclick="togglePreviewFont('sans')">Sans-serif (Chuẩn)</button>
+              <button class="reveal-btn" onclick="togglePreviewFont('serif')">Serif (Có chân)</button>
+            </div>
+          </div>
+          <div id="themePreviewCard" style="background: #0D1B2A; border: 2px solid #38E1F0; border-radius: 14px; padding: 20px; display: flex; flex-direction: column; justify-content: center; gap: 10px; transition: all 0.3s;">
+            <div id="previewHeader" style="font-size: 18px; font-weight: 800; color: #38E1F0;">
+              TIÊU ĐỀ TRANG WEB MẪU
+            </div>
+            <div id="previewBody" style="font-size: 13.5px; color: #E2E8F0; line-height: 1.6;">
+              Đây là đoạn văn bản nội dung mô tả vẻ đẹp thiên nhiên và văn hoá độc đáo của vùng cao Na Rì, Bắc Kạn. Phông chữ không chân giúp mắt đọc cực kỳ êm ái.
+            </div>
+            <button id="previewBtn" style="background: #0D7C86; color: white; border: none; padding: 8px 18px; border-radius: 20px; font-weight: 700; align-self: flex-start; cursor: pointer;">
+              Khám Phá Ngay
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 14: VÌ SAO CHỌN GOOGLE SITES? -->
+    <div class="slide" id="slide-14">
+      <div class="slide-header">
+        <div>
+          <div class="slide-badge">13 · LỰA CHỌN NỀN TẢNG</div>
+          <div class="slide-title">Vì Sao Sách Giáo Khoa Lựa Chọn Google Sites?</div>
+          <div class="slide-subtitle">Công cụ xây dựng website trực quan hoàn hảo cho học sinh lớp 12</div>
+        </div>
+        <div class="reveal-controller">
+          <span>Bước: <strong class="reveal-status" id="slide-14-status">0 / 4</strong></span>
+          <button class="reveal-btn" onclick="revealNextInCurrentSlide()">Tiếp ⤓</button>
+          <button class="reveal-btn" onclick="revealAllInCurrentSlide()">Hiện hết</button>
+        </div>
+      </div>
+      <div class="slide-body">
+        <div class="grid-4">
+          <div class="card reveal-item">
+            <div class="card-title" style="color: var(--leaf-light);">🎁 Hoàn toàn miễn phí</div>
+            <div class="card-desc">Chỉ cần có tài khoản Google Mail, không cần mua hosting hay tên miền tốn kém.</div>
+          </div>
+          <div class="card reveal-item">
+            <div class="card-title" style="color: var(--sea-light);">🖱️ Trực quan kéo thả</div>
+            <div class="card-desc">Giao diện WYSIWYG kéo thả dễ như làm bài thuyết trình, không bắt buộc gõ từng dòng mã lệnh.</div>
+          </div>
+          <div class="card reveal-item">
+            <div class="card-title" style="color: var(--gold-light);">🔗 Hệ sinh thái Google</div>
+            <div class="card-desc">Tích hợp mượt mà với Google Drive, Docs, Sheets, Slides, Forms, Maps và YouTube.</div>
+          </div>
+          <div class="card reveal-item">
+            <div class="card-title" style="color: var(--indigo-light);">🚀 Xuất bản tức thì</div>
+            <div class="card-desc">Bấm nút "Xuất bản" là website chạy online toàn cầu với địa chỉ URL do Google hỗ trợ.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 15: MINI-QUIZ TƯƠNG TÁC -->
+    <div class="slide" id="slide-15">
+      <div class="slide-header">
+        <div>
+          <div class="slide-badge">14 · ĐỐ VUI CỦNG CỐ</div>
+          <div class="slide-title">Kiểm Tra Kiến Thức Chuẩn Bị Xây Dựng Trang Web</div>
+          <div class="slide-subtitle">Chọn phương án đúng nhất và nhận phản hồi tức thì</div>
+        </div>
+        <div class="reveal-controller">
+          <span style="color: var(--indigo-light); font-weight: 700;">Câu hỏi tương tác</span>
+        </div>
+      </div>
+      <div class="slide-body">
+        <div class="card" style="border-color: rgba(99, 102, 241, 0.35);">
+          <div class="card-title" style="color: var(--indigo-light);">
+            ❓ Câu hỏi: Phông chữ nào sau đây được SGK khuyến nghị dùng cho các bảng chọn trên thanh điều hướng (Menu), vì hẹp ngang, dễ đọc và tiết kiệm diện tích hiển thị?
+          </div>
+          <div class="quiz-options">
+            <button class="quiz-btn" onclick="checkQuiz(this, true, 5, 'Chính xác! SGK nêu: phông chữ dùng cho các bảng chọn trên thanh điều hướng nên là phông Sans Serif (không chân), hẹp ngang, dễ đọc và tiết kiệm diện tích như Arial Condensed.')">
+              <strong>A.</strong> Phông Sans Serif hẹp ngang, ví dụ Arial Condensed
+            </button>
+            <button class="quiz-btn" onclick="checkQuiz(this, false, 5, 'Sai rồi! Phông Times New Roman có chân, chiếm nhiều diện tích ngang và khó nhận diện trên thanh menu nhỏ.')">
+              <strong>B.</strong> Phông Serif có chân cầu kỳ, ví dụ Times New Roman
+            </button>
+            <button class="quiz-btn" onclick="checkQuiz(this, false, 5, 'Sai rồi! Phông chữ viết tay uốn lượn sẽ làm người dùng rối mắt và khó bấm trên điện thoại.')">
+              <strong>C.</strong> Phông chữ viết tay trang trí nghệ thuật uốn lượn
+            </button>
+            <button class="quiz-btn" onclick="checkQuiz(this, false, 5, 'Sai rồi! Phông chữ thư pháp cổ điển không phù hợp cho giao diện số hiện đại.')">
+              <strong>D.</strong> Phông chữ thư pháp cổ điển kích thước lớn
+            </button>
+          </div>
+          <div class="quiz-feedback" id="quizFeedback5"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 16: TỔNG KẾT TOÀN BỘ BÀI HỌC -->
+    <div class="slide" id="slide-16">
+      <div class="slide-header">
+        <div>
+          <div class="slide-badge">15 · TỔNG KẾT BÀI 23</div>
+          <div class="slide-title">Ghi Nhớ Trọng Tâm Bài 23</div>
+          <div class="slide-subtitle">Nền móng vững chắc để bước vào thực hành dựng web ở các bài sau</div>
+        </div>
+        <div class="reveal-controller">
+          <button class="reveal-btn" onclick="fireConfetti()" style="background: linear-gradient(135deg, #6366F1, #38E1F0); color: #060913; font-weight: 800;">
+            🎉 Bắn pháo hoa
+          </button>
+        </div>
+      </div>
+      <div class="slide-body">
+        <div class="grid-3">
+          <div class="card" style="border-color: var(--sea-light);">
+            <div class="card-title" style="color: var(--sea-light);">1. Ba phần trang web</div>
+            <div class="card-desc">Đầu trang (Header, Logo, Menu, Favicon) · Thân trang (các khối chữ nhật độc lập) · Chân trang (Bản quyền, liên hệ).</div>
+          </div>
+          <div class="card" style="border-color: var(--indigo);">
+            <div class="card-title" style="color: var(--indigo-light);">2. Ba bước chuẩn bị</div>
+            <div class="card-desc">Định hình ý tưởng (Mục đích, đối tượng) → Xây dựng thiết kế (Dàn ý, phông chữ, bảng màu 5 màu) → Chuẩn bị tư liệu.</div>
+          </div>
+          <div class="card" style="border-color: var(--gold);">
+            <div class="card-title" style="color: var(--gold-light);">3. Nền tảng Google Sites</div>
+            <div class="card-desc">Công cụ miễn phí, kéo thả trực quan, tích hợp hệ sinh thái Google Drive, sẵn sàng xuất bản online toàn cầu.</div>
+          </div>
+        </div>
+        <div class="highlight-box" style="text-align: center; margin-top: 10px; background: rgba(99, 102, 241, 0.12); border-color: var(--indigo-light);">
+          👏 <strong>Chúc mừng các bạn học sinh THPT Na Rì đã sẵn sàng bắt tay xây dựng trang web đầu tiên!</strong> Cùng đón chờ Bài 24 để trực tiếp tạo nên phần đầu trang tuyệt đẹp trên Google Sites!
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- THANH ĐIỀU HƯỚNG CỐ ĐỊNH -->
+  <div class="deck-footer">
+    <button class="nav-btn" onclick="prevSlide()" title="Slide trước (Mũi tên trái)">‹</button>
+    <div class="deck-counter" id="deckCounter">1 / 16</div>
+    <div class="deck-progress-container">
+      <div class="deck-progress-bar" id="deckProgressBar"></div>
+    </div>
+    <button class="nav-btn" onclick="nextSlide()" title="Slide kế tiếp (Mũi tên phải)">›</button>
+    <button class="nav-btn" onclick="revealNextInCurrentSlide()" title="Hiện bước tiếp theo (Mũi tên xuống / Enter)">⤓</button>
+    <button class="nav-btn" onclick="toggleSound()" id="soundBtn" title="Bật/Tắt âm thanh (Phím M)">🔊</button>
+    <button class="nav-btn" onclick="toggleFullScreen()" title="Toàn màn hình (Phím F)">⛶</button>
+  </div>
+
+  <script>
+    let currentSlide = 1;
+    const totalSlides = 16;
+    let soundEnabled = true;
+    let audioCtx = null;
+
+    function getAudioCtx() {
+      if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      if (audioCtx.state === 'suspended') audioCtx.resume();
+      return audioCtx;
+    }
+
+    function playSound(type) {
+      if (!soundEnabled) return;
+      try {
+        const ctx = getAudioCtx();
+        const now = ctx.currentTime;
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+
+        if (type === 'click') {
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(560, now);
+          osc.frequency.exponentialRampToValueAtTime(880, now + 0.08);
+          gain.gain.setValueAtTime(0.12, now);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.08);
+          osc.start(now);
+          osc.stop(now + 0.08);
+        } else if (type === 'success') {
+          osc.type = 'triangle';
+          osc.frequency.setValueAtTime(523, now);
+          osc.frequency.setValueAtTime(659, now + 0.08);
+          osc.frequency.setValueAtTime(783, now + 0.16);
+          gain.gain.setValueAtTime(0.2, now);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.3);
+          osc.start(now);
+          osc.stop(now + 0.3);
+        } else if (type === 'wrong') {
+          osc.type = 'sawtooth';
+          osc.frequency.setValueAtTime(220, now);
+          gain.gain.setValueAtTime(0.2, now);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.25);
+          osc.start(now);
+          osc.stop(now + 0.25);
+        }
+      } catch (e) {}
+    }
+
+    function toggleSound() {
+      soundEnabled = !soundEnabled;
+      document.getElementById('soundBtn').innerText = soundEnabled ? '🔊' : '🔇';
+    }
+
+    function toggleFullScreen() {
+      if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen().catch(() => {});
+      } else {
+        document.exitFullscreen().catch(() => {});
+      }
+    }
+
+    function updateSlide() {
+      document.querySelectorAll('.slide').forEach((s, idx) => {
+        s.classList.toggle('active', idx + 1 === currentSlide);
+      });
+      document.getElementById('deckCounter').innerText = currentSlide + ' / ' + totalSlides;
+      document.getElementById('deckProgressBar').style.width = ((currentSlide - 1) / (totalSlides - 1) * 100) + '%';
+      if (currentSlide === 16) setTimeout(fireConfetti, 300);
+    }
+
+    function nextSlide() {
+      if (currentSlide < totalSlides) {
+        currentSlide++;
+        playSound('click');
+        updateSlide();
+      }
+    }
+
+    function prevSlide() {
+      if (currentSlide > 1) {
+        currentSlide--;
+        playSound('click');
+        updateSlide();
+      }
+    }
+
+    function revealNextInCurrentSlide() {
+      const slide = document.getElementById('slide-' + currentSlide);
+      if (!slide) return;
+      const items = slide.querySelectorAll('.reveal-item');
+      for (let item of items) {
+        if (!item.classList.contains('revealed')) {
+          item.classList.add('revealed', 'just-revealed');
+          setTimeout(() => item.classList.remove('just-revealed'), 600);
+          playSound('click');
+          updateRevealStatus(slide);
+          return;
+        }
+      }
+    }
+
+    function revealAllInCurrentSlide() {
+      const slide = document.getElementById('slide-' + currentSlide);
+      if (!slide) return;
+      slide.querySelectorAll('.reveal-item').forEach(item => item.classList.add('revealed'));
+      playSound('success');
+      updateRevealStatus(slide);
+    }
+
+    function updateRevealStatus(slide) {
+      const items = slide.querySelectorAll('.reveal-item');
+      const revealed = slide.querySelectorAll('.reveal-item.revealed').length;
+      const statusEl = document.getElementById(slide.id + '-status');
+      if (statusEl) statusEl.innerText = revealed + ' / ' + items.length;
+    }
+
+    document.addEventListener('keydown', (e) => {
+      if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+      if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown') {
+        e.preventDefault(); nextSlide();
+      } else if (e.key === 'ArrowLeft' || e.key === 'PageUp') {
+        e.preventDefault(); prevSlide();
+      } else if (e.key === 'ArrowDown' || e.key === 'Enter') {
+        e.preventDefault(); revealNextInCurrentSlide();
+      } else if (e.key.toLowerCase() === 'f') {
+        toggleFullScreen();
+      } else if (e.key.toLowerCase() === 'm') {
+        toggleSound();
+      }
+    });
+
+    /* MINI QUIZ */
+    function checkQuiz(btn, isCorrect, qId, explanation) {
+      const parent = btn.parentElement;
+      const feedback = document.getElementById('quizFeedback' + qId);
+      parent.querySelectorAll('.quiz-btn').forEach(b => {
+        b.disabled = true;
+        b.style.pointerEvents = 'none';
+      });
+
+      if (isCorrect) {
+        btn.classList.add('correct');
+        playSound('success');
+        feedback.style.display = 'block';
+        feedback.style.background = 'rgba(16, 185, 129, 0.15)';
+        feedback.style.border = '1px solid #10B981';
+        feedback.style.color = '#34D399';
+        feedback.innerHTML = '🎉 <strong>Chính xác!</strong> ' + explanation;
+      } else {
+        btn.classList.add('wrong');
+        playSound('wrong');
+        feedback.style.display = 'block';
+        feedback.style.background = 'rgba(239, 68, 68, 0.15)';
+        feedback.style.border = '1px solid #EF4444';
+        feedback.style.color = '#FCA5A5';
+        feedback.innerHTML = '❌ <strong>Chưa chính xác!</strong> ' + explanation;
+      }
+    }
+
+    /* WEB INSPECTOR */
+    function inspectZone(zone, el) {
+      playSound('click');
+      document.querySelectorAll('.mock-zone').forEach(z => z.classList.remove('active'));
+      el.classList.add('active');
+
+      const title = document.getElementById('inspTitle');
+      const desc = document.getElementById('inspDesc');
+
+      if (zone === 'tab') {
+        title.innerHTML = '⭐ Tab Trình Duyệt & Favicon';
+        desc.innerHTML = '<strong>Favicon:</strong> Biểu tượng đại diện cho cả website. Giúp người dùng nhận diện nhanh tab trong hàng chục tab đang mở.<br><strong>Tiêu đề tab:</strong> Tên bài viết hoặc tên trang web ngắn gọn.';
+      } else if (zone === 'header') {
+        title.innerHTML = '🖼️ Phần Đầu Trang (Header)';
+        desc.innerHTML = 'Như trang bìa thu gọn của một cuốn sách:<br>• <strong>Logo & Tên trang:</strong> Góc trái nhận diện thương hiệu.<br>• <strong>Thanh điều hướng:</strong> Các chuyên mục chính + ô tìm kiếm.<br>• <strong>Banner tiêu đề:</strong> Hình ảnh thông điệp nổi bật chào đón người xem.';
+      } else if (zone === 'body') {
+        title.innerHTML = '🧱 Phần Thân Trang (Body)';
+        desc.innerHTML = 'Tổ chức thành các <strong>khối hình chữ nhật</strong> độc lập, mỗi khối có tiêu đề riêng.<br>Chứa đựng bài viết, ảnh chụp, video YouTube, Google Maps hoặc biểu mẫu khảo sát Google Forms.';
+      } else if (zone === 'footer') {
+        title.innerHTML = '📜 Phần Chân Trang (Footer)';
+        desc.innerHTML = 'Nơi để lại thông tin bản quyền (©), chính sách bảo mật, số điện thoại hotline, địa chỉ cơ quan và liên kết mạng xã hội.<br>Thường dùng <strong>cỡ chữ nhỏ nhất</strong> trong trang.';
+      }
+    }
+
+    /* THEME STUDIO */
+    function applyTheme(theme, btn) {
+      playSound('click');
+      for (let i = 1; i <= 3; i++) {
+        const b = document.getElementById('palBtn' + i);
+        if (b) b.classList.remove('correct');
+      }
+      btn.classList.add('correct');
+
+      const card = document.getElementById('themePreviewCard');
+      const h = document.getElementById('previewHeader');
+      const p = document.getElementById('previewBody');
+      const bBtn = document.getElementById('previewBtn');
+
+      if (theme === 'ocean') {
+        card.style.background = '#0D1B2A';
+        card.style.borderColor = '#38E1F0';
+        h.style.color = '#38E1F0';
+        p.style.color = '#E2E8F0';
+        bBtn.style.background = '#0D7C86';
+      } else if (theme === 'forest') {
+        card.style.background = '#061E14';
+        card.style.borderColor = '#34D399';
+        h.style.color = '#34D399';
+        p.style.color = '#D1FAE5';
+        bBtn.style.background = '#059669';
+      } else if (theme === 'sunset') {
+        card.style.background = '#2A0D15';
+        card.style.borderColor = '#F5A623';
+        h.style.color = '#F5A623';
+        p.style.color = '#FFE4E6';
+        bBtn.style.background = '#F2683C';
+      }
+    }
+
+    function togglePreviewFont(type) {
+      playSound('click');
+      const card = document.getElementById('themePreviewCard');
+      if (type === 'sans') {
+        card.style.fontFamily = "system-ui, -apple-system, sans-serif";
+      } else {
+        card.style.fontFamily = "'Times New Roman', Times, serif";
+      }
+    }
+
+    /* PHÁO HOA */
+    function fireConfetti() {
+      playSound('success');
+      const canvas = document.getElementById('confettiCanvas');
+      const ctx = canvas.getContext('2d');
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+
+      const particles = [];
+      const colors = ['#6366F1', '#38E1F0', '#F5A623', '#10B981', '#EC4899'];
+
+      for (let i = 0; i < 90; i++) {
+        particles.push({
+          x: canvas.width / 2,
+          y: canvas.height * 0.45,
+          vx: (Math.random() - 0.5) * 16,
+          vy: (Math.random() - 0.7) * 16,
+          size: Math.random() * 8 + 4,
+          color: colors[Math.floor(Math.random() * colors.length)],
+          alpha: 1,
+          rot: Math.random() * 360,
+          vrot: (Math.random() - 0.5) * 12
+        });
+      }
+
+      function render() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        let alive = false;
+        particles.forEach(p => {
+          p.x += p.vx;
+          p.y += p.vy;
+          p.vy += 0.35;
+          p.alpha -= 0.012;
+          p.rot += p.vrot;
+
+          if (p.alpha > 0) {
+            alive = true;
+            ctx.save();
+            ctx.globalAlpha = p.alpha;
+            ctx.translate(p.x, p.y);
+            ctx.rotate(p.rot * Math.PI / 180);
+            ctx.fillStyle = p.color;
+            ctx.fillRect(-p.size / 2, -p.size / 2, p.size, p.size);
+            ctx.restore();
+          }
+        });
+        if (alive) requestAnimationFrame(render);
+        else ctx.clearRect(0, 0, canvas.width, canvas.height);
+      }
+      render();
+    }
+
+    updateSlide();
+  </script>
+</body>
+</html>
