@@ -1,0 +1,1445 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bài 19: Dịch vụ sửa chữa và bảo trì máy tính — Bài giảng điện tử Tin học 12</title>
+  <style>
+    :root {
+      --bg: #060B12;
+      --bg-card: rgba(12, 22, 36, 0.94);
+      --border-card: rgba(56, 225, 240, 0.18);
+      --ink: #FFFFFF;
+      --ink-soft: #94A3B8;
+      --sea: #0D7C86;
+      --sea-light: #38E1F0;
+      --sea-glow: rgba(56, 225, 240, 0.35);
+      --coral: #F2683C;
+      --coral-light: #FF855D;
+      --gold: #F5A623;
+      --gold-light: #FFC043;
+      --leaf: #10B981;
+      --leaf-light: #34D399;
+      --purple: #8B5CF6;
+      --purple-light: #C4B5FD;
+      --rose: #F43F5E;
+      --radius-lg: 24px;
+      --radius-md: 16px;
+      --radius-sm: 10px;
+      --font-main: system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      --font-mono: 'Consolas', 'Fira Code', 'Courier New', monospace;
+      --transition-slide: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.5s ease;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: var(--font-main);
+      background-color: var(--bg);
+      color: var(--ink);
+      overflow: hidden;
+      width: 100vw;
+      height: 100vh;
+      user-select: none;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .bg-mesh {
+      position: fixed;
+      top: 0; left: 0; width: 100vw; height: 100vh;
+      background: radial-gradient(circle at 12% 15%, rgba(13, 124, 134, 0.35) 0%, transparent 45%),
+                  radial-gradient(circle at 88% 82%, rgba(242, 104, 60, 0.22) 0%, transparent 45%),
+                  radial-gradient(circle at 50% 50%, rgba(16, 185, 129, 0.16) 0%, transparent 60%);
+      z-index: 0;
+      pointer-events: none;
+      animation: meshPulse 14s ease-in-out infinite alternate;
+    }
+
+    @keyframes meshPulse {
+      0% { transform: scale(1) translate(0, 0); opacity: 0.9; }
+      100% { transform: scale(1.06) translate(-10px, 12px); opacity: 1; }
+    }
+
+    .floating-symbols {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 1;
+      overflow: hidden;
+    }
+
+    .float-tag {
+      position: absolute;
+      font-family: var(--font-mono);
+      font-size: 13.5px;
+      font-weight: 700;
+      color: rgba(56, 225, 240, 0.28);
+      border: 1px solid rgba(56, 225, 240, 0.18);
+      padding: 5px 12px;
+      border-radius: 8px;
+      background: rgba(56, 225, 240, 0.05);
+      animation: floatUp 22s linear infinite;
+    }
+
+    @keyframes floatUp {
+      0% { transform: translateY(105vh) rotate(0deg); opacity: 0; }
+      10% { opacity: 0.5; }
+      90% { opacity: 0.5; }
+      100% { transform: translateY(-10vh) rotate(360deg); opacity: 0; }
+    }
+
+    .deck-container {
+      position: relative;
+      width: 100vw;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 10;
+    }
+
+    .slide {
+      position: absolute;
+      width: 92vw;
+      max-width: 1280px;
+      height: 86vh;
+      background: var(--bg-card);
+      border: 1px solid var(--border-card);
+      border-radius: var(--radius-lg);
+      box-shadow: 0 24px 70px rgba(0, 0, 0, 0.65);
+      backdrop-filter: blur(20px);
+      padding: 34px 46px;
+      display: flex;
+      flex-direction: column;
+      opacity: 0;
+      transform: scale(0.96) translateY(24px);
+      pointer-events: none;
+      transition: var(--transition-slide);
+      overflow-y: auto;
+    }
+
+    .slide.active {
+      opacity: 1;
+      transform: scale(1) translateY(0);
+      pointer-events: auto;
+    }
+
+    /* THANH CUỘN ĐẸP */
+    .slide::-webkit-scrollbar { width: 6px; }
+    .slide::-webkit-scrollbar-thumb { background: rgba(56, 225, 240, 0.25); border-radius: 4px; }
+
+    .slide-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 20px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      padding-bottom: 14px;
+      flex-shrink: 0;
+    }
+
+    .slide-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(56, 225, 240, 0.16);
+      border: 1px solid rgba(56, 225, 240, 0.35);
+      color: var(--sea-light);
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      padding: 4px 12px;
+      border-radius: 20px;
+      margin-bottom: 6px;
+    }
+
+    .slide-title {
+      font-size: 27px;
+      font-weight: 800;
+      color: #FFFFFF;
+      line-height: 1.25;
+      background: linear-gradient(90deg, #FFFFFF, #E2E8F0);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .slide-subtitle {
+      font-size: 13.5px;
+      color: var(--ink-soft);
+      margin-top: 3px;
+    }
+
+    .reveal-controller {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 30px;
+      padding: 4px 12px;
+      font-size: 12px;
+      color: var(--ink-soft);
+      flex-shrink: 0;
+    }
+
+    .reveal-status {
+      font-family: var(--font-mono);
+      font-weight: 700;
+      color: var(--sea-light);
+    }
+
+    .reveal-btn {
+      background: rgba(56, 225, 240, 0.25);
+      border: 1px solid rgba(56, 225, 240, 0.4);
+      color: white;
+      padding: 4px 10px;
+      border-radius: 14px;
+      font-size: 11px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .reveal-btn:hover {
+      background: var(--sea-light);
+      color: #060B12;
+    }
+
+    .slide-body {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .reveal-item {
+      opacity: 0.15;
+      transform: translateY(10px);
+      transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+      filter: blur(1.5px);
+    }
+
+    .reveal-item.revealed {
+      opacity: 1;
+      transform: translateY(0);
+      filter: blur(0);
+    }
+
+    .reveal-item.just-revealed {
+      box-shadow: 0 0 25px rgba(56, 225, 240, 0.35);
+      border-color: var(--sea-light) !important;
+    }
+
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+    .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
+
+    .card {
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.09);
+      border-radius: var(--radius-md);
+      padding: 16px 20px;
+      transition: transform 0.3s, border-color 0.3s, background 0.3s;
+    }
+
+    .card:hover {
+      transform: translateY(-3px);
+      border-color: rgba(56, 225, 240, 0.35);
+      background: rgba(255, 255, 255, 0.06);
+    }
+
+    .card-title {
+      font-size: 15.5px;
+      font-weight: 700;
+      color: #FFFFFF;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .card-desc {
+      font-size: 13.5px;
+      color: var(--ink-soft);
+      line-height: 1.55;
+    }
+
+    .highlight-box {
+      background: rgba(13, 124, 134, 0.18);
+      border: 1px solid rgba(56, 225, 240, 0.35);
+      border-radius: var(--radius-md);
+      padding: 16px 20px;
+      font-size: 14.5px;
+      line-height: 1.6;
+      color: #E2E8F0;
+    }
+
+    .highlight-box strong { color: var(--sea-light); }
+
+    /* FOOTER THANH ĐIỀU HƯỚNG */
+    .deck-footer {
+      position: fixed;
+      bottom: 14px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background: rgba(10, 18, 28, 0.9);
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      border-radius: 40px;
+      padding: 8px 20px;
+      backdrop-filter: blur(20px);
+      z-index: 100;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    }
+
+    .nav-btn {
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      color: white;
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 15px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .nav-btn:hover {
+      background: var(--sea-light);
+      color: #060B12;
+      border-color: var(--sea-light);
+      transform: scale(1.08);
+    }
+
+    .deck-progress-container {
+      width: 140px;
+      height: 6px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 3px;
+      overflow: hidden;
+    }
+
+    .deck-progress-bar {
+      height: 100%;
+      background: linear-gradient(90deg, var(--sea), var(--sea-light));
+      width: 0%;
+      transition: width 0.3s ease;
+    }
+
+    .deck-counter {
+      font-family: var(--font-mono);
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--sea-light);
+      min-width: 52px;
+      text-align: center;
+    }
+
+    /* MINI QUIZ */
+    .quiz-options {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-top: 12px;
+    }
+
+    .quiz-btn {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: var(--radius-sm);
+      padding: 12px 18px;
+      color: #FFFFFF;
+      font-size: 14px;
+      text-align: left;
+      cursor: pointer;
+      transition: all 0.25s;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .quiz-btn:hover {
+      background: rgba(56, 225, 240, 0.15);
+      border-color: var(--sea-light);
+      transform: translateX(4px);
+    }
+
+    .quiz-btn.correct {
+      background: rgba(16, 185, 129, 0.25) !important;
+      border-color: #10B981 !important;
+      color: #34D399 !important;
+    }
+
+    .quiz-btn.wrong {
+      background: rgba(239, 68, 68, 0.25) !important;
+      border-color: #EF4444 !important;
+      color: #FCA5A5 !important;
+    }
+
+    .quiz-feedback {
+      margin-top: 12px;
+      padding: 12px 16px;
+      border-radius: var(--radius-sm);
+      font-size: 13.5px;
+      line-height: 1.5;
+      display: none;
+    }
+
+    /* WIDGET CHẨN ĐOÁN LỖI MÁY TÍNH (TROUBLESHOOTER) */
+    .trouble-container {
+      display: grid;
+      grid-template-columns: 1fr 1.3fr;
+      gap: 16px;
+      flex: 1;
+    }
+
+    .trouble-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .trouble-item {
+      padding: 12px 16px;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 12px;
+      cursor: pointer;
+      font-size: 13.5px;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .trouble-item:hover, .trouble-item.active {
+      background: rgba(56, 225, 240, 0.16);
+      border-color: var(--sea-light);
+      color: #FFFFFF;
+    }
+
+    .trouble-view {
+      background: #08111B;
+      border: 1px solid rgba(56, 225, 240, 0.25);
+      border-radius: 14px;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .action-badge {
+      display: inline-block;
+      padding: 3px 10px;
+      border-radius: 6px;
+      font-size: 11.5px;
+      font-weight: 700;
+      text-transform: uppercase;
+      font-family: var(--font-mono);
+    }
+
+    .badge-hw { background: rgba(242, 104, 60, 0.25); color: #FF855D; border: 1px solid rgba(242, 104, 60, 0.4); }
+    .badge-sw { background: rgba(56, 225, 240, 0.2); color: #38E1F0; border: 1px solid rgba(56, 225, 240, 0.35); }
+    .badge-user { background: rgba(245, 166, 35, 0.2); color: #FFC043; border: 1px solid rgba(245, 166, 35, 0.35); }
+
+    /* CONFETTI CANVAS */
+    #confettiCanvas {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 999;
+    }
+  </style>
+</head>
+<body>
+  <div class="bg-mesh"></div>
+  <canvas id="confettiCanvas"></canvas>
+
+  <div class="floating-symbols">
+    <div class="float-tag" style="left: 6%; animation-delay: 0s;">Hardware 🔧</div>
+    <div class="float-tag" style="left: 22%; animation-delay: 5s;">Software 💾</div>
+    <div class="float-tag" style="left: 42%; animation-delay: 2s;">Driver Update ⚡</div>
+    <div class="float-tag" style="left: 62%; animation-delay: 8s;">User Support 🙋</div>
+    <div class="float-tag" style="left: 82%; animation-delay: 3s;">Troubleshoot 🩺</div>
+  </div>
+
+  <div class="deck-container">
+    <!-- SLIDE 1: BÌA BÀI GIẢNG -->
+    <div class="slide active" id="slide-1">
+      <div style="flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; gap: 20px;">
+        <div class="slide-badge" style="font-size: 13px; padding: 6px 18px;">CHỦ ĐỀ 5: HƯỚNG NGHIỆP VỚI TIN HỌC · TIN HỌC 12 ICT</div>
+        <h1 style="font-size: 44px; font-weight: 900; line-height: 1.2; max-width: 900px; background: linear-gradient(135deg, #FFFFFF 30%, #38E1F0 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">
+          Bài 19: Dịch Vụ Sửa Chữa Và Bảo Trì Máy Tính
+        </h1>
+        <p style="font-size: 18px; color: var(--ink-soft); max-width: 720px; line-height: 1.6;">
+          Khám phá bức tranh nghề nghiệp, 3 nhóm công việc cốt lõi, yêu cầu kỹ năng và định hướng học tập trong kỷ nguyên số 4.0
+        </p>
+        <div style="display: flex; gap: 14px; margin-top: 10px;">
+          <button onclick="nextSlide()" class="reveal-btn" style="padding: 12px 30px; font-size: 15px; border-radius: 30px; background: linear-gradient(135deg, #0D7C86, #38E1F0); color: #060B12; font-weight: 700; box-shadow: 0 10px 25px rgba(56, 225, 240, 0.4);">
+            Bắt đầu bài giảng 🚀
+          </button>
+        </div>
+        <div style="font-size: 13px; color: rgba(255, 255, 255, 0.4); margin-top: 20px;">
+          Trường THPT Na Rì · Dành cho giáo viên & học sinh lớp 12
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 2: TÌNH HUỐNG KHỞI ĐỘNG -->
+    <div class="slide" id="slide-2">
+      <div class="slide-header">
+        <div>
+          <div class="slide-badge">01 · KHỞI ĐỘNG BÀI HỌC</div>
+          <div class="slide-title">Tình Huống Thực Tế: Máy Tính Gặp Sự Cố</div>
+          <div class="slide-subtitle">Khi máy tính của gia đình hoặc cơ quan bất ngờ ngừng hoạt động</div>
+        </div>
+        <div class="reveal-controller">
+          <span>Bước: <strong class="reveal-status" id="slide-2-status">0 / 3</strong></span>
+          <button class="reveal-btn" onclick="revealNextInCurrentSlide()">Tiếp ⤓</button>
+          <button class="reveal-btn" onclick="revealAllInCurrentSlide()">Hiện hết</button>
+        </div>
+      </div>
+      <div class="slide-body">
+        <div class="highlight-box reveal-item">
+          💻 <strong>Tình huống:</strong> Sáng thứ Hai chuẩn bị báo cáo, máy tính văn phòng bật công tắc nguồn quạt quay vù vù nhưng màn hình tối đen, kèm theo chuỗi 3 tiếng bíp ngắn liên tục. Lúc này bạn sẽ làm gì?
+        </div>
+        <div class="grid-3" style="margin-top: 10px;">
+          <div class="card reveal-item" onclick="playSound('click');" style="cursor: pointer;">
+            <div class="card-title">❌ Tự tháo bung máy</div>
+            <div class="card-desc">Tự mở ốc vít, dùng tay không chọc vào bo mạch mà không nắm vững nguyên lý tĩnh điện hay khe cắm RAM. Nguy cơ cháy nổ linh kiện rất cao!</div>
+          </div>
+          <div class="card reveal-item" onclick="playSound('click');" style="cursor: pointer;">
+            <div class="card-title">⚠️ Cài lại Windows</div>
+            <div class="card-desc">Cắm USB cài lại Win trong khi máy chưa lên màn hình BIOS/POST. Lỗi phần cứng không thể giải quyết bằng cách cài phần mềm mù quáng.</div>
+          </div>
+          <div class="card reveal-item" onclick="playSound('success');" style="border-color: var(--sea-light); background: rgba(13, 124, 134, 0.2); cursor: pointer;">
+            <div class="card-title" style="color: var(--sea-light);">✅ Nhờ chuyên gia bảo trì</div>
+            <div class="card-desc">Liên hệ kỹ thuật viên sửa chữa bảo trì: vệ sinh chân tiếp xúc RAM, đo nguồn điện, kiểm tra mã tiếng bíp của BIOS để xử lý chuẩn xác.</div>
+          </div>
+        </div>
+        <div class="highlight-box reveal-item" style="background: rgba(245, 166, 35, 0.15); border-color: rgba(245, 166, 35, 0.4);">
+          💡 <strong>Kết luận khởi động:</strong> Xã hội số phụ thuộc mật thiết vào máy tính. Khi máy gặp sự cố, **nghề sửa chữa và bảo trì máy tính** chính là "bác sĩ số" cấp cứu và duy trì sự sống cho toàn bộ hệ thống!
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 3: BỨC TRANH NGHỀ DỊCH VỤ CNTT -->
+    <div class="slide" id="slide-3">
+      <div class="slide-header">
+        <div>
+          <div class="slide-badge">02 · BỨC TRANH TỔNG THỂ</div>
+          <div class="slide-title">Vị Trí Nghề Sửa Chữa & Bảo Trì Trong Ngành CNTT</div>
+          <div class="slide-subtitle">Các nhóm nghề dịch vụ công nghệ thông tin có nhiệm vụ gì?</div>
+        </div>
+        <div class="reveal-controller">
+          <span>Bước: <strong class="reveal-status" id="slide-3-status">0 / 4</strong></span>
+          <button class="reveal-btn" onclick="revealNextInCurrentSlide()">Tiếp ⤓</button>
+          <button class="reveal-btn" onclick="revealAllInCurrentSlide()">Hiện hết</button>
+        </div>
+      </div>
+      <div class="slide-body">
+        <div class="card reveal-item" style="border-color: rgba(56, 225, 240, 0.3);">
+          <div class="card-title" style="color: var(--sea-light); font-size: 17px;">🌐 Sứ mệnh chung của nhóm nghề dịch vụ CNTT</div>
+          <div class="card-desc" style="font-size: 14.5px;">
+            Các nghề dịch vụ thuộc ngành CNTT có nhiệm vụ **hỗ trợ, phát triển và duy trì** các hệ thống công nghệ thông tin cho cá nhân, doanh nghiệp và các tổ chức xã hội.
+          </div>
+        </div>
+        <div class="grid-3">
+          <div class="card reveal-item">
+            <div class="card-title">🖥️ Phát triển & Lập trình</div>
+            <div class="card-desc">Viết phần mềm, xây dựng website, tạo ứng dụng di động và thuật toán thông minh.</div>
+          </div>
+          <div class="card reveal-item" style="border-color: var(--sea-light); background: rgba(13, 124, 134, 0.15);">
+            <div class="card-title" style="color: var(--sea-light);">🛠️ Dịch vụ Sửa chữa & Bảo trì</div>
+            <div class="card-desc">Đảm bảo máy móc, phần cứng, phần mềm hoạt động ổn định, khắc phục sự cố, phục hồi hệ thống.</div>
+          </div>
+          <div class="card reveal-item">
+            <div class="card-title">🛡️ Quản trị & Bảo mật</div>
+            <div class="card-desc">Vận hành máy chủ, giám sát an ninh mạng, chống mã độc và tấn công mạng (học ở Bài 20).</div>
+          </div>
+        </div>
+        <div class="highlight-box reveal-item">
+          📌 <strong>Ghi nhớ SGK:</strong> Nghề sửa chữa và bảo trì máy tính bao gồm những công việc nhằm **duy trì sự ổn định** của máy tính cũng như các thiết bị liên quan, **giúp người dùng được hỗ trợ kĩ thuật khi cần**.
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 4: BA NHÓM CÔNG VIỆC CHÍNH -->
+    <div class="slide" id="slide-4">
+      <div class="slide-header">
+        <div>
+          <div class="slide-badge">03 · NỘI DUNG TRỌNG TÂM</div>
+          <div class="slide-title">3 Nhóm Công Việc Cốt Lõi Của Kỹ Thuật Viên</div>
+          <div class="slide-subtitle">Người làm nghề sửa chữa và bảo trì máy tính phải làm những gì mỗi ngày?</div>
+        </div>
+        <div class="reveal-controller">
+          <span>Bước: <strong class="reveal-status" id="slide-4-status">0 / 3</strong></span>
+          <button class="reveal-btn" onclick="revealNextInCurrentSlide()">Tiếp ⤓</button>
+          <button class="reveal-btn" onclick="revealAllInCurrentSlide()">Hiện hết</button>
+        </div>
+      </div>
+      <div class="slide-body">
+        <div class="grid-3" style="flex: 1;">
+          <div class="card reveal-item" style="border-top: 4px solid var(--coral);">
+            <div class="action-badge badge-hw" style="margin-bottom: 12px;">NHÓM 1</div>
+            <div class="card-title" style="font-size: 17px; color: var(--coral-light);">🔧 Liên quan tới Phần Cứng</div>
+            <div class="card-desc">
+              • Kiểm soát, duy trì hoạt động phần cứng.<br>
+              • Xác định và khắc phục sự cố hư hỏng.<br>
+              • Lắp đặt, thay thế linh kiện (RAM, CPU, SSD...).<br>
+              • Nâng cấp cấu hình theo yêu cầu người dùng.
+            </div>
+          </div>
+          <div class="card reveal-item" style="border-top: 4px solid var(--sea-light);">
+            <div class="action-badge badge-sw" style="margin-bottom: 12px;">NHÓM 2</div>
+            <div class="card-title" style="font-size: 17px; color: var(--sea-light);">💾 Liên quan tới Phần Mềm</div>
+            <div class="card-desc">
+              • Cài đặt, cấu hình hệ điều hành & driver.<br>
+              • Cài phần mềm văn phòng, ứng dụng chuyên ngành.<br>
+              • Cập nhật các bản vá bảo mật hệ thống.<br>
+              • Quét diệt virus, bảo vệ kết nối mạng LAN/Internet.
+            </div>
+          </div>
+          <div class="card reveal-item" style="border-top: 4px solid var(--gold);">
+            <div class="action-badge badge-user" style="margin-bottom: 12px;">NHÓM 3</div>
+            <div class="card-title" style="font-size: 17px; color: var(--gold-light);">🙋 Hỗ Trợ Người Dùng</div>
+            <div class="card-desc">
+              • Hướng dẫn người dùng sử dụng máy tính đúng cách.<br>
+              • Chỉ dẫn thao tác an toàn với các thiết bị ngoại vi.<br>
+              • Tư vấn giải pháp kĩ thuật phù hợp nhu cầu.<br>
+              • Hỗ trợ xử lý lỗi qua điện thoại hoặc điều khiển từ xa.
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 5: CHI TIẾT CÔNG VIỆC PHẦN CỨNG -->
+    <div class="slide" id="slide-5">
+      <div class="slide-header">
+        <div>
+          <div class="slide-badge">04 · PHẦN CỨNG (HARDWARE)</div>
+          <div class="slide-title">Mổ Xẻ Công Việc Phần Cứng Kỹ Thuật Viên</div>
+          <div class="slide-subtitle">Các linh kiện phần cứng chính và quy trình tháo lắp, kiểm tra</div>
+        </div>
+        <div class="reveal-controller">
+          <span>Bước: <strong class="reveal-status" id="slide-5-status">0 / 4</strong></span>
+          <button class="reveal-btn" onclick="revealNextInCurrentSlide()">Tiếp ⤓</button>
+          <button class="reveal-btn" onclick="revealAllInCurrentSlide()">Hiện hết</button>
+        </div>
+      </div>
+      <div class="slide-body">
+        <div class="grid-4">
+          <div class="card reveal-item">
+            <div style="font-size: 26px; margin-bottom: 6px;">🧠</div>
+            <div class="card-title">CPU & Tản nhiệt</div>
+            <div class="card-desc">Vệ sinh keo tản nhiệt định kỳ, kiểm tra quạt quay, phát hiện hiện tượng quá nhiệt gây sập nguồn.</div>
+          </div>
+          <div class="card reveal-item">
+            <div style="font-size: 26px; margin-bottom: 6px;">⚡</div>
+            <div class="card-title">Bộ nhớ RAM</div>
+            <div class="card-desc">Lau sạch bụi chân tiếp xúc bằng cồn/gôm, chẩn đoán lỗi màn hình xanh dump RAM, nâng cấp dung lượng đa nhiệm.</div>
+          </div>
+          <div class="card reveal-item">
+            <div style="font-size: 26px; margin-bottom: 6px;">💽</div>
+            <div class="card-title">Ổ cứng SSD / HDD</div>
+            <div class="card-desc">Kiểm tra sức khoẻ bad sector, thay thế ổ cứng cơ HDD bằng SSD NVMe siêu tốc độ, sao lưu dữ liệu nguyên vẹn.</div>
+          </div>
+          <div class="card reveal-item">
+            <div style="font-size: 26px; margin-bottom: 6px;">🔌</div>
+            <div class="card-title">Nguồn PSU & Main</div>
+            <div class="card-desc">Đo đạc điện áp tụ điện, xử lý chập cháy linh kiện, thay thế pin CMOS lưu trữ ngày giờ hệ thống.</div>
+          </div>
+        </div>
+        <div class="highlight-box reveal-item" style="margin-top: 10px;">
+          ⚙️ <strong>Quy tắc an toàn phần cứng:</strong> Kỹ thuật viên luôn phải ngắt nguồn điện hoàn toàn và xả tĩnh điện trên cơ thể trước khi chạm vào linh kiện bo mạch nhạy cảm!
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 6: CHI TIẾT CÔNG VIỆC PHẦN MỀM -->
+    <div class="slide" id="slide-6">
+      <div class="slide-header">
+        <div>
+          <div class="slide-badge">05 · PHẦN MỀM (SOFTWARE)</div>
+          <div class="slide-title">Công Việc Phần Mềm & An Toàn Dữ Liệu</div>
+          <div class="slide-subtitle">Không chỉ tháo ốc vít, kỹ thuật viên phải thành thạo môi trường hệ điều hành</div>
+        </div>
+        <div class="reveal-controller">
+          <span>Bước: <strong class="reveal-status" id="slide-6-status">0 / 4</strong></span>
+          <button class="reveal-btn" onclick="revealNextInCurrentSlide()">Tiếp ⤓</button>
+          <button class="reveal-btn" onclick="revealAllInCurrentSlide()">Hiện hết</button>
+        </div>
+      </div>
+      <div class="slide-body">
+        <div class="grid-2">
+          <div class="card reveal-item">
+            <div class="card-title">🪟 Cài đặt & Cấu hình Hệ điều hành</div>
+            <div class="card-desc">
+              Phân vùng ổ đĩa (GPT/MBR, UEFI/Legacy), cài đặt các bản Windows 10/11, macOS hoặc các bản phân phối Linux theo tiêu chuẩn cơ quan.
+            </div>
+          </div>
+          <div class="card reveal-item">
+            <div class="card-title">⚙️ Cập nhật Driver Thiết bị</div>
+            <div class="card-desc">
+              Cài driver chính xác cho card đồ hoạ, card mạng Wi-Fi/LAN, card âm thanh, máy in, máy quét scan văn phòng.
+            </div>
+          </div>
+          <div class="card reveal-item">
+            <div class="card-title">🛡️ Quét Virus & Phòng chống Mã độc</div>
+            <div class="card-desc">
+              Cài đặt phần mềm diệt virus bản quyền, bật tường lửa Windows Defender, loại bỏ các tiện ích gián điệp và phần mềm quảng cáo độc hại.
+            </div>
+          </div>
+          <div class="card reveal-item">
+            <div class="card-title">🔄 Tối ưu hoá & Sao lưu dự phòng</div>
+            <div class="card-desc">
+              Dọn dẹp rác hệ thống (Temp cache), tắt ứng dụng khởi động thừa, thiết lập tự động sao lưu dữ liệu lên đám mây hoặc ổ cứng ngoài.
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 7: HỖ TRỢ NGƯỜI DÙNG -->
+    <div class="slide" id="slide-7">
+      <div class="slide-header">
+        <div>
+          <div class="slide-badge">06 · HỖ TRỢ NGƯỜI DÙNG</div>
+          <div class="slide-title">Cầu Nối Giữa Công Nghệ Và Con Người</div>
+          <div class="slide-subtitle">Người dùng là trọng tâm của mọi dịch vụ công nghệ</div>
+        </div>
+        <div class="reveal-controller">
+          <span>Bước: <strong class="reveal-status" id="slide-7-status">0 / 3</strong></span>
+          <button class="reveal-btn" onclick="revealNextInCurrentSlide()">Tiếp ⤓</button>
+          <button class="reveal-btn" onclick="revealAllInCurrentSlide()">Hiện hết</button>
+        </div>
+      </div>
+      <div class="slide-body">
+        <div class="card reveal-item" style="border-color: rgba(245, 166, 35, 0.3);">
+          <div class="card-title" style="color: var(--gold-light);">💬 Kỹ năng lắng nghe và đồng cảm</div>
+          <div class="card-desc">
+            Khách hàng thường đến với tâm trạng lo lắng, bối rối vì mất tài liệu quan trọng hoặc máy bị tê liệt. Người làm nghề phải kiên nhẫn lắng nghe mô tả bằng ngôn từ đời thường để suy luận ra nguyên nhân kỹ thuật.
+          </div>
+        </div>
+        <div class="grid-2">
+          <div class="card reveal-item">
+            <div class="card-title">📖 Hướng dẫn sử dụng đúng chuẩn</div>
+            <div class="card-desc">Chỉ dẫn người dùng cách tắt/bật máy an toàn, thói quen cắm rút USB đúng cách, cách đặt mật khẩu mạnh và không click vào link lừa đảo lạ.</div>
+          </div>
+          <div class="card reveal-item">
+            <div class="card-title">🌐 Hỗ trợ từ xa (Remote Support)</div>
+            <div class="card-desc">Sử dụng UltraViewer, TeamViewer hoặc AnyDesk để điều khiển màn hình từ xa, khắc phục ngay các lỗi phần mềm nhẹ chỉ trong vài phút.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 8: MỐI QUAN HỆ PHẦN CỨNG & PHẦN MỀM -->
+    <div class="slide" id="slide-8">
+      <div class="slide-header">
+        <div>
+          <div class="slide-badge">07 · LUẬN ĐIỂM CỐT LÕI</div>
+          <div class="slide-title">Vì Sao Phần Cứng Không Tách Rời Phần Mềm?</div>
+          <div class="slide-subtitle">Một câu hỏi đắt giá thường gặp trong các bài kiểm tra và thi tốt nghiệp</div>
+        </div>
+        <div class="reveal-controller">
+          <span>Bước: <strong class="reveal-status" id="slide-8-status">0 / 3</strong></span>
+          <button class="reveal-btn" onclick="revealNextInCurrentSlide()">Tiếp ⤓</button>
+          <button class="reveal-btn" onclick="revealAllInCurrentSlide()">Hiện hết</button>
+        </div>
+      </div>
+      <div class="slide-body">
+        <div class="highlight-box reveal-item" style="font-size: 16px; border-color: var(--sea-light);">
+          🎯 <strong>Khẳng định trong SGK Tin 12:</strong><br>
+          <em>"Máy tính và các thiết bị công nghệ thông tin chỉ có thể hoạt động cùng với phần mềm trong những điều kiện môi trường phù hợp. Vì vậy, <strong>sửa chữa, bảo trì phần cứng không tách rời việc duy trì phần mềm đi kèm</strong> và đảm bảo môi trường hoạt động cho cả hệ thống."</em>
+        </div>
+        <div class="grid-2" style="margin-top: 8px;">
+          <div class="card reveal-item">
+            <div class="card-title" style="color: var(--coral-light);">🔧 Nếu chỉ sửa Phần Cứng mà bỏ quên Phần Mềm:</div>
+            <div class="card-desc">
+              Thay card Wi-Fi mới tinh nhưng không cài driver tương thích → Máy tính vẫn không thể vào mạng!<br>
+              Nâng cấp ổ cứng SSD xịn nhưng để virus mã hoá hoành hành → Dữ liệu vẫn mất trắng!
+            </div>
+          </div>
+          <div class="card reveal-item">
+            <div class="card-title" style="color: var(--sea-light);">💾 Nếu chỉ sửa Phần Mềm mà bỏ quên Phần Cứng:</div>
+            <div class="card-desc">
+              Cài lại Windows 10 lần nhưng quạt tản nhiệt bị kẹt bụi khô keo → Máy chạy 5 phút là quá nhiệt tự ngắt bảo vệ CPU!<br>
+              Phần mềm quét lỗi liên tục vì nguồn điện PSU bị chập chờn sụt áp.
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 9: KIẾN THỨC VÀ KỸ NĂNG CẦN THIẾT -->
+    <div class="slide" id="slide-9">
+      <div class="slide-header">
+        <div>
+          <div class="slide-badge">08 · HÀNH TRANG NGHỀ NGHIỆP</div>
+          <div class="slide-title">Kiến Thức & Kỹ Năng Cần Có Để Hành Nghề</div>
+          <div class="slide-subtitle">Sự kết hợp giữa chuyên môn kỹ thuật sâu và kỹ năng mềm linh hoạt</div>
+        </div>
+        <div class="reveal-controller">
+          <span>Bước: <strong class="reveal-status" id="slide-9-status">0 / 4</strong></span>
+          <button class="reveal-btn" onclick="revealNextInCurrentSlide()">Tiếp ⤓</button>
+          <button class="reveal-btn" onclick="revealAllInCurrentSlide()">Hiện hết</button>
+        </div>
+      </div>
+      <div class="slide-body">
+        <div class="grid-2">
+          <div class="card reveal-item" style="border-left: 4px solid var(--sea-light);">
+            <div class="card-title" style="color: var(--sea-light);">📘 Khối Kiến Thức Chuyên Môn</div>
+            <div class="card-desc">
+              • <strong>Phần cứng:</strong> Hiểu cấu tạo, tháo lắp, đo đạc, chẩn đoán linh kiện.<br>
+              • <strong>Phần mềm:</strong> Cài HĐH, cấu hình ứng dụng, quét mã độc diệt virus.<br>
+              • <strong>Mạng máy tính:</strong> Kiến thức mạng cục bộ LAN, Wi-Fi, chia sẻ máy in, cấu hình router Internet.
+            </div>
+          </div>
+          <div class="card reveal-item" style="border-left: 4px solid var(--gold);">
+            <div class="card-title" style="color: var(--gold-light);">🌟 4 Kỹ Năng Mềm Then Chốt</div>
+            <div class="card-desc">
+              • <strong>Tự học & cập nhật:</strong> Theo dõi công nghệ mới mỗi ngày.<br>
+              • <strong>Giải quyết vấn đề:</strong> Phân tích logic, tra cứu tài liệu tài ba.<br>
+              • <strong>Giao tiếp:</strong> Diễn giải kỹ thuật dễ hiểu với người không chuyên.<br>
+              • <strong>Quản lý thời gian:</strong> Bàn giao thiết bị đúng hạn cam kết.
+            </div>
+          </div>
+        </div>
+        <div class="card reveal-item" style="background: rgba(255, 255, 255, 0.03);">
+          <div class="card-title">💡 Tính phân công chuyên trách trong thực tế:</div>
+          <div class="card-desc">
+            Vì thiết bị và phần mềm rất đa dạng, không ai có khả năng sửa chữa mọi thứ. Các trung tâm lớn thường phân công chuyên sâu: chuyên viên phần cứng bo mạch, chuyên viên xử lý phần mềm - dữ liệu, chuyên viên bảo trì máy in & mạng văn phòng.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 10: TRẠM TƯƠNG TÁC CHẨN ĐOÁN LỖI ẢO -->
+    <div class="slide" id="slide-10">
+      <div class="slide-header">
+        <div>
+          <div class="slide-badge">09 · PHÒNG THỰC HÀNH ẢO</div>
+          <div class="slide-title">Trạm Tương Tác: Chẩn Đoán & Khắc Phục Sự Cố</div>
+          <div class="slide-subtitle">Nhấp chọn triệu chứng lỗi bên trái để xem phân tích và giải pháp xử lý</div>
+        </div>
+        <div class="reveal-controller">
+          <span style="color: var(--sea-light); font-weight: 700;">Tương tác trực tiếp</span>
+        </div>
+      </div>
+      <div class="slide-body">
+        <div class="trouble-container">
+          <div class="trouble-list">
+            <div class="trouble-item active" onclick="selectTrouble(0, this)">
+              <span>🔔</span>
+              <div>
+                <strong>Ca 1: Bật máy kêu tít tít liên tục</strong>
+                <div style="font-size: 11.5px; color: var(--ink-soft);">Quạt quay nhưng không lên hình</div>
+              </div>
+            </div>
+            <div class="trouble-item" onclick="selectTrouble(1, this)">
+              <span>🐢</span>
+              <div>
+                <strong>Ca 2: Máy chạy chậm đơ như rùa bò</strong>
+                <div style="font-size: 11.5px; color: var(--ink-soft);">Mở Word/Excel mất 3-5 phút</div>
+              </div>
+            </div>
+            <div class="trouble-item" onclick="selectTrouble(2, this)">
+              <span>🌐</span>
+              <div>
+                <strong>Ca 3: Mất mạng LAN & biểu tượng quả cầu</strong>
+                <div style="font-size: 11.5px; color: var(--ink-soft);">Dây mạng cắm đèn không sáng</div>
+              </div>
+            </div>
+            <div class="trouble-item" onclick="selectTrouble(3, this)">
+              <span>💀</span>
+              <div>
+                <strong>Ca 4: Đang dùng bị Màn hình xanh BSOD</strong>
+                <div style="font-size: 11.5px; color: var(--ink-soft);">Mã lỗi MEMORY_MANAGEMENT</div>
+              </div>
+            </div>
+          </div>
+          <div class="trouble-view" id="troubleDetail">
+            <!-- Render động bằng JS -->
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 11: NHU CẦU NHÂN LỰC THỜI 4.0 -->
+    <div class="slide" id="slide-11">
+      <div class="slide-header">
+        <div>
+          <div class="slide-badge">10 · XU HƯỚNG TƯƠNG LAI</div>
+          <div class="slide-title">Nhu Cầu Nhân Lực Trong Kỷ Nguyên Số Hoá</div>
+          <div class="slide-subtitle">Cơ hội việc làm rộng mở cho những kỹ thuật viên trình độ cao</div>
+        </div>
+        <div class="reveal-controller">
+          <span>Bước: <strong class="reveal-status" id="slide-11-status">0 / 3</strong></span>
+          <button class="reveal-btn" onclick="revealNextInCurrentSlide()">Tiếp ⤓</button>
+          <button class="reveal-btn" onclick="revealAllInCurrentSlide()">Hiện hết</button>
+        </div>
+      </div>
+      <div class="slide-body">
+        <div class="grid-3">
+          <div class="card reveal-item">
+            <div style="font-size: 28px; margin-bottom: 8px;">📈</div>
+            <div class="card-title">Bùng nổ thiết bị kết nối</div>
+            <div class="card-desc">Từ máy tính bàn, laptop đến camera thông minh, thiết bị IoT văn phòng bùng nổ, kéo theo khối lượng công việc bảo trì định kỳ khổng lồ.</div>
+          </div>
+          <div class="card reveal-item">
+            <div style="font-size: 28px; margin-bottom: 8px;">🏠</div>
+            <div class="card-title">Làm việc từ xa (WFA)</div>
+            <div class="card-desc">Nhân viên làm việc tại nhà cần được hỗ trợ thiết lập VPN an toàn, chẩn đoán lỗi từ xa qua mạng mà không cần đến tận nơi.</div>
+          </div>
+          <div class="card reveal-item">
+            <div style="font-size: 28px; margin-bottom: 8px;">🔒</div>
+            <div class="card-title">Bảo mật & An toàn dữ liệu</div>
+            <div class="card-desc">Kỹ thuật viên không chỉ biết sửa linh kiện mà phải có ý thức bảo mật, cam kết tuyệt đối không sao chép trộm dữ liệu nhạy cảm của khách.</div>
+          </div>
+        </div>
+        <div class="highlight-box reveal-item" style="border-color: var(--leaf-light); background: rgba(16, 185, 129, 0.15); color: #D1FAE5;">
+          🚀 <strong>Khẳng định SGK:</strong> Trong tương lai gần, nhu cầu nhân lực cho nghề sửa chữa và bảo trì máy tính, **đặc biệt là nhân lực trình độ cao**, sẽ ngày càng tăng cả về số lượng lẫn chất lượng.
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 12: CÁC NGÀNH ĐÀO TẠO LIÊN QUAN -->
+    <div class="slide" id="slide-12">
+      <div class="slide-header">
+        <div>
+          <div class="slide-badge">11 · ĐỊNH HƯỚNG TUYỂN SINH</div>
+          <div class="slide-title">Các Ngành Học Liên Quan Tại Việt Nam</div>
+          <div class="slide-subtitle">Bạn có thể chọn học những ngành nào sau khi tốt nghiệp THPT?</div>
+        </div>
+        <div class="reveal-controller">
+          <span>Bước: <strong class="reveal-status" id="slide-12-status">0 / 4</strong></span>
+          <button class="reveal-btn" onclick="revealNextInCurrentSlide()">Tiếp ⤓</button>
+          <button class="reveal-btn" onclick="revealAllInCurrentSlide()">Hiện hết</button>
+        </div>
+      </div>
+      <div class="slide-body">
+        <div class="grid-2">
+          <div class="card reveal-item">
+            <div class="card-title" style="color: var(--sea-light);">1. Kĩ thuật sửa chữa, lắp ráp máy tính</div>
+            <div class="card-desc">Đào tạo chuyên sâu về thao tác thực hành, kỹ năng tháo lắp linh kiện, đo nguồn bo mạch, xử lý ban bệnh điện tử thực tế.</div>
+          </div>
+          <div class="card reveal-item">
+            <div class="card-title" style="color: var(--coral-light);">2. Công nghệ kĩ thuật phần cứng máy tính</div>
+            <div class="card-desc">Nghiên cứu sâu về kiến trúc vi xử lý, mạch in, nguyên lý hoạt động điện tử của các thiết bị ngoại vi và bo mạch chủ.</div>
+          </div>
+          <div class="card reveal-item">
+            <div class="card-title" style="color: var(--gold-light);">3. Công nghệ kĩ thuật phần mềm máy tính</div>
+            <div class="card-desc">Trang bị kiến thức hệ điều hành, cấu trúc tệp tin, tối ưu hóa phần mềm và phòng chống các lỗ hổng mã độc.</div>
+          </div>
+          <div class="card reveal-item">
+            <div class="card-title" style="color: var(--leaf-light);">4. Công nghệ thông tin (Tổng hợp)</div>
+            <div class="card-desc">Ngành học nền tảng toàn diện, bao quát cả phần cứng, phần mềm, cơ sở dữ liệu, mạng máy tính và chuyển đổi số.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 13: SO SÁNH CAO ĐẲNG VÀ ĐẠI HỌC -->
+    <div class="slide" id="slide-13">
+      <div class="slide-header">
+        <div>
+          <div class="slide-badge">12 · LỰA CHỌN BẬC HỌC</div>
+          <div class="slide-title">Bậc Cao Đẳng Hay Đại Học: Chọn Con Đường Nào?</div>
+          <div class="slide-subtitle">So sánh định hướng đào tạo và lợi thế của từng bậc học theo SGK</div>
+        </div>
+        <div class="reveal-controller">
+          <span>Bước: <strong class="reveal-status" id="slide-13-status">0 / 3</strong></span>
+          <button class="reveal-btn" onclick="revealNextInCurrentSlide()">Tiếp ⤓</button>
+          <button class="reveal-btn" onclick="revealAllInCurrentSlide()">Hiện hết</button>
+        </div>
+      </div>
+      <div class="slide-body">
+        <div class="grid-2" style="flex: 1;">
+          <div class="card reveal-item" style="border-color: var(--sea-light); background: rgba(13, 124, 134, 0.14);">
+            <div style="font-size: 26px; margin-bottom: 6px;">🎓 BẬC CAO ĐẲNG NGHỀ</div>
+            <div class="card-title" style="color: var(--sea-light);">Thực hành nhiều · Tay nghề thành thạo</div>
+            <div class="card-desc" style="font-size: 14.5px; line-height: 1.7;">
+              • Thời lượng thực hành tại xưởng chiếm 60–70% chương trình.<br>
+              • Chú trọng **mức độ thành thạo** trong công việc sửa chữa thiết bị cụ thể.<br>
+              • SGK khẳng định: <em>Mức độ thành thạo là yếu tố quan trọng nhất đối với nghề sửa chữa, bảo trì</em>.<br>
+              • Thời gian đào tạo ngắn (2 – 2.5 năm), sớm có việc làm và thu nhập.
+            </div>
+          </div>
+          <div class="card reveal-item" style="border-color: var(--purple-light); background: rgba(139, 92, 246, 0.12);">
+            <div style="font-size: 26px; margin-bottom: 6px;">🏛️ BẬC ĐẠI HỌC</div>
+            <div class="card-title" style="color: var(--purple-light);">Nguyên lý sâu · Xử lý vấn đề phức tạp</div>
+            <div class="card-desc" style="font-size: 14.5px; line-height: 1.7;">
+              • Chú trọng nghiên cứu **nguyên lý hoạt động** sâu xa của hệ thống.<br>
+              • Kỹ năng sửa linh kiện cụ thể ít được chú ý rèn giũa hơn.<br>
+              • Có khả năng giải quyết các vấn đề phức tạp, thích ứng nhanh với thiết bị công nghệ mới đòi hỏi kiến thức cao.<br>
+              • Cơ hội thăng tiến lên vị trí kỹ sư trưởng, quản lý dự án hệ thống.
+            </div>
+          </div>
+        </div>
+        <div class="highlight-box reveal-item" style="font-size: 13.5px;">
+          💬 <em>Dù học ở bậc nào, môi trường doanh nghiệp thực tế và tinh thần tự học từ đồng nghiệp là yếu tố quyết định sự thành công của một kỹ thuật viên giỏi!</em>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 14: MINI-QUIZ TƯƠNG TÁC -->
+    <div class="slide" id="slide-14">
+      <div class="slide-header">
+        <div>
+          <div class="slide-badge">13 · ĐỐ VUI CỦNG CỐ</div>
+          <div class="slide-title">Thử Tài Am Hiểu Nghề Sửa Chữa Máy Tính</div>
+          <div class="slide-subtitle">Chọn phương án đúng nhất và nhận phản hồi tức thì</div>
+        </div>
+        <div class="reveal-controller">
+          <span style="color: var(--sea-light); font-weight: 700;">Câu hỏi tương tác</span>
+        </div>
+      </div>
+      <div class="slide-body">
+        <div class="card" style="border-color: rgba(56, 225, 240, 0.3);">
+          <div class="card-title" style="color: var(--sea-light);">
+            ❓ Câu hỏi: Yếu tố nào được coi là quan trọng nhất đối với nghề sửa chữa, bảo trì máy tính và bậc học nào có thế mạnh rèn luyện yếu tố này?
+          </div>
+          <div class="quiz-options">
+            <button class="quiz-btn" onclick="checkQuiz(this, true, 1, 'SGK nêu rõ: mức độ thành thạo trong công việc là yếu tố quan trọng nhất; các trường dạy nghề bậc Cao đẳng thường có điều kiện thực hành nhiều hơn để rèn luyện điều này.')">
+              <strong>A.</strong> Mức độ thành thạo công việc — Bậc Cao đẳng có điều kiện thực hành nhiều hơn
+            </button>
+            <button class="quiz-btn" onclick="checkQuiz(this, false, 1, 'Sai rồi! Bằng cấp học thuật cao chưa chắc đã đồng nghĩa với việc thành thạo kỹ năng sửa chữa linh kiện thực tế.')">
+              <strong>B.</strong> Bằng cấp học thuật cao nhất — Bậc Đại học luôn sửa máy giỏi hơn
+            </button>
+            <button class="quiz-btn" onclick="checkQuiz(this, false, 1, 'Sai rồi! Kỹ năng lập trình phần mềm là của ngành phát triển phần mềm, không phải trọng tâm của sửa chữa phần cứng.')">
+              <strong>C.</strong> Khả năng viết mã lập trình — Bậc Trung cấp chuyên nghiệp
+            </button>
+            <button class="quiz-btn" onclick="checkQuiz(this, false, 1, 'Sai rồi! Chứng chỉ ngoại ngữ chỉ là điều kiện bổ trợ, không phải yếu tố cốt lõi nhất.')">
+              <strong>D.</strong> Điểm thi đầu vào cao nhất — Các trường viện nghiên cứu hàn lâm
+            </button>
+          </div>
+          <div class="quiz-feedback" id="quizFeedback1"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 15: BẠN CÓ HỢP VỚI NGHỀ? -->
+    <div class="slide" id="slide-15">
+      <div class="slide-header">
+        <div>
+          <div class="slide-badge">14 · GÓC HƯỚNG NGHIỆP CÁ NHÂN</div>
+          <div class="slide-title">Bạn Có Phù Hợp Với Nghề Sửa Chữa & Bảo Trì?</div>
+          <div class="slide-subtitle">Bấm tích chọn các phẩm chất bạn đang có để xem độ tương thích</div>
+        </div>
+        <div class="reveal-controller">
+          <span style="color: var(--gold-light); font-weight: 700;">Trắc nghiệm bản thân</span>
+        </div>
+      </div>
+      <div class="slide-body">
+        <div class="grid-2">
+          <div style="display: flex; flex-direction: column; gap: 10px;">
+            <label class="quiz-btn" style="cursor: pointer;">
+              <input type="checkbox" onchange="calcFitScore()" class="fit-check"> 
+              <span>🔍 <strong>Thích mày mò, tò mò máy móc:</strong> Thích tháo lắp đồ chơi, phụ kiện, tìm hiểu linh kiện bên trong.</span>
+            </label>
+            <label class="quiz-btn" style="cursor: pointer;">
+              <input type="checkbox" onchange="calcFitScore()" class="fit-check"> 
+              <span>🧘 <strong>Tính kiên nhẫn, tỉ mỉ:</strong> Có thể ngồi hàng giờ đo đạc từng chân cắm, tìm lỗi mà không nản.</span>
+            </label>
+            <label class="quiz-btn" style="cursor: pointer;">
+              <input type="checkbox" onchange="calcFitScore()" class="fit-check"> 
+              <span>🧩 <strong>Tư duy logic giải đố:</strong> Thích suy luận nguyên nhân - kết quả khi sự cố xảy ra.</span>
+            </label>
+            <label class="quiz-btn" style="cursor: pointer;">
+              <input type="checkbox" onchange="calcFitScore()" class="fit-check"> 
+              <span>🤝 <strong>Nhiệt tình giúp đỡ mọi người:</strong> Cảm thấy vui vẻ khi giúp bạn bè hoặc gia đình sửa máy tính dùng được.</span>
+            </label>
+          </div>
+          <div class="card" style="display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; background: rgba(13, 124, 134, 0.15); border-color: var(--sea-light);">
+            <div style="font-size: 38px; margin-bottom: 8px;" id="fitEmoji">🎯</div>
+            <div style="font-size: 22px; font-weight: 800; color: #FFFFFF;" id="fitTitle">Hãy chọn các mục bên trái</div>
+            <div style="font-size: 14px; color: var(--ink-soft); margin-top: 8px; max-width: 320px;" id="fitDesc">
+              Khám phá mức độ phù hợp của bạn với nghề dịch vụ bảo trì máy tính!
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 16: TỔNG KẾT BÀI HỌC -->
+    <div class="slide" id="slide-16">
+      <div class="slide-header">
+        <div>
+          <div class="slide-badge">15 · TỔNG KẾT TOÀN DIỆN</div>
+          <div class="slide-title">Ghi Nhớ Trọng Tâm Bài 19</div>
+          <div class="slide-subtitle">Những điểm vàng cần nhớ để ôn tập và định hướng nghề nghiệp</div>
+        </div>
+        <div class="reveal-controller">
+          <button class="reveal-btn" onclick="fireConfetti()" style="background: linear-gradient(135deg, #10B981, #34D399); color: black;">
+            🎉 Bắn pháo hoa
+          </button>
+        </div>
+      </div>
+      <div class="slide-body">
+        <div class="grid-3">
+          <div class="card" style="border-color: var(--coral);">
+            <div class="card-title" style="color: var(--coral-light);">1. Ba nhóm công việc</div>
+            <div class="card-desc">• Phần cứng (duy trì, thay thế, nâng cấp).<br>• Phần mềm (HĐH, driver, virus).<br>• Hỗ trợ người dùng sử dụng đúng cách.</div>
+          </div>
+          <div class="card" style="border-color: var(--sea-light);">
+            <div class="card-title" style="color: var(--sea-light);">2. Nguyên lý bất di bất dịch</div>
+            <div class="card-desc">Sửa chữa phần cứng <strong>không thể tách rời</strong> phần mềm đi kèm và môi trường hệ thống.</div>
+          </div>
+          <div class="card" style="border-color: var(--gold);">
+            <div class="card-title" style="color: var(--gold-light);">3. Yếu tố thành công</div>
+            <div class="card-desc"><strong>Mức độ thành thạo công việc</strong> là quan trọng nhất. Cao đẳng mạnh thực hành, Đại học mạnh nguyên lý sâu.</div>
+          </div>
+        </div>
+        <div class="highlight-box" style="text-align: center; margin-top: 10px; background: rgba(56, 225, 240, 0.1);">
+          👏 <strong>Chúc mừng bạn đã hoàn thành bài học 19!</strong> Hãy tiếp tục ôn luyện trắc nghiệm và thử sức với các bài tiếp theo trên hệ thống!
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- THANH ĐIỀU HƯỚNG CỐ ĐỊNH PHÍA DƯỚI -->
+  <div class="deck-footer">
+    <button class="nav-btn" onclick="prevSlide()" title="Slide trước (Mũi tên trái)">‹</button>
+    <div class="deck-counter" id="deckCounter">1 / 16</div>
+    <div class="deck-progress-container">
+      <div class="deck-progress-bar" id="deckProgressBar"></div>
+    </div>
+    <button class="nav-btn" onclick="nextSlide()" title="Slide kế tiếp (Mũi tên phải)">›</button>
+    <button class="nav-btn" onclick="revealNextInCurrentSlide()" title="Hiện bước tiếp theo (Mũi tên xuống / Enter)">⤓</button>
+    <button class="nav-btn" onclick="toggleSound()" id="soundBtn" title="Bật/Tắt âm thanh (Phím M)">🔊</button>
+    <button class="nav-btn" onclick="toggleFullScreen()" title="Toàn màn hình (Phím F)">⛶</button>
+  </div>
+
+  <script>
+    let currentSlide = 1;
+    const totalSlides = 16;
+    let soundEnabled = true;
+    let audioCtx = null;
+
+    function getAudioCtx() {
+      if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      if (audioCtx.state === 'suspended') audioCtx.resume();
+      return audioCtx;
+    }
+
+    function playSound(type) {
+      if (!soundEnabled) return;
+      try {
+        const ctx = getAudioCtx();
+        const now = ctx.currentTime;
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+
+        if (type === 'click') {
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(540, now);
+          osc.frequency.exponentialRampToValueAtTime(850, now + 0.08);
+          gain.gain.setValueAtTime(0.12, now);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.08);
+          osc.start(now);
+          osc.stop(now + 0.08);
+        } else if (type === 'success') {
+          osc.type = 'triangle';
+          osc.frequency.setValueAtTime(523, now);
+          osc.frequency.setValueAtTime(659, now + 0.08);
+          osc.frequency.setValueAtTime(783, now + 0.16);
+          gain.gain.setValueAtTime(0.2, now);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.3);
+          osc.start(now);
+          osc.stop(now + 0.3);
+        } else if (type === 'wrong') {
+          osc.type = 'sawtooth';
+          osc.frequency.setValueAtTime(220, now);
+          gain.gain.setValueAtTime(0.2, now);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.25);
+          osc.start(now);
+          osc.stop(now + 0.25);
+        }
+      } catch (e) {}
+    }
+
+    function toggleSound() {
+      soundEnabled = !soundEnabled;
+      document.getElementById('soundBtn').innerText = soundEnabled ? '🔊' : '🔇';
+    }
+
+    function toggleFullScreen() {
+      if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen().catch(() => {});
+      } else {
+        document.exitFullscreen().catch(() => {});
+      }
+    }
+
+    function updateSlide() {
+      document.querySelectorAll('.slide').forEach((s, idx) => {
+        s.classList.toggle('active', idx + 1 === currentSlide);
+      });
+      document.getElementById('deckCounter').innerText = currentSlide + ' / ' + totalSlides;
+      document.getElementById('deckProgressBar').style.width = ((currentSlide - 1) / (totalSlides - 1) * 100) + '%';
+      if (currentSlide === 10) renderTroubleDetail(currentTroubleIdx);
+      if (currentSlide === 16) setTimeout(fireConfetti, 300);
+    }
+
+    function nextSlide() {
+      if (currentSlide < totalSlides) {
+        currentSlide++;
+        playSound('click');
+        updateSlide();
+      }
+    }
+
+    function prevSlide() {
+      if (currentSlide > 1) {
+        currentSlide--;
+        playSound('click');
+        updateSlide();
+      }
+    }
+
+    function revealNextInCurrentSlide() {
+      const slide = document.getElementById('slide-' + currentSlide);
+      if (!slide) return;
+      const items = slide.querySelectorAll('.reveal-item');
+      for (let item of items) {
+        if (!item.classList.contains('revealed')) {
+          item.classList.add('revealed', 'just-revealed');
+          setTimeout(() => item.classList.remove('just-revealed'), 600);
+          playSound('click');
+          updateRevealStatus(slide);
+          return;
+        }
+      }
+    }
+
+    function revealAllInCurrentSlide() {
+      const slide = document.getElementById('slide-' + currentSlide);
+      if (!slide) return;
+      slide.querySelectorAll('.reveal-item').forEach(item => item.classList.add('revealed'));
+      playSound('success');
+      updateRevealStatus(slide);
+    }
+
+    function updateRevealStatus(slide) {
+      const items = slide.querySelectorAll('.reveal-item');
+      const revealed = slide.querySelectorAll('.reveal-item.revealed').length;
+      const statusEl = document.getElementById(slide.id + '-status');
+      if (statusEl) statusEl.innerText = revealed + ' / ' + items.length;
+    }
+
+    document.addEventListener('keydown', (e) => {
+      if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+      if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown') {
+        e.preventDefault(); nextSlide();
+      } else if (e.key === 'ArrowLeft' || e.key === 'PageUp') {
+        e.preventDefault(); prevSlide();
+      } else if (e.key === 'ArrowDown' || e.key === 'Enter') {
+        e.preventDefault(); revealNextInCurrentSlide();
+      } else if (e.key.toLowerCase() === 'f') {
+        toggleFullScreen();
+      } else if (e.key.toLowerCase() === 'm') {
+        toggleSound();
+      }
+    });
+
+    /* MINI QUIZ */
+    function checkQuiz(btn, isCorrect, qId, explanation) {
+      const parent = btn.parentElement;
+      const feedback = document.getElementById('quizFeedback' + qId);
+      parent.querySelectorAll('.quiz-btn').forEach(b => {
+        b.disabled = true;
+        b.style.pointerEvents = 'none';
+      });
+
+      if (isCorrect) {
+        btn.classList.add('correct');
+        playSound('success');
+        feedback.style.display = 'block';
+        feedback.style.background = 'rgba(16, 185, 129, 0.15)';
+        feedback.style.border = '1px solid #10B981';
+        feedback.style.color = '#34D399';
+        feedback.innerHTML = '🎉 <strong>Chính xác!</strong> ' + explanation;
+      } else {
+        btn.classList.add('wrong');
+        playSound('wrong');
+        feedback.style.display = 'block';
+        feedback.style.background = 'rgba(239, 68, 68, 0.15)';
+        feedback.style.border = '1px solid #EF4444';
+        feedback.style.color = '#FCA5A5';
+        feedback.innerHTML = '❌ <strong>Chưa chính xác!</strong> ' + explanation;
+      }
+    }
+
+    /* TROUBLESHOOTER DATA */
+    const troubles = [
+      {
+        title: "Bật nguồn quạt quay nhưng màn hình tối đen, 3 tiếng bíp",
+        cause: "Chân tiếp xúc RAM bị bám bụi bẩn, oxy hoá hoặc lỏng khe cắm sau thời gian dài sử dụng.",
+        steps: [
+          "1. Ngắt nguồn điện hoàn toàn, tháo nắp thùng máy tính.",
+          "2. Bấm 2 ngàm giữ thanh RAM, nhấc nhẹ nhàng thanh RAM ra ngoài.",
+          "3. Dùng gôm tẩy mực hoặc cồn 90 độ lau nhẹ chân mạ vàng của RAM.",
+          "4. Dùng bóng xịt thổi sạch bụi trong rãnh khe cắm RAM trên mainboard.",
+          "5. Cắm chặt RAM vào khe (nghe tiếng tách ăn khớp) và bật máy kiểm tra."
+        ],
+        type: "Phần cứng (Hardware)"
+      },
+      {
+        title: "Máy tính chạy chậm như rùa bò, mở phần mềm rất lâu",
+        cause: "Ổ đĩa cứng HDD cũ bị phân mảnh, quá nhiều ứng dụng chạy ngầm khởi động cùng Windows.",
+        steps: [
+          "1. Mở Task Manager (Ctrl + Shift + Esc) kiểm tra mức độ 100% Disk hoặc CPU.",
+          "2. Tắt các ứng dụng không cần thiết trong tab Startup.",
+          "3. Dọn dẹp tệp tin tạm (xoá thư mục %temp% và chạy Disk Cleanup).",
+          "4. Giải pháp triệt để: Nâng cấp thay thế ổ HDD truyền thống bằng ổ SSD NVMe tốc độ cao."
+        ],
+        type: "Phần mềm & Nâng cấp"
+      },
+      {
+        title: "Mất kết nối mạng LAN, biểu tượng quả cầu gạch chéo",
+        cause: "Cáp mạng bấm lỏng hạt mạng RJ45, card mạng bị tắt (Disabled) hoặc chưa có driver.",
+        steps: [
+          "1. Kiểm tra 2 đèn LED vàng/xanh ở cổng RJ45 phía sau thùng máy tính.",
+          "2. Rút cáp cắm lại chắc chắn, thử dây cáp khác hoặc cắm sang cổng switch khác.",
+          "3. Vào Network Connections kiểm tra xem card Ethernet có bị Disabled không (bấm Enable).",
+          "4. Cài lại driver mạng LAN mới nhất từ trang chủ nhà sản xuất bo mạch chủ."
+        ],
+        type: "Mạng & Driver"
+      },
+      {
+        title: "Màn hình xanh chết chóc (BSOD) thông báo MEMORY_MANAGEMENT",
+        cause: "Xung đột driver card đồ hoạ hoặc một thanh RAM trong máy bị lỗi chip nhớ (bad memory).",
+        steps: [
+          "1. Ghi lại mã lỗi hiển thị dưới mã QR màn hình xanh.",
+          "2. Chạy công cụ Windows Memory Diagnostic kiểm tra xem thanh RAM nào bị lỗi.",
+          "3. Nếu cắm 2 thanh RAM, tháo thử từng thanh để chạy kiểm tra loại trừ.",
+          "4. Cập nhật driver card đồ hoạ hoặc khôi phục hệ điều hành về thời điểm ổn định."
+        ],
+        type: "Phần cứng & HĐH"
+      }
+    ];
+
+    let currentTroubleIdx = 0;
+    function selectTrouble(idx, el) {
+      playSound('click');
+      currentTroubleIdx = idx;
+      document.querySelectorAll('.trouble-item').forEach(item => item.classList.remove('active'));
+      el.classList.add('active');
+      renderTroubleDetail(idx);
+    }
+
+    function renderTroubleDetail(idx) {
+      const t = troubles[idx];
+      const container = document.getElementById('troubleDetail');
+      if (!container) return;
+      container.innerHTML = `
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+          <div style="font-size: 16px; font-weight: 800; color: #FFFFFF;">${t.title}</div>
+          <span class="action-badge badge-hw">${t.type}</span>
+        </div>
+        <div style="background: rgba(255,255,255,0.04); border-left: 3px solid var(--coral); padding: 10px 14px; border-radius: 6px; font-size: 13.5px;">
+          <strong>Nguyên nhân suy đoán:</strong> ${t.cause}
+        </div>
+        <div style="font-size: 13.5px; line-height: 1.6; color: #E2E8F0;">
+          <strong style="color: var(--sea-light);">Quy trình xử lý của Kỹ thuật viên:</strong>
+          <div style="margin-top: 6px;">
+            ${t.steps.map(s => `<div style="margin-bottom: 4px;">${s}</div>`).join('')}
+          </div>
+        </div>
+      `;
+    }
+
+    /* ĐÁNH GIÁ ĐỘ PHÙ HỢP NGHỀ */
+    function calcFitScore() {
+      playSound('click');
+      const checks = document.querySelectorAll('.fit-check:checked').length;
+      const emojiEl = document.getElementById('fitEmoji');
+      const titleEl = document.getElementById('fitTitle');
+      const descEl = document.getElementById('fitDesc');
+
+      if (checks === 0) {
+        emojiEl.innerText = "🎯";
+        titleEl.innerText = "Hãy chọn các mục bên trái";
+        descEl.innerText = "Khám phá mức độ phù hợp của bạn với nghề dịch vụ bảo trì máy tính!";
+      } else if (checks <= 2) {
+        emojiEl.innerText = "🌱";
+        titleEl.innerText = "Tiềm Năng Khởi Đầu (" + checks + "/4)";
+        descEl.innerText = "Bạn có những nét tính cách phù hợp bước đầu. Hãy tiếp tục khám phá thêm máy tính và công nghệ nhé!";
+      } else if (checks === 3) {
+        emojiEl.innerText = "⭐";
+        titleEl.innerText = "Rất Phù Hợp Nghề! (3/4)";
+        descEl.innerText = "Bạn có tư duy logic, tính tò mò và sự kiên nhẫn. Bạn rất có tố chất trở thành kỹ thuật viên CNTT giỏi!";
+      } else {
+        emojiEl.innerText = "🚀";
+        titleEl.innerText = "Kỹ Thuật Viên Tương Lai! (4/4)";
+        descEl.innerText = "Tuyệt vời! Bạn hội tụ đủ mọi phẩm chất của một chuyên gia sửa chữa & bảo trì máy tính chuyên nghiệp!";
+        playSound('success');
+      }
+    }
+
+    /* PHÁO HOA ĂN MỪNG */
+    function fireConfetti() {
+      playSound('success');
+      const canvas = document.getElementById('confettiCanvas');
+      const ctx = canvas.getContext('2d');
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+
+      const particles = [];
+      const colors = ['#38E1F0', '#F2683C', '#F5A623', '#10B981', '#8B5CF6'];
+
+      for (let i = 0; i < 90; i++) {
+        particles.push({
+          x: canvas.width / 2,
+          y: canvas.height * 0.45,
+          vx: (Math.random() - 0.5) * 16,
+          vy: (Math.random() - 0.7) * 16,
+          size: Math.random() * 8 + 4,
+          color: colors[Math.floor(Math.random() * colors.length)],
+          alpha: 1,
+          rot: Math.random() * 360,
+          vrot: (Math.random() - 0.5) * 12
+        });
+      }
+
+      function render() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        let alive = false;
+        particles.forEach(p => {
+          p.x += p.vx;
+          p.y += p.vy;
+          p.vy += 0.35;
+          p.alpha -= 0.012;
+          p.rot += p.vrot;
+
+          if (p.alpha > 0) {
+            alive = true;
+            ctx.save();
+            ctx.globalAlpha = p.alpha;
+            ctx.translate(p.x, p.y);
+            ctx.rotate(p.rot * Math.PI / 180);
+            ctx.fillStyle = p.color;
+            ctx.fillRect(-p.size / 2, -p.size / 2, p.size, p.size);
+            ctx.restore();
+          }
+        });
+        if (alive) requestAnimationFrame(render);
+        else ctx.clearRect(0, 0, canvas.width, canvas.height);
+      }
+      render();
+    }
+
+    updateSlide();
+  </script>
+</body>
+</html>

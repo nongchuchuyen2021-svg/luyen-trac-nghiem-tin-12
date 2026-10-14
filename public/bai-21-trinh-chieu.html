@@ -1,0 +1,1333 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bài 21: Hội thảo hướng nghiệp — Bài giảng điện tử Tin học 12</title>
+  <style>
+    :root {
+      --bg: #04090F;
+      --bg-card: rgba(8, 20, 32, 0.94);
+      --border-card: rgba(16, 185, 129, 0.22);
+      --ink: #FFFFFF;
+      --ink-soft: #94A3B8;
+      --sea: #0D7C86;
+      --sea-light: #38E1F0;
+      --coral: #F2683C;
+      --gold: #F5A623;
+      --gold-light: #FFC043;
+      --leaf: #10B981;
+      --leaf-light: #34D399;
+      --purple: #8B5CF6;
+      --purple-light: #C4B5FD;
+      --radius-lg: 24px;
+      --radius-md: 16px;
+      --radius-sm: 10px;
+      --font-main: system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      --font-mono: 'Consolas', 'Fira Code', 'Courier New', monospace;
+      --transition-slide: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.5s ease;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: var(--font-main);
+      background-color: var(--bg);
+      color: var(--ink);
+      overflow: hidden;
+      width: 100vw;
+      height: 100vh;
+      user-select: none;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .bg-mesh {
+      position: fixed;
+      top: 0; left: 0; width: 100vw; height: 100vh;
+      background: radial-gradient(circle at 15% 15%, rgba(16, 185, 129, 0.28) 0%, transparent 45%),
+                  radial-gradient(circle at 85% 82%, rgba(245, 166, 35, 0.22) 0%, transparent 45%),
+                  radial-gradient(circle at 50% 50%, rgba(56, 225, 240, 0.18) 0%, transparent 60%);
+      z-index: 0;
+      pointer-events: none;
+      animation: meshPulse 14s ease-in-out infinite alternate;
+    }
+
+    @keyframes meshPulse {
+      0% { transform: scale(1) translate(0, 0); opacity: 0.9; }
+      100% { transform: scale(1.06) translate(-10px, 12px); opacity: 1; }
+    }
+
+    .floating-symbols {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 1;
+      overflow: hidden;
+    }
+
+    .float-tag {
+      position: absolute;
+      font-family: var(--font-mono);
+      font-size: 13.5px;
+      font-weight: 700;
+      color: rgba(16, 185, 129, 0.35);
+      border: 1px solid rgba(16, 185, 129, 0.22);
+      padding: 5px 12px;
+      border-radius: 8px;
+      background: rgba(16, 185, 129, 0.06);
+      animation: floatUp 24s linear infinite;
+    }
+
+    @keyframes floatUp {
+      0% { transform: translateY(105vh) rotate(0deg); opacity: 0; }
+      10% { opacity: 0.55; }
+      90% { opacity: 0.55; }
+      100% { transform: translateY(-10vh) rotate(360deg); opacity: 0; }
+    }
+
+    .deck-container {
+      position: relative;
+      width: 100vw;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 10;
+    }
+
+    .slide {
+      position: absolute;
+      width: 92vw;
+      max-width: 1280px;
+      height: 86vh;
+      background: var(--bg-card);
+      border: 1px solid var(--border-card);
+      border-radius: var(--radius-lg);
+      box-shadow: 0 24px 70px rgba(0, 0, 0, 0.7);
+      backdrop-filter: blur(22px);
+      padding: 34px 46px;
+      display: flex;
+      flex-direction: column;
+      opacity: 0;
+      transform: scale(0.96) translateY(24px);
+      pointer-events: none;
+      transition: var(--transition-slide);
+      overflow-y: auto;
+    }
+
+    .slide.active {
+      opacity: 1;
+      transform: scale(1) translateY(0);
+      pointer-events: auto;
+    }
+
+    .slide::-webkit-scrollbar { width: 6px; }
+    .slide::-webkit-scrollbar-thumb { background: rgba(16, 185, 129, 0.3); border-radius: 4px; }
+
+    .slide-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 20px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      padding-bottom: 14px;
+      flex-shrink: 0;
+    }
+
+    .slide-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(16, 185, 129, 0.16);
+      border: 1px solid rgba(16, 185, 129, 0.38);
+      color: var(--leaf-light);
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      padding: 4px 12px;
+      border-radius: 20px;
+      margin-bottom: 6px;
+    }
+
+    .slide-title {
+      font-size: 27px;
+      font-weight: 800;
+      color: #FFFFFF;
+      line-height: 1.25;
+      background: linear-gradient(90deg, #FFFFFF, #A7F3D0);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .slide-subtitle {
+      font-size: 13.5px;
+      color: var(--ink-soft);
+      margin-top: 3px;
+    }
+
+    .reveal-controller {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 30px;
+      padding: 4px 12px;
+      font-size: 12px;
+      color: var(--ink-soft);
+      flex-shrink: 0;
+    }
+
+    .reveal-status {
+      font-family: var(--font-mono);
+      font-weight: 700;
+      color: var(--leaf-light);
+    }
+
+    .reveal-btn {
+      background: rgba(16, 185, 129, 0.25);
+      border: 1px solid rgba(16, 185, 129, 0.45);
+      color: white;
+      padding: 4px 10px;
+      border-radius: 14px;
+      font-size: 11px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .reveal-btn:hover {
+      background: var(--leaf);
+      color: #04090F;
+    }
+
+    .slide-body {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .reveal-item {
+      opacity: 0.15;
+      transform: translateY(10px);
+      transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+      filter: blur(1.5px);
+    }
+
+    .reveal-item.revealed {
+      opacity: 1;
+      transform: translateY(0);
+      filter: blur(0);
+    }
+
+    .reveal-item.just-revealed {
+      box-shadow: 0 0 25px rgba(16, 185, 129, 0.4);
+      border-color: var(--leaf-light) !important;
+    }
+
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+    .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
+
+    .card {
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.09);
+      border-radius: var(--radius-md);
+      padding: 16px 20px;
+      transition: transform 0.3s, border-color 0.3s, background 0.3s;
+    }
+
+    .card:hover {
+      transform: translateY(-3px);
+      border-color: rgba(16, 185, 129, 0.4);
+      background: rgba(255, 255, 255, 0.06);
+    }
+
+    .card-title {
+      font-size: 15.5px;
+      font-weight: 700;
+      color: #FFFFFF;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .card-desc {
+      font-size: 13.5px;
+      color: var(--ink-soft);
+      line-height: 1.55;
+    }
+
+    .highlight-box {
+      background: rgba(16, 185, 129, 0.14);
+      border: 1px solid rgba(16, 185, 129, 0.35);
+      border-radius: var(--radius-md);
+      padding: 16px 20px;
+      font-size: 14.5px;
+      line-height: 1.6;
+      color: #D1FAE5;
+    }
+
+    .highlight-box strong { color: #A7F3D0; }
+
+    /* FOOTER THANH ĐIỀU HƯỚNG */
+    .deck-footer {
+      position: fixed;
+      bottom: 14px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background: rgba(6, 14, 22, 0.92);
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      border-radius: 40px;
+      padding: 8px 20px;
+      backdrop-filter: blur(20px);
+      z-index: 100;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
+    }
+
+    .nav-btn {
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      color: white;
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 15px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .nav-btn:hover {
+      background: var(--leaf);
+      color: #04090F;
+      border-color: var(--leaf-light);
+      transform: scale(1.08);
+    }
+
+    .deck-progress-container {
+      width: 140px;
+      height: 6px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 3px;
+      overflow: hidden;
+    }
+
+    .deck-progress-bar {
+      height: 100%;
+      background: linear-gradient(90deg, var(--leaf), var(--gold));
+      width: 0%;
+      transition: width 0.3s ease;
+    }
+
+    .deck-counter {
+      font-family: var(--font-mono);
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--leaf-light);
+      min-width: 52px;
+      text-align: center;
+    }
+
+    /* MINI QUIZ */
+    .quiz-options {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-top: 12px;
+    }
+
+    .quiz-btn {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: var(--radius-sm);
+      padding: 12px 18px;
+      color: #FFFFFF;
+      font-size: 14px;
+      text-align: left;
+      cursor: pointer;
+      transition: all 0.25s;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .quiz-btn:hover {
+      background: rgba(16, 185, 129, 0.18);
+      border-color: var(--leaf-light);
+      transform: translateX(4px);
+    }
+
+    .quiz-btn.correct {
+      background: rgba(16, 185, 129, 0.25) !important;
+      border-color: #10B981 !important;
+      color: #34D399 !important;
+    }
+
+    .quiz-btn.wrong {
+      background: rgba(239, 68, 68, 0.25) !important;
+      border-color: #EF4444 !important;
+      color: #FCA5A5 !important;
+    }
+
+    .quiz-feedback {
+      margin-top: 12px;
+      padding: 12px 16px;
+      border-radius: var(--radius-sm);
+      font-size: 13.5px;
+      line-height: 1.5;
+      display: none;
+    }
+
+    /* BẢNG CHƯƠNG TRÌNH HỘI THẢO */
+    .schedule-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13.5px;
+    }
+
+    .schedule-table th, .schedule-table td {
+      padding: 10px 14px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      text-align: left;
+    }
+
+    .schedule-table th {
+      background: rgba(16, 185, 129, 0.15);
+      color: var(--leaf-light);
+      font-weight: 700;
+    }
+
+    .schedule-table tr:hover td {
+      background: rgba(255, 255, 255, 0.03);
+    }
+
+    #confettiCanvas {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 999;
+    }
+  </style>
+</head>
+<body>
+  <div class="bg-mesh"></div>
+  <canvas id="confettiCanvas"></canvas>
+
+  <div class="floating-symbols">
+    <div class="float-tag" style="left: 6%; animation-delay: 0s;">Workshop 45 Min ⏱️</div>
+    <div class="float-tag" style="left: 25%; animation-delay: 5s;">HealthTech 🏥</div>
+    <div class="float-tag" style="left: 48%; animation-delay: 2s;">FinTech 💳</div>
+    <div class="float-tag" style="left: 70%; animation-delay: 8s;">Slide Limit ≤ 15 📊</div>
+    <div class="float-tag" style="left: 88%; animation-delay: 3s;">Team Evaluation 🏆</div>
+  </div>
+
+  <div class="deck-container">
+    <!-- SLIDE 1: BÌA BÀI GIẢNG DỰ ÁN -->
+    <div class="slide active" id="slide-1">
+      <div style="flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; gap: 20px;">
+        <div class="slide-badge" style="font-size: 13px; padding: 6px 18px;">CHỦ ĐỀ 5: HƯỚNG NGHIỆP VỚI TIN HỌC · BÀI HOẠT ĐỘNG DỰ ÁN</div>
+        <h1 style="font-size: 44px; font-weight: 900; line-height: 1.2; max-width: 960px; background: linear-gradient(135deg, #FFFFFF 30%, #34D399 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">
+          Bài 21: Hội Thảo Hướng Nghiệp
+        </h1>
+        <p style="font-size: 18px; color: var(--ink-soft); max-width: 780px; line-height: 1.6;">
+          Chủ đề: <em>"Nhân lực Công nghệ thông tin — Cơ hội và thách thức trong kỷ nguyên số"</em>. Tìm hiểu ứng dụng CNTT đa ngành qua trải nghiệm tổ chức hội thảo thực chiến.
+        </p>
+        <div style="display: flex; gap: 14px; margin-top: 10px;">
+          <button onclick="nextSlide()" class="reveal-btn" style="padding: 12px 30px; font-size: 15px; border-radius: 30px; background: linear-gradient(135deg, #10B981, #38E1F0); color: #04090F; font-weight: 800; box-shadow: 0 10px 25px rgba(16, 185, 129, 0.4);">
+            Bắt đầu bài giảng 🚀
+          </button>
+        </div>
+        <div style="font-size: 13px; color: rgba(255, 255, 255, 0.4); margin-top: 20px;">
+          Trường THPT Na Rì · Dành cho giáo viên & học sinh lớp 12
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 2: KHỞI ĐỘNG - CNTT TRONG MỌI NGÀNH NGHỀ -->
+    <div class="slide" id="slide-2">
+      <div class="slide-header">
+        <div>
+          <div class="slide-badge">01 · KHỞI ĐỘNG</div>
+          <div class="slide-title">CNTT Không Chỉ Giới Hạn Trong Ngành CNTT!</div>
+          <div class="slide-subtitle">Nhân lực công nghệ len lỏi vào từng tế bào của nền kinh tế hiện đại</div>
+        </div>
+        <div class="reveal-controller">
+          <span>Bước: <strong class="reveal-status" id="slide-2-status">0 / 3</strong></span>
+          <button class="reveal-btn" onclick="revealNextInCurrentSlide()">Tiếp ⤓</button>
+          <button class="reveal-btn" onclick="revealAllInCurrentSlide()">Hiện hết</button>
+        </div>
+      </div>
+      <div class="slide-body">
+        <div class="highlight-box reveal-item" style="font-size: 15.5px;">
+          💡 <strong>Nhận định then chốt của SGK:</strong><br>
+          <em>"Công nghệ thông tin đã trở thành phần không thể thiếu trong cuộc sống hiện đại. Vì vậy, nhu cầu nhân lực công nghệ thông tin <strong>không chỉ giới hạn</strong> trong các ngành nghề của lĩnh vực này."</em>
+        </div>
+        <div class="grid-2">
+          <div class="card reveal-item">
+            <div class="card-title" style="color: var(--sea-light);">🏥 Trong Y Tế & Chăm Sóc Sức Khoẻ</div>
+            <div class="card-desc">Bác sĩ khám bệnh từ xa qua Telemedicine, quản lý hồ sơ bệnh án điện tử quốc gia, máy chụp CT/MRI hỗ trợ bởi AI, thiết kế thuốc phân tử trên siêu máy tính.</div>
+          </div>
+          <div class="card reveal-item">
+            <div class="card-title" style="color: var(--gold-light);">🏭 Trong Công Nghiệp & Sản Xuất</div>
+            <div class="card-desc">Dây chuyền tự động hoá robot cánh tay công nghiệp, cảm biến giám sát thông minh IoT, tối ưu quy trình logistics và kho hàng tự hành.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 3: BỨC TRANH ĐA LĨNH VỰC -->
+    <div class="slide" id="slide-3">
+      <div class="slide-header">
+        <div>
+          <div class="slide-badge">02 · BỨC TRANH TOÀN CẢNH</div>
+          <div class="slide-title">4 Lĩnh Vực Học Sinh Quan Tâm Nhất</div>
+          <div class="slide-subtitle">Những miền đất hứa cho các bạn trẻ định hướng nghề nghiệp</div>
+        </div>
+        <div class="reveal-controller">
+          <span>Bước: <strong class="reveal-status" id="slide-3-status">0 / 4</strong></span>
+          <button class="reveal-btn" onclick="revealNextInCurrentSlide()">Tiếp ⤓</button>
+          <button class="reveal-btn" onclick="revealAllInCurrentSlide()">Hiện hết</button>
+        </div>
+      </div>
+      <div class="slide-body">
+        <div class="grid-4">
+          <div class="card reveal-item">
+            <div style="font-size: 26px; margin-bottom: 6px;">🩺</div>
+            <div class="card-title">1. Y Tế</div>
+            <div class="card-desc">Hệ thống bệnh viện số, thiết bị y tế IoT, cổng thông tin y tế cộng đồng, phân tích dữ liệu dịch tễ học.</div>
+          </div>
+          <div class="card reveal-item">
+            <div style="font-size: 26px; margin-bottom: 6px;">🎓</div>
+            <div class="card-title">2. Giáo Dục</div>
+            <div class="card-desc">Học trực tuyến LMS, mô phỏng thí nghiệm thực tế ảo VR, ngân hàng đề thi trực tuyến tự động chấm điểm.</div>
+          </div>
+          <div class="card reveal-item">
+            <div style="font-size: 26px; margin-bottom: 6px;">💳</div>
+            <div class="card-title">3. Tài Chính - Kinh Doanh</div>
+            <div class="card-desc">Công nghệ tài chính FinTech, ví điện tử, sàn thương mại điện tử, chống rửa tiền và phát hiện gian lận số.</div>
+          </div>
+          <div class="card reveal-item">
+            <div style="font-size: 26px; margin-bottom: 6px;">🎬</div>
+            <div class="card-title">4. Truyền Thông & Giải Trí</div>
+            <div class="card-desc">Sản xuất game 3D, kỹ xảo điện ảnh CGI, nền tảng streaming âm nhạc / phim ảnh và mạng xã hội kết nối toàn cầu.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 4: VÌ SAO CHỌN HÌNH THỨC HỘI THẢO? -->
+    <div class="slide" id="slide-4">
+      <div class="slide-header">
+        <div>
+          <div class="slide-badge">03 · MỤC TIÊU DỰ ÁN</div>
+          <div class="slide-title">Vì Sao Chọn Cách Tổ Chức Hội Thảo?</div>
+          <div class="slide-subtitle">Học qua trải nghiệm thực tế thay vì nghe giảng thụ động một chiều</div>
+        </div>
+        <div class="reveal-controller">
+          <span>Bước: <strong class="reveal-status" id="slide-4-status">0 / 3</strong></span>
+          <button class="reveal-btn" onclick="revealNextInCurrentSlide()">Tiếp ⤓</button>
+          <button class="reveal-btn" onclick="revealAllInCurrentSlide()">Hiện hết</button>
+        </div>
+      </div>
+      <div class="slide-body">
+        <div class="grid-3">
+          <div class="card reveal-item">
+            <div class="card-title" style="color: var(--leaf-light);">🤝 Kỹ năng làm việc nhóm</div>
+            <div class="card-desc">Phân chia vai trò rõ ràng giữa các thành viên: Nhóm trưởng điều phối, Thư ký ghi chép, Kỹ thuật viên thiết kế slide, Báo cáo viên thuyết trình.</div>
+          </div>
+          <div class="card reveal-item">
+            <div class="card-title" style="color: var(--gold-light);">🎤 Kỹ năng thuyết trình & Phản biện</div>
+            <div class="card-desc">Tập dượt đứng trước đám đông, trình bày cô đọng trong khung thời gian quy định, tự tin trả lời chất vấn từ bạn bè và thầy cô.</div>
+          </div>
+          <div class="card reveal-item">
+            <div class="card-title" style="color: var(--sea-light);">🧑‍💼 Kết nối chuyên gia thực tế</div>
+            <div class="card-desc">Hội thảo có mời chuyên gia hoặc người có kinh nghiệm tham dự trực tiếp hoặc trực tuyến, đem đến cái nhìn chân thực về thị trường lao động.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 5: KẾ HOẠCH HỘI THẢO MẪU 45 PHÚT -->
+    <div class="slide" id="slide-5">
+      <div class="slide-header">
+        <div>
+          <div class="slide-badge">04 · CHƯƠNG TRÌNH CHI TIẾT</div>
+          <div class="slide-title">Kế Hoạch Hội Thảo Mẫu 45 Phút Chuẩn SGK</div>
+          <div class="slide-subtitle">Bảng phân bổ thời lượng 7 chặng vừa khít 1 tiết học trên lớp</div>
+        </div>
+        <div class="reveal-controller">
+          <span>Bước: <strong class="reveal-status" id="slide-5-status">0 / 3</strong></span>
+          <button class="reveal-btn" onclick="revealNextInCurrentSlide()">Tiếp ⤓</button>
+          <button class="reveal-btn" onclick="revealAllInCurrentSlide()">Hiện hết</button>
+        </div>
+      </div>
+      <div class="slide-body">
+        <div class="card reveal-item" style="padding: 0; overflow: hidden;">
+          <table class="schedule-table">
+            <thead>
+              <tr>
+                <th style="width: 80px;">STT</th>
+                <th>Nội dung hoạt động</th>
+                <th>Người thực hiện</th>
+                <th style="width: 120px;">Thời lượng</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>1</strong></td>
+                <td>Cơ hội & Thách thức — Lĩnh vực Y tế</td>
+                <td>Nhóm 1 trình bày</td>
+                <td><strong style="color: var(--leaf-light);">8 phút</strong></td>
+              </tr>
+              <tr>
+                <td><strong>2</strong></td>
+                <td>Cơ hội & Thách thức — Lĩnh vực Giáo dục</td>
+                <td>Nhóm 2 trình bày</td>
+                <td><strong style="color: var(--leaf-light);">8 phút</strong></td>
+              </tr>
+              <tr style="background: rgba(245, 166, 35, 0.08);">
+                <td><strong>3</strong></td>
+                <td><strong>Thảo luận lượt 1 (Y tế & Giáo dục)</strong></td>
+                <td>Chủ toạ, chuyên gia & các nhóm</td>
+                <td><strong style="color: var(--gold-light);">5 phút</strong></td>
+              </tr>
+              <tr>
+                <td><strong>4</strong></td>
+                <td>Cơ hội & Thách thức — Lĩnh vực Tài chính, kinh doanh</td>
+                <td>Nhóm 3 trình bày</td>
+                <td><strong style="color: var(--leaf-light);">8 phút</strong></td>
+              </tr>
+              <tr>
+                <td><strong>5</strong></td>
+                <td>Cơ hội & Thách thức — Lĩnh vực Truyền thông, giải trí</td>
+                <td>Nhóm 4 trình bày</td>
+                <td><strong style="color: var(--leaf-light);">8 phút</strong></td>
+              </tr>
+              <tr style="background: rgba(245, 166, 35, 0.08);">
+                <td><strong>6</strong></td>
+                <td><strong>Thảo luận lượt 2 (Tài chính & Truyền thông)</strong></td>
+                <td>Chủ toạ, chuyên gia & các nhóm</td>
+                <td><strong style="color: var(--gold-light);">5 phút</strong></td>
+              </tr>
+              <tr style="background: rgba(56, 225, 240, 0.08);">
+                <td><strong>7</strong></td>
+                <td><strong>Kết luận hội thảo</strong></td>
+                <td>Chủ toạ tổng kết</td>
+                <td><strong style="color: var(--sea-light);">3 phút</strong></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="highlight-box reveal-item" style="font-size: 13.5px;">
+          ⏱️ <strong>Công thức phân bổ vàng:</strong> 4 bài thuyết trình (32 phút) + 2 phiên thảo luận (10 phút) + 1 kết luận (3 phút) = <strong>Đúng 45 phút</strong>!
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 6: CƠ CẤU NHÂN SỰ VÀ ĐIỀU HÀNH -->
+    <div class="slide" id="slide-6">
+      <div class="slide-header">
+        <div>
+          <div class="slide-badge">05 · CƠ CẤU TỔ CHỨC</div>
+          <div class="slide-title">Ban Tổ Chức & Đoàn Chủ Toạ Hội Thảo</div>
+          <div class="slide-subtitle">Sự phân công trách nhiệm để hội thảo diễn ra trang trọng, trật tự</div>
+        </div>
+        <div class="reveal-controller">
+          <span>Bước: <strong class="reveal-status" id="slide-6-status">0 / 3</strong></span>
+          <button class="reveal-btn" onclick="revealNextInCurrentSlide()">Tiếp ⤓</button>
+          <button class="reveal-btn" onclick="revealAllInCurrentSlide()">Hiện hết</button>
+        </div>
+      </div>
+      <div class="slide-body">
+        <div class="grid-2">
+          <div class="card reveal-item" style="border-color: var(--leaf);">
+            <div class="card-title" style="color: var(--leaf-light);">🎪 Ban Tổ Chức (4 thành viên)</div>
+            <div class="card-desc" style="line-height: 1.6;">
+              • Mỗi nhóm cử 1 đại diện tham gia.<br>
+              • Thu nhận sản phẩm trình chiếu từ các nhóm.<br>
+              • Chuẩn bị máy chiếu, âm thanh mic, kết nối mạng trực tuyến.<br>
+              • Nộp tài liệu cho giáo viên và gửi trước cho chuyên gia khách mời.
+            </div>
+          </div>
+          <div class="card reveal-item" style="border-color: var(--gold);">
+            <div class="card-title" style="color: var(--gold-light);">⚖️ Đoàn Chủ Toạ (3 thành viên)</div>
+            <div class="card-desc" style="line-height: 1.6;">
+              • Do ban tổ chức chọn cử trong lớp.<br>
+              • Điều khiển chương trình theo kịch bản và thời lượng.<br>
+              • Mời các nhóm báo cáo, điều phối các câu hỏi thảo luận.<br>
+              • Mời chuyên gia phát biểu và tóm tắt kết luận hội thảo.
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 7: QUY ĐỊNH VỀ BÀI TRÌNH CHIẾU -->
+    <div class="slide" id="slide-7">
+      <div class="slide-header">
+        <div>
+          <div class="slide-badge">06 · QUY ĐỊNH BÀI NỘP</div>
+          <div class="slide-title">Quy Định Nghiêm Ngặt Về Sản Phẩm Trình Chiếu</div>
+          <div class="slide-subtitle">Những con số học sinh bắt buộc phải ghi nhớ chuẩn SGK</div>
+        </div>
+        <div class="reveal-controller">
+          <span>Bước: <strong class="reveal-status" id="slide-7-status">0 / 3</strong></span>
+          <button class="reveal-btn" onclick="revealNextInCurrentSlide()">Tiếp ⤓</button>
+          <button class="reveal-btn" onclick="revealAllInCurrentSlide()">Hiện hết</button>
+        </div>
+      </div>
+      <div class="slide-body">
+        <div class="grid-3">
+          <div class="card reveal-item" style="border-top: 4px solid var(--sea-light);">
+            <div style="font-size: 26px; margin-bottom: 6px;">🖥️</div>
+            <div class="card-title">Hình thức sản phẩm</div>
+            <div class="card-desc">Bài trình chiếu (PowerPoint, Canva, HTML) hoặc video clip đã được biên tập hoàn chỉnh.</div>
+          </div>
+          <div class="card reveal-item" style="border-top: 4px solid var(--leaf);">
+            <div style="font-size: 26px; margin-bottom: 6px;">📄</div>
+            <div class="card-title">Giới hạn số trang</div>
+            <div class="card-desc">
+              <strong>Không quá 15 trang chiếu:</strong><br>
+              • 1 trang bìa giới thiệu nhóm & chủ đề.<br>
+              • Tối đa 12 trang nội dung cốt lõi.<br>
+              • 1 trang kết luận & lời cảm ơn.
+            </div>
+          </div>
+          <div class="card reveal-item" style="border-top: 4px solid var(--coral);">
+            <div style="font-size: 26px; margin-bottom: 6px;">⏰</div>
+            <div class="card-title">Thời hạn nộp bài</div>
+            <div class="card-desc">
+              <strong>Trước hội thảo 2 ngày!</strong> Để ban tổ chức tổng hợp, nộp giáo viên duyệt và gửi trước cho khách mời.
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 8: DÀN Ý 5 PHẦN CHUẨN CỦA BÀI THUYẾT TRÌNH -->
+    <div class="slide" id="slide-8">
+      <div class="slide-header">
+        <div>
+          <div class="slide-badge">07 · DÀN Ý BÀI BÁO CÁO</div>
+          <div class="slide-title">Dàn Ý 5 Phần Chuẩn Cho Bài Trình Bày 8 Phút</div>
+          <div class="slide-subtitle">Cấu trúc logic giúp bài thuyết trình mạch lạc và cuốn hút</div>
+        </div>
+        <div class="reveal-controller">
+          <span>Bước: <strong class="reveal-status" id="slide-8-status">0 / 5</strong></span>
+          <button class="reveal-btn" onclick="revealNextInCurrentSlide()">Tiếp ⤓</button>
+          <button class="reveal-btn" onclick="revealAllInCurrentSlide()">Hiện hết</button>
+        </div>
+      </div>
+      <div class="slide-body">
+        <div style="display: flex; flex-direction: column; gap: 8px;">
+          <div class="card reveal-item" style="padding: 10px 18px; display: flex; justify-content: space-between; align-items: center;">
+            <div>
+              <strong style="color: var(--sea-light);">I. Giới thiệu lĩnh vực & vai trò CNTT:</strong> Định nghĩa, tầm quan trọng, lợi ích của việc ứng dụng công nghệ.
+            </div>
+            <span class="reveal-status">1 phút</span>
+          </div>
+          <div class="card reveal-item" style="padding: 10px 18px; display: flex; justify-content: space-between; align-items: center;">
+            <div>
+              <strong style="color: var(--leaf-light);">II. Vai trò của chuyên viên CNTT:</strong> Các công việc chính; yêu cầu kiến thức và kỹ năng cần có trong ngành.
+            </div>
+            <span class="reveal-status">2 phút</span>
+          </div>
+          <div class="card reveal-item" style="padding: 10px 18px; display: flex; justify-content: space-between; align-items: center;">
+            <div>
+              <strong style="color: var(--coral-light);">III. Phân tích cơ hội và thách thức:</strong> Cơ hội thăng tiến phát triển; khó khăn, rủi ro có thể gặp phải.
+            </div>
+            <span class="reveal-status">2 phút</span>
+          </div>
+          <div class="card reveal-item" style="padding: 10px 18px; display: flex; justify-content: space-between; align-items: center;">
+            <div>
+              <strong style="color: var(--gold-light);">IV. Chia sẻ thông tin về đào tạo:</strong> Giới thiệu cơ sở đào tạo uy tín; mô tả chương trình học phù hợp.
+            </div>
+            <span class="reveal-status">2 phút</span>
+          </div>
+          <div class="card reveal-item" style="padding: 10px 18px; display: flex; justify-content: space-between; align-items: center;">
+            <div>
+              <strong style="color: var(--purple-light);">V. Kết luận và đề xuất:</strong> Tóm tắt điểm chính; đề xuất ý tưởng, hướng phát triển công nghệ cho lĩnh vực.
+            </div>
+            <span class="reveal-status">1 phút</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 9: QUY TRÌNH 4 BƯỚC XÂY DỰNG BÀI TRÌNH BÀY -->
+    <div class="slide" id="slide-9">
+      <div class="slide-header">
+        <div>
+          <div class="slide-badge">08 · QUY TRÌNH THỰC HIỆN</div>
+          <div class="slide-title">4 Bước Xây Dựng Bài Trình Bày Nhóm</div>
+          <div class="slide-subtitle">Nhiệm vụ 2 trong SGK: Từ ý tưởng ban đầu đến sản phẩm hoàn chỉnh</div>
+        </div>
+        <div class="reveal-controller">
+          <span>Bước: <strong class="reveal-status" id="slide-9-status">0 / 4</strong></span>
+          <button class="reveal-btn" onclick="revealNextInCurrentSlide()">Tiếp ⤓</button>
+          <button class="reveal-btn" onclick="revealAllInCurrentSlide()">Hiện hết</button>
+        </div>
+      </div>
+      <div class="slide-body">
+        <div class="grid-2">
+          <div class="card reveal-item">
+            <div class="card-title" style="color: var(--sea-light);">Bước 1: Lập dàn ý chi tiết</div>
+            <div class="card-desc">Dựa trên mục đích hội thảo, nhóm cùng nhau thống nhất đề cương 5 phần và phân chia thời lượng chuẩn xác cho từng phần.</div>
+          </div>
+          <div class="card reveal-item">
+            <div class="card-title" style="color: var(--leaf-light);">Bước 2: Thu thập thông tin đa kênh</div>
+            <div class="card-desc">Tìm kiếm từ website chính thức của doanh nghiệp, bài báo nghiên cứu khoa học, tin tuyển dụng thực tế, diễn đàn công nghệ.</div>
+          </div>
+          <div class="card reveal-item">
+            <div class="card-title" style="color: var(--gold-light);">Bước 3: Chọn lọc & Trích dẫn nguồn rõ ràng</div>
+            <div class="card-desc">Phân tích kiểm chứng số liệu, dùng biểu đồ/sơ đồ cho sinh động. <strong>Đặc biệt lưu ý: Phải nêu rõ nguồn gốc tài liệu sử dụng</strong>.</div>
+          </div>
+          <div class="card reveal-item">
+            <div class="card-title" style="color: var(--purple-light);">Bước 4: Báo cáo thử nghiệm & Hoàn thiện</div>
+            <div class="card-desc">Tổ chức báo cáo thử trong nhóm, bấm giờ 8 phút, các bạn nhận xét góp ý cử chỉ, giọng điệu trước khi nộp chính thức.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 10: TIÊU CHÍ ĐÁNH GIÁ ĐIỂM NHÓM CỦA GIÁO VIÊN -->
+    <div class="slide" id="slide-10">
+      <div class="slide-header">
+        <div>
+          <div class="slide-badge">09 · ĐÁNH GIÁ ĐIỂM NHÓM</div>
+          <div class="slide-title">5 Tiêu Chí Đánh Giá Điểm Nhóm Của Giáo Viên</div>
+          <div class="slide-subtitle">Mỗi tiêu chí có 4 mức điểm: Giỏi (2đ) · Khá (1.5đ) · TB (1đ) · Chưa đạt (0.5đ)</div>
+        </div>
+        <div class="reveal-controller">
+          <span>Bước: <strong class="reveal-status" id="slide-10-status">0 / 5</strong></span>
+          <button class="reveal-btn" onclick="revealNextInCurrentSlide()">Tiếp ⤓</button>
+          <button class="reveal-btn" onclick="revealAllInCurrentSlide()">Hiện hết</button>
+        </div>
+      </div>
+      <div class="slide-body">
+        <div class="grid-3">
+          <div class="card reveal-item">
+            <div class="card-title" style="color: var(--leaf-light);">1. Nội dung (2 điểm)</div>
+            <div class="card-desc">Giới thiệu đầy đủ, chính xác toàn bộ nội dung theo dàn ý đã lập; số liệu có kiểm chứng, nguồn trích dẫn uy tín.</div>
+          </div>
+          <div class="card reveal-item">
+            <div class="card-title" style="color: var(--sea-light);">2. Hình thức (2 điểm)</div>
+            <div class="card-desc">Slide thiết kế khoa học, bố cục hài hoà, màu sắc tương phản tốt, chữ dễ đọc từ cuối lớp, tuyệt đối không sai chính tả.</div>
+          </div>
+          <div class="card reveal-item">
+            <div class="card-title" style="color: var(--gold-light);">3. Tính chuyên nghiệp (2 điểm)</div>
+            <div class="card-desc">Mức độ hoàn thiện, công phu, tỉ mỉ; nộp bài đúng thời hạn quy định (trước 2 ngày); tác phong nghiêm túc.</div>
+          </div>
+          <div class="card reveal-item">
+            <div class="card-title" style="color: var(--coral-light);">4. Báo cáo viên (2 điểm)</div>
+            <div class="card-desc">Nói to, rõ ràng, truyền cảm, phong thái tự tin; kết hợp ngôn ngữ cơ thể và kết thúc bài đúng 8 phút quy định.</div>
+          </div>
+          <div class="card reveal-item">
+            <div class="card-title" style="color: var(--purple-light);">5. Thảo luận (2 điểm)</div>
+            <div class="card-desc">Nhiệt tình tham gia đặt câu hỏi hay cho các nhóm bạn; trả lời thông minh, thỏa đáng các câu hỏi chất vấn từ chuyên gia.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 11: CÔNG THỨC ĐIỂM CÁ NHÂN -->
+    <div class="slide" id="slide-11">
+      <div class="slide-header">
+        <div>
+          <div class="slide-badge">10 · TÍNH ĐIỂM CÁ NHÂN</div>
+          <div class="slide-title">Công Thức Đánh Giá Điểm Cá Nhân Thành Viên</div>
+          <div class="slide-subtitle">Đảm bảo công bằng tuyệt đối: Làm nhiều hưởng nhiều, làm ít hưởng ít!</div>
+        </div>
+        <div class="reveal-controller">
+          <span>Bước: <strong class="reveal-status" id="slide-11-status">0 / 3</strong></span>
+          <button class="reveal-btn" onclick="revealNextInCurrentSlide()">Tiếp ⤓</button>
+          <button class="reveal-btn" onclick="revealAllInCurrentSlide()">Hiện hết</button>
+        </div>
+      </div>
+      <div class="slide-body">
+        <div class="highlight-box reveal-item" style="font-size: 17px; text-align: center; border-color: var(--gold); background: rgba(245, 166, 35, 0.15);">
+          🏆 <strong>CÔNG THỨC SGK:</strong><br>
+          <span style="font-size: 22px; font-weight: 900; color: #FFC043; font-family: var(--font-mono);">
+            Điểm cá nhân = Điểm nhóm × Hệ số cá nhân
+          </span><br>
+          <span style="font-size: 14.5px; color: var(--ink-soft);">(Hệ số cá nhân = Tổng điểm đánh giá cá nhân / 100%)</span>
+        </div>
+        <div class="card reveal-item">
+          <div class="card-title" style="color: var(--leaf-light);">5 Tiêu chí do các bạn trong nhóm tự chấm cho nhau (Tối đa 100 điểm):</div>
+          <div class="grid-2" style="font-size: 13.5px; line-height: 1.7; margin-top: 8px;">
+            <div>
+              • <strong>Hoàn thành nhiệm vụ đúng hạn, chất lượng:</strong> Tối đa 30 điểm.<br>
+              • <strong>Có tinh thần trách nhiệm, nhiệt tình:</strong> Tối đa 20 điểm.<br>
+              • <strong>Có nhiều ý kiến đóng góp cho sản phẩm:</strong> Tối đa 20 điểm.
+            </div>
+            <div>
+              • <strong>Phối hợp tốt với các thành viên khác:</strong> Tối đa 20 điểm.<br>
+              • <strong>Tham gia đầy đủ các buổi họp nhóm:</strong> Tối đa 10 điểm.<br>
+              • <em>(Có thể thảo luận cộng điểm thưởng cho Ban tổ chức & Chủ toạ)</em>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 12: MÁY TÍNH ĐIỂM CÁ NHÂN TƯƠNG TÁC -->
+    <div class="slide" id="slide-12">
+      <div class="slide-header">
+        <div>
+          <div class="slide-badge">11 · MÁY TÍNH ĐIỂM</div>
+          <div class="slide-title">Máy Tính Giả Lập Điểm Cá Nhân Hội Thảo</div>
+          <div class="slide-subtitle">Trải nghiệm kéo thanh trượt để hiểu cách hệ số tác động lên điểm số thật</div>
+        </div>
+        <div class="reveal-controller">
+          <span style="color: var(--leaf-light); font-weight: 700;">Công cụ tính tự động</span>
+        </div>
+      </div>
+      <div class="slide-body">
+        <div class="grid-2">
+          <div class="card">
+            <div style="font-size: 14.5px; font-weight: 700; margin-bottom: 12px; color: var(--sea-light);">
+              1. Điều chỉnh thông số đầu vào:
+            </div>
+            <div style="margin-bottom: 14px;">
+              <div style="display: flex; justify-content: space-between; font-size: 13.5px;">
+                <span>Điểm nhóm của giáo viên chấm (0 – 10đ):</span>
+                <strong id="groupScoreVal" style="color: var(--leaf-light); font-family: var(--font-mono);">9.0</strong>
+              </div>
+              <input type="range" id="groupScoreRange" min="5" max="10" step="0.5" value="9" oninput="calcGradeSim()" style="width: 100%; margin-top: 6px;">
+            </div>
+            <div>
+              <div style="display: flex; justify-content: space-between; font-size: 13.5px;">
+                <span>Tổng điểm thành viên nhóm tự đánh giá (0 – 100đ):</span>
+                <strong id="indivScoreVal" style="color: var(--gold-light); font-family: var(--font-mono);">85</strong>
+              </div>
+              <input type="range" id="indivScoreRange" min="40" max="100" step="5" value="85" oninput="calcGradeSim()" style="width: 100%; margin-top: 6px;">
+            </div>
+          </div>
+          <div class="card" style="display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; border-color: var(--leaf-light); background: rgba(16, 185, 129, 0.1);">
+            <div style="font-size: 13.5px; color: var(--ink-soft);">KẾT QUẢ ĐIỂM CÁ NHÂN THỰC NHẬN:</div>
+            <div style="font-size: 46px; font-weight: 900; color: #34D399; font-family: var(--font-mono); margin: 6px 0;" id="finalGradeVal">
+              7.7
+            </div>
+            <div style="font-size: 13px; color: #A7F3D0;" id="finalFormulaText">
+              9.0 × (85 / 100) = 7.65 làm tròn 7.7 điểm
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 13: MINI-QUIZ TƯƠNG TÁC -->
+    <div class="slide" id="slide-13">
+      <div class="slide-header">
+        <div>
+          <div class="slide-badge">12 · ĐỐ VUI CỦNG CỐ</div>
+          <div class="slide-title">Kiểm Tra Trí Nhớ Về Kế Hoạch Hội Thảo</div>
+          <div class="slide-subtitle">Chọn phương án đúng nhất và nhận phản hồi tức thì</div>
+        </div>
+        <div class="reveal-controller">
+          <span style="color: var(--leaf-light); font-weight: 700;">Câu hỏi tương tác</span>
+        </div>
+      </div>
+      <div class="slide-body">
+        <div class="card" style="border-color: rgba(16, 185, 129, 0.35);">
+          <div class="card-title" style="color: var(--leaf-light);">
+            ❓ Câu hỏi: Theo chương trình hội thảo gợi ý trong SGK, sau khi Nhóm 2 trình bày xong lĩnh vực Giáo dục, hoạt động tiếp theo trong chương trình là gì?
+          </div>
+          <div class="quiz-options">
+            <button class="quiz-btn" onclick="checkQuiz(this, true, 3, 'Chính xác! Theo bảng chương trình 7 dòng chuẩn của SGK, sau Nhóm 1 và Nhóm 2 là phiên Thảo luận 1 (5 phút) do chủ toạ, chuyên gia và các nhóm cùng trao đổi.')">
+              <strong>A.</strong> Thảo luận do chủ toạ, chuyên gia và các nhóm cùng tham gia trong 5 phút
+            </button>
+            <button class="quiz-btn" onclick="checkQuiz(this, false, 3, 'Sai rồi! Phải có phần thảo luận xen giữa sau mỗi 2 bài thuyết trình.')">
+              <strong>B.</strong> Nhóm 3 trình bày ngay lĩnh vực Tài chính mà không thảo luận xen giữa
+            </button>
+            <button class="quiz-btn" onclick="checkQuiz(this, false, 3, 'Sai rồi! Hội thảo còn lĩnh vực Tài chính và Truyền thông chưa báo cáo mà.')">
+              <strong>C.</strong> Chủ toạ kết luận toàn bộ hội thảo và bế mạc lớp học
+            </button>
+            <button class="quiz-btn" onclick="checkQuiz(this, false, 3, 'Sai rồi! Tiết học 45 phút không có giải lao 10 phút.')">
+              <strong>D.</strong> Cả lớp giải lao 10 phút ăn nhẹ trước khi tiếp tục
+            </button>
+          </div>
+          <div class="quiz-feedback" id="quizFeedback3"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 14: LỜI KHUYÊN CHO BUỔI THUYẾT TRÌNH ĐỈNH CAO -->
+    <div class="slide" id="slide-14">
+      <div class="slide-header">
+        <div>
+          <div class="slide-badge">13 · BÍ QUYẾT BÁO CÁO VIÊN</div>
+          <div class="slide-title">Bí Quyết Giành Trọn 2 Điểm "Báo Cáo Viên"</div>
+          <div class="slide-subtitle">Những kinh nghiệm thực chiến giúp bạn toả sáng trên bục thuyết trình</div>
+        </div>
+        <div class="reveal-controller">
+          <span>Bước: <strong class="reveal-status" id="slide-14-status">0 / 4</strong></span>
+          <button class="reveal-btn" onclick="revealNextInCurrentSlide()">Tiếp ⤓</button>
+          <button class="reveal-btn" onclick="revealAllInCurrentSlide()">Hiện hết</button>
+        </div>
+      </div>
+      <div class="slide-body">
+        <div class="grid-2">
+          <div class="card reveal-item">
+            <div class="card-title">👀 Giao tiếp bằng mắt (Eye Contact)</div>
+            <div class="card-desc">Đừng dán mắt đọc từng dòng trên màn hình chiếu! Hãy nhìn bao quát thầy cô, bạn bè phía dưới để tạo sự kết nối và tự tin.</div>
+          </div>
+          <div class="card reveal-item">
+            <div class="card-title">⏱️ Làm chủ thời gian 8 phút</div>
+            <div class="card-desc">Phân chia: 1 phút mở đầu, 6 phút trình bày ý chính, 1 phút đúc kết. Nhờ một bạn ngồi bàn đầu ra hiệu khi còn 1 phút cuối.</div>
+          </div>
+          <div class="card reveal-item">
+            <div class="card-title">🎨 Slide ít chữ — nhiều hình ảnh</div>
+            <div class="card-desc">Slide chỉ ghi từ khoá trọng tâm và biểu đồ, hình ảnh minh hoạ; lời nói của báo cáo viên sẽ bổ sung chi tiết sinh động.</div>
+          </div>
+          <div class="card reveal-item">
+            <div class="card-title">💡 Phong thái tự tin, tôn trọng</div>
+            <div class="card-desc">Khi nhận câu hỏi phản biện khó từ chuyên gia hoặc bạn bè, hãy mỉm cười cảm ơn trước rồi bình tĩnh giải thích theo hiểu biết của nhóm.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 15: BẢNG CHECKLIST SẴN SÀNG HỘI THẢO -->
+    <div class="slide" id="slide-15">
+      <div class="slide-header">
+        <div>
+          <div class="slide-badge">14 · DANH SÁCH KIỂM TRA</div>
+          <div class="slide-title">Checklist Sẵn Sàng Trước Ngày Khai Mạc</div>
+          <div class="slide-subtitle">Bấm tích chọn để kiểm tra xem nhóm bạn đã chuẩn bị chu đáo chưa</div>
+        </div>
+        <div class="reveal-controller">
+          <span style="color: var(--gold-light); font-weight: 700;">Checklist tương tác</span>
+        </div>
+      </div>
+      <div class="slide-body">
+        <div style="display: flex; flex-direction: column; gap: 10px;">
+          <label class="quiz-btn" style="cursor: pointer;">
+            <input type="checkbox" onchange="calcChecklist()" class="event-check">
+            <span>📊 <strong>Số trang bài nộp:</strong> Bài trình chiếu đúng giới hạn ≤ 15 trang chiếu (1 bìa + ≤12 nội dung + 1 kết luận).</span>
+          </label>
+          <label class="quiz-btn" style="cursor: pointer;">
+            <input type="checkbox" onchange="calcChecklist()" class="event-check">
+            <span>⏰ <strong>Thời hạn nộp:</strong> Đã gửi file cho Ban tổ chức trước ngày hội thảo ít nhất 2 ngày.</span>
+          </label>
+          <label class="quiz-btn" style="cursor: pointer;">
+            <input type="checkbox" onchange="calcChecklist()" class="event-check">
+            <span>📖 <strong>Nguồn tư liệu:</strong> Đã ghi rõ nguồn của mọi số liệu, bảng biểu, hình ảnh trích dẫn.</span>
+          </label>
+          <label class="quiz-btn" style="cursor: pointer;">
+            <input type="checkbox" onchange="calcChecklist()" class="event-check">
+            <span>🎤 <strong>Tập dượt trước:</strong> Báo cáo viên đã tập nói thử trong nhóm và căn đúng thời lượng 8 phút.</span>
+          </label>
+        </div>
+        <div class="highlight-box" id="checklistResult" style="text-align: center; font-size: 14.5px;">
+          📋 Hãy tích chọn các mục để kiểm tra độ sẵn sàng của nhóm bạn!
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 16: TỔNG KẾT BÀI HỌC -->
+    <div class="slide" id="slide-16">
+      <div class="slide-header">
+        <div>
+          <div class="slide-badge">15 · TỔNG KẾT TOÀN DIỆN</div>
+          <div class="slide-title">Ghi Nhớ Trọng Tâm Bài 21</div>
+          <div class="slide-subtitle">Khép lại Chủ đề 5: Hướng nghiệp với tin học thật trọn vẹn</div>
+        </div>
+        <div class="reveal-controller">
+          <button class="reveal-btn" onclick="fireConfetti()" style="background: linear-gradient(135deg, #10B981, #34D399); color: black;">
+            🎉 Bắn pháo hoa
+          </button>
+        </div>
+      </div>
+      <div class="slide-body">
+        <div class="grid-3">
+          <div class="card" style="border-color: var(--sea-light);">
+            <div class="card-title" style="color: var(--sea-light);">1. Chương trình 45 phút</div>
+            <div class="card-desc">4 bài trình bày (8p/bài) xen giữa 2 phiên thảo luận (5p) và kết luận của chủ toạ (3p).</div>
+          </div>
+          <div class="card" style="border-color: var(--leaf);">
+            <div class="card-title" style="color: var(--leaf-light);">2. Bài nộp ≤ 15 slide</div>
+            <div class="card-desc">1 trang bìa, tối đa 12 trang nội dung, 1 trang kết luận. Nộp trước hội thảo 2 ngày. Ghi rõ nguồn trích dẫn.</div>
+          </div>
+          <div class="card" style="border-color: var(--gold);">
+            <div class="card-title" style="color: var(--gold-light);">3. Cách tính điểm</div>
+            <div class="card-desc">Điểm cá nhân = Điểm nhóm × Hệ số cá nhân. Giáo viên chấm 5 tiêu chí nhóm, thành viên tự đánh giá 5 tiêu chí cá nhân.</div>
+          </div>
+        </div>
+        <div class="highlight-box" style="text-align: center; margin-top: 10px; background: rgba(16, 185, 129, 0.12); border-color: var(--leaf-light);">
+          👏 <strong>Chúc mừng các bạn học sinh THPT Na Rì đã hoàn thành trọn vẹn Chủ đề 5: Hướng nghiệp với Tin học!</strong> Chúc các bạn tổ chức thành công buổi hội thảo và tự tin lựa chọn ngành nghề tương lai!
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- THANH ĐIỀU HƯỚNG CỐ ĐỊNH -->
+  <div class="deck-footer">
+    <button class="nav-btn" onclick="prevSlide()" title="Slide trước (Mũi tên trái)">‹</button>
+    <div class="deck-counter" id="deckCounter">1 / 16</div>
+    <div class="deck-progress-container">
+      <div class="deck-progress-bar" id="deckProgressBar"></div>
+    </div>
+    <button class="nav-btn" onclick="nextSlide()" title="Slide kế tiếp (Mũi tên phải)">›</button>
+    <button class="nav-btn" onclick="revealNextInCurrentSlide()" title="Hiện bước tiếp theo (Mũi tên xuống / Enter)">⤓</button>
+    <button class="nav-btn" onclick="toggleSound()" id="soundBtn" title="Bật/Tắt âm thanh (Phím M)">🔊</button>
+    <button class="nav-btn" onclick="toggleFullScreen()" title="Toàn màn hình (Phím F)">⛶</button>
+  </div>
+
+  <script>
+    let currentSlide = 1;
+    const totalSlides = 16;
+    let soundEnabled = true;
+    let audioCtx = null;
+
+    function getAudioCtx() {
+      if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      if (audioCtx.state === 'suspended') audioCtx.resume();
+      return audioCtx;
+    }
+
+    function playSound(type) {
+      if (!soundEnabled) return;
+      try {
+        const ctx = getAudioCtx();
+        const now = ctx.currentTime;
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+
+        if (type === 'click') {
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(560, now);
+          osc.frequency.exponentialRampToValueAtTime(880, now + 0.08);
+          gain.gain.setValueAtTime(0.12, now);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.08);
+          osc.start(now);
+          osc.stop(now + 0.08);
+        } else if (type === 'success') {
+          osc.type = 'triangle';
+          osc.frequency.setValueAtTime(523, now);
+          osc.frequency.setValueAtTime(659, now + 0.08);
+          osc.frequency.setValueAtTime(783, now + 0.16);
+          gain.gain.setValueAtTime(0.2, now);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.3);
+          osc.start(now);
+          osc.stop(now + 0.3);
+        } else if (type === 'wrong') {
+          osc.type = 'sawtooth';
+          osc.frequency.setValueAtTime(220, now);
+          gain.gain.setValueAtTime(0.2, now);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.25);
+          osc.start(now);
+          osc.stop(now + 0.25);
+        }
+      } catch (e) {}
+    }
+
+    function toggleSound() {
+      soundEnabled = !soundEnabled;
+      document.getElementById('soundBtn').innerText = soundEnabled ? '🔊' : '🔇';
+    }
+
+    function toggleFullScreen() {
+      if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen().catch(() => {});
+      } else {
+        document.exitFullscreen().catch(() => {});
+      }
+    }
+
+    function updateSlide() {
+      document.querySelectorAll('.slide').forEach((s, idx) => {
+        s.classList.toggle('active', idx + 1 === currentSlide);
+      });
+      document.getElementById('deckCounter').innerText = currentSlide + ' / ' + totalSlides;
+      document.getElementById('deckProgressBar').style.width = ((currentSlide - 1) / (totalSlides - 1) * 100) + '%';
+      if (currentSlide === 16) setTimeout(fireConfetti, 300);
+    }
+
+    function nextSlide() {
+      if (currentSlide < totalSlides) {
+        currentSlide++;
+        playSound('click');
+        updateSlide();
+      }
+    }
+
+    function prevSlide() {
+      if (currentSlide > 1) {
+        currentSlide--;
+        playSound('click');
+        updateSlide();
+      }
+    }
+
+    function revealNextInCurrentSlide() {
+      const slide = document.getElementById('slide-' + currentSlide);
+      if (!slide) return;
+      const items = slide.querySelectorAll('.reveal-item');
+      for (let item of items) {
+        if (!item.classList.contains('revealed')) {
+          item.classList.add('revealed', 'just-revealed');
+          setTimeout(() => item.classList.remove('just-revealed'), 600);
+          playSound('click');
+          updateRevealStatus(slide);
+          return;
+        }
+      }
+    }
+
+    function revealAllInCurrentSlide() {
+      const slide = document.getElementById('slide-' + currentSlide);
+      if (!slide) return;
+      slide.querySelectorAll('.reveal-item').forEach(item => item.classList.add('revealed'));
+      playSound('success');
+      updateRevealStatus(slide);
+    }
+
+    function updateRevealStatus(slide) {
+      const items = slide.querySelectorAll('.reveal-item');
+      const revealed = slide.querySelectorAll('.reveal-item.revealed').length;
+      const statusEl = document.getElementById(slide.id + '-status');
+      if (statusEl) statusEl.innerText = revealed + ' / ' + items.length;
+    }
+
+    document.addEventListener('keydown', (e) => {
+      if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+      if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown') {
+        e.preventDefault(); nextSlide();
+      } else if (e.key === 'ArrowLeft' || e.key === 'PageUp') {
+        e.preventDefault(); prevSlide();
+      } else if (e.key === 'ArrowDown' || e.key === 'Enter') {
+        e.preventDefault(); revealNextInCurrentSlide();
+      } else if (e.key.toLowerCase() === 'f') {
+        toggleFullScreen();
+      } else if (e.key.toLowerCase() === 'm') {
+        toggleSound();
+      }
+    });
+
+    /* MINI QUIZ */
+    function checkQuiz(btn, isCorrect, qId, explanation) {
+      const parent = btn.parentElement;
+      const feedback = document.getElementById('quizFeedback' + qId);
+      parent.querySelectorAll('.quiz-btn').forEach(b => {
+        b.disabled = true;
+        b.style.pointerEvents = 'none';
+      });
+
+      if (isCorrect) {
+        btn.classList.add('correct');
+        playSound('success');
+        feedback.style.display = 'block';
+        feedback.style.background = 'rgba(16, 185, 129, 0.15)';
+        feedback.style.border = '1px solid #10B981';
+        feedback.style.color = '#34D399';
+        feedback.innerHTML = '🎉 <strong>Chính xác!</strong> ' + explanation;
+      } else {
+        btn.classList.add('wrong');
+        playSound('wrong');
+        feedback.style.display = 'block';
+        feedback.style.background = 'rgba(239, 68, 68, 0.15)';
+        feedback.style.border = '1px solid #EF4444';
+        feedback.style.color = '#FCA5A5';
+        feedback.innerHTML = '❌ <strong>Chưa chính xác!</strong> ' + explanation;
+      }
+    }
+
+    /* MÁY TÍNH ĐIỂM GIẢ LẬP */
+    function calcGradeSim() {
+      const gScore = parseFloat(document.getElementById('groupScoreRange').value);
+      const iScore = parseInt(document.getElementById('indivScoreRange').value);
+
+      document.getElementById('groupScoreVal').innerText = gScore.toFixed(1);
+      document.getElementById('indivScoreVal').innerText = iScore;
+
+      const finalGrade = (gScore * (iScore / 100)).toFixed(1);
+      document.getElementById('finalGradeVal').innerText = finalGrade;
+      document.getElementById('finalFormulaText').innerText = 
+        `${gScore.toFixed(1)} × (${iScore} / 100) = ${(gScore * iScore / 100).toFixed(2)} → làm tròn ${finalGrade} điểm`;
+    }
+
+    /* CHECKLIST SỰ KIỆN */
+    function calcChecklist() {
+      playSound('click');
+      const count = document.querySelectorAll('.event-check:checked').length;
+      const res = document.getElementById('checklistResult');
+      if (count === 4) {
+        playSound('success');
+        res.style.borderColor = '#10B981';
+        res.style.background = 'rgba(16, 185, 129, 0.2)';
+        res.innerHTML = '🚀 <strong>XUẤT SẮC! (4/4):</strong> Nhóm của bạn đã hoàn tất mọi tiêu chuẩn vàng! Chúc nhóm có buổi thuyết trình toả sáng nhất hội thảo!';
+      } else {
+        res.style.borderColor = '#F5A623';
+        res.style.background = 'rgba(245, 166, 35, 0.15)';
+        res.innerHTML = `⚠️ <strong>Đang chuẩn bị (${count}/4 mục):</strong> Hãy rà soát lại các mục còn thiếu trước thời hạn 2 ngày nhé!`;
+      }
+    }
+
+    /* PHÁO HOA */
+    function fireConfetti() {
+      playSound('success');
+      const canvas = document.getElementById('confettiCanvas');
+      const ctx = canvas.getContext('2d');
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+
+      const particles = [];
+      const colors = ['#10B981', '#34D399', '#F5A623', '#38E1F0', '#C4B5FD'];
+
+      for (let i = 0; i < 90; i++) {
+        particles.push({
+          x: canvas.width / 2,
+          y: canvas.height * 0.45,
+          vx: (Math.random() - 0.5) * 16,
+          vy: (Math.random() - 0.7) * 16,
+          size: Math.random() * 8 + 4,
+          color: colors[Math.floor(Math.random() * colors.length)],
+          alpha: 1,
+          rot: Math.random() * 360,
+          vrot: (Math.random() - 0.5) * 12
+        });
+      }
+
+      function render() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        let alive = false;
+        particles.forEach(p => {
+          p.x += p.vx;
+          p.y += p.vy;
+          p.vy += 0.35;
+          p.alpha -= 0.012;
+          p.rot += p.vrot;
+
+          if (p.alpha > 0) {
+            alive = true;
+            ctx.save();
+            ctx.globalAlpha = p.alpha;
+            ctx.translate(p.x, p.y);
+            ctx.rotate(p.rot * Math.PI / 180);
+            ctx.fillStyle = p.color;
+            ctx.fillRect(-p.size / 2, -p.size / 2, p.size, p.size);
+            ctx.restore();
+          }
+        });
+        if (alive) requestAnimationFrame(render);
+        else ctx.clearRect(0, 0, canvas.width, canvas.height);
+      }
+      render();
+    }
+
+    updateSlide();
+  </script>
+</body>
+</html>

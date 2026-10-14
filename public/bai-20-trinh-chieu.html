@@ -1,0 +1,1333 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bài 20: Nhóm nghề quản trị thuộc ngành Công nghệ thông tin — Bài giảng điện tử Tin học 12</title>
+  <style>
+    :root {
+      --bg: #050811;
+      --bg-card: rgba(10, 18, 32, 0.94);
+      --border-card: rgba(244, 63, 94, 0.2);
+      --ink: #FFFFFF;
+      --ink-soft: #94A3B8;
+      --sea: #0D7C86;
+      --sea-light: #38E1F0;
+      --coral: #F2683C;
+      --gold: #F5A623;
+      --gold-light: #FFC043;
+      --leaf: #10B981;
+      --leaf-light: #34D399;
+      --purple: #8B5CF6;
+      --purple-light: #C4B5FD;
+      --rose: #F43F5E;
+      --rose-light: #FB7185;
+      --radius-lg: 24px;
+      --radius-md: 16px;
+      --radius-sm: 10px;
+      --font-main: system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      --font-mono: 'Consolas', 'Fira Code', 'Courier New', monospace;
+      --transition-slide: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.5s ease;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: var(--font-main);
+      background-color: var(--bg);
+      color: var(--ink);
+      overflow: hidden;
+      width: 100vw;
+      height: 100vh;
+      user-select: none;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .bg-mesh {
+      position: fixed;
+      top: 0; left: 0; width: 100vw; height: 100vh;
+      background: radial-gradient(circle at 14% 18%, rgba(244, 63, 94, 0.28) 0%, transparent 45%),
+                  radial-gradient(circle at 86% 80%, rgba(56, 225, 240, 0.24) 0%, transparent 45%),
+                  radial-gradient(circle at 50% 50%, rgba(139, 92, 246, 0.16) 0%, transparent 60%);
+      z-index: 0;
+      pointer-events: none;
+      animation: meshPulse 14s ease-in-out infinite alternate;
+    }
+
+    @keyframes meshPulse {
+      0% { transform: scale(1) translate(0, 0); opacity: 0.9; }
+      100% { transform: scale(1.06) translate(-10px, 12px); opacity: 1; }
+    }
+
+    .floating-symbols {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 1;
+      overflow: hidden;
+    }
+
+    .float-tag {
+      position: absolute;
+      font-family: var(--font-mono);
+      font-size: 13.5px;
+      font-weight: 700;
+      color: rgba(244, 63, 94, 0.35);
+      border: 1px solid rgba(244, 63, 94, 0.22);
+      padding: 5px 12px;
+      border-radius: 8px;
+      background: rgba(244, 63, 94, 0.06);
+      animation: floatUp 24s linear infinite;
+    }
+
+    @keyframes floatUp {
+      0% { transform: translateY(105vh) rotate(0deg); opacity: 0; }
+      10% { opacity: 0.55; }
+      90% { opacity: 0.55; }
+      100% { transform: translateY(-10vh) rotate(360deg); opacity: 0; }
+    }
+
+    .deck-container {
+      position: relative;
+      width: 100vw;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 10;
+    }
+
+    .slide {
+      position: absolute;
+      width: 92vw;
+      max-width: 1280px;
+      height: 86vh;
+      background: var(--bg-card);
+      border: 1px solid var(--border-card);
+      border-radius: var(--radius-lg);
+      box-shadow: 0 24px 70px rgba(0, 0, 0, 0.7);
+      backdrop-filter: blur(22px);
+      padding: 34px 46px;
+      display: flex;
+      flex-direction: column;
+      opacity: 0;
+      transform: scale(0.96) translateY(24px);
+      pointer-events: none;
+      transition: var(--transition-slide);
+      overflow-y: auto;
+    }
+
+    .slide.active {
+      opacity: 1;
+      transform: scale(1) translateY(0);
+      pointer-events: auto;
+    }
+
+    .slide::-webkit-scrollbar { width: 6px; }
+    .slide::-webkit-scrollbar-thumb { background: rgba(244, 63, 94, 0.3); border-radius: 4px; }
+
+    .slide-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 20px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      padding-bottom: 14px;
+      flex-shrink: 0;
+    }
+
+    .slide-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(244, 63, 94, 0.16);
+      border: 1px solid rgba(244, 63, 94, 0.38);
+      color: var(--rose-light);
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      padding: 4px 12px;
+      border-radius: 20px;
+      margin-bottom: 6px;
+    }
+
+    .slide-title {
+      font-size: 27px;
+      font-weight: 800;
+      color: #FFFFFF;
+      line-height: 1.25;
+      background: linear-gradient(90deg, #FFFFFF, #FDA4AF);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .slide-subtitle {
+      font-size: 13.5px;
+      color: var(--ink-soft);
+      margin-top: 3px;
+    }
+
+    .reveal-controller {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 30px;
+      padding: 4px 12px;
+      font-size: 12px;
+      color: var(--ink-soft);
+      flex-shrink: 0;
+    }
+
+    .reveal-status {
+      font-family: var(--font-mono);
+      font-weight: 700;
+      color: var(--rose-light);
+    }
+
+    .reveal-btn {
+      background: rgba(244, 63, 94, 0.25);
+      border: 1px solid rgba(244, 63, 94, 0.45);
+      color: white;
+      padding: 4px 10px;
+      border-radius: 14px;
+      font-size: 11px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .reveal-btn:hover {
+      background: var(--rose);
+      color: #FFFFFF;
+    }
+
+    .slide-body {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .reveal-item {
+      opacity: 0.15;
+      transform: translateY(10px);
+      transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+      filter: blur(1.5px);
+    }
+
+    .reveal-item.revealed {
+      opacity: 1;
+      transform: translateY(0);
+      filter: blur(0);
+    }
+
+    .reveal-item.just-revealed {
+      box-shadow: 0 0 25px rgba(244, 63, 94, 0.4);
+      border-color: var(--rose-light) !important;
+    }
+
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+    .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
+
+    .card {
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.09);
+      border-radius: var(--radius-md);
+      padding: 16px 20px;
+      transition: transform 0.3s, border-color 0.3s, background 0.3s;
+    }
+
+    .card:hover {
+      transform: translateY(-3px);
+      border-color: rgba(244, 63, 94, 0.4);
+      background: rgba(255, 255, 255, 0.06);
+    }
+
+    .card-title {
+      font-size: 15.5px;
+      font-weight: 700;
+      color: #FFFFFF;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .card-desc {
+      font-size: 13.5px;
+      color: var(--ink-soft);
+      line-height: 1.55;
+    }
+
+    .highlight-box {
+      background: rgba(244, 63, 94, 0.14);
+      border: 1px solid rgba(244, 63, 94, 0.35);
+      border-radius: var(--radius-md);
+      padding: 16px 20px;
+      font-size: 14.5px;
+      line-height: 1.6;
+      color: #FEE2E2;
+    }
+
+    .highlight-box strong { color: #FECDD3; }
+
+    /* FOOTER THANH ĐIỀU HƯỚNG */
+    .deck-footer {
+      position: fixed;
+      bottom: 14px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background: rgba(10, 16, 26, 0.92);
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      border-radius: 40px;
+      padding: 8px 20px;
+      backdrop-filter: blur(20px);
+      z-index: 100;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
+    }
+
+    .nav-btn {
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      color: white;
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 15px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .nav-btn:hover {
+      background: var(--rose);
+      color: #FFFFFF;
+      border-color: var(--rose-light);
+      transform: scale(1.08);
+    }
+
+    .deck-progress-container {
+      width: 140px;
+      height: 6px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 3px;
+      overflow: hidden;
+    }
+
+    .deck-progress-bar {
+      height: 100%;
+      background: linear-gradient(90deg, var(--rose), var(--sea-light));
+      width: 0%;
+      transition: width 0.3s ease;
+    }
+
+    .deck-counter {
+      font-family: var(--font-mono);
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--rose-light);
+      min-width: 52px;
+      text-align: center;
+    }
+
+    /* MINI QUIZ */
+    .quiz-options {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-top: 12px;
+    }
+
+    .quiz-btn {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: var(--radius-sm);
+      padding: 12px 18px;
+      color: #FFFFFF;
+      font-size: 14px;
+      text-align: left;
+      cursor: pointer;
+      transition: all 0.25s;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .quiz-btn:hover {
+      background: rgba(244, 63, 94, 0.18);
+      border-color: var(--rose-light);
+      transform: translateX(4px);
+    }
+
+    .quiz-btn.correct {
+      background: rgba(16, 185, 129, 0.25) !important;
+      border-color: #10B981 !important;
+      color: #34D399 !important;
+    }
+
+    .quiz-btn.wrong {
+      background: rgba(239, 68, 68, 0.25) !important;
+      border-color: #EF4444 !important;
+      color: #FCA5A5 !important;
+    }
+
+    .quiz-feedback {
+      margin-top: 12px;
+      padding: 12px 16px;
+      border-radius: var(--radius-sm);
+      font-size: 13.5px;
+      line-height: 1.5;
+      display: none;
+    }
+
+    /* SOC SIMULATOR */
+    .soc-container {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      background: #080D18;
+      border: 1px solid rgba(244, 63, 94, 0.3);
+      border-radius: 14px;
+      padding: 20px;
+    }
+
+    .soc-status-box {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .soc-alert {
+      background: rgba(239, 68, 68, 0.2);
+      border: 1px solid #EF4444;
+      padding: 10px 14px;
+      border-radius: 8px;
+      font-size: 13.5px;
+      animation: alertPulse 1.5s infinite;
+    }
+
+    @keyframes alertPulse {
+      0% { opacity: 0.85; }
+      50% { opacity: 1; box-shadow: 0 0 15px rgba(239, 68, 68, 0.4); }
+      100% { opacity: 0.85; }
+    }
+
+    /* BADGES */
+    .badge-admin { background: rgba(56, 225, 240, 0.2); color: #38E1F0; border: 1px solid rgba(56, 225, 240, 0.35); }
+    .badge-sec { background: rgba(244, 63, 94, 0.25); color: #FDA4AF; border: 1px solid rgba(244, 63, 94, 0.45); }
+    .badge-sys { background: rgba(139, 92, 246, 0.25); color: #DDD6FE; border: 1px solid rgba(139, 92, 246, 0.4); }
+
+    #confettiCanvas {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 999;
+    }
+  </style>
+</head>
+<body>
+  <div class="bg-mesh"></div>
+  <canvas id="confettiCanvas"></canvas>
+
+  <div class="floating-symbols">
+    <div class="float-tag" style="left: 8%; animation-delay: 0s;">Firewall 🛡️</div>
+    <div class="float-tag" style="left: 24%; animation-delay: 4s;">WannaCry Alert 🚨</div>
+    <div class="float-tag" style="left: 48%; animation-delay: 7s;">IDS / IPS 📡</div>
+    <div class="float-tag" style="left: 70%; animation-delay: 2s;">SysAdmin ⚙️</div>
+    <div class="float-tag" style="left: 88%; animation-delay: 9s;">Cloud Security ☁️</div>
+  </div>
+
+  <div class="deck-container">
+    <!-- SLIDE 1: BÌA BÀI GIẢNG -->
+    <div class="slide active" id="slide-1">
+      <div style="flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; gap: 20px;">
+        <div class="slide-badge" style="font-size: 13px; padding: 6px 18px;">CHỦ ĐỀ 5: HƯỚNG NGHIỆP VỚI TIN HỌC · TIN HỌC 12 ICT</div>
+        <h1 style="font-size: 44px; font-weight: 900; line-height: 1.2; max-width: 960px; background: linear-gradient(135deg, #FFFFFF 30%, #FB7185 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">
+          Bài 20: Nhóm Nghề Quản Trị Thuộc Ngành Công Nghệ Thông Tin
+        </h1>
+        <p style="font-size: 18px; color: var(--ink-soft); max-width: 760px; line-height: 1.6;">
+          Khám phá 3 nghề "lá chắn thép" bảo vệ huyết mạch số của doanh nghiệp: Quản trị mạng, Bảo mật hệ thống thông tin, Quản trị và bảo trì hệ thống
+        </p>
+        <div style="display: flex; gap: 14px; margin-top: 10px;">
+          <button onclick="nextSlide()" class="reveal-btn" style="padding: 12px 30px; font-size: 15px; border-radius: 30px; background: linear-gradient(135deg, #F43F5E, #38E1F0); color: #050811; font-weight: 800; box-shadow: 0 10px 25px rgba(244, 63, 94, 0.4);">
+            Bắt đầu bài giảng 🛡️
+          </button>
+        </div>
+        <div style="font-size: 13px; color: rgba(255, 255, 255, 0.4); margin-top: 20px;">
+          Trường THPT Na Rì · Dành cho giáo viên & học sinh lớp 12
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 2: KHỞI ĐỘNG VỚI 3 THẢM HOẠ BẢO MẬT -->
+    <div class="slide" id="slide-2">
+      <div class="slide-header">
+        <div>
+          <div class="slide-badge">01 · KHỞI ĐỘNG</div>
+          <div class="slide-title">Khi Hệ Thống Số Bị Tấn Công: 3 Bài Học Đắt Giá</div>
+          <div class="slide-subtitle">Các vụ việc chấn động thế giới được ghi nhận trong SGK Tin học 12</div>
+        </div>
+        <div class="reveal-controller">
+          <span>Bước: <strong class="reveal-status" id="slide-2-status">0 / 3</strong></span>
+          <button class="reveal-btn" onclick="revealNextInCurrentSlide()">Tiếp ⤓</button>
+          <button class="reveal-btn" onclick="revealAllInCurrentSlide()">Hiện hết</button>
+        </div>
+      </div>
+      <div class="slide-body">
+        <div class="grid-3">
+          <div class="card reveal-item" style="border-top: 4px solid #EF4444;">
+            <div style="font-size: 28px; margin-bottom: 6px;">🦠</div>
+            <div class="card-title" style="color: #F87171;">Mã độc WannaCry (5/2017)</div>
+            <div class="card-desc">
+              Một trong những phần mềm độc hại đáng sợ nhất lịch sử. Tấn công có tính toàn cầu, mã hoá tống tiền dữ liệu của hơn 200.000 máy tính tại 150 quốc gia chỉ trong vài giờ.
+            </div>
+          </div>
+          <div class="card reveal-item" style="border-top: 4px solid var(--gold);">
+            <div style="font-size: 28px; margin-bottom: 6px;">✈️</div>
+            <div class="card-title" style="color: var(--gold-light);">British Airways (2017)</div>
+            <div class="card-desc">
+              Cùng thời điểm WannaCry, hệ thống máy tính hãng bay gặp sự cố nguồn điện và máy chủ nghiêm trọng, ngừng hoạt động nhiều ngày, huỷ hàng nghìn chuyến bay, thiệt hại hàng trăm triệu USD.
+            </div>
+          </div>
+          <div class="card reveal-item" style="border-top: 4px solid var(--purple-light);">
+            <div style="font-size: 28px; margin-bottom: 6px;">🎮</div>
+            <div class="card-title" style="color: var(--purple-light);">Sony Pictures (2014)</div>
+            <div class="card-desc">
+              Bị nhóm tin tặc tinh vi đột nhập sâu vào mạng nội bộ. Nhiều dữ liệu tuyệt mật, kịch bản phim chưa công chiếu và email nội bộ nhạy cảm bị rò rỉ công khai trên Internet.
+            </div>
+          </div>
+        </div>
+        <div class="highlight-box reveal-item" style="margin-top: 6px;">
+          🚨 <strong>Bài học rút ra:</strong> Chuyển đổi số càng mạnh mẽ, doanh nghiệp càng phụ thuộc vào máy tính và dữ liệu. Nếu không có các chuyên gia quản trị mạng và bảo mật canh gác, một sự cố có thể đánh sập cả tập đoàn!
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 3: NHÓM NGHỀ QUẢN TRỊ LÀ AI? -->
+    <div class="slide" id="slide-3">
+      <div class="slide-header">
+        <div>
+          <div class="slide-badge">02 · BẢN CHẤT NGHỀ NGHIỆP</div>
+          <div class="slide-title">Sứ Mệnh Của Nhóm Nghề Quản Trị CNTT</div>
+          <div class="slide-subtitle">Người lính gác thầm lặng bảo vệ không gian mạng của tổ chức</div>
+        </div>
+        <div class="reveal-controller">
+          <span>Bước: <strong class="reveal-status" id="slide-3-status">0 / 3</strong></span>
+          <button class="reveal-btn" onclick="revealNextInCurrentSlide()">Tiếp ⤓</button>
+          <button class="reveal-btn" onclick="revealAllInCurrentSlide()">Hiện hết</button>
+        </div>
+      </div>
+      <div class="slide-body">
+        <div class="highlight-box reveal-item" style="font-size: 16px; border-color: var(--rose-light);">
+          🛡️ <strong>Định nghĩa cốt lõi trong SGK:</strong><br>
+          <em>"Nhóm nghề quản trị trong ngành Công nghệ thông tin thực hiện những công việc nhằm đảm bảo hệ thống công nghệ thông tin của các tổ chức và doanh nghiệp hoạt động một cách <strong>hiệu quả và an toàn</strong>."</em>
+        </div>
+        <div class="grid-2">
+          <div class="card reveal-item">
+            <div class="card-title" style="color: var(--sea-light);">⚡ Yếu tố HIỆU QUẢ</div>
+            <div class="card-desc">
+              Mạng máy tính chạy thông suốt không tắc nghẽn, máy chủ tải nhanh, dữ liệu truy xuất mượt mà, nhân viên làm việc không bị gián đoạn, dịch vụ trực tuyến luôn sẵn sàng (High Availability).
+            </div>
+          </div>
+          <div class="card reveal-item">
+            <div class="card-title" style="color: var(--rose-light);">🔒 Yếu tố AN TOÀN</div>
+            <div class="card-desc">
+              Dữ liệu không bị đánh cắp hay tống tiền, người ngoài không thể đột nhập trái phép vào cơ sở dữ liệu, các lỗ hổng hệ điều hành được vá ngay lập tức trước khi hacker khai thác.
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 4: BA TRỤ CỘT NGHỀ NGHIỆP QUẢN TRỊ -->
+    <div class="slide" id="slide-4">
+      <div class="slide-header">
+        <div>
+          <div class="slide-badge">03 · BA TRỤ CỘT</div>
+          <div class="slide-title">Ba Công Việc Chính Trong Nhóm Nghề Quản Trị</div>
+          <div class="slide-subtitle">Sự phân định rõ ràng giữa 3 vị trí chuyên môn then chốt</div>
+        </div>
+        <div class="reveal-controller">
+          <span>Bước: <strong class="reveal-status" id="slide-4-status">0 / 3</strong></span>
+          <button class="reveal-btn" onclick="revealNextInCurrentSlide()">Tiếp ⤓</button>
+          <button class="reveal-btn" onclick="revealAllInCurrentSlide()">Hiện hết</button>
+        </div>
+      </div>
+      <div class="slide-body">
+        <div class="grid-3" style="flex: 1;">
+          <div class="card reveal-item" style="border-top: 4px solid var(--sea-light);">
+            <div class="card-title" style="color: var(--sea-light); font-size: 16.5px;">🌐 1. Quản trị mạng</div>
+            <div class="card-desc">
+              Quản lý và duy trì hệ thống mạng máy tính của tổ chức: cài đặt, cấu hình, bảo mật mạng, theo dõi hiệu suất, xử lý sự cố mạng, đảm bảo mạng luôn hoạt động ổn định.
+            </div>
+          </div>
+          <div class="card reveal-item" style="border-top: 4px solid var(--rose);">
+            <div class="card-title" style="color: var(--rose-light); font-size: 16.5px;">🔒 2. Bảo mật hệ thống thông tin</div>
+            <div class="card-desc">
+              Bảo mật dữ liệu và hệ thống khỏi các mối đe doạ, tấn công mạng: triển khai biện pháp bảo mật, giám sát mạng phát hiện xâm nhập trái phép, xử lý các sự cố an ninh.
+            </div>
+          </div>
+          <div class="card reveal-item" style="border-top: 4px solid var(--purple-light);">
+            <div class="card-title" style="color: var(--purple-light); font-size: 16.5px;">🖥️ 3. Quản trị & bảo trì hệ thống</div>
+            <div class="card-desc">
+              Quản lý và duy trì toàn bộ hệ thống thông tin của tổ chức, gồm cả phần cứng và phần mềm máy chủ: cài đặt, cập nhật, xử lý sự cố để hệ thống hoạt động ổn định, hiệu năng cao.
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 5: NGHỀ 1 - QUẢN TRỊ MẠNG (NETWORK ADMIN) -->
+    <div class="slide" id="slide-5">
+      <div class="slide-header">
+        <div>
+          <div class="slide-badge">04 · CHUYÊN SÂU NGHỀ 1</div>
+          <div class="slide-title">Quản Trị Mạng Máy Tính (Network Administrator)</div>
+          <div class="slide-subtitle">Người thiết kế và giữ cho dòng chảy thông tin không bao giờ ngừng</div>
+        </div>
+        <div class="reveal-controller">
+          <span>Bước: <strong class="reveal-status" id="slide-5-status">0 / 4</strong></span>
+          <button class="reveal-btn" onclick="revealNextInCurrentSlide()">Tiếp ⤓</button>
+          <button class="reveal-btn" onclick="revealAllInCurrentSlide()">Hiện hết</button>
+        </div>
+      </div>
+      <div class="slide-body">
+        <div class="grid-2">
+          <div class="card reveal-item">
+            <div class="card-title">📡 Thiết bị & Cấu hình mạng</div>
+            <div class="card-desc">
+              Quản lý các thiết bị mạng cốt lõi: Router định tuyến, Switch chuyển mạch, Access Point Wi-Fi doanh nghiệp, phân chia mạng ảo VLAN cho các phòng ban kế toán, kinh doanh, giám đốc.
+            </div>
+          </div>
+          <div class="card reveal-item">
+            <div class="card-title">📊 Giám sát băng thông & Hiệu suất</div>
+            <div class="card-desc">
+              Theo dõi lưu lượng truy cập (Network Traffic), đo lường độ trễ Ping, phát hiện kịp thời các hiện tượng nghẽn mạng do xem video quá mức hoặc tải tệp quá tải.
+            </div>
+          </div>
+          <div class="card reveal-item">
+            <div class="card-title">🛠️ Khắc phục sự cố mạng khẩn cấp</div>
+            <div class="card-desc">
+              Tìm điểm đứt cáp quang, xung đột địa chỉ IP (IP Conflict), hỏng cổng Switch, cấu hình sai giao thức DHCP/DNS dẫn đến không thể truy cập Internet.
+            </div>
+          </div>
+          <div class="card reveal-item">
+            <div class="card-title">🌐 Kết nối từ xa an toàn (VPN)</div>
+            <div class="card-desc">
+              Thiết lập đường truyền hầm bảo mật Virtual Private Network (VPN) để nhân viên làm việc tại nhà vẫn truy cập được tài liệu nội bộ công ty an toàn.
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 6: NGHỀ 2 - BẢO MẬT HỆ THỐNG THÔNG TIN -->
+    <div class="slide" id="slide-6">
+      <div class="slide-header">
+        <div>
+          <div class="slide-badge">05 · CHUYÊN SÂU NGHỀ 2</div>
+          <div class="slide-title">Bảo Mật Hệ Thống Thông Tin (Cybersecurity)</div>
+          <div class="slide-subtitle">Cuộc chiến trí tuệ không hồi kết giữa chuyên gia bảo mật và hacker</div>
+        </div>
+        <div class="reveal-controller">
+          <span>Bước: <strong class="reveal-status" id="slide-6-status">0 / 4</strong></span>
+          <button class="reveal-btn" onclick="revealNextInCurrentSlide()">Tiếp ⤓</button>
+          <button class="reveal-btn" onclick="revealAllInCurrentSlide()">Hiện hết</button>
+        </div>
+      </div>
+      <div class="slide-body">
+        <div class="grid-2">
+          <div class="card reveal-item">
+            <div class="card-title">🧱 Thiết lập Tường lửa (Firewall)</div>
+            <div class="card-desc">
+              Xây dựng các quy tắc lọc gói tin: chặn các cổng nguy hiểm, chặn IP từ các quốc gia đáng ngờ, chỉ cho phép luồng dữ liệu hợp lệ đi qua.
+            </div>
+          </div>
+          <div class="card reveal-item">
+            <div class="card-title">📡 Hệ thống phát hiện xâm nhập (IDS/IPS)</div>
+            <div class="card-desc">
+              Triển khai cảm biến giám sát mạng 24/7. Khi phát hiện dấu hiệu dò quét mật khẩu Brute-force hoặc chọc lỗ hổng SQL Injection, hệ thống tự động phát cảnh báo và cô lập ngay.
+            </div>
+          </div>
+          <div class="card reveal-item">
+            <div class="card-title">⚔️ Chống tấn công từ chối dịch vụ (DoS/DDoS)</div>
+            <div class="card-desc">
+              Ngăn chặn các cuộc tấn công dùng hàng triệu máy tính ma (Botnet) gửi yêu cầu ảo làm sập website bán hàng hoặc cổng thông tin điện tử của cơ quan.
+            </div>
+          </div>
+          <div class="card reveal-item">
+            <div class="card-title">🔐 Mã hoá & Quản lý danh tính</div>
+            <div class="card-desc">
+              Mã hoá cơ sở dữ liệu khách hàng (AES-256), áp dụng xác thực 2 yếu tố (2FA), phân quyền người dùng theo nguyên tắc đặc quyền tối thiểu (Least Privilege).
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 7: NGHỀ 3 - QUẢN TRỊ VÀ BẢO TRÌ HỆ THỐNG (SYSADMIN) -->
+    <div class="slide" id="slide-7">
+      <div class="slide-header">
+        <div>
+          <div class="slide-badge">06 · CHUYÊN SÂU NGHỀ 3</div>
+          <div class="slide-title">Quản Trị Và Bảo Trì Hệ Thống (System Administrator)</div>
+          <div class="slide-subtitle">Người làm chủ phòng máy chủ, điện toán đám mây và cơ sở dữ liệu</div>
+        </div>
+        <div class="reveal-controller">
+          <span>Bước: <strong class="reveal-status" id="slide-7-status">0 / 3</strong></span>
+          <button class="reveal-btn" onclick="revealNextInCurrentSlide()">Tiếp ⤓</button>
+          <button class="reveal-btn" onclick="revealAllInCurrentSlide()">Hiện hết</button>
+        </div>
+      </div>
+      <div class="slide-body">
+        <div class="card reveal-item" style="border-left: 4px solid var(--purple-light);">
+          <div class="card-title" style="color: var(--purple-light);">🖥️ Máy chủ vật lý & Ảo hoá đám mây</div>
+          <div class="card-desc">
+            Cài đặt, cấu hình các máy chủ chạy Linux (Ubuntu Server, RedHat) hoặc Windows Server; sử dụng công nghệ ảo hoá (VMware, Docker, Kubernetes) và dịch vụ đám mây (Cloud AWS, Google Cloud, Azure).
+          </div>
+        </div>
+        <div class="grid-2">
+          <div class="card reveal-item">
+            <div class="card-title">💾 Chiến lược Sao lưu (Backup 3-2-1)</div>
+            <div class="card-desc">
+              Lập lịch sao lưu tự động hàng đêm: 3 bản sao chép, lưu trên 2 loại phương tiện khác nhau, có ít nhất 1 bản lưu ngoài địa điểm (off-site hoặc Cloud) để phòng hoả hoạn.
+            </div>
+          </div>
+          <div class="card reveal-item">
+            <div class="card-title">⏱️ Khôi phục sau thảm hoạ (Disaster Recovery)</div>
+            <div class="card-desc">
+              Kế hoạch phản ứng nhanh khi máy chủ bị cháy hỏng phần cứng hoặc động đất: chỉ mất 15-30 phút để khởi động máy chủ dự phòng thay thế hoạt động ngay lập tức.
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 8: BỐN KHỐI KIẾN THỨC BẮT BUỘC -->
+    <div class="slide" id="slide-8">
+      <div class="slide-header">
+        <div>
+          <div class="slide-badge">07 · YÊU CẦU NĂNG LỰC</div>
+          <div class="slide-title">4 Khối Kiến Thức Bắt Buộc Của Nghề Quản Trị</div>
+          <div class="slide-subtitle">Để làm tốt nhóm nghề quản trị, bạn cần tích luỹ những gì?</div>
+        </div>
+        <div class="reveal-controller">
+          <span>Bước: <strong class="reveal-status" id="slide-8-status">0 / 4</strong></span>
+          <button class="reveal-btn" onclick="revealNextInCurrentSlide()">Tiếp ⤓</button>
+          <button class="reveal-btn" onclick="revealAllInCurrentSlide()">Hiện hết</button>
+        </div>
+      </div>
+      <div class="slide-body">
+        <div class="grid-2">
+          <div class="card reveal-item">
+            <div class="card-title" style="color: var(--sea-light);">1. Kiến thức Mạng máy tính</div>
+            <div class="card-desc">Nắm vững cấu trúc và cách vận hành mạng; các tầng giao thức (TCP/IP, HTTP, DNS, DHCP); phân tích gói tin mạng và cấu hình Router, Firewall.</div>
+          </div>
+          <div class="card reveal-item">
+            <div class="card-title" style="color: var(--rose-light);">2. Kiến thức Bảo mật thông tin</div>
+            <div class="card-desc">Hiểu rõ các phương thức tấn công (DoS, dò lỗ hổng, mã độc, lừa đảo); biết triển khai hệ thống phát hiện xâm nhập (IDS) và tường lửa phòng vệ.</div>
+          </div>
+          <div class="card reveal-item">
+            <div class="card-title" style="color: var(--purple-light);">3. Kiến thức Quản lý hệ thống</div>
+            <div class="card-desc">Kiến thức sâu về quản trị hệ điều hành (dòng lệnh Linux, dịch vụ Windows Server); tối ưu hiệu năng, cấu hình quyền hạn và khắc phục lỗi hệ thống.</div>
+          </div>
+          <div class="card reveal-item">
+            <div class="card-title" style="color: var(--gold-light);">4. Luật pháp & Tuân thủ quy định</div>
+            <div class="card-desc">Hiểu biết và tuân thủ Luật An ninh mạng Việt Nam, các quy định pháp luật về bảo vệ dữ liệu cá nhân cũng như tiêu chuẩn an ninh quốc tế (ISO 27001).</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 9: KỸ NĂNG MỀM ĐẶC THÙ -->
+    <div class="slide" id="slide-9">
+      <div class="slide-header">
+        <div>
+          <div class="slide-badge">08 · KỸ NĂNG MỀM</div>
+          <div class="slide-title">Kỹ Năng Mềm Của Chuyên Gia Quản Trị</div>
+          <div class="slide-subtitle">Vũ khí bí mật giúp người làm nghề vượt qua áp lực cao độ</div>
+        </div>
+        <div class="reveal-controller">
+          <span>Bước: <strong class="reveal-status" id="slide-9-status">0 / 3</strong></span>
+          <button class="reveal-btn" onclick="revealNextInCurrentSlide()">Tiếp ⤓</button>
+          <button class="reveal-btn" onclick="revealAllInCurrentSlide()">Hiện hết</button>
+        </div>
+      </div>
+      <div class="slide-body">
+        <div class="card reveal-item" style="border-color: var(--gold); background: rgba(245, 166, 35, 0.12);">
+          <div class="card-title" style="color: var(--gold-light); font-size: 17px;">
+            📚 Kỹ năng Tự nghiên cứu & Học hỏi liên tục (ĐẶC BIỆT CẦN THIẾT)
+          </div>
+          <div class="card-desc" style="font-size: 14.5px;">
+            SGK nhấn mạnh kỹ năng này là **đặc biệt cần thiết**! Hacker luôn tạo ra các loại virus và phương thức tấn công mới mỗi ngày. Nếu chuyên viên quản trị không chủ động đọc tài liệu, cập nhật bản vá và xu hướng bảo mật mới thì hệ thống sẽ sớm bị chọc thủng.
+          </div>
+        </div>
+        <div class="grid-2">
+          <div class="card reveal-item">
+            <div class="card-title">⏱️ Quản lý thời gian & Ứng phó sự cố</div>
+            <div class="card-desc">Bình tĩnh xử lý khi xảy ra tấn công giữa đêm khuya; ưu tiên phục hồi dịch vụ quan trọng nhất trước để giảm thiểu thiệt hại kinh tế.</div>
+          </div>
+          <div class="card reveal-item">
+            <div class="card-title">💬 Kỹ năng Giao tiếp & Báo cáo</div>
+            <div class="card-desc">Giải thích rõ ràng tình trạng sự cố cho ban giám đốc hiểu mà không dùng thuật ngữ kỹ thuật quá rối rắm; hướng dẫn nhân viên tuân thủ an toàn mạng.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 10: TRẠM TƯƠNG TÁC SOC SIMULATOR -->
+    <div class="slide" id="slide-10">
+      <div class="slide-header">
+        <div>
+          <div class="slide-badge">09 · TRẠM TƯƠNG TÁC SOC</div>
+          <div class="slide-title">Mô Phỏng Trung Tâm Điều Hành An Ninh Mạng (SOC)</div>
+          <div class="slide-subtitle">Tình huống khẩn cấp: Tấn công từ chối dịch vụ DoS vào cổng thi trực tuyến!</div>
+        </div>
+        <div class="reveal-controller">
+          <span style="color: var(--rose-light); font-weight: 700;">Tương tác trực tiếp</span>
+        </div>
+      </div>
+      <div class="slide-body">
+        <div class="soc-container">
+          <div class="soc-status-box">
+            <div class="soc-alert" id="socAlertBox">
+              🚨 <strong>CẢNH BÁO:</strong> Máy chủ thi trực tuyến đang nhận 1.500.000 lượt truy cập ảo / giây từ hàng nghìn IP lạ! CPU Server quá tải 99.8%. Học sinh không thể nộp bài!
+            </div>
+            <div style="font-size: 13.5px; color: var(--ink-soft); margin-top: 4px;">
+              Là chuyên viên Quản trị & Bảo mật, bạn sẽ xử lý sự cố này bằng biện pháp nào?
+            </div>
+            <div style="display: flex; flex-direction: column; gap: 8px; margin-top: 8px;">
+              <button class="quiz-btn" onclick="handleSocAction(1)">
+                A. Rút toàn bộ dây nguồn máy chủ ra tắt máy
+              </button>
+              <button class="quiz-btn" onclick="handleSocAction(2)">
+                B. Kích hoạt Tường lửa chặn dải IP độc hại & bật chế độ Anti-DDoS lọc gói tin
+              </button>
+              <button class="quiz-btn" onclick="handleSocAction(3)">
+                C. Xoá toàn bộ cơ sở dữ liệu học sinh để giảm tải
+              </button>
+            </div>
+          </div>
+          <div style="background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.1); border-radius: 10px; padding: 16px; display: flex; flex-direction: column; justify-content: center;" id="socLog">
+            <div style="font-family: var(--font-mono); font-size: 13px; color: #94A3B8;">
+              [SYSTEM LOGS] Đang chờ quyết định của Kỹ sư Quản trị mạng...
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 11: NHU CẦU NHÂN LỰC THỜI CHUYỂN ĐỔI SỐ -->
+    <div class="slide" id="slide-11">
+      <div class="slide-header">
+        <div>
+          <div class="slide-badge">10 · NHU CẦU THỊ TRƯỜNG</div>
+          <div class="slide-title">Nhu Cầu Nhân Lực Nhóm Quản Trị Gia Tăng Chóng Mặt</div>
+          <div class="slide-subtitle">Lý do vì sao ngành này luôn nằm trong top thu nhập và khát nhân tài</div>
+        </div>
+        <div class="reveal-controller">
+          <span>Bước: <strong class="reveal-status" id="slide-11-status">0 / 3</strong></span>
+          <button class="reveal-btn" onclick="revealNextInCurrentSlide()">Tiếp ⤓</button>
+          <button class="reveal-btn" onclick="revealAllInCurrentSlide()">Hiện hết</button>
+        </div>
+      </div>
+      <div class="slide-body">
+        <div class="grid-3">
+          <div class="card reveal-item">
+            <div class="card-title" style="color: var(--sea-light);">🌐 1. Sự bùng nổ của IoT</div>
+            <div class="card-desc">Internet vạn vật làm tăng đột biến số lượng thiết bị kết nối vào mạng (camera, cảm biến nhà thông minh, máy chấm công), khiến nhu cầu chuyên gia quản trị mạng tăng vọt.</div>
+          </div>
+          <div class="card reveal-item">
+            <div class="card-title" style="color: var(--rose-light);">🔒 2. Nguy cơ an ninh phức tạp</div>
+            <div class="card-desc">Tin tặc quốc tế tấn công bằng AI, mã độc đào tiền ảo, tống tiền ngân hàng. Mọi tổ chức đều phải thành lập bộ phận an toàn thông tin chuyên trách.</div>
+          </div>
+          <div class="card reveal-item">
+            <div class="card-title" style="color: var(--purple-light);">☁️ 3. Lên mây (Cloud Migration)</div>
+            <div class="card-desc">Doanh nghiệp chuyển đổi cơ sở dữ liệu lên đám mây, đòi hỏi kỹ sư quản trị hệ thống có trình độ cao về quản lý từ xa, bảo mật phân tán.</div>
+          </div>
+        </div>
+        <div class="highlight-box reveal-item" style="border-color: var(--leaf-light); background: rgba(16, 185, 129, 0.15); color: #D1FAE5;">
+          📈 <strong>Nhận định SGK:</strong> Nhu cầu nhân lực trong lĩnh vực quản trị ngành Công nghệ thông tin đang ngày càng tăng cao ở cả Việt Nam và trên phạm vi toàn thế giới.
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 12: CÁC NGÀNH ĐÀO TẠO ĐẠI HỌC VÀ CAO ĐẲNG -->
+    <div class="slide" id="slide-12">
+      <div class="slide-header">
+        <div>
+          <div class="slide-badge">11 · HƯỚNG NGHIỆP TUYỂN SINH</div>
+          <div class="slide-title">5 Ngành Đào Tạo Liên Quan Đến Nghề Quản Trị</div>
+          <div class="slide-subtitle">Các mã ngành xét tuyển đại học, cao đẳng theo hướng dẫn SGK Tin 12</div>
+        </div>
+        <div class="reveal-controller">
+          <span>Bước: <strong class="reveal-status" id="slide-12-status">0 / 5</strong></span>
+          <button class="reveal-btn" onclick="revealNextInCurrentSlide()">Tiếp ⤓</button>
+          <button class="reveal-btn" onclick="revealAllInCurrentSlide()">Hiện hết</button>
+        </div>
+      </div>
+      <div class="slide-body">
+        <div style="display: flex; flex-direction: column; gap: 10px;">
+          <div class="card reveal-item" style="padding: 12px 18px;">
+            <strong style="color: var(--sea-light);">1. Quản trị mạng máy tính:</strong> Đào tạo chuyên gia thiết kế, cài đặt, quản lý và xử lý sự cố hệ thống mạng cho cơ quan, ngân hàng.
+          </div>
+          <div class="card reveal-item" style="padding: 12px 18px;">
+            <strong style="color: var(--purple-light);">2. Quản trị hệ thống:</strong> Đào tạo kỹ sư quản lý máy chủ, hệ điều hành doanh nghiệp, ảo hoá và kiến trúc đám mây.
+          </div>
+          <div class="card reveal-item" style="padding: 12px 18px;">
+            <strong style="color: var(--rose-light);">3. An ninh mạng (An toàn thông tin):</strong> Đào tạo kỹ sư tác chiến bảo mật, kiểm thử xâm nhập (Pen-test), phòng thủ không gian mạng.
+          </div>
+          <div class="card reveal-item" style="padding: 12px 18px;">
+            <strong style="color: var(--gold-light);">4. Hệ thống thông tin:</strong> Kết hợp giữa công nghệ thông tin và quản trị kinh doanh, phân tích quy trình số cho tổ chức.
+          </div>
+          <div class="card reveal-item" style="padding: 12px 18px;">
+            <strong style="color: var(--leaf-light);">5. Mạng máy tính và truyền thông dữ liệu:</strong> Đi sâu vào giao thức mạng, viễn thông và truyền tải dữ liệu tốc độ cao.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 13: CHỨNG CHỈ QUỐC TẾ DANH GIÁ -->
+    <div class="slide" id="slide-13">
+      <div class="slide-header">
+        <div>
+          <div class="slide-badge">12 · CHỨNG CHỈ QUỐC TẾ</div>
+          <div class="slide-title">Các Bằng Cấp & Chứng Chỉ Quốc Tế Nghề Quản Trị</div>
+          <div class="slide-subtitle">Tấm vé thông hành giúp sinh viên làm việc tại các tập đoàn đa quốc gia</div>
+        </div>
+        <div class="reveal-controller">
+          <span>Bước: <strong class="reveal-status" id="slide-13-status">0 / 4</strong></span>
+          <button class="reveal-btn" onclick="revealNextInCurrentSlide()">Tiếp ⤓</button>
+          <button class="reveal-btn" onclick="revealAllInCurrentSlide()">Hiện hết</button>
+        </div>
+      </div>
+      <div class="slide-body">
+        <div class="grid-4">
+          <div class="card reveal-item">
+            <div class="card-title" style="color: var(--sea-light);">Cisco CCNA / CCNP</div>
+            <div class="card-desc">Chứng chỉ tiêu chuẩn vàng toàn cầu về kỹ năng cấu hình thiết bị mạng Router và Switch của hãng Cisco Systems.</div>
+          </div>
+          <div class="card reveal-item">
+            <div class="card-title" style="color: var(--rose-light);">CompTIA Security+</div>
+            <div class="card-desc">Chứng chỉ quốc tế nền tảng chứng minh năng lực cốt lõi về an toàn mạng, đánh giá lỗ hổng và quản lý rủi ro số.</div>
+          </div>
+          <div class="card reveal-item">
+            <div class="card-title" style="color: var(--gold-light);">CEH (Ethical Hacker)</div>
+            <div class="card-desc">Chứng chỉ "Hacker Mũ Trắng" — chuyên gia tấn công kiểm thử đạo đức để phát hiện điểm yếu hệ thống trước tin tặc.</div>
+          </div>
+          <div class="card reveal-item">
+            <div class="card-title" style="color: var(--purple-light);">AWS / Azure Certified</div>
+            <div class="card-desc">Chứng chỉ chuyên gia quản trị điện toán đám mây của Amazon Web Services và Microsoft Azure.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 14: MINI-QUIZ TƯƠNG TÁC -->
+    <div class="slide" id="slide-14">
+      <div class="slide-header">
+        <div>
+          <div class="slide-badge">13 · ĐỐ VUI CỦNG CỐ</div>
+          <div class="slide-title">Thử Tài Kiến Thức Quản Trị & An Ninh Mạng</div>
+          <div class="slide-subtitle">Chọn phương án đúng nhất và nhận phản hồi tức thì</div>
+        </div>
+        <div class="reveal-controller">
+          <span style="color: var(--rose-light); font-weight: 700;">Câu hỏi tương tác</span>
+        </div>
+      </div>
+      <div class="slide-body">
+        <div class="card" style="border-color: rgba(244, 63, 94, 0.35);">
+          <div class="card-title" style="color: var(--rose-light);">
+            ❓ Câu hỏi: Sự phổ biến ngày càng tăng của các thiết bị IoT (Internet vạn vật) dẫn đến sự gia tăng số lượng thiết bị kết nối mạng, chủ yếu làm tăng nhu cầu nhân lực cho nghề nào?
+          </div>
+          <div class="quiz-options">
+            <button class="quiz-btn" onclick="checkQuiz(this, true, 2, 'Chính xác! SGK nêu: đối với Quản trị mạng, sự phổ biến của IoT làm tăng lượng thiết bị kết nối mạng, cùng với xu hướng làm việc từ xa, làm tăng mạnh nhu cầu chuyên gia quản trị mạng.')">
+              <strong>A.</strong> Quản trị mạng máy tính
+            </button>
+            <button class="quiz-btn" onclick="checkQuiz(this, false, 2, 'Chưa đúng! Dù bảo mật có liên quan nhưng nguyên nhân trực tiếp của việc tăng thiết bị kết nối vào hạ tầng mạng là chuyên môn quản trị mạng.')">
+              <strong>B.</strong> Nhân viên tư vấn bán hàng điện thoại
+            </button>
+            <button class="quiz-btn" onclick="checkQuiz(this, false, 2, 'Sai rồi! Thiết kế đồ hoạ không liên quan đến việc cấu hình thiết bị mạng IoT.')">
+              <strong>C.</strong> Thiết kế đồ hoạ đa phương tiện
+            </button>
+            <button class="quiz-btn" onclick="checkQuiz(this, false, 2, 'Sai rồi! Soạn thảo văn phòng không phụ trách việc kết nối các cảm biến IoT.')">
+              <strong>D.</strong> Soạn thảo văn bản hành chính
+            </button>
+          </div>
+          <div class="quiz-feedback" id="quizFeedback2"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 15: THỬ THÁCH NHẬN DIỆN MẬT KHẨU & PHISHING -->
+    <div class="slide" id="slide-15">
+      <div class="slide-header">
+        <div>
+          <div class="slide-badge">14 · THỰC HÀNH BẢO MẬT</div>
+          <div class="slide-title">Thử Thách: Đánh Giá Độ Mạnh Mật Khẩu Số</div>
+          <div class="slide-subtitle">Nhập thử một mật khẩu giả định để xem chuyên gia an ninh đánh giá ra sao</div>
+        </div>
+        <div class="reveal-controller">
+          <span style="color: var(--sea-light); font-weight: 700;">Công cụ kiểm tra</span>
+        </div>
+      </div>
+      <div class="slide-body">
+        <div class="grid-2">
+          <div class="card">
+            <div class="card-title">🔑 Nhập mật khẩu thử nghiệm:</div>
+            <input type="text" id="pwdInput" oninput="checkPasswordStrength()" placeholder="Ví dụ: Nari@2026!#" style="width: 100%; padding: 12px 16px; background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.2); border-radius: 8px; color: white; font-family: var(--font-mono); font-size: 15px; margin-top: 8px;">
+            <div id="pwdStrengthBar" style="height: 6px; width: 0%; border-radius: 3px; background: red; margin-top: 10px; transition: all 0.3s;"></div>
+            <div id="pwdResult" style="font-size: 13.5px; margin-top: 8px; color: var(--ink-soft);">
+              Gợi ý: Mật khẩu an toàn cần ít nhất 10 ký tự, có chữ hoa, chữ thường, chữ số và ký tự đặc biệt (@, #, $).
+            </div>
+          </div>
+          <div class="card" style="border-color: var(--gold);">
+            <div class="card-title" style="color: var(--gold-light);">⚠️ Cảnh giác tấn công Lừa đảo (Phishing):</div>
+            <div class="card-desc" style="line-height: 1.6;">
+              Hacker thường gửi email giả mạo ngân hàng hoặc mạng xã hội yêu cầu đăng nhập khẩn cấp.<br>
+              <strong>Quy tắc vàng:</strong><br>
+              • Luôn nhìn kỹ tên miền URL trên thanh địa chỉ.<br>
+              • Không bao giờ nhập mật khẩu từ đường link lạ gửi qua email.<br>
+              • Luôn bật xác thực 2 bước (2FA) bằng ứng dụng điện thoại.
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 16: TỔNG KẾT BÀI HỌC -->
+    <div class="slide" id="slide-16">
+      <div class="slide-header">
+        <div>
+          <div class="slide-badge">15 · TỔNG KẾT BÀI HỌC</div>
+          <div class="slide-title">Ghi Nhớ Trọng Tâm Bài 20</div>
+          <div class="slide-subtitle">Hành trang nghề nghiệp nhóm Quản trị và An ninh mạng</div>
+        </div>
+        <div class="reveal-controller">
+          <button class="reveal-btn" onclick="fireConfetti()" style="background: linear-gradient(135deg, #F43F5E, #FB7185); color: white;">
+            🎉 Bắn pháo hoa
+          </button>
+        </div>
+      </div>
+      <div class="slide-body">
+        <div class="grid-3">
+          <div class="card" style="border-color: var(--sea-light);">
+            <div class="card-title" style="color: var(--sea-light);">1. Ba nghề quản trị</div>
+            <div class="card-desc">Quản trị mạng · Bảo mật hệ thống thông tin · Quản trị và bảo trì hệ thống. Đảm bảo hoạt động hiệu quả và an toàn.</div>
+          </div>
+          <div class="card" style="border-color: var(--rose);">
+            <div class="card-title" style="color: var(--rose-light);">2. Bốn khối kiến thức</div>
+            <div class="card-desc">Mạng máy tính · Bảo mật thông tin · Quản lý hệ thống · Luật pháp và tuân thủ quy định an ninh mạng.</div>
+          </div>
+          <div class="card" style="border-color: var(--gold);">
+            <div class="card-title" style="color: var(--gold-light);">3. Kỹ năng sống còn</div>
+            <div class="card-desc">Kỹ năng tự nghiên cứu, học hỏi công nghệ mới là đặc biệt cần thiết để đối phó các cuộc tấn công mạng tương lai.</div>
+          </div>
+        </div>
+        <div class="highlight-box" style="text-align: center; margin-top: 10px; background: rgba(244, 63, 94, 0.12); border-color: var(--rose-light);">
+          👏 <strong>Chúc mừng bạn đã hoàn thành bài học 20!</strong> Nghề quản trị và an ninh mạng là ngành nghề đầy thử thách, vinh quang và thu nhập hàng đầu trong kỷ nguyên số!
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- THANH ĐIỀU HƯỚNG CỐ ĐỊNH -->
+  <div class="deck-footer">
+    <button class="nav-btn" onclick="prevSlide()" title="Slide trước (Mũi tên trái)">‹</button>
+    <div class="deck-counter" id="deckCounter">1 / 16</div>
+    <div class="deck-progress-container">
+      <div class="deck-progress-bar" id="deckProgressBar"></div>
+    </div>
+    <button class="nav-btn" onclick="nextSlide()" title="Slide kế tiếp (Mũi tên phải)">›</button>
+    <button class="nav-btn" onclick="revealNextInCurrentSlide()" title="Hiện bước tiếp theo (Mũi tên xuống / Enter)">⤓</button>
+    <button class="nav-btn" onclick="toggleSound()" id="soundBtn" title="Bật/Tắt âm thanh (Phím M)">🔊</button>
+    <button class="nav-btn" onclick="toggleFullScreen()" title="Toàn màn hình (Phím F)">⛶</button>
+  </div>
+
+  <script>
+    let currentSlide = 1;
+    const totalSlides = 16;
+    let soundEnabled = true;
+    let audioCtx = null;
+
+    function getAudioCtx() {
+      if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      if (audioCtx.state === 'suspended') audioCtx.resume();
+      return audioCtx;
+    }
+
+    function playSound(type) {
+      if (!soundEnabled) return;
+      try {
+        const ctx = getAudioCtx();
+        const now = ctx.currentTime;
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+
+        if (type === 'click') {
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(580, now);
+          osc.frequency.exponentialRampToValueAtTime(900, now + 0.08);
+          gain.gain.setValueAtTime(0.12, now);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.08);
+          osc.start(now);
+          osc.stop(now + 0.08);
+        } else if (type === 'success') {
+          osc.type = 'triangle';
+          osc.frequency.setValueAtTime(523, now);
+          osc.frequency.setValueAtTime(659, now + 0.08);
+          osc.frequency.setValueAtTime(783, now + 0.16);
+          gain.gain.setValueAtTime(0.2, now);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.3);
+          osc.start(now);
+          osc.stop(now + 0.3);
+        } else if (type === 'wrong') {
+          osc.type = 'sawtooth';
+          osc.frequency.setValueAtTime(220, now);
+          gain.gain.setValueAtTime(0.2, now);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.25);
+          osc.start(now);
+          osc.stop(now + 0.25);
+        }
+      } catch (e) {}
+    }
+
+    function toggleSound() {
+      soundEnabled = !soundEnabled;
+      document.getElementById('soundBtn').innerText = soundEnabled ? '🔊' : '🔇';
+    }
+
+    function toggleFullScreen() {
+      if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen().catch(() => {});
+      } else {
+        document.exitFullscreen().catch(() => {});
+      }
+    }
+
+    function updateSlide() {
+      document.querySelectorAll('.slide').forEach((s, idx) => {
+        s.classList.toggle('active', idx + 1 === currentSlide);
+      });
+      document.getElementById('deckCounter').innerText = currentSlide + ' / ' + totalSlides;
+      document.getElementById('deckProgressBar').style.width = ((currentSlide - 1) / (totalSlides - 1) * 100) + '%';
+      if (currentSlide === 16) setTimeout(fireConfetti, 300);
+    }
+
+    function nextSlide() {
+      if (currentSlide < totalSlides) {
+        currentSlide++;
+        playSound('click');
+        updateSlide();
+      }
+    }
+
+    function prevSlide() {
+      if (currentSlide > 1) {
+        currentSlide--;
+        playSound('click');
+        updateSlide();
+      }
+    }
+
+    function revealNextInCurrentSlide() {
+      const slide = document.getElementById('slide-' + currentSlide);
+      if (!slide) return;
+      const items = slide.querySelectorAll('.reveal-item');
+      for (let item of items) {
+        if (!item.classList.contains('revealed')) {
+          item.classList.add('revealed', 'just-revealed');
+          setTimeout(() => item.classList.remove('just-revealed'), 600);
+          playSound('click');
+          updateRevealStatus(slide);
+          return;
+        }
+      }
+    }
+
+    function revealAllInCurrentSlide() {
+      const slide = document.getElementById('slide-' + currentSlide);
+      if (!slide) return;
+      slide.querySelectorAll('.reveal-item').forEach(item => item.classList.add('revealed'));
+      playSound('success');
+      updateRevealStatus(slide);
+    }
+
+    function updateRevealStatus(slide) {
+      const items = slide.querySelectorAll('.reveal-item');
+      const revealed = slide.querySelectorAll('.reveal-item.revealed').length;
+      const statusEl = document.getElementById(slide.id + '-status');
+      if (statusEl) statusEl.innerText = revealed + ' / ' + items.length;
+    }
+
+    document.addEventListener('keydown', (e) => {
+      if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+      if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown') {
+        e.preventDefault(); nextSlide();
+      } else if (e.key === 'ArrowLeft' || e.key === 'PageUp') {
+        e.preventDefault(); prevSlide();
+      } else if (e.key === 'ArrowDown' || e.key === 'Enter') {
+        e.preventDefault(); revealNextInCurrentSlide();
+      } else if (e.key.toLowerCase() === 'f') {
+        toggleFullScreen();
+      } else if (e.key.toLowerCase() === 'm') {
+        toggleSound();
+      }
+    });
+
+    /* MINI QUIZ */
+    function checkQuiz(btn, isCorrect, qId, explanation) {
+      const parent = btn.parentElement;
+      const feedback = document.getElementById('quizFeedback' + qId);
+      parent.querySelectorAll('.quiz-btn').forEach(b => {
+        b.disabled = true;
+        b.style.pointerEvents = 'none';
+      });
+
+      if (isCorrect) {
+        btn.classList.add('correct');
+        playSound('success');
+        feedback.style.display = 'block';
+        feedback.style.background = 'rgba(16, 185, 129, 0.15)';
+        feedback.style.border = '1px solid #10B981';
+        feedback.style.color = '#34D399';
+        feedback.innerHTML = '🎉 <strong>Chính xác!</strong> ' + explanation;
+      } else {
+        btn.classList.add('wrong');
+        playSound('wrong');
+        feedback.style.display = 'block';
+        feedback.style.background = 'rgba(239, 68, 68, 0.15)';
+        feedback.style.border = '1px solid #EF4444';
+        feedback.style.color = '#FCA5A5';
+        feedback.innerHTML = '❌ <strong>Chưa chính xác!</strong> ' + explanation;
+      }
+    }
+
+    /* SOC SIMULATOR */
+    function handleSocAction(choice) {
+      const log = document.getElementById('socLog');
+      const alertBox = document.getElementById('socAlertBox');
+
+      if (choice === 2) {
+        playSound('success');
+        alertBox.style.animation = 'none';
+        alertBox.style.background = 'rgba(16, 185, 129, 0.2)';
+        alertBox.style.borderColor = '#10B981';
+        alertBox.innerHTML = '🛡️ <strong>THÀNH CÔNG:</strong> Tường lửa đã chặn 10.000 IP rác. Tải CPU giảm về 14%. Hệ thống thi trực tuyến phục hồi thông suốt!';
+        log.innerHTML = `
+          <div style="font-family: var(--font-mono); font-size: 13px; color: #34D399; line-height: 1.6;">
+            [00:01] Bật quy tắc iptables DROP dải IP Botnet.<br>
+            [00:03] Chuyển hướng lưu lượng qua bộ lọc Anti-DDoS WAF.<br>
+            [00:05] Băng thông sạch ổn định trở lại.<br>
+            <strong>👉 Xử lý chuẩn xác của Kỹ sư Bảo mật chuyên nghiệp!</strong>
+          </div>
+        `;
+      } else {
+        playSound('wrong');
+        log.innerHTML = `
+          <div style="font-family: var(--font-mono); font-size: 13px; color: #F87171; line-height: 1.6;">
+            ❌ <strong>Thao tác sai lầm!</strong> Hành động này làm mất toàn bộ bài thi của học sinh hoặc làm sập nguồn gây lỗi dữ liệu vĩnh viễn. Hãy chọn giải pháp kỹ thuật đúng đắn hơn!
+          </div>
+        `;
+      }
+    }
+
+    /* KIỂM TRA MẬT KHẨU */
+    function checkPasswordStrength() {
+      const val = document.getElementById('pwdInput').value;
+      const bar = document.getElementById('pwdStrengthBar');
+      const res = document.getElementById('pwdResult');
+
+      if (!val) {
+        bar.style.width = '0%';
+        res.innerHTML = 'Gợi ý: Mật khẩu an toàn cần ít nhất 10 ký tự, có chữ hoa, chữ thường, chữ số và ký tự đặc biệt.';
+        return;
+      }
+
+      let score = 0;
+      if (val.length >= 8) score += 25;
+      if (val.length >= 12) score += 15;
+      if (/[A-Z]/.test(val)) score += 20;
+      if (/[0-9]/.test(val)) score += 20;
+      if (/[^A-Za-z0-9]/.test(val)) score += 20;
+
+      bar.style.width = score + '%';
+      if (score < 40) {
+        bar.style.background = '#EF4444';
+        res.innerHTML = '<span style="color: #F87171;">⚠️ Rất yếu! Hacker có thể bẻ khoá trong vài giây bằng phương pháp tra từ điển.</span>';
+      } else if (score < 75) {
+        bar.style.background = '#F5A623';
+        res.innerHTML = '<span style="color: #FBBF24;">⚡ Trung bình: Nên thêm ký tự đặc biệt (!, @, #, $) và kéo dài trên 10 ký tự.</span>';
+      } else {
+        bar.style.background = '#10B981';
+        res.innerHTML = '<span style="color: #34D399;">🛡️ Siêu mạnh! Mật khẩu đạt chuẩn quân sự an toàn trước các cuộc tấn công Brute-force!</span>';
+      }
+    }
+
+    /* PHÁO HOA */
+    function fireConfetti() {
+      playSound('success');
+      const canvas = document.getElementById('confettiCanvas');
+      const ctx = canvas.getContext('2d');
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+
+      const particles = [];
+      const colors = ['#F43F5E', '#38E1F0', '#F5A623', '#10B981', '#A78BFA'];
+
+      for (let i = 0; i < 90; i++) {
+        particles.push({
+          x: canvas.width / 2,
+          y: canvas.height * 0.45,
+          vx: (Math.random() - 0.5) * 16,
+          vy: (Math.random() - 0.7) * 16,
+          size: Math.random() * 8 + 4,
+          color: colors[Math.floor(Math.random() * colors.length)],
+          alpha: 1,
+          rot: Math.random() * 360,
+          vrot: (Math.random() - 0.5) * 12
+        });
+      }
+
+      function render() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        let alive = false;
+        particles.forEach(p => {
+          p.x += p.vx;
+          p.y += p.vy;
+          p.vy += 0.35;
+          p.alpha -= 0.012;
+          p.rot += p.vrot;
+
+          if (p.alpha > 0) {
+            alive = true;
+            ctx.save();
+            ctx.globalAlpha = p.alpha;
+            ctx.translate(p.x, p.y);
+            ctx.rotate(p.rot * Math.PI / 180);
+            ctx.fillStyle = p.color;
+            ctx.fillRect(-p.size / 2, -p.size / 2, p.size, p.size);
+            ctx.restore();
+          }
+        });
+        if (alive) requestAnimationFrame(render);
+        else ctx.clearRect(0, 0, canvas.width, canvas.height);
+      }
+      render();
+    }
+
+    updateSlide();
+  </script>
+</body>
+</html>
