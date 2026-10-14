@@ -1,0 +1,1407 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bài 22: Thực hành kết nối các thiết bị số — Bài giảng điện tử Tin học 12</title>
+  <style>
+    :root {
+      --bg: #050811;
+      --bg-card: rgba(8, 20, 34, 0.94);
+      --border-card: rgba(56, 225, 240, 0.2);
+      --ink: #FFFFFF;
+      --ink-soft: #94A3B8;
+      --sea: #0D7C86;
+      --sea-light: #38E1F0;
+      --coral: #F2683C;
+      --coral-light: #FF855D;
+      --gold: #F5A623;
+      --gold-light: #FFC043;
+      --leaf: #10B981;
+      --leaf-light: #34D399;
+      --purple: #8B5CF6;
+      --purple-light: #C4B5FD;
+      --radius-lg: 24px;
+      --radius-md: 16px;
+      --radius-sm: 10px;
+      --font-main: system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      --font-mono: 'Consolas', 'Fira Code', 'Courier New', monospace;
+      --transition-slide: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.5s ease;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: var(--font-main);
+      background-color: var(--bg);
+      color: var(--ink);
+      overflow: hidden;
+      width: 100vw;
+      height: 100vh;
+      user-select: none;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .bg-mesh {
+      position: fixed;
+      top: 0; left: 0; width: 100vw; height: 100vh;
+      background: radial-gradient(circle at 12% 16%, rgba(56, 225, 240, 0.28) 0%, transparent 45%),
+                  radial-gradient(circle at 88% 80%, rgba(245, 166, 35, 0.22) 0%, transparent 45%),
+                  radial-gradient(circle at 50% 50%, rgba(16, 185, 129, 0.16) 0%, transparent 60%);
+      z-index: 0;
+      pointer-events: none;
+      animation: meshPulse 14s ease-in-out infinite alternate;
+    }
+
+    @keyframes meshPulse {
+      0% { transform: scale(1) translate(0, 0); opacity: 0.9; }
+      100% { transform: scale(1.06) translate(-10px, 12px); opacity: 1; }
+    }
+
+    .floating-symbols {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 1;
+      overflow: hidden;
+    }
+
+    .float-tag {
+      position: absolute;
+      font-family: var(--font-mono);
+      font-size: 13.5px;
+      font-weight: 700;
+      color: rgba(56, 225, 240, 0.35);
+      border: 1px solid rgba(56, 225, 240, 0.22);
+      padding: 5px 12px;
+      border-radius: 8px;
+      background: rgba(56, 225, 240, 0.06);
+      animation: floatUp 24s linear infinite;
+    }
+
+    @keyframes floatUp {
+      0% { transform: translateY(105vh) rotate(0deg); opacity: 0; }
+      10% { opacity: 0.55; }
+      90% { opacity: 0.55; }
+      100% { transform: translateY(-10vh) rotate(360deg); opacity: 0; }
+    }
+
+    .deck-container {
+      position: relative;
+      width: 100vw;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 10;
+    }
+
+    .slide {
+      position: absolute;
+      width: 92vw;
+      max-width: 1280px;
+      height: 86vh;
+      background: var(--bg-card);
+      border: 1px solid var(--border-card);
+      border-radius: var(--radius-lg);
+      box-shadow: 0 24px 70px rgba(0, 0, 0, 0.7);
+      backdrop-filter: blur(22px);
+      padding: 34px 46px;
+      display: flex;
+      flex-direction: column;
+      opacity: 0;
+      transform: scale(0.96) translateY(24px);
+      pointer-events: none;
+      transition: var(--transition-slide);
+      overflow-y: auto;
+    }
+
+    .slide.active {
+      opacity: 1;
+      transform: scale(1) translateY(0);
+      pointer-events: auto;
+    }
+
+    .slide::-webkit-scrollbar { width: 6px; }
+    .slide::-webkit-scrollbar-thumb { background: rgba(56, 225, 240, 0.3); border-radius: 4px; }
+
+    .slide-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 20px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      padding-bottom: 14px;
+      flex-shrink: 0;
+    }
+
+    .slide-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(56, 225, 240, 0.16);
+      border: 1px solid rgba(56, 225, 240, 0.38);
+      color: var(--sea-light);
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      padding: 4px 12px;
+      border-radius: 20px;
+      margin-bottom: 6px;
+    }
+
+    .slide-title {
+      font-size: 27px;
+      font-weight: 800;
+      color: #FFFFFF;
+      line-height: 1.25;
+      background: linear-gradient(90deg, #FFFFFF, #7DD3FC);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .slide-subtitle {
+      font-size: 13.5px;
+      color: var(--ink-soft);
+      margin-top: 3px;
+    }
+
+    .reveal-controller {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 30px;
+      padding: 4px 12px;
+      font-size: 12px;
+      color: var(--ink-soft);
+      flex-shrink: 0;
+    }
+
+    .reveal-status {
+      font-family: var(--font-mono);
+      font-weight: 700;
+      color: var(--sea-light);
+    }
+
+    .reveal-btn {
+      background: rgba(56, 225, 240, 0.25);
+      border: 1px solid rgba(56, 225, 240, 0.45);
+      color: white;
+      padding: 4px 10px;
+      border-radius: 14px;
+      font-size: 11px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .reveal-btn:hover {
+      background: var(--sea-light);
+      color: #050811;
+    }
+
+    .slide-body {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .reveal-item {
+      opacity: 0.15;
+      transform: translateY(10px);
+      transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+      filter: blur(1.5px);
+    }
+
+    .reveal-item.revealed {
+      opacity: 1;
+      transform: translateY(0);
+      filter: blur(0);
+    }
+
+    .reveal-item.just-revealed {
+      box-shadow: 0 0 25px rgba(56, 225, 240, 0.4);
+      border-color: var(--sea-light) !important;
+    }
+
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+    .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
+
+    .card {
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.09);
+      border-radius: var(--radius-md);
+      padding: 16px 20px;
+      transition: transform 0.3s, border-color 0.3s, background 0.3s;
+    }
+
+    .card:hover {
+      transform: translateY(-3px);
+      border-color: rgba(56, 225, 240, 0.4);
+      background: rgba(255, 255, 255, 0.06);
+    }
+
+    .card-title {
+      font-size: 15.5px;
+      font-weight: 700;
+      color: #FFFFFF;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .card-desc {
+      font-size: 13.5px;
+      color: var(--ink-soft);
+      line-height: 1.55;
+    }
+
+    .highlight-box {
+      background: rgba(13, 124, 134, 0.16);
+      border: 1px solid rgba(56, 225, 240, 0.35);
+      border-radius: var(--radius-md);
+      padding: 16px 20px;
+      font-size: 14.5px;
+      line-height: 1.6;
+      color: #E0F2FE;
+    }
+
+    .highlight-box strong { color: var(--sea-light); }
+
+    /* FOOTER THANH ĐIỀU HƯỚNG */
+    .deck-footer {
+      position: fixed;
+      bottom: 14px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background: rgba(8, 16, 26, 0.92);
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      border-radius: 40px;
+      padding: 8px 20px;
+      backdrop-filter: blur(20px);
+      z-index: 100;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
+    }
+
+    .nav-btn {
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      color: white;
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 15px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .nav-btn:hover {
+      background: var(--sea-light);
+      color: #050811;
+      border-color: var(--sea-light);
+      transform: scale(1.08);
+    }
+
+    .deck-progress-container {
+      width: 140px;
+      height: 6px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 3px;
+      overflow: hidden;
+    }
+
+    .deck-progress-bar {
+      height: 100%;
+      background: linear-gradient(90deg, var(--sea), var(--sea-light));
+      width: 0%;
+      transition: width 0.3s ease;
+    }
+
+    .deck-counter {
+      font-family: var(--font-mono);
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--sea-light);
+      min-width: 52px;
+      text-align: center;
+    }
+
+    /* MINI QUIZ */
+    .quiz-options {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-top: 12px;
+    }
+
+    .quiz-btn {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: var(--radius-sm);
+      padding: 12px 18px;
+      color: #FFFFFF;
+      font-size: 14px;
+      text-align: left;
+      cursor: pointer;
+      transition: all 0.25s;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .quiz-btn:hover {
+      background: rgba(56, 225, 240, 0.18);
+      border-color: var(--sea-light);
+      transform: translateX(4px);
+    }
+
+    .quiz-btn.correct {
+      background: rgba(16, 185, 129, 0.25) !important;
+      border-color: #10B981 !important;
+      color: #34D399 !important;
+    }
+
+    .quiz-btn.wrong {
+      background: rgba(239, 68, 68, 0.25) !important;
+      border-color: #EF4444 !important;
+      color: #FCA5A5 !important;
+    }
+
+    .quiz-feedback {
+      margin-top: 12px;
+      padding: 12px 16px;
+      border-radius: var(--radius-sm);
+      font-size: 13.5px;
+      line-height: 1.5;
+      display: none;
+    }
+
+    /* SMART HOME SIMULATOR */
+    .smarthome-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+    }
+
+    .smart-device {
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 12px;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      transition: all 0.3s;
+    }
+
+    .smart-device.on {
+      background: rgba(56, 225, 240, 0.12);
+      border-color: var(--sea-light);
+      box-shadow: 0 0 20px rgba(56, 225, 240, 0.25);
+    }
+
+    .switch-btn {
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 20px;
+      padding: 6px 14px;
+      color: white;
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s;
+      align-self: flex-start;
+    }
+
+    .switch-btn.active {
+      background: var(--sea-light);
+      color: #050811;
+      border-color: var(--sea-light);
+    }
+
+    #confettiCanvas {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 999;
+    }
+  </style>
+</head>
+<body>
+  <div class="bg-mesh"></div>
+  <canvas id="confettiCanvas"></canvas>
+
+  <div class="floating-symbols">
+    <div class="float-tag" style="left: 6%; animation-delay: 0s;">HDMI vs VGA 🖥️</div>
+    <div class="float-tag" style="left: 26%; animation-delay: 5s;">Windows + P ⚡</div>
+    <div class="float-tag" style="left: 48%; animation-delay: 2s;">Bluetooth Pairing 🎧</div>
+    <div class="float-tag" style="left: 70%; animation-delay: 8s;">MTP File Transfer 📱</div>
+    <div class="float-tag" style="left: 88%; animation-delay: 3s;">Smart Home IoT 🏠</div>
+  </div>
+
+  <div class="deck-container">
+    <!-- SLIDE 1: BÌA BÀI GIẢNG -->
+    <div class="slide active" id="slide-1">
+      <div style="flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; gap: 20px;">
+        <div class="slide-badge" style="font-size: 13px; padding: 6px 18px;">CHỦ ĐỀ 6: MÁY TÍNH VÀ XÃ HỘI TRI THỨC · TIN HỌC 12 ICT</div>
+        <h1 style="font-size: 44px; font-weight: 900; line-height: 1.2; max-width: 960px; background: linear-gradient(135deg, #FFFFFF 30%, #38E1F0 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">
+          Bài 22: Thực Hành Kết Nối Các Thiết Bị Số
+        </h1>
+        <p style="font-size: 18px; color: var(--ink-soft); max-width: 780px; line-height: 1.6;">
+          Làm chủ kỹ năng thực hành kết nối máy chiếu, màn hình rời qua HDMI/VGA, ghép đôi tai nghe Bluetooth, truyền tệp điện thoại & điều khiển hệ thống Nhà thông minh (Smart Home)
+        </p>
+        <div style="display: flex; gap: 14px; margin-top: 10px;">
+          <button onclick="nextSlide()" class="reveal-btn" style="padding: 12px 30px; font-size: 15px; border-radius: 30px; background: linear-gradient(135deg, #0D7C86, #38E1F0); color: #050811; font-weight: 800; box-shadow: 0 10px 25px rgba(56, 225, 240, 0.4);">
+            Bắt đầu thực hành 🔌
+          </button>
+        </div>
+        <div style="font-size: 13px; color: rgba(255, 255, 255, 0.4); margin-top: 20px;">
+          Trường THPT Na Rì · Dành cho giáo viên & học sinh lớp 12
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 2: KHỞI ĐỘNG - THẾ GIỚI KẾT NỐI -->
+    <div class="slide" id="slide-2">
+      <div class="slide-header">
+        <div>
+          <div class="slide-badge">01 · KHỞI ĐỘNG</div>
+          <div class="slide-title">Hệ Sinh Thái Thiết Bị Số Xung Quanh Bạn</div>
+          <div class="slide-subtitle">Những tình huống quen thuộc mà bất kỳ học sinh nào cũng từng gặp</div>
+        </div>
+        <div class="reveal-controller">
+          <span>Bước: <strong class="reveal-status" id="slide-2-status">0 / 3</strong></span>
+          <button class="reveal-btn" onclick="revealNextInCurrentSlide()">Tiếp ⤓</button>
+          <button class="reveal-btn" onclick="revealAllInCurrentSlide()">Hiện hết</button>
+        </div>
+      </div>
+      <div class="slide-body">
+        <div class="grid-3">
+          <div class="card reveal-item">
+            <div style="font-size: 28px; margin-bottom: 6px;">📽️</div>
+            <div class="card-title">Chiếu bài thuyết trình</div>
+            <div class="card-desc">Cắm laptop vào máy chiếu lớp học nhưng màn hình không lên hình hoặc chỉ có hình mà loa máy chiếu không phát ra tiếng.</div>
+          </div>
+          <div class="card reveal-item">
+            <div style="font-size: 28px; margin-bottom: 6px;">🎧</div>
+            <div class="card-title">Tai nghe Bluetooth không nhận</div>
+            <div class="card-desc">Bật tai nghe không dây mới mua nhưng điện thoại quét mãi không thấy tên thiết bị để ghép đôi nghe nhạc.</div>
+          </div>
+          <div class="card reveal-item">
+            <div style="font-size: 28px; margin-bottom: 6px;">📱</div>
+            <div class="card-title">Cắm cáp máy tính chỉ sạc</div>
+            <div class="card-desc">Muốn chép ảnh kỷ yếu từ điện thoại sang máy tính nhưng cắm dây cáp USB vào chỉ thấy báo đang sạc pin, không thấy ổ đĩa.</div>
+          </div>
+        </div>
+        <div class="highlight-box reveal-item" style="margin-top: 10px;">
+          💡 <strong>Mục tiêu bài học:</strong> Trang bị cho học sinh kỹ năng thao tác chuẩn xác, nhanh chóng để kết nối và làm chủ mọi thiết bị số trong học tập và đời sống hiện đại!
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 3: BẢN ĐỒ 4 NỘI DUNG THỰC HÀNH -->
+    <div class="slide" id="slide-3">
+      <div class="slide-header">
+        <div>
+          <div class="slide-badge">02 · BẢN ĐỒ BÀI HỌC</div>
+          <div class="slide-title">4 Nội Dung Thực Hành Cốt Lõi Của Bài 22</div>
+          <div class="slide-subtitle">Trọng tâm kiến thức và kỹ năng thực hành theo SGK Tin học 12</div>
+        </div>
+        <div class="reveal-controller">
+          <span>Bước: <strong class="reveal-status" id="slide-3-status">0 / 4</strong></span>
+          <button class="reveal-btn" onclick="revealNextInCurrentSlide()">Tiếp ⤓</button>
+          <button class="reveal-btn" onclick="revealAllInCurrentSlide()">Hiện hết</button>
+        </div>
+      </div>
+      <div class="slide-body">
+        <div class="grid-4">
+          <div class="card reveal-item" style="border-top: 4px solid var(--sea-light);">
+            <div class="card-title" style="color: var(--sea-light);">1. Thiết bị hiển thị</div>
+            <div class="card-desc">So sánh cổng VGA vs HDMI; làm chủ 4 chế độ trình chiếu bằng tổ hợp phím <strong>Windows + P</strong>; chia sẻ không dây.</div>
+          </div>
+          <div class="card reveal-item" style="border-top: 4px solid var(--gold);">
+            <div class="card-title" style="color: var(--gold-light);">2. Thiết bị âm thanh</div>
+            <div class="card-desc">Bản chất công nghệ Bluetooth; quy trình 4 bước ghép đôi (Pairing) tai nghe, loa không dây trong bán kính 10m.</div>
+          </div>
+          <div class="card reveal-item" style="border-top: 4px solid var(--leaf);">
+            <div class="card-title" style="color: var(--leaf-light);">3. Điện thoại & Máy tính</div>
+            <div class="card-desc">Kết nối có dây qua cổng USB ở chế độ MTP (File Transfer) và truyền tệp không dây (Quick Share / AirDrop).</div>
+          </div>
+          <div class="card reveal-item" style="border-top: 4px solid var(--purple-light);">
+            <div class="card-title" style="color: var(--purple-light);">4. Nhà thông minh</div>
+            <div class="card-desc">Cấu trúc Smart Home (thiết bị chấp hành, cảm biến, Hub trung tâm); điều khiển qua app và khẩu lệnh giọng nói.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 4: PHẦN 1 - SO SÁNH CỔNG VGA VÀ HDMI -->
+    <div class="slide" id="slide-4">
+      <div class="slide-header">
+        <div>
+          <div class="slide-badge">03 · THIẾT BỊ HIỂN THỊ</div>
+          <div class="slide-title">Đối Đầu Công Nghệ: Cổng VGA vs Cổng HDMI</div>
+          <div class="slide-subtitle">Điểm khác biệt quan trọng nhất xuất hiện liên tục trong đề thi</div>
+        </div>
+        <div class="reveal-controller">
+          <span>Bước: <strong class="reveal-status" id="slide-4-status">0 / 3</strong></span>
+          <button class="reveal-btn" onclick="revealNextInCurrentSlide()">Tiếp ⤓</button>
+          <button class="reveal-btn" onclick="revealAllInCurrentSlide()">Hiện hết</button>
+        </div>
+      </div>
+      <div class="slide-body">
+        <div class="grid-2" style="flex: 1;">
+          <div class="card reveal-item" style="border-color: #38BDF8; background: rgba(56, 189, 248, 0.1);">
+            <div style="font-size: 24px; margin-bottom: 6px;">🟦 CỔNG VGA (Vector Graphics Array)</div>
+            <div class="card-title" style="color: #38BDF8;">Cổng truyền thống · Tín hiệu tương tự (Analog)</div>
+            <div class="card-desc" style="font-size: 14.5px; line-height: 1.7;">
+              • Đầu cắm 15 chân hình thang, vỏ màu xanh dương đặc trưng.<br>
+              • <strong>CHỈ TRUYỀN TÍN HIỆU HÌNH ẢNH</strong> — hoàn toàn không truyền âm thanh!<br>
+              • Nếu muốn phát âm thanh ra máy chiếu/TV, người dùng bắt buộc phải cắm thêm 1 dây âm thanh Jack 3.5mm riêng biệt.<br>
+              • Chất lượng hình ảnh giới hạn ở độ phân giải tiêu chuẩn, dễ bị nhiễu sóng.
+            </div>
+          </div>
+          <div class="card reveal-item" style="border-color: var(--gold); background: rgba(245, 166, 35, 0.1);">
+            <div style="font-size: 24px; margin-bottom: 6px;">🟨 CỔNG HDMI (High-Definition Multimedia)</div>
+            <div class="card-title" style="color: var(--gold-light);">Cổng hiện đại · Kỹ thuật số độ nét cao</div>
+            <div class="card-desc" style="font-size: 14.5px; line-height: 1.7;">
+              • Chuẩn giao tiếp đa phương tiện kỹ thuật số phổ biến nhất hiện nay.<br>
+              • <strong>TRUYỀN ĐỒNG THỜI CẢ HÌNH ẢNH ĐỘ NÉT CAO VÀ ÂM THANH KỸ THUẬT SỐ</strong> trên cùng một sợi dây duy nhất!<br>
+              • Hỗ trợ độ phân giải sắc nét từ Full HD, 4K đến 8K, âm thanh vòm sống động.<br>
+              • Tiện lợi, gọn gàng, cắm vào là nhận ngay tín hiệu hoàn hảo.
+            </div>
+          </div>
+        </div>
+        <div class="highlight-box reveal-item" style="font-size: 13.5px;">
+          📌 <strong>Ghi nhớ cốt lõi:</strong> HDMI = Hình ảnh Full HD + Âm thanh (1 dây duy nhất). VGA = Chỉ có hình ảnh (phải cắm thêm dây loa).
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 5: 4 CHẾ ĐỘ HIỂN THỊ WINDOWS + P -->
+    <div class="slide" id="slide-5">
+      <div class="slide-header">
+        <div>
+          <div class="slide-badge">04 · PHÍM TẮT WINDOWS + P</div>
+          <div class="slide-title">Làm Chủ 4 Chế Độ Trình Chiếu Màn Hình</div>
+          <div class="slide-subtitle">Nhấn phím [Windows] + [P] trên bàn phím để mở thanh điều khiển Project</div>
+        </div>
+        <div class="reveal-controller">
+          <span>Bước: <strong class="reveal-status" id="slide-5-status">0 / 4</strong></span>
+          <button class="reveal-btn" onclick="revealNextInCurrentSlide()">Tiếp ⤓</button>
+          <button class="reveal-btn" onclick="revealAllInCurrentSlide()">Hiện hết</button>
+        </div>
+      </div>
+      <div class="slide-body">
+        <div class="grid-2">
+          <div class="card reveal-item">
+            <div class="card-title" style="color: var(--sea-light);">1. PC screen only (Chỉ màn hình máy tính)</div>
+            <div class="card-desc">Nội dung chỉ hiển thị trên màn hình laptop/máy tính chính; màn hình phụ hoặc máy chiếu sẽ tối đen tắt tín hiệu.</div>
+          </div>
+          <div class="card reveal-item" style="border-color: var(--leaf-light); background: rgba(16, 185, 129, 0.12);">
+            <div class="card-title" style="color: var(--leaf-light);">2. Duplicate (Nhân bản - Sao chép) ⭐</div>
+            <div class="card-desc">
+              Hiển thị <strong>cùng một nội dung giống hệt nhau</strong> trên cả màn hình máy tính và máy chiếu. Chế độ chuẩn mực khi thuyết trình, báo cáo bài giảng trước lớp.
+            </div>
+          </div>
+          <div class="card reveal-item">
+            <div class="card-title" style="color: var(--gold-light);">3. Extend (Mở rộng không gian)</div>
+            <div class="card-desc">Mở rộng không gian làm việc. Màn hình phụ đóng vai trò diện tích nối dài, cho phép bạn vừa soạn tài liệu bên này, vừa tra cứu web bên kia.</div>
+          </div>
+          <div class="card reveal-item">
+            <div class="card-title" style="color: var(--coral-light);">4. Second screen only (Chỉ màn hình ngoài)</div>
+            <div class="card-desc">Tắt hẳn màn hình máy tính chính, toàn bộ nội dung chuyển sang hiển thị trên màn hình lớn hoặc ti vi (thường dùng xem phim gia đình).</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 6: TRẠM TƯƠNG TÁC WINDOWS + P ẢO -->
+    <div class="slide" id="slide-6">
+      <div class="slide-header">
+        <div>
+          <div class="slide-badge">05 · THỰC HÀNH ẢO</div>
+          <div class="slide-title">Trạm Tương Tác: Thử Nghiệm Tổ Hợp Windows + P</div>
+          <div class="slide-subtitle">Nhấp chọn các chế độ hiển thị bên trái để quan sát phản hồi trực tiếp của 2 màn hình</div>
+        </div>
+        <div class="reveal-controller">
+          <span style="color: var(--sea-light); font-weight: 700;">Tương tác mô phỏng</span>
+        </div>
+      </div>
+      <div class="slide-body">
+        <div class="grid-2" style="flex: 1;">
+          <div style="display: flex; flex-direction: column; gap: 8px;">
+            <div class="card-title" style="font-size: 14px; color: var(--sea-light);">Menu Project (Windows + P):</div>
+            <button class="quiz-btn" id="projBtn1" onclick="setScreenMode(1)">
+              🖥️ PC screen only
+            </button>
+            <button class="quiz-btn correct" id="projBtn2" onclick="setScreenMode(2)">
+              👥 Duplicate (Nhân bản)
+            </button>
+            <button class="quiz-btn" id="projBtn3" onclick="setScreenMode(3)">
+              ↔️ Extend (Mở rộng)
+            </button>
+            <button class="quiz-btn" id="projBtn4" onclick="setScreenMode(4)">
+              📺 Second screen only
+            </button>
+          </div>
+          <div class="card" style="display: flex; flex-direction: column; justify-content: center; align-items: center; background: #040810; border-color: var(--sea-light);">
+            <div style="display: flex; gap: 20px; align-items: center;">
+              <!-- Màn hình chính -->
+              <div style="display: flex; flex-direction: column; align-items: center;">
+                <div id="screenLaptop" style="width: 140px; height: 90px; background: #0284C7; border: 3px solid #38BDF8; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; text-align: center; color: white; padding: 4px; transition: all 0.3s;">
+                  SLIDE BÀI 22
+                </div>
+                <span style="font-size: 11.5px; color: var(--ink-soft); margin-top: 4px;">Laptop chính</span>
+              </div>
+              <div style="font-size: 20px; color: var(--sea-light);">⇄</div>
+              <!-- Màn hình phụ / Máy chiếu -->
+              <div style="display: flex; flex-direction: column; align-items: center;">
+                <div id="screenProjector" style="width: 170px; height: 105px; background: #0284C7; border: 3px solid #38BDF8; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; text-align: center; color: white; padding: 4px; transition: all 0.3s;">
+                  SLIDE BÀI 22
+                </div>
+                <span style="font-size: 11.5px; color: var(--ink-soft); margin-top: 4px;">Máy chiếu lớp học</span>
+              </div>
+            </div>
+            <div id="screenDescText" style="font-size: 13.5px; color: var(--leaf-light); margin-top: 16px; text-align: center;">
+              Chế độ Duplicate: Cả 2 màn hình hiển thị nội dung giống hệt nhau.
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 7: PHẢN CHIẾU KHÔNG DÂY SCREEN MIRRORING -->
+    <div class="slide" id="slide-7">
+      <div class="slide-header">
+        <div>
+          <div class="slide-badge">06 · TRÌNH CHIẾU KHÔNG DÂY</div>
+          <div class="slide-title">Phản Chiếu Màn Hình Không Dây (Screen Mirroring)</div>
+          <div class="slide-subtitle">Chiếu trực tiếp màn hình điện thoại hoặc máy tính lên Smart TV không cần dây cáp</div>
+        </div>
+        <div class="reveal-controller">
+          <span>Bước: <strong class="reveal-status" id="slide-7-status">0 / 3</strong></span>
+          <button class="reveal-btn" onclick="revealNextInCurrentSlide()">Tiếp ⤓</button>
+          <button class="reveal-btn" onclick="revealAllInCurrentSlide()">Hiện hết</button>
+        </div>
+      </div>
+      <div class="slide-body">
+        <div class="grid-3">
+          <div class="card reveal-item">
+            <div class="card-title" style="color: var(--sea-light);">📺 Miracast / Cast</div>
+            <div class="card-desc">Giao thức phổ biến trên hệ điều hành Windows và Android, cho phép truyền tín hiệu hình ảnh/âm thanh trực tiếp qua kết nối Wi-Fi Direct.</div>
+          </div>
+          <div class="card reveal-item">
+            <div class="card-title" style="color: var(--gold-light);">🍎 Apple AirPlay</div>
+            <div class="card-desc">Công nghệ độc quyền của Apple, truyền phát video, âm thanh mượt mà từ iPhone, iPad, MacBook lên Apple TV hoặc các dòng Smart TV hỗ trợ.</div>
+          </div>
+          <div class="card reveal-item">
+            <div class="card-title" style="color: var(--leaf-light);">📱 Samsung Smart View</div>
+            <div class="card-desc">Tính năng tích hợp sẵn trên điện thoại Samsung Galaxy giúp chiếu màn hình lên tivi chỉ với một chạm từ thanh cài đặt nhanh.</div>
+          </div>
+        </div>
+        <div class="highlight-box reveal-item" style="margin-top: 10px;">
+          📶 <strong>Điều kiện bắt buộc:</strong> Thiết bị phát (điện thoại/laptop) và thiết bị hiển thị (Smart TV) phải được kết nối vào <strong>cùng một mạng Wi-Fi</strong> cục bộ!
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 8: PHẦN 2 - CÔNG NGHỆ BLUETOOTH -->
+    <div class="slide" id="slide-8">
+      <div class="slide-header">
+        <div>
+          <div class="slide-badge">07 · KẾT NỐI ÂM THANH</div>
+          <div class="slide-title">Công Nghệ Kết Nối Không Dây Bluetooth</div>
+          <div class="slide-subtitle">Sóng vô tuyến cự li gần phục vụ kết nối thiết bị cá nhân</div>
+        </div>
+        <div class="reveal-controller">
+          <span>Bước: <strong class="reveal-status" id="slide-8-status">0 / 3</strong></span>
+          <button class="reveal-btn" onclick="revealNextInCurrentSlide()">Tiếp ⤓</button>
+          <button class="reveal-btn" onclick="revealAllInCurrentSlide()">Hiện hết</button>
+        </div>
+      </div>
+      <div class="slide-body">
+        <div class="highlight-box reveal-item" style="font-size: 16px;">
+          📻 <strong>Định nghĩa SGK Tin học 12:</strong><br>
+          <em>"<strong>Bluetooth</strong> là một công nghệ kết nối không dây qua sóng vô tuyến điện, được sử dụng để truyền tải dữ liệu giữa các thiết bị số (bao gồm cả âm thanh, hình ảnh và tập tin) trong <strong>phạm vi gần</strong> (thông thường dưới 10 mét)."</em>
+        </div>
+        <div class="grid-2">
+          <div class="card reveal-item">
+            <div class="card-title" style="color: var(--leaf-light);">Ưu điểm vượt trội</div>
+            <div class="card-desc">
+              • Tiêu thụ cực ít năng lượng, tiết kiệm pin cho tai nghe, đồng hồ thông minh.<br>
+              • Không cần dây nối rườm rà, gọn gàng, tự do di chuyển trong phòng.<br>
+              • Tự động ghi nhớ thiết bị đã ghép đôi và kết nối lại ngay trong các lần bật tiếp theo.
+            </div>
+          </div>
+          <div class="card reveal-item">
+            <div class="card-title" style="color: var(--coral-light);">Hạn chế & Lưu ý</div>
+            <div class="card-desc">
+              • Bị suy giảm tín hiệu hoặc mất kết nối khi vượt quá phạm vi 10m hoặc có tường bê tông dày chắn ngang.<br>
+              • Dễ bị nhiễu sóng khi ở gần các nguồn phát sóng 2.4GHz công suất cao hoặc lò vi sóng.
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 9: QUY TRÌNH 4 BƯỚC GHÉP ĐÔI BLUETOOTH -->
+    <div class="slide" id="slide-9">
+      <div class="slide-header">
+        <div>
+          <div class="slide-badge">08 · QUY TRÌNH GHÉP ĐÔI</div>
+          <div class="slide-title">Quy Trình 4 Bước Ghép Đôi Thiết Bị Bluetooth</div>
+          <div class="slide-subtitle">Áp dụng cho tai nghe True Wireless, loa kéo không dây, chuột & bàn phím</div>
+        </div>
+        <div class="reveal-controller">
+          <span>Bước: <strong class="reveal-status" id="slide-9-status">0 / 4</strong></span>
+          <button class="reveal-btn" onclick="revealNextInCurrentSlide()">Tiếp ⤓</button>
+          <button class="reveal-btn" onclick="revealAllInCurrentSlide()">Hiện hết</button>
+        </div>
+      </div>
+      <div class="slide-body">
+        <div style="display: flex; flex-direction: column; gap: 10px;">
+          <div class="card reveal-item" style="padding: 12px 18px; border-left: 4px solid var(--sea-light);">
+            <strong style="color: var(--sea-light);">Bước 1: Bật nguồn & Đưa vào chế độ chờ ghép nối (Pairing mode)</strong><br>
+            <span style="font-size: 13.5px; color: var(--ink-soft);">Mở nắp hộp tai nghe hoặc nhấn giữ nút nguồn/Bluetooth trên loa từ 3-5 giây cho đến khi đèn LED nhấp nháy xanh đỏ báo hiệu sẵn sàng tìm kiếm.</span>
+          </div>
+          <div class="card reveal-item" style="padding: 12px 18px; border-left: 4px solid var(--gold);">
+            <strong style="color: var(--gold-light);">Bước 2: Bật tính năng Bluetooth trên máy tính hoặc điện thoại</strong><br>
+            <span style="font-size: 13.5px; color: var(--ink-soft);">Vào Settings → Bluetooth & devices → Gạt công tắc sang trạng thái On (Bật).</span>
+          </div>
+          <div class="card reveal-item" style="padding: 12px 18px; border-left: 4px solid var(--leaf);">
+            <strong style="color: var(--leaf-light);">Bước 3: Quét tìm thiết bị khả dụng (Add device)</strong><br>
+            <span style="font-size: 13.5px; color: var(--ink-soft);">Bấm nút Add Bluetooth device, chờ hệ thống quét danh sách và nhấp chọn đúng tên tai nghe/loa của mình.</span>
+          </div>
+          <div class="card reveal-item" style="padding: 12px 18px; border-left: 4px solid var(--purple-light);">
+            <strong style="color: var(--purple-light);">Bước 4: Xác nhận kết nối (Connected)</strong><br>
+            <span style="font-size: 13.5px; color: var(--ink-soft);">Bấm Pair (Ghép đôi), nhập mã PIN nếu có yêu cầu (thường là 0000 hoặc 1234) cho đến khi trạng thái chuyển sang Connected voice/audio.</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 10: PHẦN 3 - KẾT NỐI ĐIỆN THOẠI VỚI MÁY TÍNH -->
+    <div class="slide" id="slide-10">
+      <div class="slide-header">
+        <div>
+          <div class="slide-badge">09 · KẾT NỐI ĐIỆN THOẠI</div>
+          <div class="slide-title">Kết Nối Điện Thoại Thông Minh Với Máy Tính</div>
+          <div class="slide-subtitle">Sao chép ảnh, video tài liệu và những lưu ý bảo mật dữ liệu sống còn</div>
+        </div>
+        <div class="reveal-controller">
+          <span>Bước: <strong class="reveal-status" id="slide-10-status">0 / 3</strong></span>
+          <button class="reveal-btn" onclick="revealNextInCurrentSlide()">Tiếp ⤓</button>
+          <button class="reveal-btn" onclick="revealAllInCurrentSlide()">Hiện hết</button>
+        </div>
+      </div>
+      <div class="slide-body">
+        <div class="grid-2">
+          <div class="card reveal-item">
+            <div class="card-title" style="color: var(--sea-light);">🔌 Kết nối bằng cáp USB</div>
+            <div class="card-desc" style="line-height: 1.6;">
+              • Cắm cáp kết nối điện thoại vào cổng USB máy tính.<br>
+              • <strong>Bước then chốt:</strong> Trên màn hình điện thoại, chọn chế độ <strong>Truyền tệp (File Transfer / MTP)</strong> thay vì chế độ mặc định <em>Chỉ sạc pin</em>.<br>
+              • Máy tính sẽ mở bộ nhớ điện thoại như một ổ đĩa USB trong File Explorer (thư mục DCIM/Camera).
+            </div>
+          </div>
+          <div class="card reveal-item">
+            <div class="card-title" style="color: var(--leaf-light);">📶 Kết nối truyền tệp không dây</div>
+            <div class="card-desc" style="line-height: 1.6;">
+              • Dùng tính năng Quick Share (Android / Windows) hoặc AirDrop (iOS / macOS) để bắn tệp siêu tốc độ qua Wi-Fi Direct.<br>
+              • Sử dụng đồng bộ đám mây: Google Drive, OneDrive, Zalo Cloud để tải tệp lên từ điện thoại và mở ra trên máy tính.
+            </div>
+          </div>
+        </div>
+        <div class="highlight-box reveal-item" style="border-color: #EF4444; background: rgba(239, 68, 68, 0.15); color: #FEE2E2;">
+          ⚠️ <strong>Cảnh báo an toàn tại máy tính công cộng:</strong> Khi cắm sạc điện thoại ở tiệm nét, quán cafe hoặc máy tính lạ, TUYỆT ĐỐI KHÔNG chọn "Tin cậy thiết bị này" hoặc không mở chế độ "Truyền tệp" để phòng tránh nguy cơ hacker sao chép trộm dữ liệu cá nhân hoặc lây nhiễm mã độc!
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 11: PHẦN 4 - NHÀ THÔNG MINH SMART HOME LÀ GÌ? -->
+    <div class="slide" id="slide-11">
+      <div class="slide-header">
+        <div>
+          <div class="slide-badge">10 · NHÀ THÔNG MINH</div>
+          <div class="slide-title">Khám Phá Hệ Thống Nhà Thông Minh (Smart Home)</div>
+          <div class="slide-subtitle">Xu thế công nghệ nhà ở của thời đại vạn vật kết nối Internet (IoT)</div>
+        </div>
+        <div class="reveal-controller">
+          <span>Bước: <strong class="reveal-status" id="slide-11-status">0 / 3</strong></span>
+          <button class="reveal-btn" onclick="revealNextInCurrentSlide()">Tiếp ⤓</button>
+          <button class="reveal-btn" onclick="revealAllInCurrentSlide()">Hiện hết</button>
+        </div>
+      </div>
+      <div class="slide-body">
+        <div class="highlight-box reveal-item" style="font-size: 16px;">
+          🏠 <strong>Khái niệm SGK Tin học 12:</strong><br>
+          <em>"<strong>Nhà thông minh (Smart Home)</strong> là loại nhà được trang bị các thiết bị và hệ thống công nghệ thông minh nhằm <strong>tăng cường tiện ích, hiệu suất, bảo mật và khả năng quản lí</strong> cho người sử dụng."</em>
+        </div>
+        <div class="grid-3">
+          <div class="card reveal-item">
+            <div class="card-title" style="color: var(--sea-light);">🌟 Tiện ích & Thoải mái</div>
+            <div class="card-desc">Tự động bật điều hoà mát lạnh trước khi bạn về nhà, rèm cửa tự mở đón ánh nắng ban mai, bật nhạc êm dịu khi thức giấc.</div>
+          </div>
+          <div class="card reveal-item">
+            <div class="card-title" style="color: var(--leaf-light);">🌱 Tiết kiệm năng lượng</div>
+            <div class="card-desc">Tự động tắt đèn và máy lạnh khi không phát hiện người trong phòng; theo dõi điện năng tiêu thụ từng thiết bị theo thời gian thực.</div>
+          </div>
+          <div class="card reveal-item">
+            <div class="card-title" style="color: var(--gold-light);">🔒 An ninh & Cảnh báo sớm</div>
+            <div class="card-desc">Khoá cửa vân tay mã số, chuông cửa có hình kết nối điện thoại, cảm biến cảnh báo rò rỉ khí gas và báo cháy tức thì.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 12: 3 THÀNH PHẦN TRỤ CỘT SMART HOME -->
+    <div class="slide" id="slide-12">
+      <div class="slide-header">
+        <div>
+          <div class="slide-badge">11 · CẤU TRÚC HỆ THỐNG</div>
+          <div class="slide-title">Ba Thành Phần Trụ Cột Của Hệ Thống Smart Home</div>
+          <div class="slide-subtitle">Sự phối hợp nhịp nhàng giữa cảm biến, xử lý trung tâm và thiết bị thực thi</div>
+        </div>
+        <div class="reveal-controller">
+          <span>Bước: <strong class="reveal-status" id="slide-12-status">0 / 3</strong></span>
+          <button class="reveal-btn" onclick="revealNextInCurrentSlide()">Tiếp ⤓</button>
+          <button class="reveal-btn" onclick="revealAllInCurrentSlide()">Hiện hết</button>
+        </div>
+      </div>
+      <div class="slide-body">
+        <div class="grid-3" style="flex: 1;">
+          <div class="card reveal-item" style="border-top: 4px solid var(--gold);">
+            <div class="card-title" style="color: var(--gold-light);">👁️ 1. Cảm biến thông minh (Sensors)</div>
+            <div class="card-desc">
+              "Giác quan" của ngôi nhà:<br>
+              • Cảm biến chuyển động (PIR).<br>
+              • Cảm biến đóng/mở cửa từ tính.<br>
+              • Cảm biến nhiệt độ & độ ẩm.<br>
+              • Cảm biến khói, khí gas và rò rỉ nước.
+            </div>
+          </div>
+          <div class="card reveal-item" style="border-top: 4px solid var(--purple-light);">
+            <div class="card-title" style="color: var(--purple-light);">🧠 2. Bộ điều khiển trung tâm (Hub/Gateway)</div>
+            <div class="card-desc">
+              "Bộ não" điều phối:<br>
+              • Tiếp nhận dữ liệu từ cảm biến gửi về.<br>
+              • Kết nối qua sóng Zigbee, Matter, Wi-Fi.<br>
+              • Xử lý kịch bản tự động hoá và đồng bộ trạng thái lên đám mây máy chủ.
+            </div>
+          </div>
+          <div class="card reveal-item" style="border-top: 4px solid var(--sea-light);">
+            <div class="card-title" style="color: var(--sea-light);">⚡ 3. Thiết bị chấp hành (Actuators)</div>
+            <div class="card-desc">
+              "Tay chân" thực hiện lệnh:<br>
+              • Đèn chiếu sáng thông minh RGB.<br>
+              • Ổ cắm thông minh hẹn giờ bật tắt.<br>
+              • Động cơ kéo rèm cửa tự động.<br>
+              • Khoá cửa điện tử vân tay thông minh.
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 13: TRẠM TƯƠNG TÁC ĐIỀU KHIỂN NHÀ THÔNG MINH -->
+    <div class="slide" id="slide-13">
+      <div class="slide-header">
+        <div>
+          <div class="slide-badge">12 · TRẠM TƯƠNG TÁC SMART HOME</div>
+          <div class="slide-title">Bảng Điều Khiển Nhà Thông Minh Thu Nhỏ</div>
+          <div class="slide-subtitle">Bấm công tắc điều khiển các thiết bị trong nhà và xem kịch bản thông minh</div>
+        </div>
+        <div class="reveal-controller">
+          <span style="color: var(--sea-light); font-weight: 700;">Bảng điều khiển trực tiếp</span>
+        </div>
+      </div>
+      <div class="slide-body">
+        <div class="smarthome-grid">
+          <!-- Đèn phòng khách -->
+          <div class="smart-device" id="devLight">
+            <div style="font-size: 24px;">💡 Đèn Phòng Khách</div>
+            <div style="font-size: 13px; color: var(--ink-soft);" id="devLightStatus">Trạng thái: Đang Tắt</div>
+            <button class="switch-btn" id="btnToggleLight" onclick="toggleDevice('Light')">BẬT ĐÈN</button>
+          </div>
+          <!-- Điều hoà -->
+          <div class="smart-device" id="devAc">
+            <div style="font-size: 24px;">❄️ Máy Điều Hoà</div>
+            <div style="font-size: 13px; color: var(--ink-soft);" id="devAcStatus">Trạng thái: 26°C (Đang Tắt)</div>
+            <button class="switch-btn" id="btnToggleAc" onclick="toggleDevice('Ac')">BẬT ĐIỀU HOÀ</button>
+          </div>
+          <!-- Khoá cửa -->
+          <div class="smart-device" id="devLock">
+            <div style="font-size: 24px;">🔒 Khoá Cửa Vân Tay</div>
+            <div style="font-size: 13px; color: var(--ink-soft);" id="devLockStatus">Trạng thái: ĐÃ KHOÁ AN TOÀN</div>
+            <button class="switch-btn" id="btnToggleLock" onclick="toggleDevice('Lock')">MỞ KHOÁ CỬA</button>
+          </div>
+        </div>
+        <div class="card" style="margin-top: 10px; background: rgba(13, 124, 134, 0.15); border-color: var(--sea-light);">
+          <div style="font-size: 14.5px; font-weight: 700; color: var(--sea-light);">🎭 Kích hoạt nhanh Kịch bản tự động hoá (Smart Scene):</div>
+          <div style="display: flex; gap: 10px; margin-top: 10px;">
+            <button class="quiz-btn" style="padding: 8px 16px; font-size: 13px;" onclick="triggerScene('leave')">
+              🚶 Kịch bản "Rời khỏi nhà" (Tắt hết đèn, khoá cửa an toàn)
+            </button>
+            <button class="quiz-btn" style="padding: 8px 16px; font-size: 13px;" onclick="triggerScene('arrive')">
+              🏠 Kịch bản "Về đến nhà" (Bật đèn sáng, bật điều hoà 24°C, mở khoá)
+            </button>
+          </div>
+          <div id="sceneFeedback" style="font-size: 13px; color: var(--leaf-light); margin-top: 8px;"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 14: ĐIỀU KHIỂN BẰNG GIỌNG NÓI & APP -->
+    <div class="slide" id="slide-14">
+      <div class="slide-header">
+        <div>
+          <div class="slide-badge">13 · PHƯƠNG THỨC GIAO TIẾP</div>
+          <div class="slide-title">Giao Diện Ứng Dụng Di Động & Trợ Lý Giọng Nói</div>
+          <div class="slide-subtitle">Người dùng tương tác với hệ thống nhà thông minh như thế nào?</div>
+        </div>
+        <div class="reveal-controller">
+          <span>Bước: <strong class="reveal-status" id="slide-14-status">0 / 3</strong></span>
+          <button class="reveal-btn" onclick="revealNextInCurrentSlide()">Tiếp ⤓</button>
+          <button class="reveal-btn" onclick="revealAllInCurrentSlide()">Hiện hết</button>
+        </div>
+      </div>
+      <div class="slide-body">
+        <div class="grid-2">
+          <div class="card reveal-item" style="border-color: var(--sea-light);">
+            <div class="card-title" style="color: var(--sea-light);">📱 Ứng dụng di động (Phổ biến nhất)</div>
+            <div class="card-desc" style="line-height: 1.6;">
+              • Các ứng dụng tiêu biểu: <strong>Google Home, Apple Home, Samsung SmartThings, Mi Home</strong>.<br>
+              • Cho phép giám sát trạng thái từng phòng, hẹn giờ tự động, điều khiển thiết bị từ bất kỳ đâu trên thế giới qua kết nối 4G/5G/Internet.
+            </div>
+          </div>
+          <div class="card reveal-item" style="border-color: var(--gold);">
+            <div class="card-title" style="color: var(--gold-light);">🗣️ Ra lệnh bằng khẩu lệnh giọng nói</div>
+            <div class="card-desc" style="line-height: 1.6;">
+              • Tích hợp trợ lý ảo thông minh: <strong>Google Assistant, Apple Siri, Amazon Alexa</strong>.<br>
+              • Chỉ cần nói: <em>"Hey Google, bật đèn bàn học"</em> hoặc <em>"Siri, đóng cửa chính"</em>, hệ thống sẽ nhận diện giọng nói và thực thi ngay lập tức trong 1 giây.
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 15: MINI-QUIZ TƯƠNG TÁC -->
+    <div class="slide" id="slide-15">
+      <div class="slide-header">
+        <div>
+          <div class="slide-badge">14 · ĐỐ VUI CỦNG CỐ</div>
+          <div class="slide-title">Kiểm Tra Kỹ Năng Thực Hành Kết Nối Thiết Bị Số</div>
+          <div class="slide-subtitle">Chọn phương án đúng nhất và nhận phản hồi tức thì</div>
+        </div>
+        <div class="reveal-controller">
+          <span style="color: var(--sea-light); font-weight: 700;">Câu hỏi tương tác</span>
+        </div>
+      </div>
+      <div class="slide-body">
+        <div class="card" style="border-color: rgba(56, 225, 240, 0.35);">
+          <div class="card-title" style="color: var(--sea-light);">
+            ❓ Câu hỏi: Khi thuyết trình trước lớp, để máy chiếu hiển thị cùng một nội dung giống hệt màn hình máy tính của bạn, bạn cần bấm phím tắt nào và chọn chế độ gì?
+          </div>
+          <div class="quiz-options">
+            <button class="quiz-btn" onclick="checkQuiz(this, true, 4, 'Chính xác! Nhấn tổ hợp phím Windows + P và chọn chế độ Duplicate (Nhân bản) để nội dung trên máy tính và máy chiếu giống hệt nhau.')">
+              <strong>A.</strong> Nhấn Windows + P và chọn chế độ Duplicate (Nhân bản)
+            </button>
+            <button class="quiz-btn" onclick="checkQuiz(this, false, 4, 'Sai rồi! Chế độ Extend sẽ làm máy chiếu thành màn hình mở rộng thứ hai, không giống màn hình chính.')">
+              <strong>B.</strong> Nhấn Windows + P và chọn chế độ Extend (Mở rộng)
+            </button>
+            <button class="quiz-btn" onclick="checkQuiz(this, false, 4, 'Sai rồi! Tổ hợp phím Ctrl + P là lệnh in ấn tài liệu ra máy in.')">
+              <strong>C.</strong> Nhấn Ctrl + P và chọn máy in ảo PDF
+            </button>
+            <button class="quiz-btn" onclick="checkQuiz(this, false, 4, 'Sai rồi! Chế độ PC screen only sẽ làm máy chiếu tắt ngúm không hiển thị gì.')">
+              <strong>D.</strong> Nhấn Windows + P và chọn chế độ PC screen only
+            </button>
+          </div>
+          <div class="quiz-feedback" id="quizFeedback4"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 16: TỔNG KẾT TOÀN BỘ BÀI HỌC -->
+    <div class="slide" id="slide-16">
+      <div class="slide-header">
+        <div>
+          <div class="slide-badge">15 · TỔNG KẾT BÀI 22</div>
+          <div class="slide-title">Ghi Nhớ Trọng Tâm Bài 22</div>
+          <div class="slide-subtitle">Hành trang thực hành số vững chắc cho học sinh thời đại số</div>
+        </div>
+        <div class="reveal-controller">
+          <button class="reveal-btn" onclick="fireConfetti()" style="background: linear-gradient(135deg, #0D7C86, #38E1F0); color: #050811; font-weight: 800;">
+            🎉 Bắn pháo hoa
+          </button>
+        </div>
+      </div>
+      <div class="slide-body">
+        <div class="grid-4">
+          <div class="card" style="border-color: var(--sea-light);">
+            <div class="card-title" style="color: var(--sea-light);">1. Cổng HDMI & VGA</div>
+            <div class="card-desc">HDMI truyền cả hình ảnh + âm thanh kỹ thuật số. VGA chỉ truyền hình ảnh analog. Windows + P chọn Duplicate khi thuyết trình.</div>
+          </div>
+          <div class="card" style="border-color: var(--gold);">
+            <div class="card-title" style="color: var(--gold-light);">2. Bluetooth</div>
+            <div class="card-desc">Sóng vô tuyến cự li gần &lt; 10m. Bật Pairing mode trên tai nghe để máy quét và ghép đôi xác nhận Connected.</div>
+          </div>
+          <div class="card" style="border-color: var(--leaf);">
+            <div class="card-title" style="color: var(--leaf-light);">3. Kết nối điện thoại</div>
+            <div class="card-desc">Cắm USB chọn chế độ Truyền tệp (MTP) để sao chép dữ liệu. Không tin cậy máy tính lạ công cộng.</div>
+          </div>
+          <div class="card" style="border-color: var(--purple-light);">
+            <div class="card-title" style="color: var(--purple-light);">4. Smart Home</div>
+            <div class="card-desc">Hệ thống gồm cảm biến + Hub điều khiển + thiết bị chấp hành; điều khiển tiện lợi qua app điện thoại hoặc giọng nói.</div>
+          </div>
+        </div>
+        <div class="highlight-box" style="text-align: center; margin-top: 10px; background: rgba(56, 225, 240, 0.12); border-color: var(--sea-light);">
+          👏 <strong>Chúc mừng các bạn học sinh THPT Na Rì đã hoàn thành trọn vẹn Bài 22!</strong> Hãy tự tin áp dụng các kỹ năng kết nối thiết bị số này vào thực tế lớp học và gia đình nhé!
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- THANH ĐIỀU HƯỚNG CỐ ĐỊNH -->
+  <div class="deck-footer">
+    <button class="nav-btn" onclick="prevSlide()" title="Slide trước (Mũi tên trái)">‹</button>
+    <div class="deck-counter" id="deckCounter">1 / 16</div>
+    <div class="deck-progress-container">
+      <div class="deck-progress-bar" id="deckProgressBar"></div>
+    </div>
+    <button class="nav-btn" onclick="nextSlide()" title="Slide kế tiếp (Mũi tên phải)">›</button>
+    <button class="nav-btn" onclick="revealNextInCurrentSlide()" title="Hiện bước tiếp theo (Mũi tên xuống / Enter)">⤓</button>
+    <button class="nav-btn" onclick="toggleSound()" id="soundBtn" title="Bật/Tắt âm thanh (Phím M)">🔊</button>
+    <button class="nav-btn" onclick="toggleFullScreen()" title="Toàn màn hình (Phím F)">⛶</button>
+  </div>
+
+  <script>
+    let currentSlide = 1;
+    const totalSlides = 16;
+    let soundEnabled = true;
+    let audioCtx = null;
+
+    function getAudioCtx() {
+      if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      if (audioCtx.state === 'suspended') audioCtx.resume();
+      return audioCtx;
+    }
+
+    function playSound(type) {
+      if (!soundEnabled) return;
+      try {
+        const ctx = getAudioCtx();
+        const now = ctx.currentTime;
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+
+        if (type === 'click') {
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(540, now);
+          osc.frequency.exponentialRampToValueAtTime(850, now + 0.08);
+          gain.gain.setValueAtTime(0.12, now);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.08);
+          osc.start(now);
+          osc.stop(now + 0.08);
+        } else if (type === 'success') {
+          osc.type = 'triangle';
+          osc.frequency.setValueAtTime(523, now);
+          osc.frequency.setValueAtTime(659, now + 0.08);
+          osc.frequency.setValueAtTime(783, now + 0.16);
+          gain.gain.setValueAtTime(0.2, now);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.3);
+          osc.start(now);
+          osc.stop(now + 0.3);
+        } else if (type === 'wrong') {
+          osc.type = 'sawtooth';
+          osc.frequency.setValueAtTime(220, now);
+          gain.gain.setValueAtTime(0.2, now);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.25);
+          osc.start(now);
+          osc.stop(now + 0.25);
+        }
+      } catch (e) {}
+    }
+
+    function toggleSound() {
+      soundEnabled = !soundEnabled;
+      document.getElementById('soundBtn').innerText = soundEnabled ? '🔊' : '🔇';
+    }
+
+    function toggleFullScreen() {
+      if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen().catch(() => {});
+      } else {
+        document.exitFullscreen().catch(() => {});
+      }
+    }
+
+    function updateSlide() {
+      document.querySelectorAll('.slide').forEach((s, idx) => {
+        s.classList.toggle('active', idx + 1 === currentSlide);
+      });
+      document.getElementById('deckCounter').innerText = currentSlide + ' / ' + totalSlides;
+      document.getElementById('deckProgressBar').style.width = ((currentSlide - 1) / (totalSlides - 1) * 100) + '%';
+      if (currentSlide === 16) setTimeout(fireConfetti, 300);
+    }
+
+    function nextSlide() {
+      if (currentSlide < totalSlides) {
+        currentSlide++;
+        playSound('click');
+        updateSlide();
+      }
+    }
+
+    function prevSlide() {
+      if (currentSlide > 1) {
+        currentSlide--;
+        playSound('click');
+        updateSlide();
+      }
+    }
+
+    function revealNextInCurrentSlide() {
+      const slide = document.getElementById('slide-' + currentSlide);
+      if (!slide) return;
+      const items = slide.querySelectorAll('.reveal-item');
+      for (let item of items) {
+        if (!item.classList.contains('revealed')) {
+          item.classList.add('revealed', 'just-revealed');
+          setTimeout(() => item.classList.remove('just-revealed'), 600);
+          playSound('click');
+          updateRevealStatus(slide);
+          return;
+        }
+      }
+    }
+
+    function revealAllInCurrentSlide() {
+      const slide = document.getElementById('slide-' + currentSlide);
+      if (!slide) return;
+      slide.querySelectorAll('.reveal-item').forEach(item => item.classList.add('revealed'));
+      playSound('success');
+      updateRevealStatus(slide);
+    }
+
+    function updateRevealStatus(slide) {
+      const items = slide.querySelectorAll('.reveal-item');
+      const revealed = slide.querySelectorAll('.reveal-item.revealed').length;
+      const statusEl = document.getElementById(slide.id + '-status');
+      if (statusEl) statusEl.innerText = revealed + ' / ' + items.length;
+    }
+
+    document.addEventListener('keydown', (e) => {
+      if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+      if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown') {
+        e.preventDefault(); nextSlide();
+      } else if (e.key === 'ArrowLeft' || e.key === 'PageUp') {
+        e.preventDefault(); prevSlide();
+      } else if (e.key === 'ArrowDown' || e.key === 'Enter') {
+        e.preventDefault(); revealNextInCurrentSlide();
+      } else if (e.key.toLowerCase() === 'f') {
+        toggleFullScreen();
+      } else if (e.key.toLowerCase() === 'm') {
+        toggleSound();
+      }
+    });
+
+    /* MINI QUIZ */
+    function checkQuiz(btn, isCorrect, qId, explanation) {
+      const parent = btn.parentElement;
+      const feedback = document.getElementById('quizFeedback' + qId);
+      parent.querySelectorAll('.quiz-btn').forEach(b => {
+        b.disabled = true;
+        b.style.pointerEvents = 'none';
+      });
+
+      if (isCorrect) {
+        btn.classList.add('correct');
+        playSound('success');
+        feedback.style.display = 'block';
+        feedback.style.background = 'rgba(16, 185, 129, 0.15)';
+        feedback.style.border = '1px solid #10B981';
+        feedback.style.color = '#34D399';
+        feedback.innerHTML = '🎉 <strong>Chính xác!</strong> ' + explanation;
+      } else {
+        btn.classList.add('wrong');
+        playSound('wrong');
+        feedback.style.display = 'block';
+        feedback.style.background = 'rgba(239, 68, 68, 0.15)';
+        feedback.style.border = '1px solid #EF4444';
+        feedback.style.color = '#FCA5A5';
+        feedback.innerHTML = '❌ <strong>Chưa chính xác!</strong> ' + explanation;
+      }
+    }
+
+    /* MÔ PHỎNG WINDOWS + P */
+    function setScreenMode(mode) {
+      playSound('click');
+      for (let i = 1; i <= 4; i++) {
+        const btn = document.getElementById('projBtn' + i);
+        if (btn) btn.classList.toggle('correct', i === mode);
+      }
+
+      const sLaptop = document.getElementById('screenLaptop');
+      const sProjector = document.getElementById('screenProjector');
+      const desc = document.getElementById('screenDescText');
+
+      if (mode === 1) { // PC Screen only
+        sLaptop.style.background = '#0284C7';
+        sLaptop.style.opacity = '1';
+        sLaptop.innerText = 'SLIDE BÀI 22';
+        sProjector.style.background = '#1E293B';
+        sProjector.style.opacity = '0.3';
+        sProjector.innerText = 'TẮT TÍN HIỆU (NO SIGNAL)';
+        desc.innerText = 'PC screen only: Chỉ màn hình Laptop hiển thị, máy chiếu tắt ngúm.';
+      } else if (mode === 2) { // Duplicate
+        sLaptop.style.background = '#0284C7';
+        sLaptop.style.opacity = '1';
+        sLaptop.innerText = 'SLIDE BÀI 22';
+        sProjector.style.background = '#0284C7';
+        sProjector.style.opacity = '1';
+        sProjector.innerText = 'SLIDE BÀI 22';
+        desc.innerText = 'Duplicate (Nhân bản): Màn hình Laptop và máy chiếu chiếu nội dung giống hệt nhau (Phù hợp thuyết trình!).';
+      } else if (mode === 3) { // Extend
+        sLaptop.style.background = '#0284C7';
+        sLaptop.style.opacity = '1';
+        sLaptop.innerText = 'TÀI LIỆU SOẠN THẢO';
+        sProjector.style.background = '#0D9488';
+        sProjector.style.opacity = '1';
+        sProjector.innerText = 'BẢN ĐỒ TRA CỨU WEB';
+        desc.innerText = 'Extend (Mở rộng): Hai màn hình ghép nối thành không gian làm việc rộng gấp đôi.';
+      } else if (mode === 4) { // Second screen only
+        sLaptop.style.background = '#1E293B';
+        sLaptop.style.opacity = '0.3';
+        sLaptop.innerText = 'MÀN HÌNH TẮT';
+        sProjector.style.background = '#0284C7';
+        sProjector.style.opacity = '1';
+        sProjector.innerText = 'PHIM ĐIỆN ẢNH FULL HD';
+        desc.innerText = 'Second screen only: Tắt màn hình laptop, chỉ phát trên màn hình phụ lớn.';
+      }
+    }
+
+    /* SMART HOME SIMULATOR */
+    const devState = { Light: false, Ac: false, Lock: true };
+
+    function toggleDevice(dev) {
+      playSound('click');
+      devState[dev] = !devState[dev];
+      updateDeviceUI(dev);
+    }
+
+    function updateDeviceUI(dev) {
+      const card = document.getElementById('dev' + dev);
+      const statusEl = document.getElementById('dev' + dev + 'Status');
+      const btn = document.getElementById('btnToggle' + dev);
+
+      if (dev === 'Light') {
+        card.classList.toggle('on', devState.Light);
+        statusEl.innerText = devState.Light ? 'Trạng thái: ĐANG BẬT SÁNG 100%' : 'Trạng thái: Đang Tắt';
+        btn.innerText = devState.Light ? 'TẮT ĐÈN' : 'BẬT ĐÈN';
+        btn.classList.toggle('active', devState.Light);
+      } else if (dev === 'Ac') {
+        card.classList.toggle('on', devState.Ac);
+        statusEl.innerText = devState.Ac ? 'Trạng thái: 24°C ĐANG LÀM MÁT' : 'Trạng thái: 26°C (Đang Tắt)';
+        btn.innerText = devState.Ac ? 'TẮT ĐIỀU HOÀ' : 'BẬT ĐIỀU HOÀ';
+        btn.classList.toggle('active', devState.Ac);
+      } else if (dev === 'Lock') {
+        card.classList.toggle('on', !devState.Lock);
+        statusEl.innerText = devState.Lock ? 'Trạng thái: ĐÃ KHOÁ AN TOÀN' : 'Trạng thái: ĐANG MỞ KHOÁ CỬA';
+        btn.innerText = devState.Lock ? 'MỞ KHOÁ CỬA' : 'KHOÁ CỬA LẠI';
+        btn.classList.toggle('active', !devState.Lock);
+      }
+    }
+
+    function triggerScene(scene) {
+      playSound('success');
+      const fb = document.getElementById('sceneFeedback');
+      if (scene === 'leave') {
+        devState.Light = false;
+        devState.Ac = false;
+        devState.Lock = true;
+        updateDeviceUI('Light');
+        updateDeviceUI('Ac');
+        updateDeviceUI('Lock');
+        fb.innerHTML = '🚶 <strong>Kịch bản "Rời khỏi nhà" kích hoạt:</strong> Đèn và máy lạnh đã tắt, cửa chính đã khoá an toàn!';
+      } else {
+        devState.Light = true;
+        devState.Ac = true;
+        devState.Lock = false;
+        updateDeviceUI('Light');
+        updateDeviceUI('Ac');
+        updateDeviceUI('Lock');
+        fb.innerHTML = '🏠 <strong>Kịch bản "Về đến nhà" kích hoạt:</strong> Đèn phòng bật sáng rực rỡ, máy lạnh hạ 24°C, cửa đã mở khoá!';
+      }
+    }
+
+    /* PHÁO HOA */
+    function fireConfetti() {
+      playSound('success');
+      const canvas = document.getElementById('confettiCanvas');
+      const ctx = canvas.getContext('2d');
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+
+      const particles = [];
+      const colors = ['#38E1F0', '#F5A623', '#10B981', '#A78BFA', '#F43F5E'];
+
+      for (let i = 0; i < 90; i++) {
+        particles.push({
+          x: canvas.width / 2,
+          y: canvas.height * 0.45,
+          vx: (Math.random() - 0.5) * 16,
+          vy: (Math.random() - 0.7) * 16,
+          size: Math.random() * 8 + 4,
+          color: colors[Math.floor(Math.random() * colors.length)],
+          alpha: 1,
+          rot: Math.random() * 360,
+          vrot: (Math.random() - 0.5) * 12
+        });
+      }
+
+      function render() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        let alive = false;
+        particles.forEach(p => {
+          p.x += p.vx;
+          p.y += p.vy;
+          p.vy += 0.35;
+          p.alpha -= 0.012;
+          p.rot += p.vrot;
+
+          if (p.alpha > 0) {
+            alive = true;
+            ctx.save();
+            ctx.globalAlpha = p.alpha;
+            ctx.translate(p.x, p.y);
+            ctx.rotate(p.rot * Math.PI / 180);
+            ctx.fillStyle = p.color;
+            ctx.fillRect(-p.size / 2, -p.size / 2, p.size, p.size);
+            ctx.restore();
+          }
+        });
+        if (alive) requestAnimationFrame(render);
+        else ctx.clearRect(0, 0, canvas.width, canvas.height);
+      }
+      render();
+    }
+
+    updateSlide();
+  </script>
+</body>
+</html>
