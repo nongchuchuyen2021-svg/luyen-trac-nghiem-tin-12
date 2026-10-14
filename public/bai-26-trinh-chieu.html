@@ -1,0 +1,1432 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bài 26: Liên kết và thanh điều hướng — Bài giảng điện tử Tin học 12</title>
+  <style>
+    :root {
+      --bg: #060913;
+      --bg-card: rgba(10, 18, 34, 0.94);
+      --border-card: rgba(99, 102, 241, 0.22);
+      --ink: #FFFFFF;
+      --ink-soft: #94A3B8;
+      --sea: #0D7C86;
+      --sea-light: #38E1F0;
+      --coral: #F2683C;
+      --coral-light: #FF855D;
+      --gold: #F5A623;
+      --gold-light: #FFC043;
+      --leaf: #10B981;
+      --leaf-light: #34D399;
+      --purple: #8B5CF6;
+      --purple-light: #C4B5FD;
+      --indigo: #6366F1;
+      --indigo-light: #A5B4FC;
+      --radius-lg: 24px;
+      --radius-md: 16px;
+      --radius-sm: 10px;
+      --font-main: system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      --font-mono: 'Consolas', 'Fira Code', 'Courier New', monospace;
+      --transition-slide: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.5s ease;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: var(--font-main);
+      background-color: var(--bg);
+      color: var(--ink);
+      overflow: hidden;
+      width: 100vw;
+      height: 100vh;
+      user-select: none;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .bg-mesh {
+      position: fixed;
+      top: 0; left: 0; width: 100vw; height: 100vh;
+      background: radial-gradient(circle at 14% 16%, rgba(245, 166, 35, 0.22) 0%, transparent 45%),
+                  radial-gradient(circle at 86% 82%, rgba(99, 102, 241, 0.28) 0%, transparent 45%),
+                  radial-gradient(circle at 50% 50%, rgba(56, 225, 240, 0.16) 0%, transparent 60%);
+      z-index: 0;
+      pointer-events: none;
+      animation: meshPulse 14s ease-in-out infinite alternate;
+    }
+
+    @keyframes meshPulse {
+      0% { transform: scale(1) translate(0, 0); opacity: 0.9; }
+      100% { transform: scale(1.06) translate(-10px, 12px); opacity: 1; }
+    }
+
+    .floating-symbols {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 1;
+      overflow: hidden;
+    }
+
+    .float-tag {
+      position: absolute;
+      font-family: var(--font-mono);
+      font-size: 13.5px;
+      font-weight: 700;
+      color: rgba(165, 180, 252, 0.35);
+      border: 1px solid rgba(165, 180, 252, 0.22);
+      padding: 5px 12px;
+      border-radius: 8px;
+      background: rgba(99, 102, 241, 0.06);
+      animation: floatUp 24s linear infinite;
+    }
+
+    @keyframes floatUp {
+      0% { transform: translateY(105vh) rotate(0deg); opacity: 0; }
+      10% { opacity: 0.55; }
+      90% { opacity: 0.55; }
+      100% { transform: translateY(-10vh) rotate(360deg); opacity: 0; }
+    }
+
+    .deck-container {
+      position: relative;
+      width: 100vw;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 10;
+    }
+
+    .slide {
+      position: absolute;
+      width: 92vw;
+      max-width: 1280px;
+      height: 86vh;
+      background: var(--bg-card);
+      border: 1px solid var(--border-card);
+      border-radius: var(--radius-lg);
+      box-shadow: 0 24px 70px rgba(0, 0, 0, 0.7);
+      backdrop-filter: blur(22px);
+      padding: 34px 46px;
+      display: flex;
+      flex-direction: column;
+      opacity: 0;
+      transform: scale(0.96) translateY(24px);
+      pointer-events: none;
+      transition: var(--transition-slide);
+      overflow-y: auto;
+    }
+
+    .slide.active {
+      opacity: 1;
+      transform: scale(1) translateY(0);
+      pointer-events: all;
+    }
+
+    .slide-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 20px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      padding-bottom: 14px;
+      gap: 16px;
+    }
+
+    .slide-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(245, 166, 35, 0.16);
+      border: 1px solid rgba(245, 166, 35, 0.35);
+      color: var(--gold-light);
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 11.5px;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+
+    .slide-title {
+      font-size: 26px;
+      font-weight: 800;
+      color: #FFFFFF;
+      line-height: 1.3;
+    }
+
+    .slide-subtitle {
+      font-size: 14px;
+      color: var(--ink-soft);
+      margin-top: 4px;
+    }
+
+    .slide-body {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    /* REVEAL CONTROLLER */
+    .reveal-controller {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(255, 255, 255, 0.06);
+      padding: 5px 12px;
+      border-radius: 30px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      font-size: 12.5px;
+    }
+
+    .reveal-btn {
+      background: var(--gold);
+      color: #060913;
+      border: none;
+      padding: 5px 12px;
+      border-radius: 14px;
+      cursor: pointer;
+      font-weight: 700;
+      font-size: 12px;
+      transition: all 0.2s;
+    }
+
+    .reveal-btn:hover {
+      background: var(--gold-light);
+      transform: scale(1.05);
+    }
+
+    .reveal-item {
+      opacity: 0.2;
+      transform: translateY(8px);
+      transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+      filter: blur(1.5px);
+    }
+
+    .reveal-item.revealed {
+      opacity: 1;
+      transform: translateY(0);
+      filter: blur(0);
+    }
+
+    /* GRID & CARD LAYOUTS */
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 18px;
+    }
+
+    .grid-3 {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+    }
+
+    .grid-4 {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 14px;
+    }
+
+    .card {
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: var(--radius-md);
+      padding: 16px 20px;
+      transition: transform 0.3s, border-color 0.3s, background 0.3s;
+    }
+
+    .card:hover {
+      transform: translateY(-3px);
+      border-color: rgba(245, 166, 35, 0.4);
+      background: rgba(255, 255, 255, 0.06);
+    }
+
+    .card-title {
+      font-size: 15.5px;
+      font-weight: 700;
+      color: #FFFFFF;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .card-desc {
+      font-size: 13.5px;
+      color: var(--ink-soft);
+      line-height: 1.55;
+    }
+
+    .highlight-box {
+      background: rgba(245, 166, 35, 0.12);
+      border: 1px solid rgba(245, 166, 35, 0.35);
+      border-radius: var(--radius-md);
+      padding: 16px 20px;
+      font-size: 14.5px;
+      line-height: 1.6;
+      color: #FEF3C7;
+    }
+
+    .highlight-box strong { color: #FDE68A; }
+
+    /* FOOTER THANH ĐIỀU HƯỚNG */
+    .deck-footer {
+      position: fixed;
+      bottom: 14px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background: rgba(10, 16, 28, 0.92);
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      border-radius: 40px;
+      padding: 8px 20px;
+      backdrop-filter: blur(20px);
+      z-index: 100;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
+    }
+
+    .nav-btn {
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      color: white;
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 15px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .nav-btn:hover {
+      background: var(--gold);
+      color: #060913;
+      border-color: var(--gold-light);
+      transform: scale(1.08);
+    }
+
+    .deck-progress-container {
+      width: 140px;
+      height: 6px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 3px;
+      overflow: hidden;
+    }
+
+    .deck-progress-bar {
+      height: 100%;
+      background: linear-gradient(90deg, var(--gold), var(--coral-light));
+      width: 0%;
+      transition: width 0.3s ease;
+    }
+
+    .deck-counter {
+      font-family: var(--font-mono);
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--gold-light);
+      min-width: 52px;
+      text-align: center;
+    }
+
+    /* MINI QUIZ */
+    .quiz-options {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-top: 12px;
+    }
+
+    .quiz-btn {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: var(--radius-sm);
+      padding: 12px 18px;
+      color: #FFFFFF;
+      font-size: 14px;
+      text-align: left;
+      cursor: pointer;
+      transition: all 0.25s;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .quiz-btn:hover {
+      background: rgba(245, 166, 35, 0.18);
+      border-color: var(--gold-light);
+      transform: translateX(4px);
+    }
+
+    .quiz-btn.correct {
+      background: rgba(16, 185, 129, 0.25) !important;
+      border-color: #10B981 !important;
+      color: #34D399 !important;
+    }
+
+    .quiz-btn.wrong {
+      background: rgba(239, 68, 68, 0.25) !important;
+      border-color: #EF4444 !important;
+      color: #F87171 !important;
+    }
+
+    .quiz-feedback {
+      margin-top: 10px;
+      padding: 10px 14px;
+      border-radius: var(--radius-sm);
+      font-size: 13.5px;
+      display: none;
+    }
+
+    /* TREE BUILDER STYLES */
+    .tree-box {
+      background: #0B1120;
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      border-radius: 12px;
+      padding: 18px;
+      min-height: 250px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .tree-node {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 12px;
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      font-size: 13.5px;
+      transition: all 0.2s;
+    }
+
+    .tree-node.homepage {
+      background: rgba(245, 166, 35, 0.15);
+      border-color: var(--gold);
+      font-weight: 700;
+      color: #FDE68A;
+    }
+
+    .tree-node.subpage {
+      margin-left: 28px;
+      border-left: 3px solid var(--sea-light);
+      color: #E2E8F0;
+    }
+
+    #confettiCanvas {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 999;
+    }
+  </style>
+</head>
+<body>
+  <div class="bg-mesh"></div>
+  <canvas id="confettiCanvas"></canvas>
+
+  <div class="floating-symbols">
+    <div class="float-tag" style="left: 6%; animation-delay: 0s;">Pages Panel 📑</div>
+    <div class="float-tag" style="left: 28%; animation-delay: 4s;">Add Subpage 🌳</div>
+    <div class="float-tag" style="left: 52%; animation-delay: 1s;">Top vs Side Nav 🧭</div>
+    <div class="float-tag" style="left: 74%; animation-delay: 6s;">Hyperlinks 🔗</div>
+    <div class="float-tag" style="left: 90%; animation-delay: 3s;">Action Button 🔘</div>
+  </div>
+
+  <div class="deck-container">
+    <!-- SLIDE 1: BÌA BÀI GIẢNG -->
+    <div class="slide active" id="slide-1">
+      <div style="flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; gap: 20px;">
+        <div class="slide-badge" style="font-size: 13px; padding: 6px 18px;">CHỦ ĐỀ 7: ỨNG DỤNG TIN HỌC · THỰC HÀNH GOOGLE SITES</div>
+        <h1 style="font-size: 44px; font-weight: 900; line-height: 1.2; max-width: 980px; background: linear-gradient(135deg, #FFFFFF 30%, #FDE68A 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">
+          Bài 26: Liên Kết & Thanh Điều Hướng
+        </h1>
+        <p style="font-size: 18px; color: var(--ink-soft); max-width: 820px; line-height: 1.6;">
+          Tổ chức cấu trúc website thành sơ đồ cây phân cấp khoa học, quản trị các trang con qua bảng chọn Trang (Pages), tùy biến thanh điều hướng Top/Side và gắn siêu liên kết thông minh
+        </p>
+        <div style="display: flex; gap: 14px; margin-top: 10px;">
+          <button onclick="nextSlide()" class="reveal-btn" style="padding: 12px 30px; font-size: 15px; border-radius: 30px; background: linear-gradient(135deg, #F5A623, #F2683C); color: #060913; font-weight: 800; box-shadow: 0 10px 25px rgba(245, 166, 35, 0.4);">
+            Bắt đầu bài giảng 🚀
+          </button>
+        </div>
+        <div style="font-size: 13px; color: rgba(255, 255, 255, 0.4); margin-top: 20px;">
+          Trường THPT Na Rì · SGK Tin học 12 (ICT Kết nối tri thức, trang 144–146)
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 2: KHỞI ĐỘNG - BÀI TOÁN WEBSITE QUÁ TẢI -->
+    <div class="slide" id="slide-2">
+      <div class="slide-header">
+        <div>
+          <div class="slide-badge">01 · KHỞI ĐỘNG</div>
+          <div class="slide-title">Bài Toán Website Quá Tải: Tại Sao Không Nhồi Hết Vào Trang Chủ?</div>
+          <div class="slide-subtitle">Hậu quả nghiêm trọng của việc đưa toàn bộ bài viết dài vào duy nhất một trang</div>
+        </div>
+        <div class="reveal-controller">
+          <span>Bước: <strong class="reveal-status" id="slide-2-status">0 / 3</strong></span>
+          <button class="reveal-btn" onclick="revealNextInCurrentSlide()">Tiếp ⤓</button>
+          <button class="reveal-btn" onclick="revealAllInCurrentSlide()">Hiện hết</button>
+        </div>
+      </div>
+      <div class="slide-body">
+        <div class="highlight-box reveal-item">
+          ⚠️ <strong>Cảnh báo SGK:</strong> Nếu đưa toàn bộ văn bản chi tiết vào trang chủ, trang sẽ trở nên vô cùng dài, người xem phải cuộn chuột mỏi tay và các bài viết có độ dài khác nhau sẽ làm lộ những khoảng trống lệch lạc, phá vỡ tính thẩm mỹ!
+        </div>
+        <div class="grid-3">
+          <div class="card reveal-item">
+            <div class="card-title">😵 Người xem bị "ngợp"</div>
+            <div class="card-desc">Quá nhiều thông tin dồn dập khiến độc giả không biết đâu là điểm nhấn và từ bỏ trước khi kịp đọc hết thông điệp.</div>
+          </div>
+          <div class="card reveal-item">
+            <div class="card-title">🌳 Cấu trúc cây phân cấp</div>
+            <div class="card-desc">Trang chủ chỉ tóm tắt các đề mục lớn. Người muốn đọc sâu sẽ nhấp vào các liên kết dẫn tới từng <strong>Trang con (Subpages)</strong> độc lập.</div>
+          </div>
+          <div class="card reveal-item">
+            <div class="card-title">🧭 Thanh menu chỉ lối</div>
+            <div class="card-desc">Thanh điều hướng đóng vai trò là "chiếc la bàn", giúp người xem bay nhảy giữa các chuyên mục chỉ bằng một cú nhấp chuột.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 3: CẤU TRÚC CÂY PHÂN CẤP -->
+    <div class="slide" id="slide-3">
+      <div class="slide-header">
+        <div>
+          <div class="slide-badge">02 · MÔ HÌNH THÔNG TIN</div>
+          <div class="slide-title">Mô Hình Cây Phân Cấp (Website Hierarchy)</div>
+          <div class="slide-subtitle">Trang chủ đóng vai trò gốc rễ, các trang con là những cành nhánh chuyên sâu</div>
+        </div>
+        <div class="reveal-controller">
+          <span>Bước: <strong class="reveal-status" id="slide-3-status">0 / 2</strong></span>
+          <button class="reveal-btn" onclick="revealNextInCurrentSlide()">Tiếp ⤓</button>
+          <button class="reveal-btn" onclick="revealAllInCurrentSlide()">Hiện hết</button>
+        </div>
+      </div>
+      <div class="slide-body">
+        <div class="grid-2">
+          <div class="card reveal-item" style="border-top: 3px solid var(--gold-light);">
+            <div class="card-title">🏠 Trang chủ (Homepage)</div>
+            <div class="card-desc" style="font-size: 14px; line-height: 1.6;">
+              • Đóng vai trò là <strong>cửa ngõ chính</strong> đón tiếp người truy cập.<br><br>
+              • Trình bày lời chào mừng, biểu ngữ nổi bật, các khẩu hiệu và đoạn tóm tắt ngắn về các hoạt động tiêu biểu.<br><br>
+              • Đặt các nút kêu gọi và liên kết dẫn đường đến các chuyên mục con chi tiết.
+            </div>
+          </div>
+          <div class="card reveal-item" style="border-top: 3px solid var(--sea-light);">
+            <div class="card-title">📑 Các trang con (Subpages)</div>
+            <div class="card-desc" style="font-size: 14px; line-height: 1.6;">
+              • Mỗi trang con là một không gian độc lập, chuyên sâu cho một chủ đề cụ thể (Ví dụ: <em>Giới thiệu trường</em>, <em>Tin tức hoạt động</em>, <em>Góc học tập</em>, <em>Thành tích Na Rì</em>).<br><br>
+              • Trong trang con lại có thể chia thêm các trang con cấp thấp hơn (Ví dụ: Trong <em>Góc học tập</em> có trang con <em>Tin học 12</em>, <em>Toán học</em>).
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 4: BẢNG CHỌN TRANG (PAGES) -->
+    <div class="slide" id="slide-4">
+      <div class="slide-header">
+        <div>
+          <div class="slide-badge">03 · BẢNG ĐIỀU HÀNH</div>
+          <div class="slide-title">Bảng Chọn Trang (Pages) — Trung Tâm Quản Lý</div>
+          <div class="slide-subtitle">Nơi thêm mới, sắp xếp thứ tự và phân cấp cây thư mục trang web</div>
+        </div>
+        <div class="reveal-controller">
+          <span>Bước: <strong class="reveal-status" id="slide-4-status">0 / 3</strong></span>
+          <button class="reveal-btn" onclick="revealNextInCurrentSlide()">Tiếp ⤓</button>
+          <button class="reveal-btn" onclick="revealAllInCurrentSlide()">Hiện hết</button>
+        </div>
+      </div>
+      <div class="slide-body">
+        <div class="grid-3">
+          <div class="card reveal-item">
+            <div class="card-title">📑 Vị trí tab Trang</div>
+            <div class="card-desc">Nằm ở vị trí giữa trong 3 tab bên phải màn hình thiết kế (giữa tab <em>Chèn / Insert</em> và tab <em>Giao diện / Themes</em>).</div>
+          </div>
+          <div class="card reveal-item">
+            <div class="card-title">➕ Nút dấu cộng tròn lớn</div>
+            <div class="card-desc">Nằm ở góc dưới cùng bảng chọn Trang. Bấm vào để tạo một <strong>Trang mới cùng cấp</strong> hoặc thêm <strong>Đường liên kết mới</strong> vào menu.</div>
+          </div>
+          <div class="card reveal-item">
+            <div class="card-title">⋮ Menu 3 chấm quyền năng</div>
+            <div class="card-desc">Rê chuột vào bất kỳ tên trang nào sẽ xuất hiện dấu ba chấm dọc ở lề phải, mở ra toàn bộ lệnh quản trị chi tiết cho trang đó.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 5: THAO TÁC TẠO TRANG CON -->
+    <div class="slide" id="slide-5">
+      <div class="slide-header">
+        <div>
+          <div class="slide-badge">04 · THAO TÁC THỰC HÀNH</div>
+          <div class="slide-title">Cách Tạo Trang Con (Add Subpage) Chuẩn Xác</div>
+          <div class="slide-subtitle">Biến một trang độc lập thành trang nhánh trực thuộc trang cha</div>
+        </div>
+        <div class="reveal-controller">
+          <span>Bước: <strong class="reveal-status" id="slide-5-status">0 / 3</strong></span>
+          <button class="reveal-btn" onclick="revealNextInCurrentSlide()">Tiếp ⤓</button>
+          <button class="reveal-btn" onclick="revealAllInCurrentSlide()">Hiện hết</button>
+        </div>
+      </div>
+      <div class="slide-body">
+        <div class="grid-3">
+          <div class="card reveal-item" style="border-top: 3px solid var(--purple-light);">
+            <div style="font-size: 26px; margin-bottom: 6px;">1️⃣ Chọn trang cha</div>
+            <div class="card-desc">Tại bảng chọn Trang, rê chuột vào tên trang bạn muốn làm trang cha (Ví dụ: Trang <em>"Hoạt động"</em>) ➔ Nhấp vào biểu tượng <strong>dấu 3 chấm (⋮)</strong>.</div>
+          </div>
+          <div class="card reveal-item" style="border-top: 3px solid var(--sea-light);">
+            <div style="font-size: 26px; margin-bottom: 6px;">2️⃣ Thêm trang con</div>
+            <div class="card-desc">Trong danh sách hiện ra, nhấp chọn mục <strong>Thêm trang con (Add subpage)</strong>. Một hộp thoại nhỏ sẽ xuất hiện.</div>
+          </div>
+          <div class="card reveal-item" style="border-top: 3px solid var(--leaf-light);">
+            <div style="font-size: 26px; margin-bottom: 6px;">3️⃣ Đặt tên & Hoàn tất</div>
+            <div class="card-desc">Nhập tên trang con (Ví dụ: <em>"Hội thi Tin học trẻ"</em>) ➔ Nhấn <strong>Xong (Done)</strong>. Trang mới sẽ tự động thụt lề dưới trang cha!</div>
+          </div>
+        </div>
+        <div class="highlight-box reveal-item">
+          💡 <strong>Mẹo kéo thả:</strong> Bạn cũng có thể tạo trang mới bình thường rồi dùng chuột nắm kéo trang đó thả đè lên trang cha, Google Sites sẽ tự biến nó thành trang con!
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 6: QUẢN LÝ NÂNG CAO TRONG MENU 3 CHẤM -->
+    <div class="slide" id="slide-6">
+      <div class="slide-header">
+        <div>
+          <div class="slide-badge">05 · QUẢN TRỊ TRANG</div>
+          <div class="slide-title">Các Lệnh Nâng Cao Trong Menu 3 Chấm Của Trang</div>
+          <div class="slide-subtitle">Đổi tên, nhân đôi, đặt làm trang chủ hoặc xóa bỏ</div>
+        </div>
+        <div class="reveal-controller">
+          <span>Bước: <strong class="reveal-status" id="slide-6-status">0 / 4</strong></span>
+          <button class="reveal-btn" onclick="revealNextInCurrentSlide()">Tiếp ⤓</button>
+          <button class="reveal-btn" onclick="revealAllInCurrentSlide()">Hiện hết</button>
+        </div>
+      </div>
+      <div class="slide-body">
+        <div class="grid-4">
+          <div class="card reveal-item">
+            <div class="card-title">🏷️ Thuộc tính (Properties)</div>
+            <div class="card-desc">Cho phép đổi tên hiển thị của trang trên thanh menu hoặc tùy biến đường dẫn URL con tùy chỉnh.</div>
+          </div>
+          <div class="card reveal-item">
+            <div class="card-title">📋 Nhân đôi trang (Duplicate)</div>
+            <div class="card-desc">Sao chép toàn bộ trang với đầy đủ banner, các khối chữ và ảnh thành một trang mới để tái sử dụng công sức.</div>
+          </div>
+          <div class="card reveal-item">
+            <div class="card-title">🏠 Đặt làm trang chủ</div>
+            <div class="card-desc">Chỉ định trang này làm trang đón tiếp đầu tiên khi người dùng gõ địa chỉ website. Biểu tượng ngôi nhà sẽ chuyển sang trang này.</div>
+          </div>
+          <div class="card reveal-item">
+            <div class="card-title">🗑️ Xóa (Delete)</div>
+            <div class="card-desc">Xóa vĩnh viễn trang khỏi website (Có thể bấm nút Hoàn tác Undo ↩️ nếu bấm nhầm).</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 7: TÍNH NĂNG ẨN KHỎI THANH ĐIỀU HƯỚNG -->
+    <div class="slide" id="slide-7">
+      <div class="slide-header">
+        <div>
+          <div class="slide-badge">06 · TÍNH NĂNG ĐẶC BIỆT</div>
+          <div class="slide-title">Ẩn Trang Khỏi Thanh Điều Hướng (Hide From Navigation)</div>
+          <div class="slide-subtitle">Trang vẫn tồn tại nhưng không chiếm diện tích trên thanh menu chính</div>
+        </div>
+        <div class="reveal-controller">
+          <span>Bước: <strong class="reveal-status" id="slide-7-status">0 / 2</strong></span>
+          <button class="reveal-btn" onclick="revealNextInCurrentSlide()">Tiếp ⤓</button>
+          <button class="reveal-btn" onclick="revealAllInCurrentSlide()">Hiện hết</button>
+        </div>
+      </div>
+      <div class="slide-body">
+        <div class="grid-2">
+          <div class="card reveal-item">
+            <div class="card-title">🔍 Bản chất của tính năng ẩn</div>
+            <div class="card-desc" style="font-size: 14px; line-height: 1.6;">
+              • Khi chọn lệnh <strong>Ẩn khỏi thanh điều hướng (Hide from navigation)</strong> trong menu 3 chấm, tên trang sẽ bị gạch ngang trong bảng chọn Trang.<br><br>
+              • Tên trang đó sẽ biến mất khỏi thanh menu ngang trên đầu website.<br><br>
+              • <strong>Trang có bị xóa không?</strong> KHÔNG HỀ! Trang vẫn hoạt động 100% bình thường, người xem vẫn truy cập được thông qua nút bấm hoặc siêu liên kết từ trang chủ!
+            </div>
+          </div>
+          <div class="card reveal-item">
+            <div class="card-title">🎯 Khi nào nên dùng tính năng này?</div>
+            <div class="card-desc" style="font-size: 14px; line-height: 1.6;">
+              • Trang cảm ơn sau khi điền biểu mẫu khảo sát.<br><br>
+              • Trang tài liệu chi tiết của từng bài học (chỉ mở khi bấm nút <em>"Xem bài giảng"</em> ở trang chủ).<br><br>
+              • Giữ cho thanh menu ngang luôn gọn gàng, thanh lịch từ 4–6 mục chính, không bị tràn hàng.
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 8: TRẠM MÔ PHỎNG TREE BUILDER -->
+    <div class="slide" id="slide-8">
+      <div class="slide-header">
+        <div>
+          <div class="slide-badge">07 · TRẠM MÔ PHỎNG TƯƠNG TÁC</div>
+          <div class="slide-title">Tree Builder: Trạm Mô Phỏng Cây Phân Cấp Trang Web</div>
+          <div class="slide-subtitle">Bấm tạo các trang con để quan sát sơ đồ cây liên kết tự động phân nhánh</div>
+        </div>
+      </div>
+      <div class="slide-body">
+        <div class="grid-2" style="gap: 20px;">
+          <!-- BẢNG ĐIỀU KHIỂN CÂY -->
+          <div class="card" style="display: flex; flex-direction: column; gap: 12px;">
+            <div class="card-title" style="color: var(--gold-light);">🛠️ Bảng Chọn Trang (Giả Lập)</div>
+            <button onclick="addSimSubpage('Giới thiệu trường THPT Na Rì')" class="quiz-btn">➕ Thêm Trang Con: "Giới thiệu"</button>
+            <button onclick="addSimSubpage('Hoạt động ngoại khóa & Thể thao')" class="quiz-btn">➕ Thêm Trang Con: "Hoạt động"</button>
+            <button onclick="addSimSubpage('Góc học tập & Luyện thi 12')" class="quiz-btn">➕ Thêm Trang Con: "Góc học tập"</button>
+            <button onclick="addSimSubpage('Liên hệ & Góp ý')" class="quiz-btn">➕ Thêm Trang Con: "Liên hệ"</button>
+            <button onclick="resetSimTree()" class="reveal-btn" style="background: rgba(239,68,68,0.2); color: #F87171; border: 1px solid #EF4444; margin-top: 6px;">
+              🔄 Làm lại từ Trang chủ trống
+            </button>
+          </div>
+
+          <!-- MÀN HÌNH CÂY PHÂN CẤP -->
+          <div class="tree-box">
+            <div style="font-size: 12.5px; font-weight: 700; color: var(--sea-light); margin-bottom: 6px;">
+              🌳 SƠ ĐỒ CÂY PHÂN CẤP WEBSITE
+            </div>
+            <div class="tree-node homepage">
+              <span>🏠</span>
+              <span>Trang chủ (Homepage) — Cửa ngõ trung tâm</span>
+            </div>
+            <div id="simSubpagesContainer" style="display: flex; flex-direction: column; gap: 6px;">
+              <!-- CÁC TRANG CON ĐƯỢC CHÈN BẰNG JS -->
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 9: THANH ĐIỀU HƯỚNG TOP VS SIDE -->
+    <div class="slide" id="slide-9">
+      <div class="slide-header">
+        <div>
+          <div class="slide-badge">08 · GIAO DIỆN MENU</div>
+          <div class="slide-title">2 Chế Độ Hiển Thị Thanh Điều Hướng (Navigation Bar)</div>
+          <div class="slide-subtitle">Chế độ Đỉnh trang (Top) và Chế độ Cạnh bên (Side)</div>
+        </div>
+        <div class="reveal-controller">
+          <span>Bước: <strong class="reveal-status" id="slide-9-status">0 / 2</strong></span>
+          <button class="reveal-btn" onclick="revealNextInCurrentSlide()">Tiếp ⤓</button>
+          <button class="reveal-btn" onclick="revealAllInCurrentSlide()">Hiện hết</button>
+        </div>
+      </div>
+      <div class="slide-body">
+        <div class="grid-2">
+          <div class="card reveal-item" style="border-top: 3px solid var(--sea-light);">
+            <div class="card-title">🔝 1. Chế độ Đỉnh trang (Top Navigation)</div>
+            <div class="card-desc" style="font-size: 14px; line-height: 1.6;">
+              • <strong>Vị trí:</strong> Nằm ngang ngay trên đầu website, cạnh logo và tên trang.<br><br>
+              • <strong>Trang con:</strong> Khi rê chuột vào trang cha, danh sách trang con sẽ trượt thả xuống (Dropdown menu).<br><br>
+              • <strong>Phù hợp nhất:</strong> Dành cho website có số lượng trang vừa phải (từ 3 đến 6 mục chính).
+            </div>
+          </div>
+          <div class="card reveal-item" style="border-top: 3px solid var(--purple-light);">
+            <div class="card-title">📑 2. Chế độ Cạnh bên (Side Navigation)</div>
+            <div class="card-desc" style="font-size: 14px; line-height: 1.6;">
+              • <strong>Vị trí:</strong> Thu gọn thành biểu tượng menu <strong>3 dấu gạch ngang (Hamburger icon ☰)</strong> ở góc trên bên trái.<br><br>
+              • <strong>Thao tác:</strong> Bấm vào sẽ mở ra một bảng menu trượt dọc từ cạnh trái sang.<br><br>
+              • <strong>Phù hợp nhất:</strong> Dành cho website có rất nhiều trang con, hoặc khi xem trên màn hình điện thoại di động!
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 10: TÙY BIẾN THANH ĐIỀU HƯỚNG -->
+    <div class="slide" id="slide-10">
+      <div class="slide-header">
+        <div>
+          <div class="slide-badge">09 · CÀI ĐẶT MENU</div>
+          <div class="slide-title">Cách Tùy Biến Màu Sắc & Kiểu Dáng Thanh Điều Hướng</div>
+          <div class="slide-subtitle">Vào biểu tượng Bánh răng Cài đặt để thiết lập chuyên sâu</div>
+        </div>
+        <div class="reveal-controller">
+          <span>Bước: <strong class="reveal-status" id="slide-10-status">0 / 3</strong></span>
+          <button class="reveal-btn" onclick="revealNextInCurrentSlide()">Tiếp ⤓</button>
+          <button class="reveal-btn" onclick="revealAllInCurrentSlide()">Hiện hết</button>
+        </div>
+      </div>
+      <div class="slide-body">
+        <div class="grid-3">
+          <div class="card reveal-item">
+            <div class="card-title">⚙️ Mở bảng Cài đặt điều hướng</div>
+            <div class="card-desc">Bấm vào biểu tượng bánh răng <strong>Cài đặt (Settings)</strong> ở góc trên ➔ Chọn mục <strong>Điều hướng (Navigation)</strong>.</div>
+          </div>
+          <div class="card reveal-item">
+            <div class="card-title">🎨 Đổi màu nền thanh menu</div>
+            <div class="card-desc">
+              Google Sites hỗ trợ 3 kiểu màu nền menu:<br>
+              • <strong>Trong suốt (Transparent):</strong> Chìm vào ảnh banner.<br>
+              • <strong>Trắng (White):</strong> Nổi bật, trang nhã.<br>
+              • <strong>Đen (Black):</strong> Hiện đại, sắc sảo.
+            </div>
+          </div>
+          <div class="card reveal-item">
+            <div class="card-title">📌 Ghim cố định khi cuộn</div>
+            <div class="card-desc">Menu luôn cố định ở mép trên cùng màn hình khi người dùng cuộn chuột đọc bài viết, giúp chuyển trang bất kỳ lúc nào mà không cần kéo chuột lên lại!</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 11: THIẾT LẬP SIÊU LIÊN KẾT (HYPERLINKS) -->
+    <div class="slide" id="slide-11">
+      <div class="slide-header">
+        <div>
+          <div class="slide-badge">10 · SIÊU LIÊN KẾT</div>
+          <div class="slide-title">Thiết Lập Liên Kết (Hyperlinks) Kết Nối Nội Dung</div>
+          <div class="slide-subtitle">Phân biệt rạch ròi giữa Liên kết nội bộ và Liên kết ra ngoài</div>
+        </div>
+        <div class="reveal-controller">
+          <span>Bước: <strong class="reveal-status" id="slide-11-status">0 / 2</strong></span>
+          <button class="reveal-btn" onclick="revealNextInCurrentSlide()">Tiếp ⤓</button>
+          <button class="reveal-btn" onclick="revealAllInCurrentSlide()">Hiện hết</button>
+        </div>
+      </div>
+      <div class="slide-body">
+        <div class="grid-2">
+          <div class="card reveal-item" style="border-left: 4px solid var(--leaf-light);">
+            <div class="card-title">🔗 1. Liên kết nội bộ (Internal Links)</div>
+            <div class="card-desc" style="font-size: 14px; line-height: 1.6;">
+              • Dẫn người xem từ một từ khóa (vd: <em>"Xem giới thiệu chi tiết"</em>) đến <strong>một trang con đã tạo trong cùng website</strong>.<br><br>
+              • <strong>Cách làm:</strong> Bôi đen chữ ➔ Bấm biểu tượng cái xích <em>Chèn liên kết</em> ➔ Chọn tên trang có sẵn trong danh sách hiển thị ➔ Bấm <em>Áp dụng (Apply)</em>.
+            </div>
+          </div>
+          <div class="card reveal-item" style="border-left: 4px solid var(--gold-light);">
+            <div class="card-title">🌐 2. Liên kết ngoài (External Links)</div>
+            <div class="card-desc" style="font-size: 14px; line-height: 1.6;">
+              • Dẫn người xem rời khỏi website để sang một địa chỉ web khác trên Internet (vd: Trang Bộ GD&ĐT, Báo Tuổi Trẻ, Cổng thông tin Tỉnh Bắc Kạn).<br><br>
+              • <strong>Cách làm:</strong> Bôi đen chữ ➔ Bấm biểu tượng cái xích ➔ Dán toàn bộ đường link <code>https://...</code> vào ô liên kết ➔ Bấm <em>Áp dụng</em>.
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 12: THAO TÁC GẮN LIÊN KẾT CHO TỪ KHÓA -->
+    <div class="slide" id="slide-12">
+      <div class="slide-header">
+        <div>
+          <div class="slide-badge">11 · QUY TRÌNH 3 BƯỚC</div>
+          <div class="slide-title">Quy Trình 3 Bước Gắn Liên Kết Cho Văn Bản Hoặc Hình Ảnh</div>
+          <div class="slide-subtitle">Áp dụng cho nút "Đọc tiếp", "Xem ngay" hoặc từng bức ảnh minh họa</div>
+        </div>
+        <div class="reveal-controller">
+          <span>Bước: <strong class="reveal-status" id="slide-12-status">0 / 3</strong></span>
+          <button class="reveal-btn" onclick="revealNextInCurrentSlide()">Tiếp ⤓</button>
+          <button class="reveal-btn" onclick="revealAllInCurrentSlide()">Hiện hết</button>
+        </div>
+      </div>
+      <div class="slide-body">
+        <div class="grid-3">
+          <div class="card reveal-item">
+            <div style="font-size: 28px; margin-bottom: 6px;">1️⃣ Chọn đối tượng</div>
+            <div class="card-desc">Bôi đen cụm từ khóa (vd: <em>"Xem danh sách học sinh đạt giải"</em>) hoặc nhấp chọn một hình ảnh cần gắn liên kết.</div>
+          </div>
+          <div class="card reveal-item">
+            <div style="font-size: 28px; margin-bottom: 6px;">2️⃣ Bấm mắt xích 🔗</div>
+            <div class="card-desc">Trên thanh công cụ nhỏ nổi lên, nhấp vào biểu tượng <strong>cái xích (Chèn liên kết / Insert link - Ctrl+K)</strong>.</div>
+          </div>
+          <div class="card reveal-item">
+            <div style="font-size: 28px; margin-bottom: 6px;">3️⃣ Chọn đích đến</div>
+            <div class="card-desc">Nhấp chọn tên trang con trong danh sách hoặc dán link web ngoài ➔ Nhấn nút <strong>Áp dụng (Apply)</strong> để hoàn tất.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 13: TẠO NÚT ĐIỀU HƯỚNG (BUTTON) -->
+    <div class="slide" id="slide-13">
+      <div class="slide-header">
+        <div>
+          <div class="slide-badge">12 · NÚT HÀNH ĐỘNG</div>
+          <div class="slide-title">Tạo Nút Điều Hướng Nổi Bật (Button Widget)</div>
+          <div class="slide-subtitle">Kêu gọi hành động mạnh mẽ hơn một dòng chữ gạch chân thông thường</div>
+        </div>
+        <div class="reveal-controller">
+          <span>Bước: <strong class="reveal-status" id="slide-13-status">0 / 3</strong></span>
+          <button class="reveal-btn" onclick="revealNextInCurrentSlide()">Tiếp ⤓</button>
+          <button class="reveal-btn" onclick="revealAllInCurrentSlide()">Hiện hết</button>
+        </div>
+      </div>
+      <div class="slide-body">
+        <div class="grid-3">
+          <div class="card reveal-item">
+            <div class="card-title">🔘 Cách chèn nút</div>
+            <div class="card-desc">Vào bảng chọn <strong>Chèn (Insert)</strong> ➔ Cuộn xuống chọn lệnh <strong>Nút (Button)</strong> ➔ Nhập <em>Tên nút</em> và chọn <em>Đường liên kết</em>.</div>
+          </div>
+          <div class="card reveal-item">
+            <div class="card-title">🎨 3 Kiểu hiển thị nút</div>
+            <div class="card-desc">
+              • <strong>Đầy đủ (Filled):</strong> Nút tô đậm màu chủ đạo.<br>
+              • <strong>Đường viền (Outlined):</strong> Nền trong suốt có viền.<br>
+              • <strong>Văn bản (Text only):</strong> Nút chữ thanh mảnh.
+            </div>
+          </div>
+          <div class="card reveal-item">
+            <div class="card-title">📐 Kéo thả điều chỉnh</div>
+            <div class="card-desc">Có thể dùng chuột kéo nút thả vào giữa khối chữ hoặc đặt cạnh ảnh để tạo các nút kêu gọi: <em>"Đăng ký tham gia CLB"</em>, <em>"Nộp bài tập"</em>.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 14: TRẠM THỰC HÀNH ĐIỀU HƯỚNG MÔ PHỎNG -->
+    <div class="slide" id="slide-14">
+      <div class="slide-header">
+        <div>
+          <div class="slide-badge">13 · TRẠM TRỰC QUAN HÓA</div>
+          <div class="slide-title">Mô Phỏng Chuyển Đổi Menu Top vs Side</div>
+          <div class="slide-subtitle">Bấm nút để trải nghiệm sự khác biệt giữa thanh menu ngang và menu trượt 3 gạch</div>
+        </div>
+      </div>
+      <div class="slide-body">
+        <div style="display: flex; gap: 12px; justify-content: center; margin-bottom: 8px;">
+          <button id="navBtnTop" onclick="switchSimNav('top')" class="reveal-btn correct" style="background: var(--gold); border: 1px solid var(--gold-light);">
+            🔝 Chế độ Đỉnh trang (Top Navigation)
+          </button>
+          <button id="navBtnSide" onclick="switchSimNav('side')" class="reveal-btn" style="background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2);">
+            ☰ Chế độ Cạnh bên (Side Hamburger)
+          </button>
+        </div>
+
+        <!-- MÀN HÌNH PREVIEW ĐIỀU HƯỚNG -->
+        <div class="card" style="background: #0F172A; border-color: rgba(245,166,35,0.3); min-height: 240px; display: flex; flex-direction: column;">
+          <div id="simNavHeader" style="background: #1E293B; padding: 12px 20px; display: flex; justify-content: space-between; align-items: center; border-radius: 8px 8px 0 0;">
+            <div style="display: flex; align-items: center; gap: 10px;">
+              <span id="simHamburgerIcon" style="display: none; font-size: 20px; cursor: pointer;" onclick="toggleSimSideDrawer()">☰</span>
+              <span style="font-weight: 800; color: white;">THPT Na Rì</span>
+            </div>
+            <div id="simTopLinks" style="display: flex; gap: 16px; font-size: 13px; font-weight: 600;">
+              <span style="color: var(--gold-light);">Trang chủ</span>
+              <span style="color: #94A3B8;">Giới thiệu</span>
+              <span style="color: #94A3B8;">Hoạt động</span>
+              <span style="color: #94A3B8;">Liên hệ</span>
+            </div>
+          </div>
+
+          <div style="flex: 1; display: flex; position: relative; overflow: hidden;">
+            <!-- SIDE DRAWER MÔ PHỎNG -->
+            <div id="simSideDrawer" style="display: none; width: 180px; background: #0A101D; border-right: 1px solid rgba(255,255,255,0.1); padding: 16px; flex-direction: column; gap: 12px; font-size: 13px;">
+              <div style="color: var(--gold-light); font-weight: 700;">🏠 Trang chủ</div>
+              <div style="color: #94A3B8; padding-left: 8px;">↳ Giới thiệu</div>
+              <div style="color: #94A3B8; padding-left: 8px;">↳ Hoạt động</div>
+              <div style="color: #94A3B8; padding-left: 8px;">↳ Liên hệ</div>
+            </div>
+            <div style="flex: 1; padding: 24px; text-align: center; color: var(--ink-soft); font-size: 13px;">
+              <p id="simNavDesc" style="margin-top: 30px;">
+                Chế độ Đỉnh trang (Top): Menu ngang cố định ở trên đầu, phù hợp khi website có ít trang con.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 15: MINI QUIZ -->
+    <div class="slide" id="slide-15">
+      <div class="slide-header">
+        <div>
+          <div class="slide-badge">14 · THỬ TÀI KIẾN THỨC</div>
+          <div class="slide-title">Mini-Quiz: Kiểm Tra Kỹ Năng Cấu Trúc Trang & Liên Kết</div>
+          <div class="slide-subtitle">Nhấp chọn đáp án để nhận phản hồi kiến thức chi tiết</div>
+        </div>
+      </div>
+      <div class="slide-body">
+        <div class="card" style="max-width: 900px; margin: 0 auto; width: 100%;">
+          <div style="font-size: 16px; font-weight: 700; color: #FFFFFF;" id="quizQuestion">
+            Câu 1/4: Để tạo một trang con trực thuộc một trang cha có sẵn trong Google Sites, ta thực hiện thao tác nào?
+          </div>
+          <div class="quiz-options" id="quizOptions">
+            <button class="quiz-btn" onclick="checkQuiz(0)">A. Nháy dấu ba chấm bên cạnh trang cha rồi chọn Thêm trang con (Add subpage)</button>
+            <button class="quiz-btn" onclick="checkQuiz(1)">B. Kéo trang cha thả vào thùng rác rồi tạo trang mới</button>
+            <button class="quiz-btn" onclick="checkQuiz(2)">C. Vào bảng chọn Giao diện rồi chọn mẫu màu sắc khác</button>
+            <button class="quiz-btn" onclick="checkQuiz(3)">D. Nháy đúp chuột vào biểu tượng logo của trang web</button>
+          </div>
+          <div id="quizFeedback" class="quiz-feedback"></div>
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 14px;">
+            <span style="font-size: 13px; color: var(--ink-soft);" id="quizScore">Điểm: 0 / 4</span>
+            <button id="quizNextBtn" class="reveal-btn" style="display: none;" onclick="nextQuizQuestion()">Câu tiếp theo ➔</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 16: TỔNG KẾT & BÀI TẬP DỰ ÁN -->
+    <div class="slide" id="slide-16">
+      <div class="slide-header">
+        <div>
+          <div class="slide-badge">15 · TỔNG KẾT & DỰ ÁN</div>
+          <div class="slide-title">Tổng Kết Bài 26 & Nhiệm Vụ Hoàn Thiện Website</div>
+          <div class="slide-subtitle">Sẵn sàng xuất bản một website đa trang hoàn chỉnh</div>
+        </div>
+      </div>
+      <div class="slide-body">
+        <div class="grid-2">
+          <div class="card" style="border-top: 3px solid var(--gold-light);">
+            <div class="card-title">🎯 3 Ghi nhớ cốt lõi Bài 26</div>
+            <div class="card-desc" style="font-size: 14px; line-height: 1.65;">
+              1. <strong>Cấu trúc cây:</strong> Phân chia Trang chủ (tổng quan) và các Trang con (chi tiết) để website khoa học, không bị quá tải.<br>
+              2. <strong>Bảng chọn Trang (Pages):</strong> Quản lý danh sách, tạo trang con qua dấu 3 chấm, đổi tên, nhân đôi hoặc ẩn khỏi thanh điều hướng.<br>
+              3. <strong>Điều hướng & Liên kết:</strong> Chọn chế độ Top/Side menu, gắn siêu liên kết nội bộ cho cụm từ "Đọc tiếp" hoặc tạo đối tượng Nút (Button).
+            </div>
+          </div>
+          <div class="card" style="border-top: 3px solid var(--sea-light);">
+            <div class="card-title">💻 Nhiệm vụ thực hành dự án nhóm</div>
+            <div class="card-desc" style="font-size: 14px; line-height: 1.65;">
+              • Tạo ít nhất <strong>2 trang con</strong> trực thuộc website lớp/nhóm.<br>
+              • Tạo các liên kết nội bộ dẫn từ Trang chủ đến các trang con.<br>
+              • Tạo ít nhất 1 nút bấm (Button) nổi bật kêu gọi hành động.<br>
+              • Thử chuyển đổi giữa 2 chế độ menu Top và Side để chọn phong cách phù hợp nhất.
+            </div>
+          </div>
+        </div>
+
+        <div style="display: flex; justify-content: center; margin-top: 10px;">
+          <button onclick="fireConfetti()" class="reveal-btn" style="padding: 12px 34px; font-size: 15px; border-radius: 30px; background: linear-gradient(135deg, #F5A623, #F2683C); color: #060913; font-weight: 800; box-shadow: 0 10px 25px rgba(245, 166, 35, 0.4);">
+            🎉 Chúc mừng hoàn thành Bài 26! (Bắn pháo hoa)
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- THANH ĐIỀU HƯỚNG TỔNG -->
+  <div class="deck-footer">
+    <button class="nav-btn" onclick="prevSlide()" title="Slide trước (Mũi tên trái)">‹</button>
+    <div class="deck-progress-container">
+      <div id="deckProgressBar" class="deck-progress-bar"></div>
+    </div>
+    <span id="deckCounter" class="deck-counter">1 / 16</span>
+    <button class="nav-btn" onclick="nextSlide()" title="Slide sau (Mũi tên phải)">›</button>
+    <button class="nav-btn" onclick="toggleMute()" id="muteBtn" title="Bật/Tắt âm thanh (Phím M)" style="font-size: 14px;">🔊</button>
+    <button class="nav-btn" onclick="toggleFullscreen()" title="Toàn màn hình (Phím F)" style="font-size: 13px;">⛶</button>
+  </div>
+
+  <script>
+    /* SYSTEM CONTROLLER */
+    let currentSlide = 1;
+    const totalSlides = 16;
+    let isMuted = false;
+
+    /* WEB AUDIO SYNTHESIZER */
+    let audioCtx = null;
+    function getAudioCtx() {
+      if (!audioCtx) {
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      }
+      if (audioCtx.state === 'suspended') {
+        audioCtx.resume();
+      }
+      return audioCtx;
+    }
+
+    function playSound(type) {
+      if (isMuted) return;
+      try {
+        const ctx = getAudioCtx();
+        const now = ctx.currentTime;
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+
+        if (type === 'next') {
+          osc.frequency.setValueAtTime(440, now);
+          osc.frequency.exponentialRampToValueAtTime(660, now + 0.12);
+          gain.gain.setValueAtTime(0.12, now);
+          gain.gain.linearRampToValueAtTime(0.01, now + 0.12);
+          osc.start(now);
+          osc.stop(now + 0.12);
+        } else if (type === 'prev') {
+          osc.frequency.setValueAtTime(580, now);
+          osc.frequency.exponentialRampToValueAtTime(360, now + 0.12);
+          gain.gain.setValueAtTime(0.12, now);
+          gain.gain.linearRampToValueAtTime(0.01, now + 0.12);
+          osc.start(now);
+          osc.stop(now + 0.12);
+        } else if (type === 'reveal') {
+          osc.type = 'triangle';
+          osc.frequency.setValueAtTime(523.25, now);
+          osc.frequency.setValueAtTime(659.25, now + 0.08);
+          gain.gain.setValueAtTime(0.1, now);
+          gain.gain.linearRampToValueAtTime(0.01, now + 0.18);
+          osc.start(now);
+          osc.stop(now + 0.18);
+        } else if (type === 'correct') {
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(523.25, now);
+          osc.frequency.setValueAtTime(659.25, now + 0.1);
+          osc.frequency.setValueAtTime(783.99, now + 0.2);
+          gain.gain.setValueAtTime(0.15, now);
+          gain.gain.linearRampToValueAtTime(0.01, now + 0.35);
+          osc.start(now);
+          osc.stop(now + 0.35);
+        } else if (type === 'wrong') {
+          osc.type = 'sawtooth';
+          osc.frequency.setValueAtTime(220, now);
+          osc.frequency.setValueAtTime(196, now + 0.12);
+          gain.gain.setValueAtTime(0.12, now);
+          gain.gain.linearRampToValueAtTime(0.01, now + 0.28);
+          osc.start(now);
+          osc.stop(now + 0.28);
+        } else if (type === 'click') {
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(800, now);
+          gain.gain.setValueAtTime(0.06, now);
+          gain.gain.linearRampToValueAtTime(0.01, now + 0.05);
+          osc.start(now);
+          osc.stop(now + 0.05);
+        } else if (type === 'success') {
+          osc.type = 'triangle';
+          [523, 659, 784, 1046].forEach((f, idx) => {
+            const o = ctx.createOscillator();
+            const g = ctx.createGain();
+            o.type = 'triangle';
+            o.connect(g);
+            g.connect(ctx.destination);
+            o.frequency.setValueAtTime(f, now + idx * 0.08);
+            g.gain.setValueAtTime(0.12, now + idx * 0.08);
+            g.gain.linearRampToValueAtTime(0.01, now + idx * 0.08 + 0.2);
+            o.start(now + idx * 0.08);
+            o.stop(now + idx * 0.08 + 0.2);
+          });
+        }
+      } catch (e) {}
+    }
+
+    /* SLIDE NAVIGATION */
+    function goToSlide(n) {
+      if (n < 1 || n > totalSlides) return;
+      const prev = currentSlide;
+      currentSlide = n;
+
+      document.querySelectorAll('.slide').forEach((s, idx) => {
+        s.classList.toggle('active', (idx + 1) === currentSlide);
+      });
+
+      document.getElementById('deckProgressBar').style.width = ((currentSlide / totalSlides) * 100) + '%';
+      document.getElementById('deckCounter').innerText = currentSlide + ' / ' + totalSlides;
+
+      if (currentSlide > prev) playSound('next');
+      else if (currentSlide < prev) playSound('prev');
+    }
+
+    function nextSlide() { goToSlide(currentSlide + 1); }
+    function prevSlide() { goToSlide(currentSlide - 1); }
+
+    function toggleFullscreen() {
+      if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen().catch(() => {});
+      } else {
+        document.exitFullscreen().catch(() => {});
+      }
+    }
+
+    function toggleMute() {
+      isMuted = !isMuted;
+      document.getElementById('muteBtn').innerText = isMuted ? '🔇' : '🔊';
+      if (!isMuted) playSound('click');
+    }
+
+    /* KEYBOARD CONTROLS */
+    window.addEventListener('keydown', (e) => {
+      if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+      if (e.key === 'ArrowRight' || e.key === 'PageDown' || e.key === ' ') {
+        e.preventDefault();
+        nextSlide();
+      } else if (e.key === 'ArrowLeft' || e.key === 'PageUp') {
+        e.preventDefault();
+        prevSlide();
+      } else if (e.key === 'ArrowDown' || e.key === 'Enter') {
+        e.preventDefault();
+        revealNextInCurrentSlide();
+      } else if (e.key === 'f' || e.key === 'F') {
+        toggleFullscreen();
+      } else if (e.key === 'm' || e.key === 'M') {
+        toggleMute();
+      }
+    });
+
+    /* STEP REVEAL LOGIC */
+    function revealNextInCurrentSlide() {
+      const activeSlide = document.querySelector('.slide.active');
+      if (!activeSlide) return;
+      const unrevealed = activeSlide.querySelectorAll('.reveal-item:not(.revealed)');
+      if (unrevealed.length > 0) {
+        unrevealed[0].classList.add('revealed');
+        playSound('reveal');
+        updateRevealStatus(activeSlide);
+      } else {
+        nextSlide();
+      }
+    }
+
+    function revealAllInCurrentSlide() {
+      const activeSlide = document.querySelector('.slide.active');
+      if (!activeSlide) return;
+      activeSlide.querySelectorAll('.reveal-item').forEach(el => el.classList.add('revealed'));
+      playSound('reveal');
+      updateRevealStatus(activeSlide);
+    }
+
+    function updateRevealStatus(slide) {
+      const statusEl = slide.querySelector('.reveal-status');
+      if (!statusEl) return;
+      const total = slide.querySelectorAll('.reveal-item').length;
+      const revealed = slide.querySelectorAll('.reveal-item.revealed').length;
+      statusEl.innerText = revealed + ' / ' + total;
+    }
+
+    /* SIMULATED TREE BUILDER */
+    const subpagesList = [];
+    function addSimSubpage(title) {
+      if (subpagesList.includes(title)) return;
+      playSound('click');
+      subpagesList.push(title);
+
+      const container = document.getElementById('simSubpagesContainer');
+      const node = document.createElement('div');
+      node.className = 'tree-node subpage';
+      node.innerHTML = `
+        <span>📄</span>
+        <span>${title}</span>
+        <span style="margin-left: auto; font-size: 11px; color: var(--gold-light);">[Trang con]</span>
+      `;
+      container.appendChild(node);
+    }
+
+    function resetSimTree() {
+      playSound('click');
+      subpagesList.length = 0;
+      document.getElementById('simSubpagesContainer').innerHTML = '';
+    }
+
+    /* SIMULATED NAV SWITCHER */
+    let currentNavMode = 'top';
+    let isSideOpen = false;
+
+    function switchSimNav(mode) {
+      playSound('click');
+      currentNavMode = mode;
+      const btnTop = document.getElementById('navBtnTop');
+      const btnSide = document.getElementById('navBtnSide');
+      const hamburger = document.getElementById('simHamburgerIcon');
+      const topLinks = document.getElementById('simTopLinks');
+      const drawer = document.getElementById('simSideDrawer');
+      const desc = document.getElementById('simNavDesc');
+
+      if (mode === 'top') {
+        btnTop.classList.add('correct');
+        btnSide.classList.remove('correct');
+        btnTop.style.background = 'var(--gold)';
+        btnSide.style.background = 'rgba(255,255,255,0.1)';
+        hamburger.style.display = 'none';
+        topLinks.style.display = 'flex';
+        drawer.style.display = 'none';
+        desc.innerText = 'Chế độ Đỉnh trang (Top): Menu ngang cố định ở trên đầu, phù hợp khi website có ít trang con.';
+      } else {
+        btnSide.classList.add('correct');
+        btnTop.classList.remove('correct');
+        btnSide.style.background = 'var(--gold)';
+        btnTop.style.background = 'rgba(255,255,255,0.1)';
+        hamburger.style.display = 'inline-block';
+        topLinks.style.display = 'none';
+        drawer.style.display = 'flex';
+        desc.innerText = 'Chế độ Cạnh bên (Side Hamburger): Menu trượt dọc trượt ra khi bấm biểu tượng 3 gạch, tối ưu cho website nhiều trang và điện thoại!';
+      }
+    }
+
+    function toggleSimSideDrawer() {
+      playSound('click');
+      const drawer = document.getElementById('simSideDrawer');
+      isSideOpen = !isSideOpen;
+      drawer.style.display = isSideOpen ? 'flex' : 'none';
+    }
+
+    /* MINI QUIZ DATA & CONTROLLER */
+    const quizData = [
+      {
+        q: "Câu 1/4: Để tạo một trang con trực thuộc một trang cha có sẵn trong Google Sites, ta thực hiện thao tác nào?",
+        options: [
+          "A. Nháy dấu ba chấm bên cạnh trang cha rồi chọn Thêm trang con (Add subpage)",
+          "B. Kéo trang cha thả vào thùng rác rồi tạo trang mới",
+          "C. Vào bảng chọn Giao diện rồi chọn lại một bảng màu khác",
+          "D. Nháy đúp chuột vào biểu tượng logo của trang web"
+        ],
+        answer: 0,
+        explain: "Chính xác! Lệnh Thêm trang con (Add subpage) trong menu 3 chấm giúp tạo nhánh trang mới nằm thụt lề dưới trang cha."
+      },
+      {
+        q: "Câu 2/4: Khi chọn tính năng 'Ẩn khỏi thanh điều hướng' (Hide from navigation) cho một trang web, điều gì sẽ xảy ra?",
+        options: [
+          "A. Trang không hiện trên menu chính nhưng vẫn tồn tại và mở được qua liên kết",
+          "B. Trang bị xóa vĩnh viễn và không thể khôi phục lại",
+          "C. Trang chuyển thành chế độ mật mã chỉ có admin mới đọc được",
+          "D. Trang web sẽ bị cấm xuất bản lên Google Sites"
+        ],
+        answer: 0,
+        explain: "Chính xác! Trang bị ẩn sẽ không hiển thị trên thanh menu để tiết kiệm chỗ, nhưng người xem vẫn truy cập bình thường qua nút bấm hay liên kết trong trang."
+      },
+      {
+        q: "Câu 3/4: Để gắn liên kết nội bộ cho cụm từ 'Đọc tiếp' dẫn đến một trang con trong website, ta làm thế nào?",
+        options: [
+          "A. Bôi đen chữ, bấm biểu tượng Chèn liên kết rồi chọn tên trang con có sẵn",
+          "B. Gõ lại toàn bộ nội dung của trang con vào ngay bên cạnh cụm từ đó",
+          "C. Tải trang web lên Google Drive rồi gửi qua email",
+          "D. Xóa cụm từ đó đi và thay thế bằng một hình ảnh bất kỳ"
+        ],
+        answer: 0,
+        explain: "Chính xác! Bôi đen cụm từ, bấm biểu tượng mắt xích và chọn tên trang con trong danh sách thả xuống là thao tác tạo liên kết nội bộ chuẩn xác."
+      },
+      {
+        q: "Câu 4/4: Chế độ hiển thị thanh điều hướng dạng 'Cạnh bên' (Side navigation) phù hợp nhất trong trường hợp nào?",
+        options: [
+          "A. Website có nhiều trang con hoặc khi xem trên màn hình điện thoại di động",
+          "B. Khi website chỉ có duy nhất đúng 1 trang chủ",
+          "C. Khi người dùng không muốn kết nối Internet",
+          "D. Khi muốn xóa bỏ hoàn toàn tất cả các trang web đã tạo"
+        ],
+        answer: 0,
+        explain: "Chính xác! Menu 3 gạch cạnh bên trượt dọc rất gọn gàng, tối ưu tuyệt vời cho website nhiều mục hoặc màn hình nhỏ như smartphone."
+      }
+    ];
+
+    let currentQuizIndex = 0;
+    let quizScore = 0;
+
+    function renderQuizQuestion() {
+      const q = quizData[currentQuizIndex];
+      document.getElementById('quizQuestion').innerText = q.q;
+      const opts = document.getElementById('quizOptions');
+      opts.innerHTML = '';
+      q.options.forEach((optText, idx) => {
+        const btn = document.createElement('button');
+        btn.className = 'quiz-btn';
+        btn.innerText = optText;
+        btn.onclick = () => checkQuiz(idx);
+        opts.appendChild(btn);
+      });
+      const feedback = document.getElementById('quizFeedback');
+      feedback.style.display = 'none';
+      document.getElementById('quizNextBtn').style.display = 'none';
+      document.getElementById('quizScore').innerText = 'Điểm: ' + quizScore + ' / ' + quizData.length;
+    }
+
+    function checkQuiz(choice) {
+      const q = quizData[currentQuizIndex];
+      const btns = document.querySelectorAll('.quiz-options .quiz-btn');
+      btns.forEach(b => b.disabled = true);
+
+      const feedback = document.getElementById('quizFeedback');
+      feedback.style.display = 'block';
+
+      if (choice === q.answer) {
+        playSound('correct');
+        btns[choice].classList.add('correct');
+        feedback.style.background = 'rgba(16, 185, 129, 0.2)';
+        feedback.style.color = '#34D399';
+        feedback.innerHTML = '🎉 <strong>Đúng rồi!</strong> ' + q.explain;
+        quizScore++;
+      } else {
+        playSound('wrong');
+        btns[choice].classList.add('wrong');
+        btns[q.answer].classList.add('correct');
+        feedback.style.background = 'rgba(239, 68, 68, 0.2)';
+        feedback.style.color = '#F87171';
+        feedback.innerHTML = '❌ <strong>Chưa chính xác!</strong> ' + q.explain;
+      }
+
+      document.getElementById('quizScore').innerText = 'Điểm: ' + quizScore + ' / ' + quizData.length;
+
+      if (currentQuizIndex < quizData.length - 1) {
+        document.getElementById('quizNextBtn').style.display = 'inline-block';
+      } else {
+        if (quizScore === quizData.length) {
+          setTimeout(fireConfetti, 500);
+        }
+      }
+    }
+
+    function nextQuizQuestion() {
+      playSound('click');
+      currentQuizIndex++;
+      renderQuizQuestion();
+    }
+
+    /* FIREWORKS CONFETTI */
+    function fireConfetti() {
+      playSound('success');
+      const canvas = document.getElementById('confettiCanvas');
+      const ctx = canvas.getContext('2d');
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+
+      const particles = [];
+      const colors = ['#6366F1', '#38E1F0', '#F5A623', '#10B981', '#EC4899'];
+
+      for (let i = 0; i < 90; i++) {
+        particles.push({
+          x: canvas.width / 2,
+          y: canvas.height * 0.45,
+          vx: (Math.random() - 0.5) * 16,
+          vy: (Math.random() - 0.7) * 16,
+          size: Math.random() * 8 + 4,
+          color: colors[Math.floor(Math.random() * colors.length)],
+          alpha: 1,
+          rot: Math.random() * 360,
+          vrot: (Math.random() - 0.5) * 12
+        });
+      }
+
+      function render() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        let alive = false;
+        particles.forEach(p => {
+          p.x += p.vx;
+          p.y += p.vy;
+          p.vy += 0.35;
+          p.alpha -= 0.012;
+          p.rot += p.vrot;
+
+          if (p.alpha > 0) {
+            alive = true;
+            ctx.save();
+            ctx.globalAlpha = p.alpha;
+            ctx.translate(p.x, p.y);
+            ctx.rotate(p.rot * Math.PI / 180);
+            ctx.fillStyle = p.color;
+            ctx.fillRect(-p.size / 2, -p.size / 2, p.size, p.size);
+            ctx.restore();
+          }
+        });
+        if (alive) requestAnimationFrame(render);
+        else ctx.clearRect(0, 0, canvas.width, canvas.height);
+      }
+      render();
+    }
+
+    /* INITIALIZATION */
+    goToSlide(1);
+    renderQuizQuestion();
+  </script>
+</body>
+</html>

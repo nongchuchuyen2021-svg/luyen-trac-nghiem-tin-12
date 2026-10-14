@@ -1,0 +1,1584 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bài 24: Xây dựng phần đầu trang web — Bài giảng điện tử Tin học 12</title>
+  <style>
+    :root {
+      --bg: #060913;
+      --bg-card: rgba(10, 18, 34, 0.94);
+      --border-card: rgba(99, 102, 241, 0.22);
+      --ink: #FFFFFF;
+      --ink-soft: #94A3B8;
+      --sea: #0D7C86;
+      --sea-light: #38E1F0;
+      --coral: #F2683C;
+      --coral-light: #FF855D;
+      --gold: #F5A623;
+      --gold-light: #FFC043;
+      --leaf: #10B981;
+      --leaf-light: #34D399;
+      --purple: #8B5CF6;
+      --purple-light: #C4B5FD;
+      --indigo: #6366F1;
+      --indigo-light: #A5B4FC;
+      --radius-lg: 24px;
+      --radius-md: 16px;
+      --radius-sm: 10px;
+      --font-main: system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      --font-mono: 'Consolas', 'Fira Code', 'Courier New', monospace;
+      --transition-slide: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.5s ease;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: var(--font-main);
+      background-color: var(--bg);
+      color: var(--ink);
+      overflow: hidden;
+      width: 100vw;
+      height: 100vh;
+      user-select: none;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .bg-mesh {
+      position: fixed;
+      top: 0; left: 0; width: 100vw; height: 100vh;
+      background: radial-gradient(circle at 12% 18%, rgba(99, 102, 241, 0.26) 0%, transparent 45%),
+                  radial-gradient(circle at 88% 80%, rgba(56, 225, 240, 0.22) 0%, transparent 45%),
+                  radial-gradient(circle at 50% 50%, rgba(245, 166, 35, 0.15) 0%, transparent 60%);
+      z-index: 0;
+      pointer-events: none;
+      animation: meshPulse 14s ease-in-out infinite alternate;
+    }
+
+    @keyframes meshPulse {
+      0% { transform: scale(1) translate(0, 0); opacity: 0.9; }
+      100% { transform: scale(1.06) translate(-10px, 12px); opacity: 1; }
+    }
+
+    .floating-symbols {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 1;
+      overflow: hidden;
+    }
+
+    .float-tag {
+      position: absolute;
+      font-family: var(--font-mono);
+      font-size: 13.5px;
+      font-weight: 700;
+      color: rgba(165, 180, 252, 0.35);
+      border: 1px solid rgba(165, 180, 252, 0.22);
+      padding: 5px 12px;
+      border-radius: 8px;
+      background: rgba(99, 102, 241, 0.06);
+      animation: floatUp 24s linear infinite;
+    }
+
+    @keyframes floatUp {
+      0% { transform: translateY(105vh) rotate(0deg); opacity: 0; }
+      10% { opacity: 0.55; }
+      90% { opacity: 0.55; }
+      100% { transform: translateY(-10vh) rotate(360deg); opacity: 0; }
+    }
+
+    .deck-container {
+      position: relative;
+      width: 100vw;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 10;
+    }
+
+    .slide {
+      position: absolute;
+      width: 92vw;
+      max-width: 1280px;
+      height: 86vh;
+      background: var(--bg-card);
+      border: 1px solid var(--border-card);
+      border-radius: var(--radius-lg);
+      box-shadow: 0 24px 70px rgba(0, 0, 0, 0.7);
+      backdrop-filter: blur(22px);
+      padding: 34px 46px;
+      display: flex;
+      flex-direction: column;
+      opacity: 0;
+      transform: scale(0.96) translateY(24px);
+      pointer-events: none;
+      transition: var(--transition-slide);
+      overflow-y: auto;
+    }
+
+    .slide.active {
+      opacity: 1;
+      transform: scale(1) translateY(0);
+      pointer-events: all;
+    }
+
+    .slide-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 20px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      padding-bottom: 14px;
+      gap: 16px;
+    }
+
+    .slide-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(99, 102, 241, 0.16);
+      border: 1px solid rgba(99, 102, 241, 0.35);
+      color: var(--indigo-light);
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 11.5px;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+
+    .slide-title {
+      font-size: 26px;
+      font-weight: 800;
+      color: #FFFFFF;
+      line-height: 1.3;
+    }
+
+    .slide-subtitle {
+      font-size: 14px;
+      color: var(--ink-soft);
+      margin-top: 4px;
+    }
+
+    .slide-body {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    /* REVEAL CONTROLLER */
+    .reveal-controller {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(255, 255, 255, 0.06);
+      padding: 5px 12px;
+      border-radius: 30px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      font-size: 12.5px;
+    }
+
+    .reveal-btn {
+      background: var(--indigo);
+      color: white;
+      border: none;
+      padding: 5px 12px;
+      border-radius: 14px;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 12px;
+      transition: all 0.2s;
+    }
+
+    .reveal-btn:hover {
+      background: var(--indigo-light);
+      color: #060913;
+      transform: scale(1.05);
+    }
+
+    .reveal-item {
+      opacity: 0.2;
+      transform: translateY(8px);
+      transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+      filter: blur(1.5px);
+    }
+
+    .reveal-item.revealed {
+      opacity: 1;
+      transform: translateY(0);
+      filter: blur(0);
+    }
+
+    /* GRID & CARD LAYOUTS */
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 18px;
+    }
+
+    .grid-3 {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+    }
+
+    .grid-4 {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 14px;
+    }
+
+    .card {
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: var(--radius-md);
+      padding: 16px 20px;
+      transition: transform 0.3s, border-color 0.3s, background 0.3s;
+    }
+
+    .card:hover {
+      transform: translateY(-3px);
+      border-color: rgba(99, 102, 241, 0.4);
+      background: rgba(255, 255, 255, 0.06);
+    }
+
+    .card-title {
+      font-size: 15.5px;
+      font-weight: 700;
+      color: #FFFFFF;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .card-desc {
+      font-size: 13.5px;
+      color: var(--ink-soft);
+      line-height: 1.55;
+    }
+
+    .highlight-box {
+      background: rgba(99, 102, 241, 0.14);
+      border: 1px solid rgba(99, 102, 241, 0.35);
+      border-radius: var(--radius-md);
+      padding: 16px 20px;
+      font-size: 14.5px;
+      line-height: 1.6;
+      color: #E0E7FF;
+    }
+
+    .highlight-box strong { color: #C7D2FE; }
+
+    /* FOOTER THANH ĐIỀU HƯỚNG */
+    .deck-footer {
+      position: fixed;
+      bottom: 14px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background: rgba(10, 16, 28, 0.92);
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      border-radius: 40px;
+      padding: 8px 20px;
+      backdrop-filter: blur(20px);
+      z-index: 100;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
+    }
+
+    .nav-btn {
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      color: white;
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 15px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .nav-btn:hover {
+      background: var(--indigo);
+      color: #FFFFFF;
+      border-color: var(--indigo-light);
+      transform: scale(1.08);
+    }
+
+    .deck-progress-container {
+      width: 140px;
+      height: 6px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 3px;
+      overflow: hidden;
+    }
+
+    .deck-progress-bar {
+      height: 100%;
+      background: linear-gradient(90deg, var(--indigo), var(--sea-light));
+      width: 0%;
+      transition: width 0.3s ease;
+    }
+
+    .deck-counter {
+      font-family: var(--font-mono);
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--indigo-light);
+      min-width: 52px;
+      text-align: center;
+    }
+
+    /* MINI QUIZ */
+    .quiz-options {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-top: 12px;
+    }
+
+    .quiz-btn {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: var(--radius-sm);
+      padding: 12px 18px;
+      color: #FFFFFF;
+      font-size: 14px;
+      text-align: left;
+      cursor: pointer;
+      transition: all 0.25s;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .quiz-btn:hover {
+      background: rgba(99, 102, 241, 0.18);
+      border-color: var(--indigo-light);
+      transform: translateX(4px);
+    }
+
+    .quiz-btn.correct {
+      background: rgba(16, 185, 129, 0.25) !important;
+      border-color: #10B981 !important;
+      color: #34D399 !important;
+    }
+
+    .quiz-btn.wrong {
+      background: rgba(239, 68, 68, 0.25) !important;
+      border-color: #EF4444 !important;
+      color: #F87171 !important;
+    }
+
+    .quiz-feedback {
+      margin-top: 10px;
+      padding: 10px 14px;
+      border-radius: var(--radius-sm);
+      font-size: 13.5px;
+      display: none;
+    }
+
+    /* BROWSER & HEADER MOCKUP */
+    .browser-frame {
+      background: #0F172A;
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      border-radius: 14px;
+      overflow: hidden;
+      box-shadow: 0 16px 36px rgba(0, 0, 0, 0.5);
+    }
+
+    .browser-tab-bar {
+      background: #1E293B;
+      display: flex;
+      align-items: center;
+      padding: 8px 14px;
+      gap: 10px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .browser-dots {
+      display: flex;
+      gap: 6px;
+    }
+
+    .browser-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+    }
+
+    .browser-active-tab {
+      background: #0F172A;
+      padding: 4px 14px;
+      border-radius: 8px 8px 0 0;
+      font-size: 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: #E2E8F0;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-bottom: none;
+    }
+
+    .mockup-header-area {
+      background: linear-gradient(135deg, rgba(30, 41, 59, 0.95), rgba(15, 23, 42, 0.95));
+      border-bottom: 2px solid rgba(99, 102, 241, 0.3);
+      padding: 16px 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .mockup-banner-preview {
+      background-size: cover;
+      background-position: center;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      position: relative;
+      transition: height 0.4s ease, background 0.4s ease;
+      overflow: hidden;
+    }
+
+    .banner-overlay {
+      position: absolute;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.45);
+    }
+
+    .banner-text {
+      position: relative;
+      z-index: 2;
+      font-size: 28px;
+      font-weight: 800;
+      color: #FFFFFF;
+      text-shadow: 0 4px 12px rgba(0, 0, 0, 0.8);
+      padding: 10px 20px;
+    }
+
+    #confettiCanvas {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 999;
+    }
+  </style>
+</head>
+<body>
+  <div class="bg-mesh"></div>
+  <canvas id="confettiCanvas"></canvas>
+
+  <div class="floating-symbols">
+    <div class="float-tag" style="left: 6%; animation-delay: 0s;">sites.google.com/new 🚀</div>
+    <div class="float-tag" style="left: 28%; animation-delay: 4s;">Logo & Favicon 🌐</div>
+    <div class="float-tag" style="left: 52%; animation-delay: 2s;">Cover & Banner 🖼️</div>
+    <div class="float-tag" style="left: 74%; animation-delay: 7s;">Google Drive Sync 💾</div>
+    <div class="float-tag" style="left: 90%; animation-delay: 3s;">Themes & Palettes 🎨</div>
+  </div>
+
+  <div class="deck-container">
+    <!-- SLIDE 1: BÌA BÀI GIẢNG -->
+    <div class="slide active" id="slide-1">
+      <div style="flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; gap: 20px;">
+        <div class="slide-badge" style="font-size: 13px; padding: 6px 18px;">CHỦ ĐỀ 7: ỨNG DỤNG TIN HỌC · THỰC HÀNH GOOGLE SITES</div>
+        <h1 style="font-size: 44px; font-weight: 900; line-height: 1.2; max-width: 980px; background: linear-gradient(135deg, #FFFFFF 30%, #A5B4FC 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">
+          Bài 24: Xây Dựng Phần Đầu Trang Web
+        </h1>
+        <p style="font-size: 18px; color: var(--ink-soft); max-width: 820px; line-height: 1.6;">
+          Khởi động công cụ Google Sites, thiết lập bộ nhận diện thương hiệu (Tên tệp, Tên site, Logo, Favicon), làm chủ 4 loại biểu ngữ Banner và tùy biến giao diện Theme đồng bộ
+        </p>
+        <div style="display: flex; gap: 14px; margin-top: 10px;">
+          <button onclick="nextSlide()" class="reveal-btn" style="padding: 12px 30px; font-size: 15px; border-radius: 30px; background: linear-gradient(135deg, #6366F1, #38E1F0); color: #060913; font-weight: 800; box-shadow: 0 10px 25px rgba(99, 102, 241, 0.4);">
+            Bắt đầu bài giảng 🚀
+          </button>
+        </div>
+        <div style="font-size: 13px; color: rgba(255, 255, 255, 0.4); margin-top: 20px;">
+          Trường THPT Na Rì · SGK Tin học 12 (ICT Kết nối tri thức, trang 134–138)
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 2: KHỞI ĐỘNG - ẤN TƯỢNG 3 GIÂY ĐẦU TIÊN -->
+    <div class="slide" id="slide-2">
+      <div class="slide-header">
+        <div>
+          <div class="slide-badge">01 · KHỞI ĐỘNG</div>
+          <div class="slide-title">Ấn Tượng 3 Giây Đầu Tiên Của Khách Vào Web</div>
+          <div class="slide-subtitle">Vì sao phần đầu trang (Header) lại quyết định giữ chân người xem?</div>
+        </div>
+        <div class="reveal-controller">
+          <span>Bước: <strong class="reveal-status" id="slide-2-status">0 / 3</strong></span>
+          <button class="reveal-btn" onclick="revealNextInCurrentSlide()">Tiếp ⤓</button>
+          <button class="reveal-btn" onclick="revealAllInCurrentSlide()">Hiện hết</button>
+        </div>
+      </div>
+      <div class="slide-body">
+        <div class="highlight-box reveal-item" style="font-size: 15px;">
+          ⏱️ <strong>Quy luật 3 giây trong thiết kế Web:</strong> Người dùng chỉ mất trung bình 3 giây để nhìn vào phần trên cùng màn hình và quyết định: <em>"Trang web này của ai? Nói về điều gì? Có chuyên nghiệp để ở lại đọc tiếp không?"</em>
+        </div>
+        <div class="grid-3">
+          <div class="card reveal-item">
+            <div class="card-title">🏷️ Bộ nhận diện rõ ràng</div>
+            <div class="card-desc">Tên trang web và logo góc trái giúp người xem biết ngay chủ nhân của website là trường học, câu lạc bộ hay doanh nghiệp nào.</div>
+          </div>
+          <div class="card reveal-item">
+            <div class="card-title">🖼️ Tiêu đề & Biểu ngữ lôi cuốn</div>
+            <div class="card-desc">Ảnh nền biểu ngữ (banner) sắc nét cùng thông điệp tiêu đề súc tích tạo cảm xúc tin tưởng và tò mò khám phá.</div>
+          </div>
+          <div class="card reveal-item">
+            <div class="card-title">🧭 Định hướng điều hướng</div>
+            <div class="card-desc">Thanh menu đặt gọn gàng cạnh logo chỉ lối giúp khách truy cập lướt nhanh sang các chuyên mục quan trọng khác.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 3: GOOGLE SITES LÀ GÌ? -->
+    <div class="slide" id="slide-3">
+      <div class="slide-header">
+        <div>
+          <div class="slide-badge">02 · GIỚI THIỆU CÔNG CỤ</div>
+          <div class="slide-title">Google Sites: Nền Tảng Dựng Web Trực Quan Miễn Phí</div>
+          <div class="slide-subtitle">Không cần viết một dòng code HTML/CSS phức tạp nào</div>
+        </div>
+        <div class="reveal-controller">
+          <span>Bước: <strong class="reveal-status" id="slide-3-status">0 / 3</strong></span>
+          <button class="reveal-btn" onclick="revealNextInCurrentSlide()">Tiếp ⤓</button>
+          <button class="reveal-btn" onclick="revealAllInCurrentSlide()">Hiện hết</button>
+        </div>
+      </div>
+      <div class="slide-body">
+        <div class="grid-3">
+          <div class="card reveal-item" style="border-top: 3px solid var(--sea-light);">
+            <div style="font-size: 32px; margin-bottom: 8px;">🖱️ Kéo & Thả Trực Quan</div>
+            <div class="card-title">WYSIWYG Hiện đại</div>
+            <div class="card-desc">Những gì bạn nhìn thấy trên màn hình thiết kế chính là giao diện thực tế khi người khác truy cập trang web. Thao tác chỉ bằng chuột kéo thả.</div>
+          </div>
+          <div class="card reveal-item" style="border-top: 3px solid var(--leaf-light);">
+            <div style="font-size: 32px; margin-bottom: 8px;">☁️ Tích Hợp Google Workspace</div>
+            <div class="card-title">Tự Động Lưu Lên Drive</div>
+            <div class="card-desc">Mọi chỉnh sửa được đồng bộ đám mây ngay lập tức. Dễ dàng chèn ảnh từ Drive, nhúng video YouTube, biểu mẫu Google Forms và bản đồ Maps.</div>
+          </div>
+          <div class="card reveal-item" style="border-top: 3px solid var(--gold-light);">
+            <div style="font-size: 32px; margin-bottom: 8px;">📱 Tương Thích Đa Thiết Bị</div>
+            <div class="card-title">Responsive Tự Động</div>
+            <div class="card-desc">Website tự động co giãn và bố cục lại chuẩn xác trên màn hình máy tính bàn, máy tính bảng iPad hay điện thoại thông minh smartphone.</div>
+          </div>
+        </div>
+        <div class="highlight-box reveal-item" style="margin-top: 6px;">
+          💡 <strong>Chuẩn kiến thức SGK:</strong> Google Sites là giải pháp hoàn hảo cho học sinh lớp 12 thực hành làm web trường, web kỷ yếu lớp học, câu lạc bộ ngoại khóa và portfolio hướng nghiệp.
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 4: KHỞI ĐỘNG GOOGLE SITES -->
+    <div class="slide" id="slide-4">
+      <div class="slide-header">
+        <div>
+          <div class="slide-badge">03 · THAO TÁC CƠ BẢN</div>
+          <div class="slide-title">2 Cách Mở & Khởi Tạo Trang Web Mới</div>
+          <div class="slide-subtitle">sites.google.com hay sites.google.com/new?</div>
+        </div>
+        <div class="reveal-controller">
+          <span>Bước: <strong class="reveal-status" id="slide-4-status">0 / 2</strong></span>
+          <button class="reveal-btn" onclick="revealNextInCurrentSlide()">Tiếp ⤓</button>
+          <button class="reveal-btn" onclick="revealAllInCurrentSlide()">Hiện hết</button>
+        </div>
+      </div>
+      <div class="slide-body">
+        <div class="grid-2">
+          <div class="card reveal-item" style="background: rgba(99, 102, 241, 0.08); border-color: rgba(99, 102, 241, 0.3);">
+            <div style="font-size: 28px; margin-bottom: 6px;">🌐 Cách 1: Vào trang quản lý chung</div>
+            <div style="font-family: var(--font-mono); font-size: 15px; color: var(--sea-light); margin-bottom: 8px;">https://sites.google.com</div>
+            <div class="card-desc">
+              • Mở màn hình chính liệt kê toàn bộ các website bạn đã từng tạo hoặc được chia sẻ.<br>
+              • Xem kho <strong>Mẫu giao diện sẵn (Template Gallery)</strong>: Mẫu lớp học (Class), Sự kiện (Event), Câu lạc bộ (Club), Dự án (Project).
+            </div>
+          </div>
+          <div class="card reveal-item" style="background: rgba(16, 185, 129, 0.08); border-color: rgba(16, 185, 129, 0.3);">
+            <div style="font-size: 28px; margin-bottom: 6px;">⚡ Cách 2: Tạo trang trống siêu tốc</div>
+            <div style="font-family: var(--font-mono); font-size: 15px; color: var(--leaf-light); margin-bottom: 8px;">https://sites.google.com/new</div>
+            <div class="card-desc">
+              • Trình duyệt mở ngay một trang web trống mới tinh (Blank site).<br>
+              • Tiết kiệm thời gian, thích hợp khi bạn muốn tự tay thiết kế từng khối từ con số 0 theo đúng ý đồ của mình.
+            </div>
+          </div>
+        </div>
+        <div class="card reveal-item" style="display: flex; align-items: center; gap: 16px;">
+          <div style="font-size: 32px;">🔑</div>
+          <div class="card-desc" style="font-size: 14px;">
+            <strong>Yêu cầu bắt buộc:</strong> Máy tính phải kết nối Internet và người dùng phải đăng nhập bằng tài khoản Google cá nhân (Gmail) hoặc tài khoản Google Workspace giáo dục do nhà trường cấp.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 5: KHÁM PHÁ CỬA SỔ THIẾT KẾ -->
+    <div class="slide" id="slide-5">
+      <div class="slide-header">
+        <div>
+          <div class="slide-badge">04 · BỐ CỤC KHÔNG GIAN</div>
+          <div class="slide-title">Khám Phá Cửa Sổ Thiết Kế Của Google Sites</div>
+          <div class="slide-subtitle">Vùng làm việc trung tâm, thanh điều khiển trên cùng và 3 bảng chọn bên phải</div>
+        </div>
+      </div>
+      <div class="slide-body">
+        <div class="grid-3" style="flex: 1;">
+          <div class="card">
+            <div class="card-title" style="color: var(--sea-light);">1. Vùng làm việc chính</div>
+            <div class="card-desc">
+              Chiếm phần lớn không gian màn hình ở trung tâm.<br><br>
+              • Hiển thị trang web đang thiết kế theo thời gian thực.<br>
+              • Cho phép nhấp trực tiếp vào chữ để sửa nội dung hoặc rê chuột vào lề để chỉnh khối.
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-title" style="color: var(--indigo-light);">2. Thanh công cụ trên cùng</div>
+            <div class="card-desc">
+              Nằm ở mép trên cùng của màn hình làm việc:<br><br>
+              • <strong>Hoàn tác (Undo/Redo):</strong> Quay lại thao tác trước.<br>
+              • <strong>Xem trước (Preview 👁️):</strong> Thử nghiệm giao diện trên PC, iPad, Phone.<br>
+              • <strong>Chia sẻ (Share 👥):</strong> Mời bạn bè cùng làm bài tập nhóm.<br>
+              • <strong>Xuất bản (Publish 🚀):</strong> Đưa trang web ra Internet.
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-title" style="color: var(--gold-light);">3. Ba bảng chọn bên phải</div>
+            <div class="card-desc">
+              "Trạm điều hành" gồm 3 tab chuyển đổi linh hoạt:<br><br>
+              • <strong>Chèn (Insert):</strong> Thêm chữ, ảnh, video, khối mẫu.<br>
+              • <strong>Trang (Pages):</strong> Quản lý trang chủ và các trang con.<br>
+              • <strong>Giao diện (Themes):</strong> Đổi bảng màu và kiểu chữ toàn site.
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 6: BỘ NHẬN DIỆN GÓC TRÊN TRÁI -->
+    <div class="slide" id="slide-6">
+      <div class="slide-header">
+        <div>
+          <div class="slide-badge">05 · NHẬN DIỆN THƯƠNG HIỆU</div>
+          <div class="slide-title">Bộ 3 Nhận Diện Ở Góc Trên Bên Trái Cửa Sổ</div>
+          <div class="slide-subtitle">Phân biệt rạch ròi giữa Tên tệp Drive, Tên trang web và Logo biểu trưng</div>
+        </div>
+        <div class="reveal-controller">
+          <span>Bước: <strong class="reveal-status" id="slide-6-status">0 / 3</strong></span>
+          <button class="reveal-btn" onclick="revealNextInCurrentSlide()">Tiếp ⤓</button>
+          <button class="reveal-btn" onclick="revealAllInCurrentSlide()">Hiện hết</button>
+        </div>
+      </div>
+      <div class="slide-body">
+        <div class="grid-3">
+          <div class="card reveal-item" style="border-top: 3px solid var(--purple-light);">
+            <div class="card-title">📁 1. Tên tệp Google Drive</div>
+            <div class="card-desc">
+              Vị trí ban đầu là dòng chữ <em>"Trang web không có tiêu đề"</em> ở góc trên cùng bên trái.<br><br>
+              • <strong>Mục đích:</strong> Dùng để đặt tên tệp lưu trong Google Drive cá nhân giúp bạn tìm kiếm, quản lý.<br>
+              • <strong>Lưu ý:</strong> Tên này người duyệt web bình thường <strong>không nhìn thấy</strong>.
+            </div>
+          </div>
+          <div class="card reveal-item" style="border-top: 3px solid var(--sea-light);">
+            <div class="card-title">🌐 2. Tên trang web (Site Name)</div>
+            <div class="card-desc">
+              Vị trí nằm ngay bên cạnh biểu trưng Logo ở đầu thanh điều hướng.<br><br>
+              • <strong>Mục đích:</strong> Tên chính thức xuất hiện trên thanh điều hướng của website (ví dụ: <em>"THPT Na Rì - Bắc Kạn"</em>).<br>
+              • <strong>Hiển thị:</strong> Xuất hiện trực tiếp cho tất cả mọi người khi xem trang.
+            </div>
+          </div>
+          <div class="card reveal-item" style="border-top: 3px solid var(--coral-light);">
+            <div class="card-title">🖼️ 3. Thêm biểu trưng (Add Logo)</div>
+            <div class="card-desc">
+              Rê chuột vào mép trái tên trang web sẽ hiện nút <em>"Thêm biểu trưng"</em>.<br><br>
+              • <strong>Thao tác:</strong> Bấm nút và chọn <em>Tải lên (Upload)</em> từ máy tính hoặc <em>Chọn (Select)</em>.<br>
+              • <strong>Khuyến nghị:</strong> Dùng ảnh định dạng PNG nền trong suốt để hòa hợp với màu thanh menu.
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 7: BIỂU TƯỢNG FAVICON -->
+    <div class="slide" id="slide-7">
+      <div class="slide-header">
+        <div>
+          <div class="slide-badge">06 · CHI TIẾT TINH TẾ</div>
+          <div class="slide-title">Biểu Tượng Trang Web (Favicon) Là Gì?</div>
+          <div class="slide-subtitle">Chi tiết nhỏ tạo nên sự chuyên nghiệp vượt bậc cho website</div>
+        </div>
+        <div class="reveal-controller">
+          <span>Bước: <strong class="reveal-status" id="slide-7-status">0 / 2</strong></span>
+          <button class="reveal-btn" onclick="revealNextInCurrentSlide()">Tiếp ⤓</button>
+          <button class="reveal-btn" onclick="revealAllInCurrentSlide()">Hiện hết</button>
+        </div>
+      </div>
+      <div class="slide-body">
+        <div class="grid-2">
+          <div class="card reveal-item">
+            <div class="card-title">🔍 Định nghĩa & Vị trí hiển thị</div>
+            <div class="card-desc" style="font-size: 14px; line-height: 1.6;">
+              • <strong>Favicon (Favorite Icon):</strong> Là biểu tượng nhỏ hình vuông (chuẩn 16×16px hoặc 32×32px).<br><br>
+              • <strong>Vị trí xuất hiện:</strong> Hiển thị ngay trên <strong>tab của trình duyệt web</strong> (bên cạnh dòng tiêu đề tab) và trong danh sách dấu trang (Bookmarks / Favorites).<br><br>
+              • <strong>Tác dụng:</strong> Giúp người xem nhận diện trang web của bạn ngay lập tức khi mở hàng chục tab cùng một lúc!
+            </div>
+          </div>
+          <div class="card reveal-item">
+            <div class="card-title">⚙️ Cách cài đặt Favicon trong Google Sites</div>
+            <div class="card-desc" style="font-size: 14px; line-height: 1.6;">
+              1. Bấm vào biểu tượng bánh răng <strong>Cài đặt (Settings)</strong> hoặc nhấp vào nút <em>Thêm biểu trưng</em>.<br><br>
+              2. Chọn mục <strong>Hình ảnh thương hiệu (Brand images)</strong> ở cột bên trái bảng cài đặt.<br><br>
+              3. Cuộn xuống phần <strong>Biểu tượng trang web (Favicon)</strong> ➔ Bấm nút <em>Tải lên (Upload)</em> tệp ảnh logo thu nhỏ (.png hoặc .ico).
+            </div>
+          </div>
+        </div>
+        <div class="highlight-box reveal-item" style="text-align: center;">
+          💡 <em>"Nếu không cài Favicon, tab trình duyệt sẽ chỉ hiện biểu tượng tệp màu xám mặc định trông rất nghiệp dư!"</em>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 8: TRẠM MÔ PHỎNG HEADER & FAVICON -->
+    <div class="slide" id="slide-8">
+      <div class="slide-header">
+        <div>
+          <div class="slide-badge">07 · TRẠM MÔ PHỎNG TƯƠNG TÁC</div>
+          <div class="slide-title">Header Studio: Thử Nghiệm Nhận Diện Thương Hiệu</div>
+          <div class="slide-subtitle">Nhập tên trang web, chọn logo và quan sát sự biến đổi đồng thời trên tab trình duyệt</div>
+        </div>
+      </div>
+      <div class="slide-body">
+        <div class="grid-2" style="align-items: center; gap: 24px;">
+          <!-- BẢNG ĐIỀU KHIỂN -->
+          <div class="card" style="display: flex; flex-direction: column; gap: 14px;">
+            <div class="card-title" style="color: var(--sea-light);">🛠️ Bảng Tùy Chỉnh Nhanh</div>
+            <div>
+              <label style="font-size: 13px; color: var(--ink-soft); display: block; margin-bottom: 6px;">1. Nhập tên trang web (Site Name):</label>
+              <input id="simSiteNameInput" type="text" value="THPT Na Rì - Bắc Kạn" oninput="updateSimHeader()" 
+                     style="width: 100%; padding: 10px 14px; background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.2); border-radius: 8px; color: white; font-size: 14px; outline: none;">
+            </div>
+            <div>
+              <label style="font-size: 13px; color: var(--ink-soft); display: block; margin-bottom: 6px;">2. Chọn biểu trưng Logo:</label>
+              <div style="display: flex; gap: 10px;">
+                <button onclick="setSimLogo('🏫', 'Trường THPT Na Rì')" class="reveal-btn" style="background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2);">🏫 Trường học</button>
+                <button onclick="setSimLogo('💻', 'CLB Tin học Na Rì')" class="reveal-btn" style="background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2);">💻 CLB Tin Học</button>
+                <button onclick="setSimLogo('🌲', 'Du lịch Ba Bể - Bắc Kạn')" class="reveal-btn" style="background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2);">🌲 Du Lịch Bắc Kạn</button>
+              </div>
+            </div>
+            <div>
+              <label style="font-size: 13px; color: var(--ink-soft); display: block; margin-bottom: 6px;">3. Bật/Tắt Favicon trên tab:</label>
+              <button id="toggleFaviconBtn" onclick="toggleSimFavicon()" class="reveal-btn" style="background: var(--leaf); color: white; width: 100%;">
+                ✅ Đang bật Favicon nhận diện
+              </button>
+            </div>
+          </div>
+
+          <!-- MÔ HÌNH TRÌNH DUYỆT TRỰC QUAN -->
+          <div class="browser-frame">
+            <div class="browser-tab-bar">
+              <div class="browser-dots">
+                <div class="browser-dot" style="background: #EF4444;"></div>
+                <div class="browser-dot" style="background: #F59E0B;"></div>
+                <div class="browser-dot" style="background: #10B981;"></div>
+              </div>
+              <div class="browser-active-tab">
+                <span id="simFaviconDisplay" style="font-size: 14px;">🏫</span>
+                <span id="simTabTitleDisplay" style="max-width: 180px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-weight: 600;">
+                  THPT Na Rì - Bắc Kạn
+                </span>
+                <span style="color: rgba(255,255,255,0.4); margin-left: 6px;">✕</span>
+              </div>
+            </div>
+            <!-- KHU VỰC ĐẦU TRANG MẪU -->
+            <div class="mockup-header-area">
+              <div style="display: flex; align-items: center; gap: 10px;">
+                <div id="simLogoDisplay" style="width: 32px; height: 32px; background: rgba(99,102,241,0.25); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 18px;">
+                  🏫
+                </div>
+                <div id="simHeaderSiteName" style="font-weight: 700; font-size: 15px; color: white;">
+                  THPT Na Rì - Bắc Kạn
+                </div>
+              </div>
+              <div style="display: flex; gap: 16px; font-size: 13px; color: var(--indigo-light); font-weight: 600;">
+                <span style="color: white; border-bottom: 2px solid var(--sea-light); padding-bottom: 2px;">Trang chủ</span>
+                <span>Giới thiệu</span>
+                <span>Hoạt động</span>
+                <span>Liên hệ</span>
+              </div>
+            </div>
+            <div style="padding: 24px; text-align: center; color: rgba(255,255,255,0.4); font-size: 13px;">
+              [Vùng nội dung bên dưới phần đầu trang...]
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 9: TÙY BIẾN BIỂU NGỮ (BANNER) -->
+    <div class="slide" id="slide-9">
+      <div class="slide-header">
+        <div>
+          <div class="slide-badge">08 · SOẠN THẢO TIÊU ĐỀ</div>
+          <div class="slide-title">Tùy Biến Biểu Ngữ (Banner) & Tiêu Đề Trang</div>
+          <div class="slide-subtitle">Trình bày thông điệp chính nổi bật giữa phần đầu trang</div>
+        </div>
+        <div class="reveal-controller">
+          <span>Bước: <strong class="reveal-status" id="slide-9-status">0 / 3</strong></span>
+          <button class="reveal-btn" onclick="revealNextInCurrentSlide()">Tiếp ⤓</button>
+          <button class="reveal-btn" onclick="revealAllInCurrentSlide()">Hiện hết</button>
+        </div>
+      </div>
+      <div class="slide-body">
+        <div class="grid-3">
+          <div class="card reveal-item">
+            <div class="card-title">✍️ Nhập tiêu đề trang</div>
+            <div class="card-desc">
+              Nhấp chuột trực tiếp vào khung chữ <em>"Tiêu đề trang của bạn"</em> ở giữa ảnh biểu ngữ để gõ nội dung chào đón (Ví dụ: <em>"Chào mừng đến với Website 12A1"</em>).
+            </div>
+          </div>
+          <div class="card reveal-item">
+            <div class="card-title">🎛️ Thanh công cụ văn bản nổi</div>
+            <div class="card-desc">
+              Khi nhấp vào khung chữ, thanh công cụ hiện ra cho phép chọn định dạng: <strong>Tiêu đề lớn (Title)</strong>, <strong>Tiêu đề phụ (Heading)</strong>, phông chữ, cỡ chữ, căn giữa và màu sắc.
+            </div>
+          </div>
+          <div class="card reveal-item">
+            <div class="card-title">📐 Kéo giãn khung chữ</div>
+            <div class="card-desc">
+              Dùng chuột kéo các chấm tròn màu xanh ở hai đầu khung tiêu đề để thay đổi độ rộng, tránh làm câu bị ngắt dòng xuống hàng thiếu thẩm mỹ.
+            </div>
+          </div>
+        </div>
+        <div class="highlight-box reveal-item">
+          📌 <strong>Mẹo hay:</strong> Tiêu đề biểu ngữ nên ngắn gọn từ 3 đến 8 từ, súc tích và truyền tải đúng trọng tâm của trang.
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 10: THAY ĐỔI HÌNH NỀN BANNER -->
+    <div class="slide" id="slide-10">
+      <div class="slide-header">
+        <div>
+          <div class="slide-badge">09 · HÌNH ẢNH NỀN</div>
+          <div class="slide-title">Thay Đổi Hình Nền Cho Biểu Ngữ (Banner)</div>
+          <div class="slide-subtitle">2 cách chọn ảnh nền chuẩn sắc nét và tính năng tự chỉnh độ tương phản</div>
+        </div>
+        <div class="reveal-controller">
+          <span>Bước: <strong class="reveal-status" id="slide-10-status">0 / 2</strong></span>
+          <button class="reveal-btn" onclick="revealNextInCurrentSlide()">Tiếp ⤓</button>
+          <button class="reveal-btn" onclick="revealAllInCurrentSlide()">Hiện hết</button>
+        </div>
+      </div>
+      <div class="slide-body">
+        <div class="grid-2">
+          <div class="card reveal-item">
+            <div class="card-title">📤 1. Nút "Thay đổi hình ảnh" (Change image)</div>
+            <div class="card-desc" style="font-size: 14px; line-height: 1.6;">
+              Khi rê chuột vào góc dưới bên trái của biểu ngữ, bấm nút <strong>Thay đổi hình ảnh</strong>:<br><br>
+              • <strong>Tải lên (Upload):</strong> Chọn ảnh lưu sẵn trong máy tính (ảnh chụp trường học, lớp học, phong cảnh Na Rì).<br><br>
+              • <strong>Chọn hình ảnh (Select):</strong> Mở thư viện ảnh mẫu phong phú của Google hoặc tìm kiếm ảnh chất lượng cao trực tiếp trên mạng.
+            </div>
+          </div>
+          <div class="card reveal-item">
+            <div class="card-title">✨ 2. Trí tuệ tự động chỉnh độ đọc được</div>
+            <div class="card-desc" style="font-size: 14px; line-height: 1.6;">
+              • Ở góc dưới bên phải biểu ngữ có biểu tượng <strong>ngôi sao nhấp nháy (Readability adjustment)</strong>.<br><br>
+              • Google Sites sẽ tự động phân tích độ sáng tối của bức ảnh nền để phủ một lớp lọc mờ thông minh, đảm bảo dòng chữ tiêu đề màu trắng luôn nổi bật, không bị chìm hay lóa mắt!
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 11: 4 LOẠI BIỂU NGỮ (HEADER TYPES) -->
+    <div class="slide" id="slide-11">
+      <div class="slide-header">
+        <div>
+          <div class="slide-badge">10 · CẤU TRÚC BIỂU NGỮ</div>
+          <div class="slide-title">4 Loại Biểu Ngữ (Header Types) Trong Google Sites</div>
+          <div class="slide-subtitle">Lựa chọn kích thước biểu ngữ tối ưu cho từng mục đích của trang web</div>
+        </div>
+        <div class="reveal-controller">
+          <span>Bước: <strong class="reveal-status" id="slide-11-status">0 / 4</strong></span>
+          <button class="reveal-btn" onclick="revealNextInCurrentSlide()">Tiếp ⤓</button>
+          <button class="reveal-btn" onclick="revealAllInCurrentSlide()">Hiện hết</button>
+        </div>
+      </div>
+      <div class="slide-body">
+        <div class="grid-4">
+          <div class="card reveal-item" style="border-top: 3px solid #EC4899;">
+            <div class="card-title" style="font-size: 14px;">1. Bìa (Cover) 🖼️</div>
+            <div class="card-desc">
+              Biểu ngữ choán <strong>toàn bộ màn hình</strong> khi mở trang. Tạo ấn tượng thị giác cực mạnh, rất phù hợp cho Trang bìa, Trang sự kiện lớn.
+            </div>
+          </div>
+          <div class="card reveal-item" style="border-top: 3px solid #6366F1;">
+            <div class="card-title" style="font-size: 14px;">2. Biểu ngữ lớn (Large) 📐</div>
+            <div class="card-desc">
+              Biểu ngữ khá rộng, chiếm khoảng <strong>nửa màn hình</strong>. Thường dùng cho Trang chủ (Homepage) của trường học hay công ty.
+            </div>
+          </div>
+          <div class="card reveal-item" style="border-top: 3px solid #10B981;">
+            <div class="card-title" style="font-size: 14px;">3. Biểu ngữ (Banner) 📏</div>
+            <div class="card-desc">
+              Kích thước <strong>vừa phải, tiêu chuẩn</strong>. Là kích thước phổ biến và được dùng nhiều nhất cho hầu hết các trang web.
+            </div>
+          </div>
+          <div class="card reveal-item" style="border-top: 3px solid #F5A623;">
+            <div class="card-title" style="font-size: 14px;">4. Chỉ tiêu đề (Title only) 📝</div>
+            <div class="card-desc">
+              <strong>Bỏ hoàn toàn hình ảnh nền</strong>, chỉ giữ lại khung chữ tiêu đề trên nền màu trang. Thích hợp cho các trang tài liệu, bảng điểm.
+            </div>
+          </div>
+        </div>
+        <div class="highlight-box reveal-item" style="font-size: 14px;">
+          🎯 <strong>Cách đổi loại biểu ngữ:</strong> Rê chuột vào góc dưới bên trái biểu ngữ ➔ Bấm vào nút <strong>Loại biểu ngữ (Header type)</strong> ➔ Chọn 1 trong 4 loại trên.
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 12: MÔ PHỎNG 4 LOẠI BANNER -->
+    <div class="slide" id="slide-12">
+      <div class="slide-header">
+        <div>
+          <div class="slide-badge">11 · TRẠM TRỰC QUAN HÓA</div>
+          <div class="slide-title">Mô Phỏng 4 Loại Biểu Ngữ (Interactive Banner Switcher)</div>
+          <div class="slide-subtitle">Nhấp chuột chuyển đổi giữa 4 chế độ để xem kích thước biểu ngữ co giãn thời gian thực</div>
+        </div>
+      </div>
+      <div class="slide-body">
+        <div style="display: flex; gap: 12px; justify-content: center; margin-bottom: 10px;">
+          <button id="bannerBtnCover" onclick="switchBannerType('cover')" class="reveal-btn" style="background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2);">
+            🖼️ Bìa (Cover)
+          </button>
+          <button id="bannerBtnLarge" onclick="switchBannerType('large')" class="reveal-btn" style="background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2);">
+            📐 Biểu ngữ lớn (Large banner)
+          </button>
+          <button id="bannerBtnNormal" onclick="switchBannerType('normal')" class="reveal-btn correct" style="background: var(--indigo); border: 1px solid var(--indigo-light);">
+            📏 Biểu ngữ chuẩn (Banner)
+          </button>
+          <button id="bannerBtnTitle" onclick="switchBannerType('title')" class="reveal-btn" style="background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2);">
+            📝 Chỉ tiêu đề (Title only)
+          </button>
+        </div>
+
+        <!-- MÀN HÌNH PREVIEW BANNER -->
+        <div class="browser-frame" style="max-height: 380px; overflow: hidden; display: flex; flex-direction: column;">
+          <div class="mockup-header-area" style="padding: 10px 20px;">
+            <div style="display: flex; align-items: center; gap: 8px;">
+              <span style="font-size: 16px;">🏫</span>
+              <span style="font-weight: 700; font-size: 14px; color: white;">THPT Na Rì</span>
+            </div>
+            <div style="font-size: 12px; color: var(--indigo-light);">Trang chủ · Giới thiệu · Hoạt động</div>
+          </div>
+
+          <div id="demoBannerBox" class="mockup-banner-preview" 
+               style="height: 180px; background-image: radial-gradient(circle at center, #1E1B4B 0%, #0F172A 100%);">
+            <div id="demoBannerOverlay" class="banner-overlay"></div>
+            <div id="demoBannerText" class="banner-text">
+              CHÀO MỪNG ĐẾN VỚI THPT NA RÌ
+            </div>
+          </div>
+
+          <div style="padding: 16px; background: #0A0F1D; text-align: center; color: var(--ink-soft); font-size: 13px;">
+            <span id="demoBannerDesc">📏 Chế độ Biểu ngữ (Banner): Chiều cao tiêu chuẩn 180px, cân đối và phổ biến nhất.</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 13: BẢNG CHỌN GIAO DIỆN (THEMES) -->
+    <div class="slide" id="slide-13">
+      <div class="slide-header">
+        <div>
+          <div class="slide-badge">12 · THẨM MỸ TOÀN DIỆN</div>
+          <div class="slide-title">Chọn Chủ Đề (Themes) & Bảng Màu Đồng Bộ</div>
+          <div class="slide-subtitle">Bảng chọn Giao diện giúp website đẹp mắt, không bao giờ bị rối mắt</div>
+        </div>
+        <div class="reveal-controller">
+          <span>Bước: <strong class="reveal-status" id="slide-13-status">0 / 3</strong></span>
+          <button class="reveal-btn" onclick="revealNextInCurrentSlide()">Tiếp ⤓</button>
+          <button class="reveal-btn" onclick="revealAllInCurrentSlide()">Hiện hết</button>
+        </div>
+      </div>
+      <div class="slide-body">
+        <div class="grid-3">
+          <div class="card reveal-item">
+            <div class="card-title">🎨 6 Giao diện tích hợp sẵn</div>
+            <div class="card-desc">
+              Google Sites cung cấp sẵn 6 phong cách thiết kế tinh tế:<br>
+              • <strong>Đơn giản (Simple)</strong><br>
+              • <strong>Aristotle</strong><br>
+              • <strong>Ngoại giao (Diplomat)</strong><br>
+              • <strong>Tầm nhìn (Vision)</strong><br>
+              • <strong>Bằng phẳng (Level)</strong><br>
+              • <strong>Ấn tượng (Impression)</strong>
+            </div>
+          </div>
+          <div class="card reveal-item">
+            <div class="card-title">🌈 Bảng màu phối sẵn (Palettes)</div>
+            <div class="card-desc">
+              Mỗi giao diện gợi ý 5 màu chủ đạo phối sẵn ăn ý. Bạn có thể bấm vào biểu tượng thùng sơn cuối hàng để nhập mã màu thương hiệu riêng (ví dụ mã màu áo đồng phục trường).
+            </div>
+          </div>
+          <div class="card reveal-item">
+            <div class="card-title">🔤 Kiểu phông chữ (Font styles)</div>
+            <div class="card-desc">
+              Tùy chọn phong cách phông chữ đi kèm (Cổ điển, Hiện đại, Táo bạo, Nhẹ nhàng) giúp đồng bộ từ tiêu đề lớn cho đến từng đoạn văn trong toàn bộ website.
+            </div>
+          </div>
+        </div>
+        <div class="highlight-box reveal-item" style="font-size: 14px;">
+          ✨ <strong>Lợi ích lớn nhất:</strong> Khi bạn đổi Theme, toàn bộ tiêu đề, đường viền, nút bấm trên tất cả các trang sẽ <strong>tự động đổi màu và phông chữ đồng bộ</strong> trong tích tắc!
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 14: LƯU Ý VÀNG KHI THIẾT KẾ HEADER -->
+    <div class="slide" id="slide-14">
+      <div class="slide-header">
+        <div>
+          <div class="slide-badge">13 · KINH NGHIỆM THỰC CHIẾN</div>
+          <div class="slide-title">4 Quy Tắc Vàng Khi Thiết Kế Phần Đầu Trang</div>
+          <div class="slide-subtitle">Tránh những sai lầm thường gặp của người mới bắt đầu làm web</div>
+        </div>
+      </div>
+      <div class="slide-body">
+        <div class="grid-2">
+          <div class="card" style="border-left: 4px solid var(--coral-light);">
+            <div class="card-title">⚠️ 1. Đừng chọn ảnh nền quá nhiều chi tiết rối rắm</div>
+            <div class="card-desc">Ảnh nền có quá nhiều hoa văn, nhiều màu sắc đối chọi sẽ khiến người đọc không thể nhìn rõ chữ tiêu đề dù đã bật bộ lọc tương phản.</div>
+          </div>
+          <div class="card" style="border-left: 4px solid var(--gold-light);">
+            <div class="card-title">⚠️ 2. Không để dòng chữ tiêu đề quá dài</div>
+            <div class="card-desc">Tiêu đề biểu ngữ chiếm từ 3–8 từ là chuẩn mực. Nếu có giải thích thêm, hãy dùng phụ đề (Subheading) cỡ nhỏ bên dưới.</div>
+          </div>
+          <div class="card" style="border-left: 4px solid var(--sea-light);">
+            <div class="card-title">⚠️ 3. Logo phải có nền trong suốt (PNG)</div>
+            <div class="card-desc">Logo nền trắng vuông vức chèn đè lên thanh điều hướng tối màu trông rất lộ khuyết điểm. Hãy dùng định dạng ảnh PNG đã tách nền.</div>
+          </div>
+          <div class="card" style="border-left: 4px solid var(--leaf-light);">
+            <div class="card-title">⚠️ 4. Luôn kiểm tra nút Xem trước (Preview 👁️)</div>
+            <div class="card-desc">Trước khi nộp bài hoặc xuất bản, bấm nút Preview để kiểm tra xem trên màn hình điện thoại dọc tiêu đề có bị tràn dòng xấu hay không.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 15: MINI QUIZ -->
+    <div class="slide" id="slide-15">
+      <div class="slide-header">
+        <div>
+          <div class="slide-badge">14 · THỬ TÀI KIẾN THỨC</div>
+          <div class="slide-title">Mini-Quiz: Đố Vui Thiết Kế Đầu Trang Web</div>
+          <div class="slide-subtitle">Nhấp chọn đáp án để kiểm tra nhanh mức độ hiểu bài của bạn</div>
+        </div>
+      </div>
+      <div class="slide-body">
+        <div class="card" style="max-width: 900px; margin: 0 auto; width: 100%;">
+          <div style="font-size: 16px; font-weight: 700; color: #FFFFFF;" id="quizQuestion">
+            Câu 1/4: Để mở trực tiếp giao diện tạo một trang web mới tinh trên Google Sites từ thanh địa chỉ trình duyệt, ta nhập địa chỉ nào?
+          </div>
+          <div class="quiz-options" id="quizOptions">
+            <button class="quiz-btn" onclick="checkQuiz(0)">A. sites.google.com/new</button>
+            <button class="quiz-btn" onclick="checkQuiz(1)">B. drive.google.com/new</button>
+            <button class="quiz-btn" onclick="checkQuiz(2)">C. docs.google.com/site</button>
+            <button class="quiz-btn" onclick="checkQuiz(3)">D. cloud.google.com/web</button>
+          </div>
+          <div id="quizFeedback" class="quiz-feedback"></div>
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 14px;">
+            <span style="font-size: 13px; color: var(--ink-soft);" id="quizScore">Điểm: 0 / 4</span>
+            <button id="quizNextBtn" class="reveal-btn" style="display: none;" onclick="nextQuizQuestion()">Câu tiếp theo ➔</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 16: TỔNG KẾT & BÀI TẬP DỰ ÁN -->
+    <div class="slide" id="slide-16">
+      <div class="slide-header">
+        <div>
+          <div class="slide-badge">15 · TỔNG KẾT & DỰ ÁN</div>
+          <div class="slide-title">Ghi Nhớ Trọng Tâm & Nhiệm Vụ Thực Hành</div>
+          <div class="slide-subtitle">Sẵn sàng bước vào tiết thực hành trên máy tính trường THPT Na Rì</div>
+        </div>
+      </div>
+      <div class="slide-body">
+        <div class="grid-2">
+          <div class="card" style="border-top: 3px solid var(--sea-light);">
+            <div class="card-title">🎯 3 Ghi nhớ cốt lõi Bài 24</div>
+            <div class="card-desc" style="font-size: 14px; line-height: 1.65;">
+              1. <strong>Đăng nhập & khởi tạo:</strong> Vào <code>sites.google.com/new</code> để tạo trang web trống mới.<br>
+              2. <strong>Bộ nhận diện góc trái:</strong> Tên tệp (lưu trong Drive), Tên trang web (hiển thị trên site), Logo biểu trưng và Favicon (biểu tượng trên tab).<br>
+              3. <strong>Biểu ngữ & Giao diện:</strong> 4 loại biểu ngữ (Bìa, Biểu ngữ lớn, Biểu ngữ, Chỉ tiêu đề) kết hợp chọn Theme màu đồng bộ.
+            </div>
+          </div>
+          <div class="card" style="border-top: 3px solid var(--gold-light);">
+            <div class="card-title">💻 Nhiệm vụ thực hành dự án lớp học</div>
+            <div class="card-desc" style="font-size: 14px; line-height: 1.65;">
+              • Khởi tạo 1 trang web cá nhân hoặc nhóm trên Google Sites.<br>
+              • Đặt tên tệp: <code>Tin12_Nhom[X]_TenDeTai</code>.<br>
+              • Chèn Logo và Favicon cho website.<br>
+              • Soạn tiêu đề biểu ngữ và chọn ảnh nền banner sắc nét theo chủ đề đã chọn ở Bài 23.
+            </div>
+          </div>
+        </div>
+
+        <div style="display: flex; justify-content: center; margin-top: 10px;">
+          <button onclick="fireConfetti()" class="reveal-btn" style="padding: 12px 34px; font-size: 15px; border-radius: 30px; background: linear-gradient(135deg, #10B981, #38E1F0); color: #060913; font-weight: 800; box-shadow: 0 10px 25px rgba(16, 185, 129, 0.4);">
+            🎉 Chúc mừng hoàn thành Bài 24! (Bắn pháo hoa)
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- THANH ĐIỀU HƯỚNG TỔNG -->
+  <div class="deck-footer">
+    <button class="nav-btn" onclick="prevSlide()" title="Slide trước (Mũi tên trái)">‹</button>
+    <div class="deck-progress-container">
+      <div id="deckProgressBar" class="deck-progress-bar"></div>
+    </div>
+    <span id="deckCounter" class="deck-counter">1 / 16</span>
+    <button class="nav-btn" onclick="nextSlide()" title="Slide sau (Mũi tên phải)">›</button>
+    <button class="nav-btn" onclick="toggleMute()" id="muteBtn" title="Bật/Tắt âm thanh (Phím M)" style="font-size: 14px;">🔊</button>
+    <button class="nav-btn" onclick="toggleFullscreen()" title="Toàn màn hình (Phím F)" style="font-size: 13px;">⛶</button>
+  </div>
+
+  <script>
+    /* SYSTEM CONTROLLER */
+    let currentSlide = 1;
+    const totalSlides = 16;
+    let isMuted = false;
+
+    /* WEB AUDIO SYNTHESIZER */
+    let audioCtx = null;
+    function getAudioCtx() {
+      if (!audioCtx) {
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      }
+      if (audioCtx.state === 'suspended') {
+        audioCtx.resume();
+      }
+      return audioCtx;
+    }
+
+    function playSound(type) {
+      if (isMuted) return;
+      try {
+        const ctx = getAudioCtx();
+        const now = ctx.currentTime;
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+
+        if (type === 'next') {
+          osc.frequency.setValueAtTime(440, now);
+          osc.frequency.exponentialRampToValueAtTime(660, now + 0.12);
+          gain.gain.setValueAtTime(0.12, now);
+          gain.gain.linearRampToValueAtTime(0.01, now + 0.12);
+          osc.start(now);
+          osc.stop(now + 0.12);
+        } else if (type === 'prev') {
+          osc.frequency.setValueAtTime(580, now);
+          osc.frequency.exponentialRampToValueAtTime(360, now + 0.12);
+          gain.gain.setValueAtTime(0.12, now);
+          gain.gain.linearRampToValueAtTime(0.01, now + 0.12);
+          osc.start(now);
+          osc.stop(now + 0.12);
+        } else if (type === 'reveal') {
+          osc.type = 'triangle';
+          osc.frequency.setValueAtTime(523.25, now);
+          osc.frequency.setValueAtTime(659.25, now + 0.08);
+          gain.gain.setValueAtTime(0.1, now);
+          gain.gain.linearRampToValueAtTime(0.01, now + 0.18);
+          osc.start(now);
+          osc.stop(now + 0.18);
+        } else if (type === 'correct') {
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(523.25, now);
+          osc.frequency.setValueAtTime(659.25, now + 0.1);
+          osc.frequency.setValueAtTime(783.99, now + 0.2);
+          gain.gain.setValueAtTime(0.15, now);
+          gain.gain.linearRampToValueAtTime(0.01, now + 0.35);
+          osc.start(now);
+          osc.stop(now + 0.35);
+        } else if (type === 'wrong') {
+          osc.type = 'sawtooth';
+          osc.frequency.setValueAtTime(220, now);
+          osc.frequency.setValueAtTime(196, now + 0.12);
+          gain.gain.setValueAtTime(0.12, now);
+          gain.gain.linearRampToValueAtTime(0.01, now + 0.28);
+          osc.start(now);
+          osc.stop(now + 0.28);
+        } else if (type === 'click') {
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(800, now);
+          gain.gain.setValueAtTime(0.06, now);
+          gain.gain.linearRampToValueAtTime(0.01, now + 0.05);
+          osc.start(now);
+          osc.stop(now + 0.05);
+        } else if (type === 'success') {
+          osc.type = 'triangle';
+          [523, 659, 784, 1046].forEach((f, idx) => {
+            const o = ctx.createOscillator();
+            const g = ctx.createGain();
+            o.type = 'triangle';
+            o.connect(g);
+            g.connect(ctx.destination);
+            o.frequency.setValueAtTime(f, now + idx * 0.08);
+            g.gain.setValueAtTime(0.12, now + idx * 0.08);
+            g.gain.linearRampToValueAtTime(0.01, now + idx * 0.08 + 0.2);
+            o.start(now + idx * 0.08);
+            o.stop(now + idx * 0.08 + 0.2);
+          });
+        }
+      } catch (e) {}
+    }
+
+    /* SLIDE NAVIGATION */
+    function goToSlide(n) {
+      if (n < 1 || n > totalSlides) return;
+      const prev = currentSlide;
+      currentSlide = n;
+
+      document.querySelectorAll('.slide').forEach((s, idx) => {
+        s.classList.toggle('active', (idx + 1) === currentSlide);
+      });
+
+      document.getElementById('deckProgressBar').style.width = ((currentSlide / totalSlides) * 100) + '%';
+      document.getElementById('deckCounter').innerText = currentSlide + ' / ' + totalSlides;
+
+      if (currentSlide > prev) playSound('next');
+      else if (currentSlide < prev) playSound('prev');
+    }
+
+    function nextSlide() { goToSlide(currentSlide + 1); }
+    function prevSlide() { goToSlide(currentSlide - 1); }
+
+    function toggleFullscreen() {
+      if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen().catch(() => {});
+      } else {
+        document.exitFullscreen().catch(() => {});
+      }
+    }
+
+    function toggleMute() {
+      isMuted = !isMuted;
+      document.getElementById('muteBtn').innerText = isMuted ? '🔇' : '🔊';
+      if (!isMuted) playSound('click');
+    }
+
+    /* KEYBOARD CONTROLS */
+    window.addEventListener('keydown', (e) => {
+      if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+      if (e.key === 'ArrowRight' || e.key === 'PageDown' || e.key === ' ') {
+        e.preventDefault();
+        nextSlide();
+      } else if (e.key === 'ArrowLeft' || e.key === 'PageUp') {
+        e.preventDefault();
+        prevSlide();
+      } else if (e.key === 'ArrowDown' || e.key === 'Enter') {
+        e.preventDefault();
+        revealNextInCurrentSlide();
+      } else if (e.key === 'f' || e.key === 'F') {
+        toggleFullscreen();
+      } else if (e.key === 'm' || e.key === 'M') {
+        toggleMute();
+      }
+    });
+
+    /* STEP REVEAL LOGIC */
+    function revealNextInCurrentSlide() {
+      const activeSlide = document.querySelector('.slide.active');
+      if (!activeSlide) return;
+      const unrevealed = activeSlide.querySelectorAll('.reveal-item:not(.revealed)');
+      if (unrevealed.length > 0) {
+        unrevealed[0].classList.add('revealed');
+        playSound('reveal');
+        updateRevealStatus(activeSlide);
+      } else {
+        nextSlide();
+      }
+    }
+
+    function revealAllInCurrentSlide() {
+      const activeSlide = document.querySelector('.slide.active');
+      if (!activeSlide) return;
+      activeSlide.querySelectorAll('.reveal-item').forEach(el => el.classList.add('revealed'));
+      playSound('reveal');
+      updateRevealStatus(activeSlide);
+    }
+
+    function updateRevealStatus(slide) {
+      const statusEl = slide.querySelector('.reveal-status');
+      if (!statusEl) return;
+      const total = slide.querySelectorAll('.reveal-item').length;
+      const revealed = slide.querySelectorAll('.reveal-item.revealed').length;
+      statusEl.innerText = revealed + ' / ' + total;
+    }
+
+    /* HEADER STUDIO SIMULATOR */
+    let simFaviconActive = true;
+    function updateSimHeader() {
+      const input = document.getElementById('simSiteNameInput').value.trim() || 'Trang web không có tiêu đề';
+      document.getElementById('simTabTitleDisplay').innerText = input;
+      document.getElementById('simHeaderSiteName').innerText = input;
+    }
+
+    function setSimLogo(emoji, defaultName) {
+      playSound('click');
+      document.getElementById('simLogoDisplay').innerText = emoji;
+      document.getElementById('simFaviconDisplay').innerText = simFaviconActive ? emoji : '📄';
+      const input = document.getElementById('simSiteNameInput');
+      input.value = defaultName;
+      updateSimHeader();
+    }
+
+    function toggleSimFavicon() {
+      playSound('click');
+      simFaviconActive = !simFaviconActive;
+      const btn = document.getElementById('toggleFaviconBtn');
+      const favDisplay = document.getElementById('simFaviconDisplay');
+      const currentLogo = document.getElementById('simLogoDisplay').innerText;
+      if (simFaviconActive) {
+        btn.innerText = '✅ Đang bật Favicon nhận diện';
+        btn.style.background = 'var(--leaf)';
+        favDisplay.innerText = currentLogo;
+      } else {
+        btn.innerText = '❌ Đã tắt Favicon (Hiện icon mặc định)';
+        btn.style.background = 'rgba(255,255,255,0.15)';
+        favDisplay.innerText = '📄';
+      }
+    }
+
+    /* BANNER TYPE SWITCHER */
+    function switchBannerType(type) {
+      playSound('click');
+      const btns = ['bannerBtnCover', 'bannerBtnLarge', 'bannerBtnNormal', 'bannerBtnTitle'];
+      btns.forEach(id => {
+        const b = document.getElementById(id);
+        if (b) {
+          b.classList.remove('correct');
+          b.style.background = 'rgba(255,255,255,0.1)';
+          b.style.borderColor = 'rgba(255,255,255,0.2)';
+        }
+      });
+
+      const box = document.getElementById('demoBannerBox');
+      const overlay = document.getElementById('demoBannerOverlay');
+      const text = document.getElementById('demoBannerText');
+      const desc = document.getElementById('demoBannerDesc');
+
+      if (type === 'cover') {
+        document.getElementById('bannerBtnCover').classList.add('correct');
+        box.style.height = '320px';
+        box.style.backgroundImage = 'radial-gradient(circle at center, #312E81 0%, #0F172A 100%)';
+        overlay.style.display = 'block';
+        text.style.fontSize = '30px';
+        desc.innerText = '🖼️ Chế độ Bìa (Cover): Chiều cao 320px+ choán ngợp màn hình, gây ấn tượng sâu đậm ngay khi mở trang.';
+      } else if (type === 'large') {
+        document.getElementById('bannerBtnLarge').classList.add('correct');
+        box.style.height = '240px';
+        box.style.backgroundImage = 'radial-gradient(circle at center, #1E1B4B 0%, #0F172A 100%)';
+        overlay.style.display = 'block';
+        text.style.fontSize = '26px';
+        desc.innerText = '📐 Chế độ Biểu ngữ lớn (Large banner): Chiều cao 240px, lý tưởng cho Trang chủ giới thiệu trường học.';
+      } else if (type === 'normal') {
+        document.getElementById('bannerBtnNormal').classList.add('correct');
+        box.style.height = '170px';
+        box.style.backgroundImage = 'radial-gradient(circle at center, #1E1B4B 0%, #0F172A 100%)';
+        overlay.style.display = 'block';
+        text.style.fontSize = '24px';
+        desc.innerText = '📏 Chế độ Biểu ngữ chuẩn (Banner): Chiều cao 170px, kích thước vừa vặn và phổ biến nhất trên Google Sites.';
+      } else if (type === 'title') {
+        document.getElementById('bannerBtnTitle').classList.add('correct');
+        box.style.height = '90px';
+        box.style.backgroundImage = 'none';
+        box.style.background = '#0F172A';
+        overlay.style.display = 'none';
+        text.style.fontSize = '20px';
+        desc.innerText = '📝 Chế độ Chỉ tiêu đề (Title only): Chiều cao chỉ 90px, loại bỏ ảnh nền, cực kỳ thanh lịch cho trang tài liệu.';
+      }
+    }
+
+    /* MINI QUIZ DATA & CONTROLLER */
+    const quizData = [
+      {
+        q: "Câu 1/4: Để mở trực tiếp giao diện tạo một trang web mới tinh trên Google Sites từ thanh địa chỉ trình duyệt, ta nhập địa chỉ nào?",
+        options: [
+          "A. sites.google.com/new",
+          "B. drive.google.com/new",
+          "C. docs.google.com/site",
+          "D. cloud.google.com/web"
+        ],
+        answer: 0,
+        explain: "Chính xác! Cú pháp sites.google.com/new giúp bạn vào ngay giao diện thiết kế một trang web trống mới mà không cần qua trang danh sách."
+      },
+      {
+        q: "Câu 2/4: Dòng chữ 'Trang web không có tiêu đề' ở góc trên cùng bên trái cửa sổ thiết kế Google Sites có vai trò gì?",
+        options: [
+          "A. Đặt tên tệp lưu trữ trang web trong Google Drive của bạn",
+          "B. Đặt dòng tiêu đề to nhất hiển thị chính giữa ảnh biểu ngữ",
+          "C. Là tên miền .com chính thức khi bạn mua bản quyền web",
+          "D. Hiển thị danh sách các trang con đã tạo trong website"
+        ],
+        answer: 0,
+        explain: "Chính xác! Dòng này dùng để đặt tên tệp trong Google Drive cá nhân để quản lý và tìm kiếm, người xem trang bình thường sẽ không thấy tên này."
+      },
+      {
+        q: "Câu 3/4: Biểu tượng Favicon của trang web sẽ xuất hiện ở vị trí nào khi người dùng duyệt web?",
+        options: [
+          "A. Hiển thị trên tab của trình duyệt web cạnh tiêu đề trang",
+          "B. Nằm ở góc dưới cùng bên phải của phần chân trang (footer)",
+          "C. Nằm chính giữa bức ảnh biểu ngữ banner lớn",
+          "D. Ẩn hoàn toàn trong mã nguồn HTML, không bao giờ nhìn thấy"
+        ],
+        answer: 0,
+        explain: "Chính xác! Favicon (Favorite Icon) hiển thị ở tab trình duyệt giúp nhận diện trang khi mở nhiều tab đồng thời."
+      },
+      {
+        q: "Câu 4/4: Khi muốn phần đầu trang chỉ hiển thị dòng chữ tiêu đề gọn gàng mà không dùng hình ảnh nền, ta chọn loại biểu ngữ nào?",
+        options: [
+          "A. Chỉ tiêu đề (Title only)",
+          "B. Biểu ngữ lớn (Large banner)",
+          "C. Bìa (Cover)",
+          "D. Biểu ngữ chuẩn (Banner)"
+        ],
+        answer: 0,
+        explain: "Chính xác! Loại biểu ngữ 'Chỉ tiêu đề' (Title only) loại bỏ hoàn toàn phần ảnh nền, giữ lại khung chữ thanh lịch, tiết kiệm diện tích."
+      }
+    ];
+
+    let currentQuizIndex = 0;
+    let quizScore = 0;
+
+    function renderQuizQuestion() {
+      const q = quizData[currentQuizIndex];
+      document.getElementById('quizQuestion').innerText = q.q;
+      const opts = document.getElementById('quizOptions');
+      opts.innerHTML = '';
+      q.options.forEach((optText, idx) => {
+        const btn = document.createElement('button');
+        btn.className = 'quiz-btn';
+        btn.innerText = optText;
+        btn.onclick = () => checkQuiz(idx);
+        opts.appendChild(btn);
+      });
+      const feedback = document.getElementById('quizFeedback');
+      feedback.style.display = 'none';
+      document.getElementById('quizNextBtn').style.display = 'none';
+      document.getElementById('quizScore').innerText = 'Điểm: ' + quizScore + ' / ' + quizData.length;
+    }
+
+    function checkQuiz(choice) {
+      const q = quizData[currentQuizIndex];
+      const btns = document.querySelectorAll('.quiz-options .quiz-btn');
+      btns.forEach(b => b.disabled = true);
+
+      const feedback = document.getElementById('quizFeedback');
+      feedback.style.display = 'block';
+
+      if (choice === q.answer) {
+        playSound('correct');
+        btns[choice].classList.add('correct');
+        feedback.style.background = 'rgba(16, 185, 129, 0.2)';
+        feedback.style.color = '#34D399';
+        feedback.innerHTML = '🎉 <strong>Đúng rồi!</strong> ' + q.explain;
+        quizScore++;
+      } else {
+        playSound('wrong');
+        btns[choice].classList.add('wrong');
+        btns[q.answer].classList.add('correct');
+        feedback.style.background = 'rgba(239, 68, 68, 0.2)';
+        feedback.style.color = '#F87171';
+        feedback.innerHTML = '❌ <strong>Chưa chính xác!</strong> ' + q.explain;
+      }
+
+      document.getElementById('quizScore').innerText = 'Điểm: ' + quizScore + ' / ' + quizData.length;
+
+      if (currentQuizIndex < quizData.length - 1) {
+        document.getElementById('quizNextBtn').style.display = 'inline-block';
+      } else {
+        if (quizScore === quizData.length) {
+          setTimeout(fireConfetti, 500);
+        }
+      }
+    }
+
+    function nextQuizQuestion() {
+      playSound('click');
+      currentQuizIndex++;
+      renderQuizQuestion();
+    }
+
+    /* FIREWORKS CONFETTI */
+    function fireConfetti() {
+      playSound('success');
+      const canvas = document.getElementById('confettiCanvas');
+      const ctx = canvas.getContext('2d');
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+
+      const particles = [];
+      const colors = ['#6366F1', '#38E1F0', '#F5A623', '#10B981', '#EC4899'];
+
+      for (let i = 0; i < 90; i++) {
+        particles.push({
+          x: canvas.width / 2,
+          y: canvas.height * 0.45,
+          vx: (Math.random() - 0.5) * 16,
+          vy: (Math.random() - 0.7) * 16,
+          size: Math.random() * 8 + 4,
+          color: colors[Math.floor(Math.random() * colors.length)],
+          alpha: 1,
+          rot: Math.random() * 360,
+          vrot: (Math.random() - 0.5) * 12
+        });
+      }
+
+      function render() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        let alive = false;
+        particles.forEach(p => {
+          p.x += p.vx;
+          p.y += p.vy;
+          p.vy += 0.35;
+          p.alpha -= 0.012;
+          p.rot += p.vrot;
+
+          if (p.alpha > 0) {
+            alive = true;
+            ctx.save();
+            ctx.globalAlpha = p.alpha;
+            ctx.translate(p.x, p.y);
+            ctx.rotate(p.rot * Math.PI / 180);
+            ctx.fillStyle = p.color;
+            ctx.fillRect(-p.size / 2, -p.size / 2, p.size, p.size);
+            ctx.restore();
+          }
+        });
+        if (alive) requestAnimationFrame(render);
+        else ctx.clearRect(0, 0, canvas.width, canvas.height);
+      }
+      render();
+    }
+
+    /* INITIALIZATION */
+    goToSlide(1);
+    renderQuizQuestion();
+  </script>
+</body>
+</html>
