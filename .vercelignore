@@ -1,0 +1,14 @@
+# Local credentials and development tools are not deployment inputs.
+.env*
+Key JSon/
+*service-account*.json
+*-key.json
+khoa-google*.json
+*.json.key
+.agents/
+.claude/
+skills-lock.json
+tai-lieu/
+*.docx
+*.zip
+*.tsbuildinfo
