@@ -22,4 +22,6 @@ Key JSon/
 *.json.key
 
 .claude/
+.agents/
+skills-lock.json
 
