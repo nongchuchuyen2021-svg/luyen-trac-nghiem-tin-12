@@ -8,7 +8,7 @@ function paint(selector,text){const el=$(selector);el.textContent=text;el.classL
 
 let pipeTimers=[];
 function resetPipe(){pipeTimers.forEach(clearTimeout);pipeTimers=[];$$('[data-pipe]').forEach(x=>x.classList.remove('lit'));$('#pipe-run').disabled=false;$('#pipe-run').textContent='▶ Quan sát từng bước';}
-function onSlideLeave(previous,next){if(previous===1&&next!==1)resetPipe();}
+function onSlideLeave(previous,next){if(previous===1&&next!==1)resetPipe();if(typeof pauseProject==='function'&&next!==17&&!(next===13&&activeMission==='create'))pauseProject();if(typeof updateTeacherNote==='function')updateTeacherNote(next);}
 $('#pipe-run').onclick=()=>{
   resetPipe();$('#pipe-run').disabled=true;
   const steps=['📄 Tệp nguồn chứa nội dung và các thẻ đánh dấu HTML.','🌐 Trình duyệt đọc mã và xác định cấu trúc, ý nghĩa các phần tử.','🖥️ Trình duyệt hiển thị tiêu đề và đoạn văn — không in nguyên các thẻ đánh dấu.'];
@@ -69,16 +69,6 @@ let commentOn=true;
 function setComment(){const value='<h1>Xin chào!</h1>\n'+(commentOn?'<!-- Đây là lời chào của lớp 12 -->\n':'')+'<p>Chúng mình cùng học HTML.</p>';$('#comment-code').textContent=value;preview('#comment-preview',value);$('#comment-toggle').setAttribute('aria-pressed',String(commentOn));$('#comment-toggle').textContent=commentOn?'Ẩn chú thích khỏi mã':'Thêm lại chú thích vào mã';}
 $('#comment-toggle').onclick=()=>{commentOn=!commentOn;setComment();sound();};setComment();
 
-const templates={basic,tags:'<h1>Hai dòng trong một đoạn</h1>\n<p>Dòng thứ nhất<br>Dòng thứ hai</p>\n<hr>\n<p>Đây là đoạn văn mới.</p>',nesting:'<h1>Trang của nhóm em</h1>\n<p>Trang này do <em>nhóm bạn bè</em> cùng tạo.</p>\n<p>Chúng mình cùng học HTML.</p>'};
-let downloadUrl;
-function runCode(){const value=$('#code-editor').value;if(value.length>30000){$('#editor-status').textContent='Đoạn mã quá dài cho ví dụ này. Em rút gọn dưới 30.000 kí tự nhé.';return;}preview('#editor-preview',value);$('#editor-status').textContent='Đã chạy mã. Đối chiếu phần em vừa sửa với kết quả bên cạnh.';}
-function loadTemplate(){const key=$('#template').value;$('#code-editor').value=templates[key];runCode();}
-$('#template').onchange=()=>{loadTemplate();sound();};$('#restore-code').onclick=()=>{loadTemplate();sound();};$('#run-code').onclick=()=>{runCode();sound();};
-$('#code-editor').addEventListener('input',()=>$('#editor-status').textContent='Mã đã thay đổi. Bấm “Chạy mã” để cập nhật kết quả.');
-$('#code-editor').addEventListener('keydown',e=>{if((e.ctrlKey||e.metaKey)&&e.key==='Enter'){e.preventDefault();runCode();sound();}});
-$('#download-code').onclick=()=>{if(downloadUrl)URL.revokeObjectURL(downloadUrl);downloadUrl=URL.createObjectURL(new Blob(['\uFEFF',$('#code-editor').value],{type:'text/html;charset=utf-8'}));const link=document.createElement('a');link.href=downloadUrl;link.download='index.html';document.body.append(link);link.click();link.remove();$('#editor-status').textContent='Đã tạo tệp index.html. Mở tệp đã lưu bằng trình duyệt để kiểm tra.';};
-window.addEventListener('pagehide',()=>{if(downloadUrl)URL.revokeObjectURL(downloadUrl);resetPipe();});loadTemplate();
 $('#back-editor').onclick=()=>showSlide(13);
 $$('.check').forEach(b=>b.onclick=()=>{const on=b.getAttribute('aria-pressed')!=='true';b.setAttribute('aria-pressed',String(on));$('.check-icon',b).textContent=on?'✓':'○';const count=$$('.check[aria-pressed="true"]').length;$('#badge').textContent=count===3?'🏅':'🌱';$('#check-status').textContent=count===3?'3 / 3 · Sẵn sàng tạo trang web đầu tiên!':`${count} / 3 việc đã tự kiểm tra`;$('#celebrate').disabled=count!==3;sound();});
 $('#celebrate').onclick=()=>{sound('good');confetti();notify('🏅 Hoàn thành Bài 7! Hãy tạo một trang giới thiệu của riêng em.');};
-showSlide(0,false);

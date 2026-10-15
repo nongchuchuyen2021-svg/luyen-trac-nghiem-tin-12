@@ -125,11 +125,11 @@ const games: LessonGame[] = [
         "explain": "Thuộc <body> — thành phần giao diện trực quan."
       },
       {
-        "id": "hb-script",
+        "id": "hb-description",
         "emoji": "⚡",
-        "label": "<script>: Liên kết tệp mã lệnh JavaScript",
+        "label": "<meta name=\"description\">: Mô tả ngắn trang web",
         "isMatch": false,
-        "explain": "Thường nằm trong <head> hoặc cuối <body>, ở đây đóng vai trò cấu hình kịch bản."
+        "explain": "Meta mô tả trang được đặt trong head. Script có thể nằm trong head hoặc body nên không dùng để phân loại chỉ một nhóm."
       },
       {
         "id": "hb-table",

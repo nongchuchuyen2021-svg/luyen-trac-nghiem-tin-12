@@ -12,3 +12,4 @@ tai-lieu/
 *.docx
 *.zip
 *.tsbuildinfo
+/tmp/

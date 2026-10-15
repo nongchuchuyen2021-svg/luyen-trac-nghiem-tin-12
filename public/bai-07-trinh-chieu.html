@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="description" content="Bài 7 Tin học 12: bài trình chiếu tương tác về HTML và cấu trúc trang web. Hiện từng ý, mã nguồn và kết quả, cây HTML, xưởng thực hành và trắc nghiệm tự chấm.">
+<meta name="description" content="Bài 7 Tin học 12: bài trình chiếu tương tác về HTML và cấu trúc trang web. 20 slide với ba mức thực hành, kiểm tra từng yêu cầu, lắp khung HTML, tự sửa lỗi, cây theo mã và câu hỏi tự chấm.">
 <title>Bài 7 · HTML và cấu trúc trang web</title>
 <style>:root{color-scheme:dark;--bg:#071522;--panel:#112839;--ink:#f1f8ff;--muted:#b3c8d9;--cyan:#65e8e0;--gold:#ffcf77;--pink:#ffa7c4;--green:#91e8b7;--line:#ffffff24;--radius:24px;font-family:system-ui,-apple-system,'Segoe UI',sans-serif}
 *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);height:100vh;height:100dvh;display:grid;grid-template-rows:62px minmax(0,1fr) 70px;overflow:hidden}button,a{-webkit-tap-highlight-color:transparent}button{font:inherit;color:inherit;cursor:pointer}button:disabled{cursor:default;opacity:.55}a{color:var(--cyan)}button:focus-visible,a:focus-visible{outline:3px solid var(--gold);outline-offset:4px}[hidden]{display:none!important}
@@ -33,12 +33,23 @@ code{font-family:Consolas,'Cascadia Code',monospace;font-size:.95em;color:#8dece
 @media(max-width:700px){.hero-title{font-size:36px}.structure-code{font-size:15px}.tree-layout .small-code{font-size:16px}.classify-box .pills{flex-wrap:wrap}.editor-layout textarea{height:280px;font-size:16px}.browser-window iframe{height:210px;min-height:180px}.fields .code-panel{font-size:16px}}
 .hero-browser p{margin:8px 0}.html-hero{padding-top:25px}.structure-choice{padding:10px 17px}.editor-layout textarea{height:248px}
 @media(max-width:700px){.structure-choice{padding:12px 15px}.editor-layout textarea{height:280px}}
+
+/* Guided work, with the same click controls available on touch devices. */
+.mission-goal{font-size:17px;line-height:1.4;margin:0;color:var(--gold)}.work-review{max-height:155px;overflow:auto;min-width:0}.review-summary{display:flex;align-items:center;justify-content:space-between;gap:12px;font-size:16px;margin-bottom:7px}.review-summary span{font-size:14px;color:var(--muted)}.review-summary.complete strong{color:#91e8b7}.criteria{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}.criterion{border:1px solid #ffcf7755;border-radius:9px;background:#ffcf7708;min-width:0}.criterion.met{border-color:#91e8b755;background:#91e8b708}.criterion summary{cursor:pointer;font-size:14px;line-height:1.35;padding:7px 9px;list-style:none}.criterion summary:focus-visible{outline:2px solid var(--gold)}.criterion p{font-size:14px;line-height:1.5;margin:0;padding:5px 10px 12px;color:var(--muted)}.criterion.met summary{color:#a1e9bf}.practice-hint,.pending{padding:10px 14px;font-size:16px;line-height:1.5;border-left:3px solid var(--gold);background:#ffcf7709;margin:0;border-radius:0 10px 10px 0}.teacher-panel{position:fixed;right:22px;bottom:85px;width:min(480px,90vw);max-height:50vh;overflow:auto;padding:20px;background:#102c3af5;border:1px solid var(--gold);border-radius:16px;box-shadow:0 16px 60px #0009;z-index:70}.teacher-panel strong{color:var(--gold);font-size:18px}.teacher-panel p{font-size:17px;line-height:1.6;margin:10px 0 0}.assembly-layout{display:grid;grid-template-columns:1fr 1.1fr;gap:20px;align-items:start}.piece-bank{display:grid;grid-template-columns:1fr 1fr;gap:8px}.piece{border:1px solid #65e8e055;background:#0e303e;color:#c8eff2;border-radius:11px;padding:11px 12px;text-align:left;font:15px/1.35 Consolas,monospace;overflow-wrap:anywhere;min-width:0;cursor:grab;min-height:48px}.piece:hover{border-color:var(--cyan)}.piece-slots{min-height:265px;margin:0;padding:8px 8px 8px 28px;background:#071b29;border:2px dashed #65e8e055;border-radius:14px;max-height:320px;overflow:auto}.piece-slots li{padding:4px;margin:0;border-bottom:1px solid var(--line);font-size:13px;position:relative;min-height:31px;display:flex;align-items:center;gap:5px}.piece-slots li code{flex:1;min-width:0;font-size:13px;line-height:1.35}.piece-tools{display:flex;gap:3px;flex-shrink:0}.piece-tools .action{min-height:28px;min-width:27px;padding:2px 6px;font-size:14px}.piece-slots .empty-slot{font:17px/1.5 system-ui;color:var(--muted);border:0;padding:20px}.repair-toolbar,.live-tree-toolbar{display:flex;gap:9px;align-items:center;flex-wrap:wrap}.repair-toolbar label{font-size:16px}.repair-toolbar select{font-size:16px}.repair-layout textarea{height:230px;font-size:17px;line-height:1.4}.live-tree-layout textarea{height:300px;font-size:16px;line-height:1.4}.live-tree-box{border:1px solid var(--line);background:#081e2a;border-radius:16px;padding:12px;min-width:0}.live-tree-box #live-tree{max-height:235px;overflow:auto}.live-tree-box ul{list-style:none;margin:0;padding:0 0 0 18px;border-left:1px solid #65e8e060}.live-tree-box>div>ul{padding-left:7px;border:0}.live-tree-box li{margin:5px 0}.live-node{background:#153d4a;border:1px solid #65e8e055;border-radius:8px;min-height:32px;padding:4px 12px;font:16px Consolas,monospace;color:#cff4ed}.live-node[aria-pressed=true]{background:var(--cyan);color:#102839}.live-tree-box .feedback{font-size:16px;line-height:1.4;min-height:0;padding:10px;margin-top:10px}.live-tree-box .stale{opacity:.45}.project-timer{text-align:center}.project-timer output{display:block;font-size:70px;font-weight:800;color:var(--gold);font-variant-numeric:tabular-nums;line-height:1.2}.project-timer .pills{justify-content:center;margin-top:16px}.project-brief p{font-size:20px}.project-brief .pills{margin-top:18px}#project-feedback{max-height:180px;overflow:auto;font-size:18px}#mission-timer{color:var(--cyan);font-size:16px;white-space:nowrap}#slide-14 .body{gap:9px}#slide-14 .lead{font-size:17px;margin-top:7px}#slide-14 .editor-toolbar{gap:8px}#slide-14 .editor-toolbar .action{font-size:14px;min-height:38px;padding:7px 10px}#slide-14 .editor-layout textarea{height:165px;font-size:16px;line-height:1.35}#slide-14 .editor-layout .browser-window iframe{height:135px;min-height:135px}#slide-14 .browser-chrome{padding:7px 12px;min-height:34px;font-size:14px}#slide-14 .code-editor{gap:6px}#slide-14 #editor-status{font-size:13px;margin:0}#slide-14 .practice-hint{font-size:14px;padding:7px 12px}#slide-15 .feedback,#slide-16 .feedback{font-size:17px;line-height:1.4;min-height:0;margin:0;padding:10px 14px}#slide-15 .body,#slide-16 .body{gap:12px}#slide-20 .history-note{font-size:15px!important}#slide-20 .card .badge{font-size:55px}
+@media(max-width:1050px){.piece{font-size:14px}.review-summary{align-items:flex-start}.review-summary span{font-size:13px}.criteria{gap:5px}.criterion summary{font-size:13px}.repair-toolbar .action{font-size:14px;padding:8px 10px}}
+@media(max-width:700px){.assembly-layout{grid-template-columns:1fr}.piece-bank{grid-template-columns:1fr 1fr}.piece{font-size:15px}.piece-slots{max-height:400px;min-height:210px}.piece-slots li code{font-size:14px}.piece-tools .action{min-height:34px;min-width:30px}.criteria{grid-template-columns:1fr 1fr}.criterion summary{font-size:14px}.review-summary{flex-direction:column;gap:4px}.work-review{max-height:310px}#slide-14 .editor-layout textarea{height:255px;font-size:16px}#slide-14 .editor-layout .browser-window iframe{height:180px;min-height:180px}#slide-14 .mission-goal{font-size:17px}#slide-14 .editor-toolbar{gap:7px}#slide-14 .editor-toolbar select{max-width:100%;font-size:16px}.repair-toolbar select{max-width:100%;font-size:15px}.repair-layout textarea{height:240px}.live-tree-layout textarea{height:250px}.live-tree-box #live-tree{max-height:320px}.project-timer output{font-size:60px}#project-feedback{max-height:350px}.teacher-panel{right:12px}.project-brief p{font-size:19px}.topbar .tool{font-size:11px;padding:7px 8px}}
+
+@media(min-width:701px){#slide-14 .body{gap:7px}#slide-14 .editor-layout textarea{height:155px}#slide-14 .editor-layout .browser-window iframe{height:125px;min-height:125px}.piece-slots li{padding:2px 4px}}
+
+@media(min-width:701px){.stage:has(#slide-14:not([hidden])){padding-bottom:10px}}
+
+@media(min-width:701px){#slide-14 .body{gap:5px}}
 </style>
 </head>
 <body>
 <header class="topbar"><div class="brand">TIN HỌC 12 <b> / BÀI 07</b></div><div class="spacer"></div><button class="tool" id="contents" aria-haspopup="dialog">☰ Mục lục</button><button class="tool" id="motion" aria-pressed="true">✨ Hiệu ứng: Bật</button><button class="tool" id="sound" aria-pressed="false">🔇 Âm thanh: Tắt</button><button class="tool" id="fullscreen" title="Toàn màn hình (F)" aria-label="Toàn màn hình">⛶</button></header>
-<main class="stage" id="stage"><div id="deck"></div><noscript><h1>Bài 7: Giao tiếp và ứng xử trong không gian mạng</h1><p>Hãy bật JavaScript để dùng các hoạt động tương tác của bài trình chiếu.</p></noscript></main>
-<footer class="bottom"><button class="nav" id="prev" aria-label="Trang trước">←</button><div class="progress" aria-hidden="true"><span id="progress"></span></div><span class="counter" id="counter">01 / 16</span><span class="footer-count" id="reveal-counter"></span><button class="action" id="all-ideas">Hiện hết</button><button class="action primary next-idea" id="next-idea">Hiện ý tiếp ↓</button><button class="nav" id="next" aria-label="Trang tiếp">→</button><span class="key-help">Space/→: hiện ý, rồi chuyển trang<br>↑: ẩn ý · F: toàn màn hình · M: âm thanh</span></footer>
+<main class="stage" id="stage"><div id="deck"></div><noscript><h1>Bài 7: HTML và cấu trúc trang web</h1><p>Hãy bật JavaScript để dùng các hoạt động tương tác của bài trình chiếu.</p></noscript></main>
+<footer class="bottom"><button class="nav" id="prev" aria-label="Trang trước">←</button><div class="progress" aria-hidden="true"><span id="progress"></span></div><span class="counter" id="counter">01 / 20</span><span class="footer-count" id="reveal-counter"></span><button class="action" id="all-ideas">Hiện hết</button><button class="action primary next-idea" id="next-idea">Hiện ý tiếp ↓</button><button class="nav" id="next" aria-label="Trang tiếp">→</button><span class="key-help">Space/→: hiện ý, rồi chuyển trang<br>↑: ẩn ý · F: toàn màn hình · M: âm thanh</span></footer>
 <dialog id="toc" aria-labelledby="toc-title"><div class="dialog-head"><h2 id="toc-title">Hành trình Bài 7</h2><button class="action" id="close-toc">Đóng ✕</button></div><div id="toc-grid" class="toc-grid"></div></dialog>
 <div id="toast" class="toast" role="status" hidden></div><div class="confetti" id="confetti" aria-hidden="true"></div>
 <script>'use strict';
@@ -116,6 +127,123 @@ const quizQuestions=[
  ['Để tạo hai dòng trong cùng một đoạn p, nên dùng cách nào?',['Chèn <br> tại chỗ muốn ngắt dòng.','Gõ nhiều dấu cách.','Chỉ nhấn Enter trong mã.','Đổi tên tệp thành .txt.'],0,'Với văn bản hiển thị thông thường, Enter trong mã không tạo ngắt dòng như <br>.'],
  ['Cách nào mô tả đúng quy trình thực hành?',['Viết bằng Chrome, lưu thành ảnh rồi mở bằng Notepad.','Viết trong Word và luôn lưu dạng .docx.','Chỉ đặt tên tệp .html, không cần nội dung.','Viết bằng trình soạn thảo, lưu .html rồi mở bằng trình duyệt.'],3,'Dùng văn bản thuần để soạn mã. Lưu đúng phần mở rộng và mã hóa rồi kiểm tra bằng trình duyệt.'],
 ];
+
+const lessonMissions={
+ foundation:{name:'1. Hoàn thiện khung',goal:'Tự điền tên tab, lời chào h1 và đoạn giới thiệu. Thêm khai báo mã hóa tiếng Việt.',starter:'<!DOCTYPE html>\n<html lang="vi">\n<head>\n  <!-- Thêm meta charset tại đây -->\n  <title></title>\n</head>\n<body>\n  <h1></h1>\n  <p></p>\n</body>\n</html>',hint:'Tên tab viết trong title ở head. Lời chào h1 và đoạn p nằm trong body. Nhớ meta charset="utf-8".'},
+ repair:{name:'2. Sửa trang bị lỗi',goal:'Sửa thứ tự đóng thẻ và chuyển title về đúng phần. Giữ một cụm từ được nhấn mạnh trong đoạn.',starter:'<!DOCTYPE html>\n<html lang="vi">\n<head>\n  <meta charset="utf-8">\n</head>\n<body>\n  <title>Câu lạc bộ lớp 12</title>\n  <h1>Chào lớp mình!</h1>\n  <p>Cùng học <em>HTML</p></em>\n</body>\n</html>',hint:'Có hai chỗ chính cần sửa: title thuộc head; em đang mở sau p thì phải đóng trước p.'},
+ create:{name:'3. Trang lớp của em',goal:'Tự tạo trang có tên tab, h1, hai đoạn p, một cụm em và một lần ngắt dòng br trong đoạn. Dùng UTF-8.',starter:'<!-- Tự viết tài liệu HTML của em từ đây. -->\n',hint:'Vẽ khung html chứa head và body trước. Head có meta và title. Body có h1, hai p; lồng em và br trong đoạn.'}
+};
+const assemblyPieces=[
+ {id:'doc',text:'<!DOCTYPE html>',why:'Khai báo kiểu tài liệu ở đầu tệp.'},
+ {id:'html',text:'<html lang="vi">',why:'Mở phần tử gốc trước head và body.'},
+ {id:'head',text:'<head><meta charset="utf-8"><title>Lớp 12</title></head>',why:'Head chứa mã hóa và tên tab, đóng lại trước body.'},
+ {id:'body',text:'<body>',why:'Mở phần nội dung sau khi head đã đóng.'},
+ {id:'h1',text:'<h1>Chào lớp mình!</h1>',why:'Tiêu đề trang nằm trong body, trước đoạn giới thiệu theo mẫu này.'},
+ {id:'p',text:'<p>Chúng mình cùng học HTML.</p>',why:'Theo mẫu nhiệm vụ này, đoạn giới thiệu nằm sau h1.'},
+ {id:'end-body',text:'</body>',why:'Đóng body sau các nội dung của nó.'},
+ {id:'end-html',text:'</html>',why:'Đóng html cuối cùng, sau body.'}
+];
+const repairTasks=[
+ {title:'1. Hai thẻ đóng bị đảo',goal:'Đoạn p phải chứa em có nội dung. Đóng phần tử con trước phần tử cha.',starter:'<p>Cùng học <em>HTML</p></em>',hint:'Em được mở sau p. Thẻ đóng nào phải xuất hiện trước?',kind:'nest'},
+ {title:'2. Tên tab bị đặt trong body',goal:'Chuyển title vào head. Giữ h1 trong body để người xem thấy lời chào.',starter:'<!DOCTYPE html>\n<html>\n<head><meta charset="utf-8"></head>\n<body>\n  <title>Lớp 12A</title>\n  <h1>Chào lớp mình!</h1>\n</body>\n</html>',hint:'Title cung cấp tên tab. Nó là con của head, khác vị trí của h1.',kind:'title'},
+ {title:'3. Enter chưa làm ngắt dòng',goal:'Giữ hai câu trong cùng một p, đặt br giữa “Dòng thứ nhất” và “Dòng thứ hai”.',starter:'<p>Dòng thứ nhất\nDòng thứ hai</p>',hint:'Giữ một cặp p. Chèn thẻ đơn br vào giữa hai câu, không viết thẻ đóng br.',kind:'break'}
+];
+// Preserve the first fourteen slides and add guided practice before the quiz.
+sections[13].lead='Chọn nhiệm vụ, tự viết mã rồi kiểm tra từng yêu cầu. Bản nháp được giữ trên trình duyệt này.';
+sections[13].html=`<div class="editor-toolbar"><label for="mission">Nhiệm vụ</label><select id="mission">${Object.entries(lessonMissions).map(([key,m])=>`<option value="${key}">${m.name}</option>`).join('')}</select><button class="action primary" id="run-code">▶ Chạy và kiểm tra</button><button class="action" id="editor-hint">💡 Gợi ý</button><button class="action" id="restore-code">↺ Mẫu nhiệm vụ</button><button class="action" id="download-code">↓ Tải .html</button></div><p class="mission-goal" id="mission-goal"></p><div class="grid two editor-layout"><div class="code-editor"><label for="code-editor">Mã của em · Ctrl + Enter để kiểm tra</label><textarea id="code-editor" spellcheck="false" aria-describedby="editor-status"></textarea></div>${frame('editor-preview','Kết quả mã HTML do em viết')}</div><div class="work-review" id="editor-review" aria-live="polite"></div><p class="teacher-note" id="editor-status" role="status"></p><div class="practice-hint" id="editor-hint-text" hidden></div>`;
+sections.splice(14,0,
+ {tag:'14 · LẮP RÁP KHUNG HTML',title:'Tự lắp một trang từ những mảnh mã',lead:'Chọn hoặc kéo mảnh mã vào vùng bên phải. Dùng nút lên, xuống để sửa thứ tự.',html:`<div class="assembly-layout"><div><h3 class="panel-label">Kho mảnh mã</h3><div class="piece-bank" id="piece-bank"></div></div><div><h3 class="panel-label">Tệp của em · xếp theo mẫu head trước body, h1 trước p</h3><ol class="piece-slots" id="piece-slots" aria-label="Thứ tự các mảnh HTML"></ol></div></div><div class="pills"><button class="action primary" id="assembly-check">Kiểm tra thứ tự</button><button class="action" id="assembly-hint">💡 Gợi ý bước kế</button><button class="action" id="assembly-reset">↺ Xếp lại</button></div><div id="assembly-feedback" class="feedback" role="status"></div>`},
+ {tag:'15 · XƯỞNG SĂN LỖI',title:'Trang vẫn hiện chưa chắc mã đã đạt yêu cầu',lead:'Sửa trực tiếp đoạn mã. Kiểm tra để biết lỗi nào còn lại, rồi thử tiếp.',html:`<div class="repair-toolbar"><label for="repair-task">Tình huống</label><select id="repair-task">${repairTasks.map((t,i)=>`<option value="${i}">${t.title}</option>`).join('')}</select><button class="action primary" id="repair-check">Kiểm tra bản sửa</button><button class="action" id="repair-hint">💡 Gợi ý</button><button class="action" id="repair-reset">↺ Mã ban đầu</button></div><p class="mission-goal" id="repair-goal"></p><div class="grid two repair-layout"><label class="code-editor" for="repair-code">Mã cần sửa<textarea id="repair-code" spellcheck="false"></textarea></label>${frame('repair-preview','Xem kết quả sau khi tự sửa')}</div><div class="feedback" id="repair-feedback" role="status"></div><div class="practice-hint" id="repair-hint-text" hidden></div>`},
+ {tag:'16 · CÂY THAY ĐỔI THEO MÃ',title:'Em đổi mã, cây giải thích cấu trúc',lead:'Thêm một em vào p, hoặc chuyển h1. Dựng cây rồi chạm nút để tìm cha và con.',html:`<div class="live-tree-toolbar"><button class="action primary" id="live-tree-build">Dựng cây từ mã</button><button class="action" id="live-tree-reset">↺ Mẫu ban đầu</button><span class="teacher-note">Cây thể hiện các phần tử em viết trong mã.</span></div><div class="grid two live-tree-layout"><label class="code-editor" for="live-tree-code">Mã nguồn có thể sửa<textarea id="live-tree-code" spellcheck="false"></textarea></label><div class="live-tree-box"><div id="live-tree" aria-label="Cây phần tử từ mã học sinh"></div><div id="live-tree-note" class="feedback" role="status"></div></div></div><p class="teacher-note">Nếu thiếu thẻ đóng hoặc lồng sai, hãy sửa theo phản hồi trước khi dựng cây. Cây này chưa hiển thị các nút văn bản.</p>`},
+ {tag:'17 · DỰ ÁN NHÓM 3 PHÚT',title:'Tạo trang giới thiệu lớp và tự nghiệm thu',lead:'Một bạn viết, một bạn kiểm tra yêu cầu, một bạn giải thích cấu trúc.',html:`<div class="grid two"><div class="card project-brief"><h3>Sản phẩm của nhóm</h3><p>Tệp HTML có tên tab, lời chào h1, hai đoạn giới thiệu, một cụm nhấn mạnh em và ngắt dòng br. Có khai báo UTF-8.</p><div class="pills"><button class="action primary" id="project-open">Mở nhiệm vụ 3 để làm</button><button class="action" id="project-review">Đọc kết quả kiểm tra</button></div></div><div class="card project-timer"><output id="project-time">03:00</output><div class="pills"><button class="action primary" id="project-start">▶ Bắt đầu</button><button class="action" id="project-reset">↺ 3 phút</button></div><p class="teacher-note" id="project-time-status">Đồng hồ chạy ở slide này và xưởng nhiệm vụ 3.</p></div></div><div id="project-feedback" class="feedback" role="status">Làm nhiệm vụ 3, chạy kiểm tra, rồi quay lại đây đối chiếu.</div>`}
+);
+sections[18].tag='18 · KIỂM TRA VÀ GIẢI THÍCH';sections[19].tag='19 · TỔNG KẾT VÀ VẬN DỤNG';
+const teacherNotes=[
+ 'Hỏi học sinh dự đoán trình duyệt làm gì với mã nguồn. Chưa cho các em chạy mã ngay.',
+ 'Cho học sinh nói kết quả dự kiến, sau đó mới bật mô phỏng ba bước.',
+ 'Yêu cầu chỉ riêng thẻ mở, thẻ đóng và toàn bộ phần tử. Cho một ví dụ mới ngoài mẫu.',
+ 'Sau mỗi lượt phân loại, yêu cầu giải thích có hay không có thẻ đóng.',
+ 'Phân biệt thuộc tính HTML style với thuộc tính CSS color nằm trong giá trị của style.',
+ 'Cho lớp dự đoán ba kết quả: Enter, br và hai p. Chốt bằng ví dụ các em tự gõ.',
+ 'Học sinh chỉ head và body cùng cấp, rồi xác định thông tin nào dành cho tên tab.',
+ 'Cho hai em đổi title và h1 thành hai câu khác nhau, giải thích nơi xuất hiện.',
+ 'Hỏi cha trực tiếp và con trực tiếp của từng nút. Sau đó đối chiếu bằng mã nguồn.',
+ 'Không coi việc trang vẫn hiển thị là bằng chứng mã đã đúng. Cho học sinh đọc thứ tự đóng thẻ.',
+ 'Giải thích cấp tiêu đề dùng cho thứ bậc nội dung. Không chọn h chỉ để đổi cỡ chữ.',
+ 'Cho học sinh thêm một chú thích riêng và dự đoán kết quả hiển thị.',
+ 'Phân biệt nhiệm vụ của trình soạn thảo và trình duyệt, rồi nêu quy trình lưu UTF-8, mở tệp HTML.',
+ 'Ba mức nhiệm vụ: hoàn thiện khung, sửa lỗi, tự tạo. Cho học sinh đọc từng phản hồi và sửa một việc mỗi lượt. Bộ kiểm tra theo yêu cầu bài học, không thay thế trình kiểm định toàn bộ chuẩn HTML.',
+ 'Cho học sinh tự xếp trước khi gợi ý. Mẫu nhiệm vụ quy định head trước body, h1 trước p. Dùng các nút lên, xuống nếu thiết bị không kéo được.',
+ 'Mỗi nhóm xử lí một tình huống, giải thích lỗi trước khi sửa. Không đọc sẵn đáp án. Sau đó đổi nhóm kiểm tra chéo.',
+ 'Đây là cây phần tử được viết rõ trong mã, không mô phỏng toàn bộ cơ chế tự sửa lỗi của trình duyệt. Dùng hai đoạn p cùng cấp và em lồng trong một p để phân biệt cha, con, anh em.',
+ 'Bật đồng hồ, rồi sang xưởng nhiệm vụ 3. Đồng hồ chạy ở hai trang này và dừng khi rời hoạt động. Cho nhóm tự chạy kiểm tra, sau đó giải thích một điều đã sửa.',
+ 'Tám câu củng cố. Yêu cầu học sinh giải thích đáp án, không chỉ nêu chữ cái.',
+ 'Đối chiếu sản phẩm nhóm với các tiêu chí tự kiểm tra. Giao trang giới thiệu của câu lạc bộ làm bài tiếp nối.'
+];
+
+// A small teaching checker for the explicitly closed markup used in Lesson 7.
+// It checks the assignment, not full HTML conformance; browser error recovery is
+// intentionally not used to give credit for a missing head/body or crossing tags.
+const lessonVoidTags=new Set('area base br col embed hr img input link meta param source track wbr'.split(' '));
+function readLessonHTML(value){
+ const source=String(value),root={tag:'#document',children:[],parent:null},stack=[root],nodes=[],issues=[];let i=0,doctype=false;
+ const lineAt=p=>source.slice(0,p).split('\n').length;
+ const issue=(pos,message)=>issues.push({line:lineAt(pos),message});
+ function text(s){if(s)stack[stack.length-1].children.push({tag:'#text',text:s,children:[]});}
+ while(i<source.length){
+  if(source.startsWith('<!--',i)){const end=source.indexOf('-->',i+4);if(end<0){issue(i,'Chú thích chưa có dấu kết thúc -->.');break;}i=end+3;continue;}
+  if(source[i]!=='<'){const next=source.indexOf('<',i);text(source.slice(i,next<0?source.length:next));i=next<0?source.length:next;continue;}
+  const start=i;let quote=null,j=i+1;
+  for(;j<source.length;j++){const c=source[j];if(quote){if(c===quote)quote=null;}else if(c==='"'||c==="'")quote=c;else if(c==='>')break;}
+  if(j>=source.length){issue(i,quote?'Giá trị thuộc tính chưa đóng dấu ngoặc kép hoặc nháy đơn.':'Thẻ chưa kết thúc bằng dấu >.');break;}
+  const raw=source.slice(i,j+1);i=j+1;
+  if(/^<!doctype\s+html\s*>$/i.test(raw)){if(doctype||nodes.length||root.children.some(n=>n.tag==='#text'&&n.text.trim()))issue(start,'Đặt một khai báo <!DOCTYPE html> ở đầu tệp, trước html.');doctype=true;continue;}
+  if(/^<!/i.test(raw)){issue(start,'Kiểm tra khai báo. Bài này dùng <!DOCTYPE html>.');continue;}
+  const closing=raw.match(/^<\/\s*([a-z][\w:-]*)\s*>$/i);
+  if(closing){const tag=closing[1].toLowerCase();if(lessonVoidTags.has(tag)){issue(start,`<${tag}> là thẻ đơn, hãy bỏ </${tag}>.`);continue;}
+   let found=-1;for(let k=stack.length-1;k>0;k--)if(stack[k].tag===tag){found=k;break;}
+   if(found<0){issue(start,`Có </${tag}> nhưng chưa thấy thẻ mở tương ứng.`);continue;}
+   if(found!==stack.length-1)issue(start,`Đang ở trong <${stack[stack.length-1].tag}>. Hãy đóng </${stack[stack.length-1].tag}> trước </${tag}>.`);
+   stack[found].closed=true;stack.length=found;continue;
+  }
+  const opening=raw.match(/^<([a-z][\w:-]*)([\s\S]*?)>$/i);
+  if(!opening){issue(start,'Kiểm tra tên thẻ và hai dấu < >.');continue;}
+  const tag=opening[1].toLowerCase(),attrs={};let rest=opening[2].replace(/\/\s*$/,'');
+  const attrPattern=/([^\s=<>"'`/]+)(?:\s*=\s*(?:"([^"]*)"|'([^']*)'|([^\s"'=<>`]+)))?/g;let a;
+  while((a=attrPattern.exec(rest)))attrs[a[1].toLowerCase()]=a[2]??a[3]??a[4]??'';
+  const node={tag,attrs,children:[],parent:stack[stack.length-1],line:lineAt(start),closed:lessonVoidTags.has(tag)};node.parent.children.push(node);nodes.push(node);
+  if(lessonVoidTags.has(tag))continue;
+  if(/\/\s*>$/.test(raw))issue(start,`Theo mẫu HTML của bài, <${tag}> cần thẻ đóng </${tag}> riêng. Dấu /> không tự đóng phần tử này.`);
+  stack.push(node);
+  if(['script','style','title','textarea'].includes(tag)){
+   const close=new RegExp('</'+tag+'\\s*>','ig');close.lastIndex=i;const match=close.exec(source);
+   if(match){text(source.slice(i,match.index));node.closed=true;stack.pop();i=close.lastIndex;}
+   else{text(source.slice(i));i=source.length;}
+  }
+ }
+ for(const node of stack.slice(1))issue(source.length,`Theo quy ước viết đủ thẻ của bài thực hành, còn thiếu </${node.tag}> (mở ở dòng ${node.line}).`);
+ return {root,nodes,issues,doctype};
+}
+function lessonText(node){return node.tag==='#text'?node.text:node.children.map(lessonText).join(' ');}
+function meaningfulLessonText(node){return !!node&&lessonText(node).replace(/&(?:nbsp|#160|#x0*a0);/ig,' ').replace(/\s/g,'').length>0;}
+function withinLesson(node,parent){for(let p=node.parent;p;p=p.parent)if(p===parent)return true;return false;}
+function checkLessonWork(source,mission='foundation'){
+ const parsed=readLessonHTML(source),{nodes,issues}=parsed,html=nodes.filter(n=>n.tag==='html'),head=nodes.find(n=>n.tag==='head'&&n.parent===html[0]),body=nodes.find(n=>n.tag==='body'&&n.parent===html[0]);
+ const find=(tag,parent)=>nodes.filter(n=>n.tag===tag&&parent&&withinLesson(n,parent));
+ const title=find('title',head).find(meaningfulLessonText),heading=find('h1',body).find(meaningfulLessonText),paragraphs=find('p',body).filter(meaningfulLessonText);
+ const checks=[
+  {key:'doctype',label:'Khai báo HTML',ok:parsed.doctype,fix:'Thêm <!DOCTYPE html> ở đầu tệp.'},
+  {key:'structure',label:'Khung html, head, body',ok:html.length===1&&html[0].parent===parsed.root&&!!head&&!!body&&html[0].children.indexOf(head)<html[0].children.indexOf(body)&&nodes.filter(n=>n.tag==='head').length===1&&nodes.filter(n=>n.tag==='body').length===1,fix:'Viết một <html> bao <head> rồi <body>. Hai phần head và body cùng cấp.'},
+  {key:'charset',label:'Mã hóa tiếng Việt',ok:find('meta',head).some(n=>n.attrs.charset?.toLowerCase()==='utf-8'),fix:'Trong <head>, thêm <meta charset="utf-8"> và lưu tệp theo UTF-8.'},
+  {key:'title',label:'Tên tab có nội dung',ok:!!title,fix:'Viết tên trang giữa <title> và </title> bên trong <head>.'},
+  {key:'h1',label:'Tiêu đề trang có nội dung',ok:!!heading,fix:'Trong <body>, viết một <h1> có lời chào hoặc tên trang.'},
+  {key:'p',label:mission==='create'?'Hai đoạn văn có nội dung':'Đoạn văn có nội dung',ok:paragraphs.length>=(mission==='create'?2:1),fix:mission==='create'?'Viết ít nhất hai phần tử <p> có nội dung trong <body>.':'Viết ít nhất một <p> có nội dung trong <body>.'},
+  {key:'syntax',label:'Thứ tự và cặp thẻ theo mẫu',ok:issues.length===0,fix:issues[0]?`Dòng ${issues[0].line}: ${issues[0].message}`:'Kiểm tra thứ tự mở, đóng thẻ.'},
+ ];
+ if(mission==='repair'||mission==='create')checks.push({key:'em',label:'Nhấn mạnh nằm trong đoạn',ok:find('em',body).some(n=>meaningfulLessonText(n)&&paragraphs.some(p=>withinLesson(n,p))),fix:'Lồng một <em> có nội dung trong <p>, rồi đóng </em> trước </p>.'});
+ if(mission==='create')checks.push({key:'br',label:'Ngắt dòng trong một đoạn',ok:find('br',body).some(n=>paragraphs.some(p=>withinLesson(n,p))),fix:'Thêm <br> tại chỗ muốn xuống dòng trong một đoạn <p>.'});
+ return {parsed,checks,passed:checks.filter(c=>c.ok).length,total:checks.length,complete:checks.every(c=>c.ok),title:title?lessonText(title):''};
+}
 
 let current = 0;
 let audioEnabled = false;
@@ -226,7 +354,7 @@ function paint(selector,text){const el=$(selector);el.textContent=text;el.classL
 
 let pipeTimers=[];
 function resetPipe(){pipeTimers.forEach(clearTimeout);pipeTimers=[];$$('[data-pipe]').forEach(x=>x.classList.remove('lit'));$('#pipe-run').disabled=false;$('#pipe-run').textContent='▶ Quan sát từng bước';}
-function onSlideLeave(previous,next){if(previous===1&&next!==1)resetPipe();}
+function onSlideLeave(previous,next){if(previous===1&&next!==1)resetPipe();if(typeof pauseProject==='function'&&next!==17&&!(next===13&&activeMission==='create'))pauseProject();if(typeof updateTeacherNote==='function')updateTeacherNote(next);}
 $('#pipe-run').onclick=()=>{
   resetPipe();$('#pipe-run').disabled=true;
   const steps=['📄 Tệp nguồn chứa nội dung và các thẻ đánh dấu HTML.','🌐 Trình duyệt đọc mã và xác định cấu trúc, ý nghĩa các phần tử.','🖥️ Trình duyệt hiển thị tiêu đề và đoạn văn — không in nguyên các thẻ đánh dấu.'];
@@ -287,18 +415,64 @@ let commentOn=true;
 function setComment(){const value='<h1>Xin chào!</h1>\n'+(commentOn?'<!-- Đây là lời chào của lớp 12 -->\n':'')+'<p>Chúng mình cùng học HTML.</p>';$('#comment-code').textContent=value;preview('#comment-preview',value);$('#comment-toggle').setAttribute('aria-pressed',String(commentOn));$('#comment-toggle').textContent=commentOn?'Ẩn chú thích khỏi mã':'Thêm lại chú thích vào mã';}
 $('#comment-toggle').onclick=()=>{commentOn=!commentOn;setComment();sound();};setComment();
 
-const templates={basic,tags:'<h1>Hai dòng trong một đoạn</h1>\n<p>Dòng thứ nhất<br>Dòng thứ hai</p>\n<hr>\n<p>Đây là đoạn văn mới.</p>',nesting:'<h1>Trang của nhóm em</h1>\n<p>Trang này do <em>nhóm bạn bè</em> cùng tạo.</p>\n<p>Chúng mình cùng học HTML.</p>'};
-let downloadUrl;
-function runCode(){const value=$('#code-editor').value;if(value.length>30000){$('#editor-status').textContent='Đoạn mã quá dài cho ví dụ này. Em rút gọn dưới 30.000 kí tự nhé.';return;}preview('#editor-preview',value);$('#editor-status').textContent='Đã chạy mã. Đối chiếu phần em vừa sửa với kết quả bên cạnh.';}
-function loadTemplate(){const key=$('#template').value;$('#code-editor').value=templates[key];runCode();}
-$('#template').onchange=()=>{loadTemplate();sound();};$('#restore-code').onclick=()=>{loadTemplate();sound();};$('#run-code').onclick=()=>{runCode();sound();};
-$('#code-editor').addEventListener('input',()=>$('#editor-status').textContent='Mã đã thay đổi. Bấm “Chạy mã” để cập nhật kết quả.');
-$('#code-editor').addEventListener('keydown',e=>{if((e.ctrlKey||e.metaKey)&&e.key==='Enter'){e.preventDefault();runCode();sound();}});
-$('#download-code').onclick=()=>{if(downloadUrl)URL.revokeObjectURL(downloadUrl);downloadUrl=URL.createObjectURL(new Blob(['\uFEFF',$('#code-editor').value],{type:'text/html;charset=utf-8'}));const link=document.createElement('a');link.href=downloadUrl;link.download='index.html';document.body.append(link);link.click();link.remove();$('#editor-status').textContent='Đã tạo tệp index.html. Mở tệp đã lưu bằng trình duyệt để kiểm tra.';};
-window.addEventListener('pagehide',()=>{if(downloadUrl)URL.revokeObjectURL(downloadUrl);resetPipe();});loadTemplate();
 $('#back-editor').onclick=()=>showSlide(13);
 $$('.check').forEach(b=>b.onclick=()=>{const on=b.getAttribute('aria-pressed')!=='true';b.setAttribute('aria-pressed',String(on));$('.check-icon',b).textContent=on?'✓':'○';const count=$$('.check[aria-pressed="true"]').length;$('#badge').textContent=count===3?'🏅':'🌱';$('#check-status').textContent=count===3?'3 / 3 · Sẵn sàng tạo trang web đầu tiên!':`${count} / 3 việc đã tự kiểm tra`;$('#celebrate').disabled=count!==3;sound();});
 $('#celebrate').onclick=()=>{sound('good');confetti();notify('🏅 Hoàn thành Bài 7! Hãy tạo một trang giới thiệu của riêng em.');};
-showSlide(0,false);
+
+let activeMission='foundation',drafts={},downloadUrl,saveTimer;
+const draftKey='tin12-bai07-practice-v2';
+try{const saved=JSON.parse(localStorage.getItem(draftKey)||'{}');for(const key of Object.keys(lessonMissions))if(typeof saved[key]==='string'&&saved[key].length<=30000)drafts[key]=saved[key];}catch{/* The practice also works without browser storage. */}
+function storeDraft(){drafts[activeMission]=$('#code-editor').value;try{localStorage.setItem(draftKey,JSON.stringify(drafts));return true;}catch{return false;}}
+function workFeedback(result){return `<div class="review-summary ${result.complete?'complete':''}"><strong>${result.passed} / ${result.total} yêu cầu đạt</strong><span>${result.complete?'✓ Hoàn thành nhiệm vụ. Hãy giải thích một điều em đã sửa.':'Chọn một mục chưa đạt bên dưới để sửa tiếp.'}</span></div><div class="criteria">${result.checks.map(c=>`<details class="criterion ${c.ok?'met':'missing'}"><summary>${c.ok?'✓':'○'} ${esc(c.label)}</summary><p>${c.ok?'Đã đáp ứng yêu cầu này.':esc(c.fix)}</p></details>`).join('')}</div>`;}
+function showWorkReview(){const value=$('#code-editor').value;if(value.length>30000){$('#editor-review').innerHTML='<p class="feedback">Mã quá dài. Hãy rút gọn dưới 30.000 kí tự để kiểm tra bài tập này.</p>';return null;}const r=checkLessonWork(value,activeMission);$('#editor-review').innerHTML=workFeedback(r);return r;}
+function runCode(){const value=$('#code-editor').value;if(value.length>30000){showWorkReview();return;}preview('#editor-preview',value);const r=showWorkReview();const chrome=$('#editor-preview').parentElement.querySelector('.browser-chrome>span:last-child');chrome.textContent=r.title||'Chưa có tên tab trong head';const saved=storeDraft();$('#editor-status').textContent=(r.complete?'Đã đạt các yêu cầu của nhiệm vụ.':'Trang đã hiển thị; đọc các mục chưa đạt để tiếp tục sửa.')+(saved?' Bản nháp đã lưu trên trình duyệt này.':' Bản nháp đang giữ trong phiên này.');}
+function loadMission(){clearTimeout(saveTimer);activeMission=$('#mission').value;if(activeMission!=='create')pauseProject();const task=lessonMissions[activeMission];$('#code-editor').value=drafts[activeMission]??task.starter;$('#mission-goal').innerHTML=esc(task.goal)+' <span id="mission-timer"></span>';$('#editor-hint-text').hidden=true;runCode();displayProjectTime();}
+$('#mission').onchange=()=>{storeDraft();loadMission();sound();};
+$('#run-code').onclick=()=>{runCode();sound();};
+$('#restore-code').onclick=()=>{clearTimeout(saveTimer);$('#code-editor').value=lessonMissions[activeMission].starter;runCode();sound();};
+$('#editor-hint').onclick=()=>{const show=$('#editor-hint-text').hidden;$('#editor-hint-text').hidden=!show;$('#editor-hint-text').textContent=lessonMissions[activeMission].hint;$('#editor-hint').setAttribute('aria-expanded',String(show));};
+$('#code-editor').addEventListener('input',()=>{clearTimeout(saveTimer);$('#editor-review').innerHTML='<p class="pending">Mã đã đổi. Chạy và kiểm tra để cập nhật kết quả; các dấu đạt cũ không còn dùng cho bản này.</p>';$('#editor-status').textContent='Đang giữ bản nháp. Ctrl + Enter để chạy và kiểm tra.';saveTimer=setTimeout(storeDraft,350);});
+$('#code-editor').addEventListener('keydown',e=>{if((e.ctrlKey||e.metaKey)&&e.key==='Enter'){e.preventDefault();runCode();sound();}});
+$('#download-code').onclick=()=>{storeDraft();if(downloadUrl)URL.revokeObjectURL(downloadUrl);downloadUrl=URL.createObjectURL(new Blob(['\uFEFF',$('#code-editor').value],{type:'text/html;charset=utf-8'}));const link=document.createElement('a');link.href=downloadUrl;link.download='index.html';document.body.append(link);link.click();link.remove();$('#editor-status').textContent='Đã tạo index.html theo UTF-8. Mở tệp đã tải bằng trình duyệt để đối chiếu.';};
+// Click/tap and native drag-and-drop are equivalent ways to assemble the same file.
+let assemblyOrder=[];
+function renderAssembly(){const used=new Set(assemblyOrder),shuffled=[4,2,7,1,5,0,6,3];$('#piece-bank').innerHTML=shuffled.filter(i=>!used.has(assemblyPieces[i].id)).map(i=>`<button class="piece" draggable="true" data-piece="${assemblyPieces[i].id}" title="Chọn hoặc kéo mảnh này vào tệp">${esc(assemblyPieces[i].text)}</button>`).join('')||'<p class="teacher-note">Đã dùng đủ mảnh. Em vẫn có thể đổi thứ tự hoặc trả mảnh về kho.</p>';$('#piece-slots').innerHTML=assemblyOrder.map((id,i)=>{const p=assemblyPieces.find(p=>p.id===id);return `<li><code>${esc(p.text)}</code><div class="piece-tools"><button class="action" data-move="${i}" data-dir="-1" aria-label="Đưa mảnh ${i+1} lên" ${i===0?'disabled':''}>↑</button><button class="action" data-move="${i}" data-dir="1" aria-label="Đưa mảnh ${i+1} xuống" ${i===assemblyOrder.length-1?'disabled':''}>↓</button><button class="action" data-remove="${i}" aria-label="Trả mảnh ${i+1} về kho">×</button></div></li>`;}).join('')||'<li class="empty-slot">Chọn mảnh trong kho hoặc kéo thả vào đây.</li>';
+ $$('[data-piece]').forEach(b=>{b.onclick=()=>addPiece(b.dataset.piece);b.ondragstart=e=>{e.dataTransfer.setData('text/plain',b.dataset.piece);e.dataTransfer.effectAllowed='move';};});
+ $$('[data-move]').forEach(b=>b.onclick=()=>{const i=Number(b.dataset.move),j=i+Number(b.dataset.dir);[assemblyOrder[i],assemblyOrder[j]]=[assemblyOrder[j],assemblyOrder[i]];renderAssembly();$('#assembly-feedback').textContent='Đã đổi thứ tự. Kiểm tra lại để nhận phản hồi mới.';});
+ $$('[data-remove]').forEach(b=>b.onclick=()=>{assemblyOrder.splice(Number(b.dataset.remove),1);renderAssembly();$('#assembly-feedback').textContent='Đã trả mảnh về kho. Chọn lại vị trí phù hợp.';});
+}
+function addPiece(id){if(!assemblyPieces.some(p=>p.id===id)||assemblyOrder.includes(id))return;assemblyOrder.push(id);renderAssembly();$('#assembly-feedback').textContent=`Đã đặt ${assemblyOrder.length}/8 mảnh. Em có thể đổi thứ tự trước khi kiểm tra.`;sound();}
+$('#piece-slots').ondragover=e=>{e.preventDefault();e.dataTransfer.dropEffect='move';};$('#piece-slots').ondrop=e=>{e.preventDefault();addPiece(e.dataTransfer.getData('text/plain'));};
+function checkAssembly(){const count=assemblyPieces.filter((p,i)=>assemblyOrder[i]===p.id).length,first=assemblyPieces.findIndex((p,i)=>assemblyOrder[i]!==p.id),good=count===8;$('#assembly-feedback').classList.toggle('good',good);$('#assembly-feedback').textContent=good?'✓ Đúng 8/8 vị trí theo mẫu. Hãy giải thích vì sao head và body cùng nằm trong html.':`${count}/8 vị trí đúng theo mẫu; đã dùng ${assemblyOrder.length}/8 mảnh. Bước ${first+1}: cần ${assemblyPieces[first].text}. ${assemblyPieces[first].why}`;sound(good?'good':'bad');}
+$('#assembly-check').onclick=checkAssembly;$('#assembly-hint').onclick=()=>{const first=assemblyPieces.findIndex((p,i)=>assemblyOrder[i]!==p.id);$('#assembly-feedback').textContent=first<0?'Em đã xếp đúng. Hãy giải thích quan hệ chứa của html, head và body.':`Gợi ý bước ${first+1}: ${assemblyPieces[first].why}`;};$('#assembly-reset').onclick=()=>{assemblyOrder=[];renderAssembly();$('#assembly-feedback').textContent='Bắt đầu lượt mới. Mỗi mảnh chỉ dùng một lần.';};renderAssembly();
+let repairIndex=0;const repairDrafts={};
+function loadRepair(){repairIndex=Number($('#repair-task').value);const t=repairTasks[repairIndex];$('#repair-code').value=repairDrafts[repairIndex]??t.starter;$('#repair-goal').textContent=t.goal;$('#repair-feedback').textContent='Tự sửa mã trước, rồi kiểm tra. Gợi ý không tự điền lời giải.';$('#repair-feedback').classList.remove('good');$('#repair-hint-text').hidden=true;preview('#repair-preview',$('#repair-code').value);}
+function assessRepair(source,index){const parsed=readLessonHTML(source);if(parsed.issues.length)return {ok:false,message:`Dòng ${parsed.issues[0].line}: ${parsed.issues[0].message}`};
+ const t=repairTasks[index];if(t.kind==='title'){const r=checkLessonWork(source),need=r.checks.filter(c=>['structure','title','h1'].includes(c.key)),missing=need.find(c=>!c.ok);return {ok:!missing,message:missing?missing.fix:'Title đã ở head và có nội dung. H1 đã ở body.'};}
+ const ps=parsed.nodes.filter(n=>n.tag==='p'&&meaningfulLessonText(n));if(!ps.length)return {ok:false,message:'Giữ một p có nội dung cho đoạn văn.'};
+ if(t.kind==='nest'){const em=parsed.nodes.find(n=>n.tag==='em'&&meaningfulLessonText(n)&&ps.some(p=>withinLesson(n,p)));return {ok:!!em,message:em?'Em nằm trong p; thứ tự mở và đóng thẻ đã đúng.':'Giữ một em có nội dung nằm bên trong p để nhấn mạnh cụm từ.'};}
+ const p=ps[0],br=p.children.findIndex(n=>n.tag==='br'),before=p.children.slice(0,br).map(lessonText).join(' '),after=p.children.slice(br+1).map(lessonText).join(' '),ok=ps.length===1&&br>=0&&before.includes('Dòng thứ nhất')&&after.includes('Dòng thứ hai');return {ok,message:ok?'Một p chứa hai câu, br nằm đúng giữa hai câu và không có thẻ đóng.':'Giữ cả hai câu trong một p và chèn <br> giữa “Dòng thứ nhất” và “Dòng thứ hai”.'};
+}
+$('#repair-task').onchange=()=>{loadRepair();sound();};$('#repair-code').oninput=()=>{repairDrafts[repairIndex]=$('#repair-code').value;$('#repair-feedback').textContent='Mã đã đổi. Kiểm tra bản sửa để cập nhật nhận xét.';$('#repair-feedback').classList.remove('good');};
+$('#repair-check').onclick=()=>{const source=$('#repair-code').value;if(source.length>30000){$('#repair-feedback').textContent='Hãy rút gọn mã dưới 30.000 kí tự.';return;}const r=assessRepair(source,repairIndex);preview('#repair-preview',source);$('#repair-feedback').textContent=(r.ok?'✓ Đã sửa đạt yêu cầu. ':'↪ Cần sửa tiếp. ')+r.message;$('#repair-feedback').classList.toggle('good',r.ok);sound(r.ok?'good':'bad');};
+$('#repair-hint').onclick=()=>{$('#repair-hint-text').hidden=!$('#repair-hint-text').hidden;$('#repair-hint-text').textContent=repairTasks[repairIndex].hint;};$('#repair-reset').onclick=()=>{delete repairDrafts[repairIndex];loadRepair();};loadRepair();
+const liveTreeDefault='<!DOCTYPE html>\n<html>\n<head>\n  <title>Lớp 12</title>\n</head>\n<body>\n  <h1>Xin chào</h1>\n  <p>Nhóm <em>bạn bè</em></p>\n  <p>Cùng học HTML.</p>\n</body>\n</html>';
+function buildLiveTree(){const source=$('#live-tree-code').value;if(source.length>10000){$('#live-tree-note').textContent='Dùng ví dụ dưới 10.000 kí tự để cây dễ quan sát.';$('#live-tree').replaceChildren();return;}const r=readLessonHTML(source);$('#live-tree').classList.remove('stale');if(r.issues.length){$('#live-tree').replaceChildren();$('#live-tree-note').textContent=`Chưa dựng cây. Dòng ${r.issues[0].line}: ${r.issues[0].message}`;return;}if(r.nodes.length>60){$('#live-tree').replaceChildren();$('#live-tree-note').textContent='Ví dụ có quá nhiều phần tử. Rút gọn dưới 60 phần tử để dễ đọc cây.';return;}
+ const map=new Map(r.nodes.map((n,i)=>[n,i]));function branch(node){const kids=node.children.filter(n=>n.tag!=='#text');return `<li><button class="live-node" data-live-node="${map.get(node)}">${esc('<'+node.tag+'>')}</button>${kids.length?'<ul>'+kids.map(branch).join('')+'</ul>':''}</li>`;}
+ $('#live-tree').innerHTML='<ul>'+r.root.children.filter(n=>n.tag!=='#text').map(branch).join('')+'</ul>';$('#live-tree-note').textContent=r.nodes.length?`Có ${r.nodes.length} phần tử được viết trong mã. Chạm một nút để tìm cha và con trực tiếp.`:'Chưa có phần tử. Thêm một p hoặc tài liệu html vào khung mã.';
+ $$('[data-live-node]').forEach(b=>b.onclick=()=>{const n=r.nodes[Number(b.dataset.liveNode)],children=n.children.filter(c=>c.tag!=='#text');$$('[data-live-node]').forEach(x=>x.setAttribute('aria-pressed',String(x===b)));$('#live-tree-note').textContent=`<${n.tag}>: ${n.parent.tag==='#document'?'không có phần tử cha trong đoạn mã này':'cha trực tiếp là <'+n.parent.tag+'>'}. ${children.length?'Con trực tiếp: '+children.map(c=>'<'+c.tag+'>').join(', ')+'.':'Không có phần tử con.'}`;});}
+$('#live-tree-code').value=liveTreeDefault;$('#live-tree-build').onclick=()=>{buildLiveTree();sound();};$('#live-tree-reset').onclick=()=>{$('#live-tree-code').value=liveTreeDefault;buildLiveTree();};$('#live-tree-code').oninput=()=>{$('#live-tree').classList.add('stale');$$('[data-live-node]').forEach(b=>b.disabled=true);$('#live-tree-note').textContent='Mã đã đổi. Nhấn “Dựng cây từ mã” để xem cấu trúc mới.';};buildLiveTree();
+let projectRemaining=180,projectTimer=null,projectEnds=0,projectStarted=false;
+function displayProjectTime(){const t=`${String(Math.floor(projectRemaining/60)).padStart(2,'0')}:${String(projectRemaining%60).padStart(2,'0')}`;$('#project-time').textContent=t;const label=$('#mission-timer');if(label)label.textContent=activeMission==='create'&&projectStarted?'⏱ '+t+(projectTimer===null?' · tạm dừng':''):'';}
+function pauseProject(){if(projectTimer!==null){projectRemaining=Math.max(0,Math.ceil((projectEnds-Date.now())/1000));clearInterval(projectTimer);projectTimer=null;$('#project-start').textContent=projectRemaining?'▶ Tiếp tục':'▶ Bắt đầu lại';$('#project-time-status').textContent=projectRemaining?'Đã tạm dừng.':'Hết giờ. Cùng kiểm tra sản phẩm và giải thích cách sửa.';displayProjectTime();}}
+$('#project-start').onclick=()=>{if(projectTimer!==null){pauseProject();return;}if(!projectRemaining)projectRemaining=180;projectStarted=true;projectEnds=Date.now()+projectRemaining*1000;$('#project-start').textContent='Ⅱ Tạm dừng';$('#project-time-status').textContent='Có thể sang nhiệm vụ 3 để viết mã, đồng hồ vẫn chạy.';projectTimer=setInterval(()=>{projectRemaining=Math.max(0,Math.ceil((projectEnds-Date.now())/1000));displayProjectTime();if(!projectRemaining){pauseProject();notify('Hết 3 phút. Hãy chạy kiểm tra và đọc các mục chưa đạt.');sound('good');}},250);displayProjectTime();};
+$('#project-reset').onclick=()=>{pauseProject();projectRemaining=180;projectStarted=false;$('#project-start').textContent='▶ Bắt đầu';$('#project-time-status').textContent='Đồng hồ chạy ở slide dự án và xưởng nhiệm vụ 3.';displayProjectTime();};
+$('#project-open').onclick=()=>{storeDraft();$('#mission').value='create';loadMission();showSlide(13);};$('#project-review').onclick=()=>{if(activeMission==='create')storeDraft();const r=checkLessonWork(drafts.create??lessonMissions.create.starter,'create');$('#project-feedback').innerHTML=workFeedback(r);};
+// Teacher guidance follows the slide without exposing answers in student tasks.
+const notePanel=document.createElement('aside');notePanel.className='teacher-panel';notePanel.hidden=true;notePanel.setAttribute('aria-label','Gợi ý giáo viên');notePanel.innerHTML='<strong>Gợi ý tổ chức</strong><p id="teacher-note-text"></p>';document.body.append(notePanel);const noteButton=document.createElement('button');noteButton.className='tool';noteButton.id='teacher-toggle';noteButton.textContent='💡 Gợi ý GV';noteButton.setAttribute('aria-expanded','false');$('#fullscreen').before(noteButton);
+function updateTeacherNote(i){$('#teacher-note-text').textContent=teacherNotes[i];}
+noteButton.onclick=()=>{notePanel.hidden=!notePanel.hidden;noteButton.setAttribute('aria-expanded',String(!notePanel.hidden));};document.addEventListener('keydown',e=>{if(e.key.toLowerCase()==='n'&&!e.ctrlKey&&!e.metaKey&&!e.altKey&&!$('#toc').open&&!e.target.closest('input,textarea,select,[contenteditable="true"]'))noteButton.click();});
+window.addEventListener('pagehide',()=>{clearTimeout(saveTimer);storeDraft();if(downloadUrl)URL.revokeObjectURL(downloadUrl);resetPipe();pauseProject();});document.addEventListener('visibilitychange',()=>{if(document.hidden)pauseProject();});
+loadMission();displayProjectTime();updateTeacherNote(0);showSlide(0,false);
 </script>
 </body></html>

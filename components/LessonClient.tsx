@@ -208,7 +208,9 @@ export default function LessonClient({
             key: "slides" as Mode,
             emoji: "📽️",
             name: "Slide Trình chiếu",
-            desc: "15 slide bài giảng điện tử tương tác · sơ đồ động, phòng code trực tiếp & đố vui",
+            desc: lessonId === "bai-07"
+              ? "20 slide tương tác · Tự viết, tự sửa HTML, kiểm tra từng yêu cầu, lắp khung trang và cây theo mã"
+              : "15 slide bài giảng điện tử tương tác · sơ đồ động, phòng code trực tiếp & đố vui",
             best: null,
             done: false,
             enabled: true,
