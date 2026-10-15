@@ -1,1276 +1,304 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Bài 7: HTML và Cấu trúc Trang Web — Bài giảng điện tử Tin học 12</title>
-  <style>
-    /* ─── RESET & BIẾN MÀU ─── */
-    :root {
-      --bg: #060C14;
-      --bg-card: rgba(12, 21, 33, 0.95);
-      --border-card: rgba(56, 225, 240, 0.16);
-      --ink: #FFFFFF;
-      --ink-soft: #94A3B8;
-      --sea: #0D7C86;
-      --sea-light: #38E1F0;
-      --coral: #F2683C;
-      --gold: #F5A623;
-      --leaf: #10B981;
-      --leaf-light: #34D399;
-      --purple: #8B5CF6;
-      --purple-light: #C4B5FD;
-      --font-main: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
-      --font-mono: 'Consolas', 'Fira Code', 'Courier New', monospace;
-      --ease-spring: cubic-bezier(0.16, 1, 0.3, 1);
-    }
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    body {
-      font-family: var(--font-main);
-      background: var(--bg);
-      color: var(--ink);
-      overflow: hidden;
-      width: 100vw; height: 100vh;
-      user-select: none;
-      -webkit-font-smoothing: antialiased;
-    }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Bài 7 Tin học 12: bài trình chiếu tương tác về HTML và cấu trúc trang web. Hiện từng ý, mã nguồn và kết quả, cây HTML, xưởng thực hành và trắc nghiệm tự chấm.">
+<title>Bài 7 · HTML và cấu trúc trang web</title>
+<style>:root{color-scheme:dark;--bg:#071522;--panel:#112839;--ink:#f1f8ff;--muted:#b3c8d9;--cyan:#65e8e0;--gold:#ffcf77;--pink:#ffa7c4;--green:#91e8b7;--line:#ffffff24;--radius:24px;font-family:system-ui,-apple-system,'Segoe UI',sans-serif}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);height:100vh;height:100dvh;display:grid;grid-template-rows:62px minmax(0,1fr) 70px;overflow:hidden}button,a{-webkit-tap-highlight-color:transparent}button{font:inherit;color:inherit;cursor:pointer}button:disabled{cursor:default;opacity:.55}a{color:var(--cyan)}button:focus-visible,a:focus-visible{outline:3px solid var(--gold);outline-offset:4px}[hidden]{display:none!important}
+body:before{content:'';position:fixed;inset:0;z-index:-1;background:radial-gradient(ellipse at 10% 15%,#13464e90,transparent 58%),radial-gradient(ellipse at 95% 80%,#48264870,transparent 55%)}
+.topbar,.bottom{display:flex;align-items:center;gap:12px;padding:10px 3vw;background:#071522e8;z-index:10}.topbar{border-bottom:1px solid var(--line)}.brand{font-size:15px;letter-spacing:.08em;font-weight:750}.brand b{color:var(--cyan)}.spacer{flex:1}.tool,.nav,.action,.choice,.tab{border:1px solid var(--line);border-radius:12px;background:#ffffff09;min-height:44px;padding:9px 15px;transition:background .2s,border-color .2s,box-shadow .2s}.tool{font-size:14px}.tool:hover,.nav:hover,.action:hover,.choice:hover,.tab:hover{background:#65e8e018;border-color:var(--cyan)}.action.primary{background:var(--cyan);color:#071522;font-weight:800;border-color:transparent}.action.gold{background:var(--gold);color:#15232e;font-weight:800}.action:disabled{opacity:.5}.tool[aria-pressed=true],.tab[aria-pressed=true]{border-color:var(--cyan);background:#65e8e01c}.stage{overflow:auto;padding:18px 3vw 14px;scroll-behavior:smooth}.slide{max-width:1340px;min-height:100%;margin:auto;display:flex;flex-direction:column;gap:18px}.slide.active{animation:pageIn .35s ease both}.slide-head{display:flex;align-items:flex-start;gap:20px}.heading{flex:1}.eyebrow{font-size:14px;font-weight:750;letter-spacing:.1em;color:var(--cyan);text-transform:uppercase;margin:0 0 6px}.slide h1,.slide h2{margin:0;font-size:clamp(27px,3vw,42px);line-height:1.17;letter-spacing:-.035em;font-weight:820}.lead{margin:9px 0 0;font-size:clamp(17px,1.6vw,22px);line-height:1.45;color:var(--muted)}.reveal-tools{display:flex;align-items:center;gap:7px;flex-wrap:wrap;justify-content:flex-end;max-width:300px}.reveal-tools button{font-size:14px}.count{font-variant-numeric:tabular-nums;color:var(--cyan);font-size:14px;min-width:50px;text-align:center}.body{flex:1;display:flex;flex-direction:column;justify-content:center;gap:16px;padding:2px 0 8px}.grid{display:grid;gap:16px}.two{grid-template-columns:repeat(2,minmax(0,1fr))}.three{grid-template-columns:repeat(3,minmax(0,1fr))}.four{grid-template-columns:repeat(4,minmax(0,1fr))}.card{border:1px solid var(--line);background:linear-gradient(145deg,#193648c9,#102435ec);border-radius:var(--radius);padding:20px;min-width:0;position:relative}.card h3{font-size:clamp(19px,1.9vw,26px);line-height:1.25;margin:8px 0}.card p,.card li{font-size:clamp(17px,1.6vw,22px);line-height:1.45;margin:7px 0;color:var(--muted)}.icon{display:block;font-size:40px;line-height:1.25}.accent{color:var(--cyan)}.gold-text{color:var(--gold)}.pink-text{color:var(--pink)}.green-text{color:var(--green)}.ribbon{border-left:4px solid var(--cyan);background:#65e8e00c;border-radius:0 14px 14px 0;padding:12px 18px;font-size:clamp(17px,1.6vw,22px);line-height:1.45}.ribbon strong{color:var(--cyan)}.reveal{visibility:hidden;opacity:0;pointer-events:none}.reveal.shown{visibility:visible;opacity:1;pointer-events:auto;animation:ideaIn .45s ease both}.reveal.shown:nth-child(even){animation-name:ideaSide}.reveal.shown strong{color:var(--ink)}.prompt{font-size:14px;color:var(--gold);margin:0}.bottom{border-top:1px solid var(--line);gap:14px}.progress{height:7px;border-radius:8px;background:#ffffff15;flex:1;overflow:hidden}.progress>span{display:block;width:0;height:100%;background:linear-gradient(90deg,var(--cyan),var(--pink));transition:width .35s}.counter{font-variant-numeric:tabular-nums;font-size:15px;color:var(--muted);white-space:nowrap}.next-idea{font-size:15px;min-width:130px}.key-help{font-size:12px;color:var(--muted)}.nav{font-size:18px;min-width:48px}.toast{position:fixed;bottom:85px;left:50%;transform:translateX(-50%);padding:12px 20px;border-radius:12px;background:#23475a;border:1px solid var(--cyan);max-width:90vw;z-index:40;font-size:16px}.sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
+.hero{display:grid;grid-template-columns:1.2fr .8fr;gap:24px;align-items:center}.hero-title{font-size:clamp(32px,4.2vw,62px);line-height:1.12;letter-spacing:-.04em;margin:8px 0 18px}.hero-title em{font-style:normal;color:var(--cyan)}.hero-orbit{min-height:190px;position:relative;display:grid;place-items:center;border:1px solid #65e8e040;border-radius:50%;aspect-ratio:1.6;max-width:400px;width:100%;margin:auto;background:radial-gradient(ellipse,#65e8e014,transparent 70%)}.hero-orbit:before,.hero-orbit:after{content:'';position:absolute;inset:18px;border:1px dashed #65e8e040;border-radius:50%;animation:orbit 35s linear infinite}.hero-orbit:after{inset:35px;animation-direction:reverse;border-color:#ffa7c430}.hero-core{font-size:76px;filter:drop-shadow(0 0 20px #65e8e040)}.satellite{position:absolute;z-index:1;background:#193648;border:1px solid var(--line);padding:9px;border-radius:16px;font-size:28px;animation:bob 4s ease-in-out infinite}.satellite:nth-of-type(2){left:3%;top:12%}.satellite:nth-of-type(3){right:3%;top:18%;animation-delay:-1s}.satellite:nth-of-type(4){bottom:-5%;animation-delay:-2s}.hero-small .card{padding:15px 18px}.hero-small h3{margin:0 0 5px;font-size:22px}.hero-small p{font-size:18px;margin:0}.teacher-note{font-size:14px;color:var(--muted);margin:0}
+.network{display:grid;grid-template-columns:1fr 1.1fr;gap:20px;align-items:center}.network-visual{position:relative;min-height:260px;display:grid;grid-template-columns:1fr 1fr;gap:70px 30px;padding:10px 20px}.network-visual:before,.network-visual:after{content:'';position:absolute;inset:49% 15%;height:2px;background:linear-gradient(90deg,transparent,var(--cyan),transparent);transform:rotate(28deg);animation:packet 2s linear infinite}.network-visual:after{transform:rotate(-28deg);animation-delay:-1s}.node{z-index:1;border:1px solid var(--line);border-radius:20px;background:#193648;padding:14px;text-align:center;font-size:20px}.node i{display:block;font-style:normal;font-size:34px}.node-core{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);border-radius:50%;width:100px;height:100px;display:grid;place-items:center;border:2px solid var(--cyan);background:#0b2535;z-index:2;font-size:40px;box-shadow:0 0 35px #65e8e020}.tabs{display:flex;gap:9px;flex-wrap:wrap}.tab{font-size:17px}.demo{min-height:85px;padding:17px 20px;border-radius:18px;background:#081c2b;border:1px solid var(--line);font-size:clamp(18px,1.7vw,24px);line-height:1.45}.demo strong{color:var(--cyan)}.demo.pop{animation:ideaIn .35s ease}.card button{font-size:17px}.reveal-list .card{text-align:left;width:100%;color:inherit}.example{font-size:18px!important;border-top:1px dashed var(--line);padding-top:10px;margin-top:12px!important;color:var(--gold)!important}.example:empty{display:none}
+.balance-layout{display:grid;grid-template-columns:1fr 1fr;align-items:center;gap:24px}.scale{height:220px;position:relative;max-width:500px;width:100%;margin:auto}.scale-base{position:absolute;bottom:12px;left:35%;width:30%;height:18px;background:#91abba;border-radius:14px}.scale-post{position:absolute;width:18px;height:155px;background:#6b8a9d;bottom:28px;left:calc(50% - 9px);border-radius:9px}.beam{position:absolute;height:12px;width:80%;left:10%;top:50px;background:var(--gold);border-radius:10px;transition:transform .65s cubic-bezier(.2,1.5,.4,1);transform-origin:center}.pan{position:absolute;top:7px;width:115px;text-align:center;font-size:18px;font-weight:750;line-height:1.5;padding-top:52px}.pan:before{content:'';position:absolute;top:0;left:50%;height:50px;border-left:2px solid var(--muted)}.pan span{display:block;padding:10px;background:#164441;border:1px solid var(--cyan);border-radius:0 0 22px 22px}.pan.left{left:-35px}.pan.right{right:-35px}.pan.right span{background:#493047;border-color:var(--pink)}.scale-focus{font-size:19px;color:var(--gold);text-align:center}.message-lab{text-align:center;padding:25px}.mood-face{font-size:64px;display:block;margin:5px}.speech{font-size:clamp(26px,3vw,42px);font-weight:800;border:1px solid var(--line);border-radius:22px;padding:18px;margin:15px 0;background:#081c2b}.pills{display:flex;gap:9px;justify-content:center;flex-wrap:wrap}.steps{counter-reset:step}.step{display:flex;gap:16px;align-items:center;padding:14px 20px}.step:before{counter-increment:step;content:counter(step);font-weight:800;flex-shrink:0;width:40px;height:40px;background:#65e8e01a;color:var(--cyan);border-radius:50%;display:grid;place-items:center}.step h3{margin:0;font-size:21px}.step p{margin:2px 0 0;font-size:18px}.stop-timer{display:grid;place-items:center;width:95px;height:95px;border-radius:50%;border:4px solid var(--gold);font-size:44px;font-variant-numeric:tabular-nums;font-weight:800;margin:auto}.timer-panel{display:flex;align-items:center;gap:20px;flex-wrap:wrap}.timer-panel>div:last-child{flex:1;min-width:210px}.date{font-size:18px;color:var(--gold);padding:10px 16px;background:#ffcf7710;border-radius:12px;display:inline-block}.sources{font-size:13px;color:var(--muted);margin:0}
+.chat-layout{display:grid;grid-template-columns:1fr 1.1fr;gap:20px;align-items:start}.chat-window{border:1px solid var(--line);border-radius:22px;background:#081c2b;overflow:hidden}.chat-head{padding:14px 18px;background:#193648;font-size:17px;color:var(--cyan);font-weight:750}.messages{padding:18px;display:flex;flex-direction:column;gap:12px;max-height:300px;overflow:auto;min-height:155px}.bubble{background:#213c4f;border-radius:16px 16px 16px 3px;padding:14px 16px;font-size:clamp(18px,1.7vw,23px);line-height:1.45;max-width:95%}.bubble.me{background:#145a65;border-radius:16px 16px 3px 16px;align-self:flex-end}.bubble.reply{animation:messageIn .3s ease both}.responses{display:flex;flex-direction:column;gap:10px}.choice{display:flex;align-items:flex-start;gap:12px;text-align:left;font-size:clamp(17px,1.55vw,21px);line-height:1.4;width:100%;padding:13px 16px}.letter{border:1px solid var(--line);border-radius:9px;padding:2px 8px;font-weight:800;flex-shrink:0}.choice.selected{border-color:var(--gold);background:#ffcf7710}.choice.correct{border-color:var(--green);background:#91e8b718}.choice.wrong{border-color:var(--pink);background:#ffa7c412}.feedback{min-height:62px;font-size:18px;line-height:1.45;padding:12px 16px;border-left:4px solid var(--gold);background:#ffcf770c;border-radius:0 12px 12px 0;margin-top:12px}.feedback.good{border-color:var(--green);background:#91e8b70c}.feedback:empty{visibility:hidden}.typing{color:var(--muted);font-size:16px}.quiz-layout{max-width:1050px;width:100%;margin:auto}.quiz-meta{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;font-size:18px;color:var(--muted)}.quiz-question{font-size:clamp(22px,2.3vw,31px);line-height:1.3;margin:0 0 18px}.quiz-options{display:grid;grid-template-columns:1fr 1fr;gap:12px}.quiz-end{text-align:center;padding:20px}.score-big{font-size:70px;line-height:1.15;font-weight:850;color:var(--cyan)}.quiz-end p{font-size:22px;line-height:1.4}.quiz-actions{display:flex;justify-content:flex-end;gap:12px;margin-top:14px}.check{display:flex;gap:12px;align-items:center;border:1px solid var(--line);border-radius:14px;padding:12px 16px;background:#ffffff05;font-size:18px;text-align:left;min-height:52px;width:100%}.check[aria-pressed=true]{border-color:var(--green);background:#91e8b711}.check-icon{font-size:24px}.badge{font-size:64px;text-align:center;display:block}.pledge-status{font-size:23px!important;color:var(--cyan)!important;text-align:center}.links{display:flex;gap:12px;flex-wrap:wrap;justify-content:center}.links a{text-decoration:none;display:inline-flex;align-items:center}.confetti{position:fixed;inset:0;pointer-events:none;z-index:90;overflow:hidden}.confetti i{position:absolute;top:-30px;width:9px;height:17px;animation:fall 1.8s ease-in both;background:var(--cyan)}dialog{background:#112839;color:var(--ink);border:1px solid var(--line);border-radius:24px;max-width:920px;width:92vw;max-height:88vh;padding:24px}dialog::backdrop{background:#000a;backdrop-filter:blur(5px)}.toc-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:18px}.toc-grid button{text-align:left;font-size:17px}.dialog-head{display:flex;align-items:center;justify-content:space-between;gap:14px}.dialog-head h2{font-size:25px;margin:0}
+@keyframes pageIn{from{opacity:0}to{opacity:1}}@keyframes ideaIn{from{opacity:0;filter:blur(4px);transform:translateY(12px)}to{opacity:1;filter:blur(0);transform:none}}@keyframes ideaSide{from{opacity:0;transform:translateX(12px)}to{opacity:1;transform:none}}@keyframes messageIn{from{opacity:0;transform:scale(.96)}to{opacity:1;transform:none}}@keyframes bob{50%{translate:0 -9px}}@keyframes orbit{to{rotate:360deg}}@keyframes packet{50%{opacity:.3;filter:drop-shadow(0 0 7px var(--cyan))}}@keyframes fall{to{transform:translateY(110vh) rotate(650deg);opacity:.3}}
+body.motion-off *,body.motion-off *:before,body.motion-off *:after{animation:none!important;transition:none!important;scroll-behavior:auto!important}
+@media(max-width:1050px){.four{grid-template-columns:repeat(2,minmax(0,1fr))}.hero-title{font-size:40px}.card{padding:17px}.slide h1,.slide h2{font-size:30px}.slide-head{gap:12px}.brand{font-size:13px}.key-help{display:none}.reveal-tools{max-width:245px}.topbar{gap:7px}.tool{padding:8px 11px}.card p{font-size:18px}}
+@media(max-width:700px){body{grid-template-rows:auto minmax(0,1fr) 68px}.topbar{flex-wrap:wrap;padding:8px 12px;gap:6px}.brand{width:100%;font-size:12px}.spacer{display:none}.tool{font-size:12px;min-height:38px;padding:7px 10px}.stage{padding:16px 14px}.slide-head{flex-direction:column;gap:10px}.slide h1,.slide h2{font-size:28px}.lead{font-size:17px}.reveal-tools{max-width:none;justify-content:flex-start}.body{justify-content:flex-start}.grid.three,.grid.four,.grid.two,.hero,.network,.balance-layout,.chat-layout{grid-template-columns:1fr}.hero-title{font-size:39px}.hero-orbit{min-height:165px;max-width:300px}.hero-small .card h3{font-size:21px}.hero-small .card p{font-size:18px}.hero .hero-orbit{display:none}.network-visual{min-height:230px}.card p,.card li{font-size:18px}.quiz-options{grid-template-columns:1fr}.bottom{padding:10px 12px;gap:7px}.next-idea{min-width:95px;font-size:13px;padding:8px}.bottom .nav{min-width:42px;padding:8px}.counter{font-size:13px}.progress{min-width:20px}.choice{font-size:18px}.toc-grid{grid-template-columns:1fr}.slide{gap:16px}.messages{max-height:240px}.timer-panel{flex-direction:column;text-align:center}.timer-panel>div:last-child{min-width:0}.slide .card{border-radius:18px}}
+@media(prefers-reduced-motion:reduce){*,*:before,*:after{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
+/* Keep the teaching controls in the footer so titles get the full screen width. */
+.slide-head{display:block}.reveal-tools{display:none!important}.slide h1,.slide h2{font-size:clamp(27px,2.6vw,40px)}.slide{gap:14px}.body{gap:12px}.card{padding:16px}.grid.two>.card>.icon,.reveal-list>.card>.icon{float:left;font-size:32px;width:45px;margin-right:8px}.grid.two>.card>h3,.reveal-list>.card>h3{min-height:40px;margin:0 0 6px}.grid.two>.card>p,.reveal-list>.card>p{clear:both}.steps{display:grid;gap:8px}.step{padding:10px 14px}.step h3{font-size:20px}.step p{font-size:17px;line-height:1.35}.footer-count{font-size:14px;color:var(--cyan);white-space:nowrap}#all-ideas{font-size:14px;white-space:nowrap}
+#slide-2 .network .icon{display:none}#slide-2 .network .card h3{margin-top:0}#slide-2 .network-visual{min-height:230px;gap:45px 25px}#slide-2 .network .grid{gap:12px}#slide-2 .network .card{padding:14px 18px}#slide-2 .network .card p{font-size:19px}#slide-2 .network-result{min-height:65px}#slide-6 .responses>.card .icon{float:left;font-size:28px;width:36px}#slide-6 .responses>.card h3{font-size:22px;margin:0 0 5px}#slide-6 .responses>.card p{font-size:19px}#slide-6 .message-lab{padding:18px}.date{font-size:17px}#slide-7 .sources{font-size:12px}
+@media(max-width:700px){.progress,.footer-count{display:none}#all-ideas{font-size:12px;padding:8px 10px}.bottom{gap:7px}.slide h1,.slide h2{font-size:28px}.grid.two>.card>.icon{float:none}.grid.two>.card>h3{min-height:0}.key-help{display:none}.network-visual{min-height:225px}.hero-title{font-size:36px}}
+.reveal-list>.card{padding:14px 16px}.reveal-list .example{font-size:17px!important;line-height:1.4}
 
-    /* ─── NỀN VŨ TRỤ SỐ ─── */
-    .bg-mesh {
-      position: fixed; inset: 0;
-      background:
-        radial-gradient(ellipse at 10% 10%, rgba(13,124,134,.35) 0, transparent 48%),
-        radial-gradient(ellipse at 88% 85%, rgba(242,104,60,.28) 0, transparent 45%),
-        radial-gradient(ellipse at 52% 52%, rgba(139,92,246,.18) 0, transparent 62%);
-      animation: meshBreath 14s ease-in-out infinite alternate;
-      pointer-events: none; z-index: 0;
-    }
-    @keyframes meshBreath {
-      0%   { transform: scale(1)    translate(0,0);       opacity:.9; }
-      100% { transform: scale(1.07) translate(-12px,12px);opacity: 1; }
-    }
-
-    /* Thẻ HTML trôi nổi */
-    .float-layer { position:fixed; inset:0; pointer-events:none; z-index:1; overflow:hidden; }
-    .float-tag {
-      position:absolute;
-      font-family: var(--font-mono); font-size:13px; font-weight:700;
-      color: rgba(56,225,240,.15);
-      border:1px solid rgba(56,225,240,.12); padding:3px 9px; border-radius:7px;
-      background: rgba(13,124,134,.05);
-      animation: floatUp 22s linear infinite;
-    }
-    @keyframes floatUp {
-      0%   { transform: translateY(108vh) rotate(0deg); opacity:0; }
-      10%  { opacity:.4; }
-      90%  { opacity:.4; }
-      100% { transform: translateY(-10vh) rotate(360deg); opacity:0; }
-    }
-
-    /* ─── DECK ─── */
-    .deck-container {
-      position:relative; width:100vw; height:100vh;
-      display:flex; justify-content:center; align-items:center; z-index:2;
-    }
-
-    /* ─── SLIDE ─── */
-    .slide {
-      position:absolute;
-      width:95vw; max-width:1380px;
-      height:88vh; max-height:870px;
-      background: var(--bg-card);
-      border:1px solid var(--border-card);
-      border-radius:24px;
-      backdrop-filter:blur(30px);
-      box-shadow: 0 38px 85px rgba(0,0,0,.78), inset 0 1px 0 rgba(255,255,255,.12);
-      padding:28px 42px;
-      display:flex; flex-direction:column;
-      opacity:0; pointer-events:none;
-      transform: translateX(70px) scale(0.96);
-      transition: transform .62s var(--ease-spring), opacity .5s ease;
-      overflow-y:auto;
-    }
-    .slide::-webkit-scrollbar { width:6px; }
-    .slide::-webkit-scrollbar-thumb { background:rgba(56,225,240,.25); border-radius:4px; }
-    .slide.active  { opacity:1; pointer-events:auto; transform:translateX(0) scale(1); z-index:3; }
-    .slide.prev    { opacity:0; pointer-events:none; transform:translateX(-70px) scale(0.96); }
-
-    /* ─── HEADER ─── */
-    .slide-header {
-      display:flex; justify-content:space-between; align-items:flex-start;
-      margin-bottom:14px; border-bottom:1px solid rgba(255,255,255,.08);
-      padding-bottom:12px; flex-shrink:0;
-    }
-    .slide-badge {
-      display:inline-flex; align-items:center; gap:5px;
-      padding:3px 13px; border-radius:20px;
-      font-size:12px; font-weight:700; letter-spacing:.5px; text-transform:uppercase;
-      background:rgba(13,124,134,.28); color:#38E1F0;
-      border:1px solid rgba(56,225,240,.35); margin-bottom:5px;
-    }
-    .slide-badge.coral  { background:rgba(242,104,60,.25);  color:#FF855D; border-color:rgba(255,133,93,.35); }
-    .slide-badge.gold   { background:rgba(245,166,35,.25);  color:#FFC043; border-color:rgba(255,192,67,.35); }
-    .slide-badge.leaf   { background:rgba(16,185,129,.25);  color:#34D399; border-color:rgba(52,211,153,.35); }
-    .slide-badge.purple { background:rgba(139,92,246,.25);  color:#C4B5FD; border-color:rgba(196,181,253,.35); }
-    .slide-title {
-      font-size:27px; font-weight:800; letter-spacing:-.4px; line-height:1.25;
-      background:linear-gradient(135deg,#FFF 40%,#BFEAF2 100%);
-      -webkit-background-clip:text; -webkit-text-fill-color:transparent;
-    }
-    .slide-subtitle { font-size:14px; color:var(--ink-soft); margin-top:3px; }
-
-    .slide-body {
-      flex:1; display:flex; flex-direction:column;
-      justify-content:center; gap:14px; position:relative;
-    }
-
-    /* ─── REVEAL CONTROLLER ─── */
-    .reveal-ctrl {
-      display:flex; align-items:center; gap:8px;
-      background:rgba(0,0,0,.35); padding:5px 13px;
-      border-radius:30px; border:1px solid rgba(255,255,255,.1); font-size:13px;
-    }
-    .reveal-status { font-weight:800; color:#38E1F0; font-family:var(--font-mono); }
-    .reveal-btn {
-      background:linear-gradient(135deg,#0D7C86,#16A8B6); color:#FFF; border:none;
-      padding:5px 12px; border-radius:16px; font-size:12px; font-weight:700;
-      cursor:pointer; transition:all .25s var(--ease-spring);
-      display:inline-flex; align-items:center; gap:4px;
-    }
-    .reveal-btn:hover { transform:translateY(-2px); box-shadow:0 4px 14px rgba(56,225,240,.45); }
-
-    /* ─── REVEAL ITEM ─── */
-    .reveal-item {
-      opacity:0;
-      transform:translateY(24px) scale(0.97);
-      transition: opacity .5s var(--ease-spring), transform .5s var(--ease-spring), box-shadow .4s;
-      will-change: opacity, transform;
-    }
-    .slide.active .reveal-item.visible { opacity:1; transform:translateY(0) scale(1); }
-    .reveal-item.just-revealed {
-      box-shadow:0 0 28px rgba(56,225,240,.4), inset 0 0 16px rgba(56,225,240,.15);
-      border-color:#38E1F0 !important;
-    }
-
-    /* ─── GRIDS & CARDS ─── */
-    .grid-2 { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
-    .grid-3 { display:grid; grid-template-columns:repeat(3,1fr); gap:14px; }
-    .card {
-      background:rgba(255,255,255,.04); border:1px solid rgba(255,255,255,.09);
-      border-radius:16px; padding:14px 18px; position:relative; overflow:hidden;
-      transition:transform .3s var(--ease-spring), border-color .3s;
-    }
-    .card:hover { transform:translateY(-3px); border-color:rgba(56,225,240,.3); }
-    .card-title {
-      font-size:15px; font-weight:700; color:#FFF; margin-bottom:7px;
-      display:flex; align-items:center; gap:7px;
-    }
-
-    /* ─── CODE BOX ─── */
-    .code-box {
-      background:#0D1520; border:1px solid rgba(56,225,240,.25);
-      border-radius:14px; overflow:hidden;
-      box-shadow:0 10px 26px rgba(0,0,0,.5);
-    }
-    .code-header {
-      background:rgba(255,255,255,.06); padding:7px 13px;
-      display:flex; justify-content:space-between; align-items:center;
-      font-size:11.5px; font-family:var(--font-mono); color:#94A3B8;
-      border-bottom:1px solid rgba(255,255,255,.08);
-    }
-    .code-content {
-      padding:13px 16px; font-family:var(--font-mono);
-      font-size:13px; line-height:1.65; color:#E2E8F0;
-      white-space:pre-wrap; overflow-x:auto;
-    }
-    .tag-kw  { color:#F2683C; font-weight:bold; }
-    .attr-kw { color:#38E1F0; }
-    .val-kw  { color:#10B981; }
-    .cmt-kw  { color:#64748B; font-style:italic; }
-    .dec-kw  { color:#C4B5FD; }
-
-    /* ─── PREVIEW BOX (nền trắng chuẩn trình duyệt) ─── */
-    .preview-box {
-      background:#FFF; color:#111827; border-radius:14px;
-      padding:14px 18px; font-family:var(--font-main);
-      border:2px solid #38E1F0; overflow-y:auto; max-height:360px;
-      box-shadow:0 10px 28px rgba(0,0,0,.5);
-    }
-    .preview-header {
-      font-size:10.5px; text-transform:uppercase; color:#64748B;
-      font-weight:700; margin-bottom:8px;
-      display:flex; justify-content:space-between;
-      border-bottom:1px dashed #CBD5E1; padding-bottom:5px;
-    }
-
-    /* ─── INTERACTIVE PANEL ─── */
-    .interact-panel {
-      background:rgba(13,124,134,.15); border:1px solid rgba(56,225,240,.35);
-      border-radius:14px; padding:10px 14px; margin-top:8px;
-      display:flex; flex-wrap:wrap; align-items:center; gap:7px;
-    }
-    .interact-title {
-      width:100%; font-size:11.5px; font-weight:700; text-transform:uppercase;
-      letter-spacing:.5px; color:#38E1F0; display:flex; align-items:center; gap:5px;
-      margin-bottom:3px;
-    }
-    .sim-btn {
-      background:rgba(255,255,255,.08); color:#E2E8F0;
-      border:1px solid rgba(255,255,255,.18); padding:5px 12px;
-      border-radius:8px; font-size:12px; font-weight:600; cursor:pointer;
-      transition:all .2s var(--ease-spring); display:inline-flex; align-items:center; gap:4px;
-    }
-    .sim-btn:hover { background:rgba(56,225,240,.2); border-color:#38E1F0; color:#FFF; transform:translateY(-1px); }
-    .sim-btn.active { background:#0D7C86; border-color:#38E1F0; color:#FFF; box-shadow:0 0 12px rgba(56,225,240,.4); }
-
-    /* ─── CÂY THÔNG TIN HOẠT HỌA ─── */
-    #tree-svg { width:100%; height:100%; }
-
-    .tree-node {
-      cursor:pointer; transition:all .35s var(--ease-spring);
-    }
-    .tree-node circle {
-      stroke-width:2; fill-opacity:.18; transition:all .35s;
-    }
-    .tree-node:hover circle {
-      fill-opacity:.4;
-      filter: drop-shadow(0 0 8px currentColor);
-    }
-    .tree-node text { font-family:var(--font-mono); font-size:13px; font-weight:700; pointer-events:none; }
-    .tree-link { stroke-opacity:.5; stroke-dasharray:6 3; animation: dash 16s linear infinite; }
-    @keyframes dash { to { stroke-dashoffset:-200; } }
-
-    /* ─── PLAYGROUND ─── */
-    .playground-wrapper {
-      display:grid; grid-template-columns:1.1fr 1fr; gap:14px; height:460px;
-    }
-    .editor-pane {
-      background:#0A1118; border:1px solid rgba(56,225,240,.3);
-      border-radius:14px; display:flex; flex-direction:column; overflow:hidden;
-    }
-    .editor-bar {
-      background:rgba(255,255,255,.05); padding:7px 13px;
-      display:flex; justify-content:space-between; align-items:center;
-      border-bottom:1px solid rgba(255,255,255,.08); font-size:11.5px;
-    }
-    .live-code-area {
-      flex:1; background:transparent; border:none; color:#F8FAFC;
-      font-family:var(--font-mono); font-size:13px; line-height:1.65;
-      padding:13px; resize:none; outline:none; white-space:pre;
-    }
-    .preview-pane {
-      background:#FFF; border-radius:14px; border:2px solid #38E1F0;
-      overflow:hidden; display:flex; flex-direction:column;
-    }
-    .preview-pane-bar {
-      background:#F1F5F9; padding:7px 13px; border-bottom:1px solid #CBD5E1;
-      font-size:11px; font-weight:700; color:#64748B; text-transform:uppercase;
-      display:flex; align-items:center; gap:6px;
-    }
-    .preview-frame { flex:1; border:none; width:100%; height:100%; background:white; }
-
-    /* ─── QUIZ ─── */
-    .quiz-grid { display:grid; grid-template-columns:1fr 1fr; gap:14px; }
-    .quiz-card {
-      background:rgba(255,255,255,.04); border:1px solid rgba(255,255,255,.12);
-      border-radius:14px; padding:14px; display:flex; flex-direction:column; gap:8px;
-    }
-    .quiz-q { font-size:14px; font-weight:700; color:#FFF; line-height:1.4; }
-    .quiz-btn {
-      background:rgba(255,255,255,.06); color:#E2E8F0;
-      border:1px solid rgba(255,255,255,.12); padding:7px 11px;
-      border-radius:8px; font-size:12.5px; text-align:left; cursor:pointer;
-      transition:all .2s var(--ease-spring);
-    }
-    .quiz-btn:hover { background:rgba(56,225,240,.15); border-color:#38E1F0; color:#FFF; transform:translateX(4px); }
-    .quiz-btn.correct { background:#059669 !important; border-color:#34D399 !important; color:#FFF !important; font-weight:700; }
-    .quiz-btn.wrong   { background:#DC2626 !important; border-color:#F87171 !important; color:#FFF !important; animation:shake .4s ease; }
-    @keyframes shake { 0%,100%{transform:translateX(0)} 20%,60%{transform:translateX(-6px)} 40%,80%{transform:translateX(6px)} }
-    .quiz-feedback { font-size:12px; margin-top:3px; padding:5px 9px; border-radius:6px; display:none; line-height:1.4; }
-
-    /* ─── THANH NAV ─── */
-    .deck-nav {
-      position:fixed; bottom:13px; left:50%; transform:translateX(-50%);
-      background:rgba(8,15,24,.9); border:1px solid rgba(255,255,255,.14);
-      border-radius:40px; padding:6px 16px;
-      display:flex; align-items:center; gap:12px;
-      backdrop-filter:blur(18px); z-index:100;
-      box-shadow:0 10px 32px rgba(0,0,0,.65);
-    }
-    .nav-btn {
-      background:transparent; border:none; color:#E2E8F0; font-size:18px;
-      cursor:pointer; padding:3px 9px; border-radius:20px;
-      transition:all .2s; display:flex; align-items:center;
-    }
-    .nav-btn:hover { color:#38E1F0; background:rgba(255,255,255,.1); transform:scale(1.12); }
-    .deck-progress { width:210px; height:6px; background:rgba(255,255,255,.14); border-radius:3px; overflow:hidden; }
-    .deck-progress-bar { height:100%; width:0; background:linear-gradient(90deg,#0D7C86,#38E1F0,#F2683C); transition:width .3s var(--ease-spring); }
-    .deck-counter { font-size:13px; font-weight:700; color:#94A3B8; font-family:var(--font-mono); min-width:56px; text-align:center; }
-
-    /* ─── ANIMATION ĐẶC BIỆT ─── */
-    @keyframes popIn {
-      0%   { transform:scale(0) rotate(-15deg); opacity:0; }
-      70%  { transform:scale(1.1) rotate(3deg); }
-      100% { transform:scale(1) rotate(0); opacity:1; }
-    }
-    .pop-in { animation:popIn .55s var(--ease-spring) forwards; }
-
-    @keyframes typewriter {
-      from { width:0; }
-      to   { width:100%; }
-    }
-
-    #confettiCanvas { position:fixed; inset:0; pointer-events:none; z-index:999; }
-
-    /* Mũi tên chỉ dẫn pulse */
-    .pulse-arrow {
-      display:inline-block;
-      animation:arrowPulse 1.2s ease-in-out infinite;
-    }
-    @keyframes arrowPulse {
-      0%,100% { transform:translateX(0); }
-      50%      { transform:translateX(6px); }
-    }
-  </style>
+/* Lesson 7 uses the same classroom controls as lesson 6. */
+code{font-family:Consolas,'Cascadia Code',monospace;font-size:.95em;color:#8dece6;background:#65e8e00a;padding:1px 4px;border-radius:5px;overflow-wrap:anywhere}.code-panel,.structure-code,.nesting-code{font-family:Consolas,'Cascadia Code',monospace;background:#081722;border:1px solid var(--line);border-radius:18px;padding:18px;color:#c8eff2;font-size:clamp(17px,1.65vw,23px);line-height:1.55;margin:0;white-space:pre-wrap;overflow-wrap:anywhere;tab-size:2}.panel-label{font-size:15px;color:var(--muted);margin:0 0 8px}.browser-window{border:1px solid #ffffff35;border-radius:20px;background:#fff;overflow:hidden;min-width:0;align-self:stretch;display:flex;flex-direction:column}.browser-chrome{padding:11px 16px;display:flex;align-items:center;gap:14px;color:#d5e2eb;background:#203848;font-size:16px;min-height:44px}.browser-dots{font-size:11px;letter-spacing:3px;color:var(--pink);flex-shrink:0}.browser-chrome>span:last-child{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.browser-window iframe{width:100%;height:245px;flex:1;min-height:200px;border:0;background:white;color-scheme:light}.html-hero{position:relative;min-height:235px;padding:35px 10px 15px}.hero-browser{background:#effaff;color:#123047;border-radius:22px;box-shadow:0 20px 50px #0005;padding:16px 24px;border-top:24px solid #254654;rotate:3deg}.hero-browser>span{font-size:12px;color:#24717e}.hero-browser h3{font-size:32px;margin:12px 0}.hero-browser p{font-size:19px}.floating-code{position:relative;z-index:2;background:#163c47;border:1px solid var(--cyan);border-radius:15px;padding:15px;font-family:Consolas,monospace;font-size:22px;rotate:-4deg;animation:bob 4s ease-in-out infinite}.html-token{position:absolute;right:5px;bottom:-6px;background:var(--gold);color:#132b3d;border-radius:20px;padding:15px;font-size:36px;font-weight:900}.pipeline{display:flex;align-items:center;justify-content:center;gap:18px}.pipe-step{border:1px solid var(--line);background:#ffffff05;border-radius:22px;padding:18px;flex:1;max-width:350px;text-align:center;transition:border-color .3s,background .3s,box-shadow .3s}.pipe-step>span{font-size:38px}.pipe-step h3{font-size:25px;margin:8px 0}.pipe-step p{font-size:19px;color:var(--muted);margin:0}.pipe-step.lit{background:#65e8e014;border-color:var(--cyan);box-shadow:0 0 30px #65e8e015}.pipe-arrow{font-size:36px;color:var(--cyan)}.element-anatomy{display:flex;justify-content:center;align-items:stretch;gap:12px;padding:20px 0 5px;flex-wrap:wrap}.anatomy-part{font-family:Consolas,monospace;font-size:clamp(26px,3.2vw,46px);padding:18px 24px;border:2px solid #65e8e060;border-radius:18px;background:#0f303d;color:var(--cyan)}.content-part{color:var(--gold);border-color:#ffcf7770;background:#302d25}.anatomy-part[aria-pressed=true]{border-color:#fff;box-shadow:0 0 25px #65e8e025}.element-bracket{border-top:2px solid var(--cyan);margin:0 5%;text-align:center;color:var(--muted);padding-top:10px;font-size:19px}.classify-box{background:#0c202e;border:1px solid var(--line);border-radius:20px;padding:15px 22px;text-align:center}.classify-box .feedback{text-align:left;margin:10px 0}.classify-box .feedback:empty{display:none}.tag-question{font-size:34px;font-family:Consolas,monospace;margin:10px 0 16px;color:var(--gold);font-weight:800}.classify-box .quiz-meta{margin:0}.classify-box>.action{margin-top:6px}.attr-code{font-size:23px;padding:18px 12px;margin:12px 0}mark{background:#65e8e01a;color:var(--cyan);padding:3px}.structure-layout{display:grid;grid-template-columns:1.1fr 1fr;gap:20px;align-items:center}.structure-code{font-size:18px;padding:14px 16px;white-space:pre;overflow:auto}.code-line{padding:2px 7px;border-radius:5px;transition:background .2s,color .2s}.code-line.highlight{background:#65e8e026;color:#fff;box-shadow:inset 3px 0 var(--cyan)}.structure-choice{display:flex;align-items:flex-start;flex-direction:column;gap:5px;width:100%;text-align:left;padding:14px 17px;border:1px solid var(--line);border-radius:16px;background:#ffffff05}.structure-choice strong{font-family:Consolas,monospace;font-size:22px;color:var(--cyan)}.structure-choice span{font-size:18px;color:var(--muted)}.structure-choice[aria-pressed=true]{border-color:var(--cyan);background:#65e8e014}.fields{display:flex;flex-direction:column;gap:9px}.fields label{font-size:18px}.fields input,select{background:#081c2b;border:1px solid var(--line);color:var(--ink);border-radius:10px;min-height:44px;padding:9px 12px;font:inherit;font-size:18px;min-width:0;max-width:100%}.fields input:focus,select:focus{outline:2px solid var(--cyan)}.fields .code-panel{font-size:18px;margin-top:8px}.fake-page{padding:25px;color:#18384b;background:white;min-height:210px}.fake-page h3{font-size:32px;margin:10px 0 20px;overflow-wrap:anywhere}.fake-page p{font-size:21px}.tree-layout{display:grid;grid-template-columns:1fr 1.1fr;gap:20px;align-items:center}.dom-tree{padding:15px 5px}.tree-row{display:flex;align-items:flex-start;justify-content:center;gap:14px;position:relative;margin:18px 0}.tree-row:not(:first-child):before{content:'';height:20px;border-left:2px solid #65e8e060;position:absolute;top:-20px;left:50%}.tree-branches{display:grid;grid-template-columns:1fr 1fr;border-top:2px solid #65e8e060;margin:0 5px}.tree-branches>div{border-top:0;position:relative}.tree-branches>div:before{content:'';height:20px;border-left:2px solid #65e8e060;position:absolute;top:0;left:50%}.tree-node{padding:9px 18px;min-height:44px;min-width:70px;background:#153647;color:var(--cyan);font-family:Consolas,monospace;font-size:23px;font-weight:800;border:2px solid var(--line);border-radius:13px;transition:background .2s,border-color .2s}.tree-node.selected{border-color:var(--gold);color:var(--gold);background:#493d22}.tree-node.parent{border-color:var(--pink);color:var(--pink)}.tree-node.child{border-color:var(--green);color:var(--green)}.small-code{font-size:17px;line-height:1.4;padding:13px 17px;margin-bottom:12px}.tree-layout .demo{font-size:18px;min-height:95px}.nesting-code{font-size:25px;line-height:1.6;padding:22px;margin:14px 0;min-height:96px}.box-outer{border:3px solid var(--cyan);padding:18px 24px;border-radius:22px;font-family:Consolas,monospace;font-size:26px;color:var(--cyan);margin-top:20px}.box-inner{border:3px solid var(--gold);padding:20px;margin:15px 0 4px;border-radius:16px;color:var(--gold);font-size:24px;animation:bob 4s ease-in-out infinite}.editor-toolbar{display:flex;align-items:center;gap:10px;flex-wrap:wrap}.editor-toolbar label{font-size:17px}.editor-toolbar select{font-size:16px}.code-editor{display:flex;flex-direction:column;gap:8px;min-width:0}.code-editor label{font-size:15px;color:var(--muted)}textarea{background:#081722;border:1px solid #65e8e045;border-radius:18px;color:#d8f4ee;font-family:Consolas,'Cascadia Code',monospace;font-size:17px;line-height:1.45;padding:16px;width:100%;height:280px;resize:vertical;tab-size:2}textarea:focus{outline:2px solid var(--cyan);outline-offset:2px}.editor-layout .browser-window iframe{min-height:280px}.history-note{border-top:1px solid var(--line);padding-top:16px;font-size:17px!important;line-height:1.5!important;margin-top:18px!important}.reveal-tools{display:none!important}.quiz-question code{color:var(--cyan)}.quiz-options .choice{overflow-wrap:anywhere}.tag-question{overflow-wrap:anywhere}.slides-source{font-size:13px;color:var(--muted)}
+@media(max-width:1050px){.structure-layout,.tree-layout{grid-template-columns:1fr 1fr}.tree-node{min-width:55px;padding:8px 10px;font-size:20px}.small-code{font-size:15px}.pipe-step h3{font-size:21px}.pipe-step p{font-size:17px}.structure-code{font-size:16px}.structure-choice{padding:10px 14px}}
+@media(max-width:700px){.pipeline{gap:7px}.pipe-step{padding:12px 6px;border-radius:15px}.pipe-step>span{font-size:27px}.pipe-step h3{font-size:17px}.pipe-step p{font-size:14px}.pipe-arrow{font-size:23px}.grid.two,.structure-layout,.tree-layout{grid-template-columns:1fr}.element-anatomy{gap:6px;padding:12px 0}.anatomy-part{font-size:22px;padding:14px 10px}.element-bracket{font-size:17px}.tag-question{font-size:28px}.classify-box{padding:15px}.classify-box .quiz-meta{flex-wrap:wrap;gap:8px}.attr-code{font-size:19px}.browser-window iframe{min-height:180px;height:210px}.structure-code{font-size:15px}.tree-layout .small-code{font-size:16px}.tree-node{font-size:20px;min-width:60px}.nesting-code{font-size:21px;padding:16px}.editor-toolbar{gap:8px}.editor-toolbar .action{font-size:14px;padding:8px 11px}.editor-toolbar select{max-width:100%;font-size:15px}.editor-toolbar label{font-size:15px}.code-editor textarea{height:275px;font-size:16px}.html-hero{display:none}.fields input{font-size:17px}.fields .code-panel{font-size:16px}.fake-page h3{font-size:27px}.quiz-meta{gap:9px;flex-wrap:wrap}.quiz-meta .action{font-size:14px;padding:7px 10px}.ribbon{overflow-wrap:anywhere}}
+/* Projector layout: keep source code and its output visible together. */
+.hero-title{font-size:clamp(32px,3.7vw,56px)}.demo{min-height:64px}.browser-window iframe{height:210px;min-height:160px}.structure-code{font-size:18px;line-height:1.35}.code-line{padding:1px 7px}.tree-layout .small-code{font-size:17px;line-height:1.25;padding:12px 17px;margin-bottom:8px}.tree-layout .demo{min-height:80px}#slide-4 .grid.two>.card .icon,#slide-13 .grid.two>.card .icon{display:none}#slide-4 .grid.two>.card,#slide-13 .grid.two>.card{padding:14px}#slide-4 .grid.two>.card h3,#slide-13 .grid.two>.card h3{min-height:30px;font-size:23px;margin:0 0 4px}#slide-4 .grid.two>.card p,#slide-13 .grid.two>.card p{font-size:19px;margin:4px 0}.tag-question{font-size:30px;margin:5px 0 10px}.classify-box .feedback{min-height:0;font-size:17px;line-height:1.4;margin:10px 0 0;padding:9px 13px}.editor-layout textarea{height:250px;font-size:16px;line-height:1.3;padding:12px}.editor-layout .browser-window iframe{min-height:230px}.attr-code{padding:12px;line-height:1.4}.fields .code-panel{font-size:18px}
+@media(max-width:700px){.hero-title{font-size:36px}.structure-code{font-size:15px}.tree-layout .small-code{font-size:16px}.classify-box .pills{flex-wrap:wrap}.editor-layout textarea{height:280px;font-size:16px}.browser-window iframe{height:210px;min-height:180px}.fields .code-panel{font-size:16px}}
+.hero-browser p{margin:8px 0}.html-hero{padding-top:25px}.structure-choice{padding:10px 17px}.editor-layout textarea{height:248px}
+@media(max-width:700px){.structure-choice{padding:12px 15px}.editor-layout textarea{height:280px}}
+</style>
 </head>
 <body>
-
-  <div class="bg-mesh"></div>
-  <div class="float-layer">
-    <div class="float-tag" style="left:4%;  animation-delay:0s;">&lt;html&gt;</div>
-    <div class="float-tag" style="left:16%; animation-delay:4s;">&lt;head&gt;</div>
-    <div class="float-tag" style="left:30%; animation-delay:9s;">&lt;body&gt;</div>
-    <div class="float-tag" style="left:45%; animation-delay:2s;">&lt;title&gt;</div>
-    <div class="float-tag" style="left:60%; animation-delay:7s;">&lt;h1&gt;</div>
-    <div class="float-tag" style="left:74%; animation-delay:12s;">&lt;p&gt;</div>
-    <div class="float-tag" style="left:85%; animation-delay:16s;">&lt;meta&gt;</div>
-    <div class="float-tag" style="left:92%; animation-delay:19s;">&lt;div&gt;</div>
-  </div>
-
-  <canvas id="confettiCanvas"></canvas>
-  <div class="deck-container">
-
-    <!-- ══ SLIDE 1: BÌA ══════════════════════════════════════════════════════ -->
-    <section class="slide active" id="slide-1" data-total-reveal="3">
-      <div class="slide-header">
-        <div>
-          <span class="slide-badge">Tin học 12 · Định hướng ICT · Kết nối tri thức</span>
-          <div class="slide-title">Bài 7. HTML và Cấu trúc Trang Web</div>
-          <div class="slide-subtitle">Trang 39 – 45 · Từ tệp văn bản đến trang web đầu tiên của em</div>
-        </div>
-        <div class="reveal-ctrl">
-          <span>✨ Hiệu ứng:</span>
-          <span class="reveal-status" id="slide-1-status">0 / 3</span>
-          <button class="reveal-btn" onclick="revealNext();">▶ Hiện ý (↓)</button>
-          <button class="reveal-btn" style="background:rgba(255,255,255,.15);" onclick="revealAll();">Hiện hết</button>
-        </div>
-      </div>
-      <div class="slide-body">
-        <div class="grid-3" style="margin-top:8px;">
-          <div class="card reveal-item" style="border-top:4px solid #38E1F0;text-align:center;padding:22px 16px;">
-            <div style="font-size:40px;margin-bottom:10px;">🌐</div>
-            <div style="font-size:16px;font-weight:700;color:#38E1F0;margin-bottom:6px;">HTML là gì?</div>
-            <p style="font-size:13.5px;color:#CBD5E1;line-height:1.5;">Ngôn ngữ đánh dấu siêu văn bản · bộ quy tắc thiết lập cấu trúc và hiển thị nội dung trang web.</p>
-          </div>
-          <div class="card reveal-item" style="border-top:4px solid #F5A623;text-align:center;padding:22px 16px;">
-            <div style="font-size:40px;margin-bottom:10px;">🏷️</div>
-            <div style="font-size:16px;font-weight:700;color:#FFC043;margin-bottom:6px;">Thẻ & Phần tử</div>
-            <p style="font-size:13.5px;color:#CBD5E1;line-height:1.5;">Thẻ đôi · thẻ đơn · phần tử gốc · thuộc tính · nội dung lồng nhau đúng quy tắc.</p>
-          </div>
-          <div class="card reveal-item" style="border-top:4px solid #10B981;text-align:center;padding:22px 16px;">
-            <div style="font-size:40px;margin-bottom:10px;">🌳</div>
-            <div style="font-size:16px;font-weight:700;color:#34D399;margin-bottom:6px;">Cây Thông Tin</div>
-            <p style="font-size:13.5px;color:#CBD5E1;line-height:1.5;">Phần tử lồng nhau = quan hệ cha–con. Gốc của cây chính là <code>&lt;html&gt;</code>.</p>
-          </div>
-        </div>
-
-        <div class="card reveal-item" style="background:rgba(13,124,134,.15);border:1px dashed rgba(56,225,240,.4);padding:10px 18px;display:flex;align-items:center;justify-content:space-between;">
-          <span style="font-size:13.5px;color:#E2E8F0;">⌨️ <strong>Space/→</strong> chuyển slide · <strong>↓</strong> hiện từng ý · <strong>F</strong> toàn màn hình · <strong>M</strong> bật/tắt âm thanh</span>
-          <button class="sim-btn" onclick="nextSlide();" style="background:#0D7C86;color:white;">Bắt đầu 🚀</button>
-        </div>
-      </div>
-    </section>
-
-    <!-- ══ SLIDE 2: HTML LÀ GÌ? ══════════════════════════════════════════════ -->
-    <section class="slide" id="slide-2" data-total-reveal="3">
-      <div class="slide-header">
-        <div>
-          <span class="slide-badge coral">Khái niệm cơ bản · Trang 39</span>
-          <div class="slide-title">HTML là gì? Trang nguồn là gì?</div>
-          <div class="slide-subtitle">Từ trang web em nhìn thấy đến tệp văn bản ẩn phía sau</div>
-        </div>
-        <div class="reveal-ctrl">
-          <span>✨</span><span class="reveal-status" id="slide-2-status">0 / 3</span>
-          <button class="reveal-btn" onclick="revealNext();">▶ Hiện ý</button>
-          <button class="reveal-btn" style="background:rgba(255,255,255,.15);" onclick="revealAll();">Hiện hết</button>
-        </div>
-      </div>
-      <div class="slide-body">
-        <!-- Trực quan hoá quá trình Browser → HTML File -->
-        <div class="reveal-item" style="display:grid;grid-template-columns:1fr auto 1fr auto 1fr;gap:6px;align-items:center;">
-          <div class="card" style="text-align:center;padding:14px 10px;border-color:rgba(56,225,240,.35);">
-            <div style="font-size:30px;">🧑‍💻</div>
-            <div style="font-size:13px;font-weight:700;color:#38E1F0;margin-top:6px;">Em mở<br>trình duyệt</div>
-            <div style="font-size:11.5px;color:#94A3B8;margin-top:4px;">(Chrome, Cốc Cốc…)</div>
-          </div>
-          <div style="text-align:center;font-size:22px;" class="pulse-arrow">→</div>
-          <div class="card" style="text-align:center;padding:14px 10px;border-color:rgba(245,166,35,.4);">
-            <div style="font-size:30px;">📡</div>
-            <div style="font-size:13px;font-weight:700;color:#FFC043;margin-top:6px;">Trình duyệt<br>tải về</div>
-            <div style="font-size:11.5px;color:#94A3B8;margin-top:4px;">tệp .html (trang nguồn)</div>
-          </div>
-          <div style="text-align:center;font-size:22px;" class="pulse-arrow">→</div>
-          <div class="card" style="text-align:center;padding:14px 10px;border-color:rgba(16,185,129,.4);">
-            <div style="font-size:30px;">🖥️</div>
-            <div style="font-size:13px;font-weight:700;color:#34D399;margin-top:6px;">Hiển thị<br>cho em thấy</div>
-            <div style="font-size:11.5px;color:#94A3B8;margin-top:4px;">trang web đẹp đẽ</div>
-          </div>
-        </div>
-
-        <div class="card reveal-item" style="border-left:5px solid #38E1F0;padding:12px 16px;">
-          <div class="card-title">📌 Định nghĩa chính xác từ SGK trang 39:</div>
-          <p style="font-size:14.5px;line-height:1.6;color:#E2E8F0;">
-            <strong>HTML</strong> là viết tắt của <strong>Hypertext Markup Language</strong>
-            (<em>ngôn ngữ đánh dấu siêu văn bản</em>) — là <strong>một bộ quy tắc dùng để thiết lập cấu trúc và hiển thị nội dung trang web</strong>.
-            Tệp HTML có phần mở rộng <code>.html</code> hoặc <code>.htm</code>.
-          </p>
-        </div>
-
-        <div class="grid-2 reveal-item">
-          <div class="card" style="border-top:3px solid #8B5CF6;">
-            <div class="card-title" style="color:#C4B5FD;">📄 Trang nguồn (Mã nguồn) là gì?</div>
-            <p style="font-size:13.5px;color:#CBD5E1;line-height:1.6;">Trang web thực chất chỉ là <strong>tệp văn bản thông thường</strong>. Tệp đó gọi là <strong>trang nguồn</strong> (hay <strong>mã nguồn</strong>) của trang web. Em có thể mở bằng Notepad và đọc được!</p>
-          </div>
-          <div class="card" style="border-top:3px solid #F2683C;">
-            <div class="card-title" style="color:#FF855D;">🔑 Ký hiệu đặc biệt &lt; và &gt;</div>
-            <p style="font-size:13.5px;color:#CBD5E1;line-height:1.6;">Trên trang html có văn bản và các <strong>kí tự đặc biệt nằm trong hai dấu "<code>&lt;</code>" và "<code>&gt;</code>"</strong> — đây là <strong>thẻ đánh dấu HTML</strong> (hay còn gọi là <strong>thẻ HTML</strong> / <strong>tag</strong>).</p>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- ══ SLIDE 3: THẺ VÀ PHẦN TỬ (Giải phẫu tương tác) ════════════════════ -->
-    <section class="slide" id="slide-3" data-total-reveal="4">
-      <div class="slide-header">
-        <div>
-          <span class="slide-badge gold">Trọng tâm · Trang 40</span>
-          <div class="slide-title">Giải phẫu Thẻ &amp; Phần tử HTML</div>
-          <div class="slide-subtitle">Bấm vào từng phần của phần tử để khám phá ý nghĩa từng thành phần</div>
-        </div>
-        <div class="reveal-ctrl">
-          <span>✨</span><span class="reveal-status" id="slide-3-status">0 / 4</span>
-          <button class="reveal-btn" onclick="revealNext();">▶ Hiện ý</button>
-          <button class="reveal-btn" style="background:rgba(255,255,255,.15);" onclick="revealAll();">Hiện hết</button>
-        </div>
-      </div>
-      <div class="slide-body">
-
-        <!-- Giải phẫu hoạt động tương tác -->
-        <div class="reveal-item" style="background:#0D1520;border:1px solid rgba(56,225,240,.25);border-radius:14px;padding:20px 24px;text-align:center;">
-          <div id="anatomy-display" style="font-family:var(--font-mono);font-size:22px;font-weight:700;letter-spacing:1px;display:flex;align-items:center;justify-content:center;gap:0;flex-wrap:wrap;">
-            <span id="a-open"   onclick="highlightPart('open')"   style="cursor:pointer;padding:6px 10px;border-radius:8px;transition:all .3s;">&lt;p <span style="color:#38E1F0;">style</span>=<span style="color:#10B981;">"color:red"</span>&gt;</span>
-            <span id="a-content" onclick="highlightPart('content')" style="cursor:pointer;padding:6px 10px;border-radius:8px;transition:all .3s;color:#FFFFFF;">Đây là đoạn văn.</span>
-            <span id="a-close"  onclick="highlightPart('close')"  style="cursor:pointer;padding:6px 10px;border-radius:8px;transition:all .3s;color:#F2683C;">&lt;/p&gt;</span>
-          </div>
-          <div id="anatomy-explain" style="margin-top:14px;font-size:14px;color:#94A3B8;font-style:italic;min-height:24px;">
-            ← Bấm vào từng phần màu để khám phá ý nghĩa!
-          </div>
-        </div>
-
-        <!-- Thuộc tính trong thẻ mở -->
-        <div class="grid-2 reveal-item">
-          <div class="card" style="border-left:4px solid #38E1F0;">
-            <div class="card-title">🔗 Thẻ đôi (Pair tag) — Đa số thẻ HTML</div>
-            <ul style="margin-left:18px;font-size:13.5px;line-height:1.7;color:#CBD5E1;">
-              <li>Gồm <strong>thẻ bắt đầu</strong> (opening tag) và <strong>thẻ kết thúc</strong> (closing tag).</li>
-              <li>Thẻ kết thúc có thêm dấu <strong>"/"</strong> phía trước tên, ví dụ <code>&lt;/p&gt;</code>.</li>
-              <li>Ví dụ: <code>&lt;h1&gt;</code>, <code>&lt;p&gt;</code>, <code>&lt;html&gt;</code>, <code>&lt;body&gt;</code>, <code>&lt;em&gt;</code>…</li>
-            </ul>
-          </div>
-          <div class="card" style="border-left:4px solid #F2683C;">
-            <div class="card-title" style="color:#FF855D;">➖ Thẻ đơn (Self-closing tag) — Ít hơn</div>
-            <ul style="margin-left:18px;font-size:13.5px;line-height:1.7;color:#CBD5E1;">
-              <li>Chỉ có <strong>thẻ bắt đầu</strong>, không có thẻ kết thúc.</li>
-              <li>Dạng <code>&lt;tên thẻ&gt;</code> hoặc <code>&lt;tên thẻ/&gt;</code>.</li>
-              <li><code>&lt;hr&gt;</code> dòng kẻ ngang · <code>&lt;br&gt;</code> ngắt xuống dòng · <code>&lt;meta&gt;</code> thông tin trang.</li>
-            </ul>
-          </div>
-        </div>
-
-        <div class="grid-2 reveal-item">
-          <div class="code-box">
-            <div class="code-header"><span>Thẻ đôi lồng nhau</span><span>nested.html</span></div>
-            <div class="code-content">&lt;<span class="tag-kw">p</span>&gt;Trang được lập bởi &lt;<span class="tag-kw">em</span>&gt;nhóm bạn bè&lt;/<span class="tag-kw">em</span>&gt; thân thiết&lt;/<span class="tag-kw">p</span>&gt;</div>
-          </div>
-          <div class="preview-box" style="font-size:15px;display:flex;align-items:center;">
-            <p>Trang được lập bởi <em>nhóm bạn bè</em> thân thiết</p>
-          </div>
-        </div>
-
-        <div class="card reveal-item" style="background:rgba(13,124,134,.12);border-color:rgba(56,225,240,.3);padding:10px 16px;font-size:13.5px;">
-          📌 <strong>Phần tử HTML (element) = Thẻ bắt đầu + Nội dung + Thẻ kết thúc</strong>. Thẻ đơn cùng nội dung của nó cũng được gọi là phần tử HTML. Tên thẻ <strong>không phân biệt hoa thường</strong> nhưng quy ước viết <strong>thường</strong>.
-        </div>
-      </div>
-    </section>
-
-    <!-- ══ SLIDE 4: SỨC MẠNH CỦA THUỘC TÍNH (ATTRIBUTES) ════════════════════ -->
-    <section class="slide" id="slide-4" data-total-reveal="3">
-      <div class="slide-header">
-        <div>
-          <span class="slide-badge">Thuộc tính · Trang 40</span>
-          <div class="slide-title">Thuộc tính — Siêu năng lực của Thẻ HTML</div>
-          <div class="slide-subtitle">Thay đổi màu sắc, kích thước, link… chỉ với cú pháp <code>tên="giá_trị"</code></div>
-        </div>
-        <div class="reveal-ctrl">
-          <span>✨</span><span class="reveal-status" id="slide-4-status">0 / 3</span>
-          <button class="reveal-btn" onclick="revealNext();">▶ Hiện ý</button>
-          <button class="reveal-btn" style="background:rgba(255,255,255,.15);" onclick="revealAll();">Hiện hết</button>
-        </div>
-      </div>
-      <div class="slide-body">
-        <div class="grid-2 reveal-item">
-          <div class="code-box">
-            <div class="code-header"><span>Thuộc tính style — đổi màu chữ</span><span>attr.html</span></div>
-            <div class="code-content" id="attr-code">&lt;<span class="tag-kw">p</span> <span class="attr-kw">style</span>=<span class="val-kw">"color: red"</span>&gt;This is a paragraph.&lt;/<span class="tag-kw">p</span>&gt;</div>
-          </div>
-          <div class="preview-box" style="display:flex;align-items:center;">
-            <div class="preview-header" style="border-bottom:0;margin:0;padding:0;margin-bottom:8px;">🌐 Trình duyệt hiển thị</div>
-            <p id="attr-preview" style="color:red;font-size:16px;margin:0;">This is a paragraph.</p>
-          </div>
-        </div>
-
-        <!-- Bộ chuyển đổi màu tương tác -->
-        <div class="interact-panel reveal-item">
-          <div class="interact-title"><span>🎨</span> Thử nghiệm thuộc tính style="color:..." — Bấm màu để đổi ngay:</div>
-          <button class="sim-btn active" onclick="changeAttrColor('red','đỏ');" style="color:tomato;border-color:tomato;">🔴 red</button>
-          <button class="sim-btn" onclick="changeAttrColor('blue','xanh dương');" style="color:#60A5FA;border-color:#60A5FA;">🔵 blue</button>
-          <button class="sim-btn" onclick="changeAttrColor('green','xanh lá');" style="color:#34D399;border-color:#34D399;">🟢 green</button>
-          <button class="sim-btn" onclick="changeAttrColor('#8B5CF6','tím');" style="color:#C4B5FD;border-color:#C4B5FD;">🟣 #8B5CF6</button>
-          <button class="sim-btn" onclick="changeAttrColor('orange','cam');" style="color:orange;border-color:orange;">🟠 orange</button>
-          <button class="sim-btn" onclick="changeAttrColor('black','đen (mặc định)');" style="color:#94A3B8;border-color:#94A3B8;">⚫ black</button>
-        </div>
-
-        <div class="card reveal-item" style="border-left:5px solid #F5A623;">
-          <div class="card-title" style="color:#FFC043;">⚠️ Lưu ý thần thánh — Trình duyệt gộp khoảng cách!</div>
-          <div class="grid-2" style="margin-top:6px;gap:10px;">
-            <div class="code-box">
-              <div class="code-content" style="font-size:12.5px;">&lt;<span class="tag-kw">p</span>&gt;Nhiều          dấu cách
-và cả xuống dòng
-đều bị bỏ qua hết.&lt;/<span class="tag-kw">p</span>&gt;</div>
-            </div>
-            <div class="preview-box" style="font-size:14px;max-height:90px;display:flex;align-items:center;">
-              <p style="margin:0;color:#111827;">Nhiều dấu cách và cả xuống dòng đều bị bỏ qua hết.</p>
-            </div>
-          </div>
-          <p style="font-size:13px;color:#CBD5E1;margin-top:8px;">→ Gõ bao nhiêu dấu cách cũng chỉ ra <strong>một dấu cách</strong>; nhấn Enter cũng <strong>không xuống dòng</strong>. Muốn xuống dòng dùng <code>&lt;br&gt;</code>!</p>
-        </div>
-      </div>
-    </section>
-
-    <!-- ══ SLIDE 5: CẤU TRÚC TỆP HTML HOÀN CHỈNH ════════════════════════════ -->
-    <section class="slide" id="slide-5" data-total-reveal="3">
-      <div class="slide-header">
-        <div>
-          <span class="slide-badge gold">Trọng tâm · Trang 41-42</span>
-          <div class="slide-title">Khung sườn Tệp HTML Hoàn Chỉnh</div>
-          <div class="slide-subtitle">Mọi trang web đều theo khung này — từ &lt;!DOCTYPE html&gt; đến &lt;/html&gt;</div>
-        </div>
-        <div class="reveal-ctrl">
-          <span>✨</span><span class="reveal-status" id="slide-5-status">0 / 3</span>
-          <button class="reveal-btn" onclick="revealNext();">▶ Hiện ý</button>
-          <button class="reveal-btn" style="background:rgba(255,255,255,.15);" onclick="revealAll();">Hiện hết</button>
-        </div>
-      </div>
-      <div class="slide-body">
-        <div class="grid-2">
-          <!-- Code chuẩn sách -->
-          <div class="code-box reveal-item">
-            <div class="code-header"><span>newpage.html — Tệp HTML hoàn chỉnh đầu tiên</span></div>
-            <div class="code-content" style="font-size:13px;"><span class="dec-kw">&lt;!DOCTYPE html&gt;</span>   <span class="cmt-kw">&lt;!-- Khai báo loại tệp --&gt;</span>
-&lt;<span class="tag-kw">html</span>&gt;              <span class="cmt-kw">&lt;!-- Phần tử GỐC (root) --&gt;</span>
-  &lt;<span class="tag-kw">head</span>&gt;           <span class="cmt-kw">&lt;!-- Phần đầu: thông tin chung --&gt;</span>
-    &lt;<span class="tag-kw">meta</span> <span class="attr-kw">charset</span>=<span class="val-kw">"utf-8"</span>&gt;
-    &lt;<span class="tag-kw">title</span>&gt;Tên trang Web&lt;/<span class="tag-kw">title</span>&gt;
-  &lt;/<span class="tag-kw">head</span>&gt;
-  &lt;<span class="tag-kw">body</span>&gt;           <span class="cmt-kw">&lt;!-- NỘI DUNG em nhìn thấy --&gt;</span>
-    &lt;<span class="tag-kw">div</span>&gt;
-      &lt;<span class="tag-kw">h1</span>&gt;Trang Web và HTML&lt;/<span class="tag-kw">h1</span>&gt;
-      &lt;<span class="tag-kw">p</span>&gt;Đây là dòng đầu tiên&lt;/<span class="tag-kw">p</span>&gt;
-      &lt;<span class="tag-kw">hr</span>&gt;
-      &lt;<span class="tag-kw">p</span>&gt;Đây là dòng cuối cùng&lt;/<span class="tag-kw">p</span>&gt;
-    &lt;/<span class="tag-kw">div</span>&gt;
-    &lt;<span class="tag-kw">p</span>&gt;Trang được lập bởi &lt;<span class="tag-kw">em</span>&gt;nhóm bạn bè&lt;/<span class="tag-kw">em</span>&gt;&lt;/<span class="tag-kw">p</span>&gt;
-  &lt;/<span class="tag-kw">body</span>&gt;
-&lt;/<span class="tag-kw">html</span>&gt;</div>
-          </div>
-
-          <!-- 6 thẻ cốt lõi dạng highlight card -->
-          <div class="reveal-item" style="display:flex;flex-direction:column;gap:6px;">
-            <div class="card" style="padding:8px 12px;border-left:4px solid #C4B5FD;">
-              <span style="font-family:var(--font-mono);color:#C4B5FD;font-weight:700;">&lt;!DOCTYPE html&gt;</span>
-              <span style="font-size:12.5px;color:#CBD5E1;margin-left:8px;">Khai báo loại tệp — KHÔNG phải phần tử HTML!</span>
-            </div>
-            <div class="card" style="padding:8px 12px;border-left:4px solid #38E1F0;" id="card-html-tag" onclick="highlightStructTag('html')">
-              <span style="font-family:var(--font-mono);color:#38E1F0;font-weight:700;">&lt;html&gt;</span>
-              <span style="font-size:12.5px;color:#CBD5E1;margin-left:8px;"><strong>Phần tử gốc (root)</strong> — bao bọc tất cả phần tử còn lại. Bắt buộc phải có!</span>
-            </div>
-            <div class="card" style="padding:8px 12px;border-left:4px solid #F5A623;">
-              <span style="font-family:var(--font-mono);color:#FFC043;font-weight:700;">&lt;head&gt;</span>
-              <span style="font-size:12.5px;color:#CBD5E1;margin-left:8px;">Thông tin chung: <code>&lt;meta charset="utf-8"&gt;</code> → Tiếng Việt đúng dấu · <code>&lt;title&gt;</code> → tên tab</span>
-            </div>
-            <div class="card" style="padding:8px 12px;border-left:4px solid #10B981;">
-              <span style="font-family:var(--font-mono);color:#34D399;font-weight:700;">&lt;body&gt;</span>
-              <span style="font-size:12.5px;color:#CBD5E1;margin-left:8px;">Toàn bộ <strong>nội dung trang web</strong> mà người xem nhìn thấy trên màn hình</span>
-            </div>
-            <div class="card" style="padding:8px 12px;border-left:4px solid #F2683C;">
-              <span style="font-family:var(--font-mono);color:#FF855D;font-weight:700;">&lt;meta charset="utf-8"&gt;</span>
-              <span style="font-size:12.5px;color:#CBD5E1;margin-left:8px;">Thẻ <strong>đơn</strong> · mã hoá Unicode UTF-8 → <strong>Tiếng Việt đúng dấu</strong></span>
-            </div>
-            <div class="card" style="padding:8px 12px;border-left:4px solid #8B5CF6;">
-              <span style="font-family:var(--font-mono);color:#C4B5FD;font-weight:700;">&lt;title&gt;</span>
-              <span style="font-size:12.5px;color:#CBD5E1;margin-left:8px;">Tên hiện trên <strong>tab trình duyệt</strong> và trong <strong>kết quả tìm kiếm Google</strong></span>
-            </div>
-          </div>
-        </div>
-
-        <div class="card reveal-item" style="background:rgba(242,104,60,.1);border-color:rgba(255,133,93,.35);padding:10px 16px;font-size:13.5px;">
-          💡 <strong>Thứ tự khung sườn chuẩn:</strong> <code>&lt;!DOCTYPE html&gt;</code> → <code>&lt;html&gt;</code> → <code>&lt;head&gt;</code> (meta + title) → <code>&lt;/head&gt;</code> → <code>&lt;body&gt;</code> (nội dung hiển thị) → <code>&lt;/body&gt;</code> → <code>&lt;/html&gt;</code>.
-        </div>
-      </div>
-    </section>
-
-    <!-- ══ SLIDE 6: CÂY THÔNG TIN HOẠT HỌA ══════════════════════════════════ -->
-    <section class="slide" id="slide-6" data-total-reveal="3">
-      <div class="slide-header">
-        <div>
-          <span class="slide-badge leaf">Trọng tâm · Trang 43</span>
-          <div class="slide-title">Cây Thông Tin — Bộ xương cấu trúc HTML</div>
-          <div class="slide-subtitle">Bấm vào nút cây để xem giải thích · Quan hệ lồng nhau = quan hệ cha–con</div>
-        </div>
-        <div class="reveal-ctrl">
-          <span>✨</span><span class="reveal-status" id="slide-6-status">0 / 3</span>
-          <button class="reveal-btn" onclick="revealNext();">▶ Hiện ý</button>
-          <button class="reveal-btn" style="background:rgba(255,255,255,.15);" onclick="revealAll();">Hiện hết</button>
-        </div>
-      </div>
-      <div class="slide-body">
-        <div class="grid-2">
-          <!-- Cây SVG sống động -->
-          <div class="card reveal-item" style="padding:10px;min-height:280px;position:relative;">
-            <svg id="tree-svg" viewBox="0 0 420 280" xmlns="http://www.w3.org/2000/svg">
-              <!-- Đường nối -->
-              <line x1="210" y1="40" x2="100" y2="95"  stroke="#38E1F0" stroke-width="1.5" class="tree-link"/>
-              <line x1="210" y1="40" x2="320" y2="95"  stroke="#38E1F0" stroke-width="1.5" class="tree-link"/>
-              <line x1="100" y1="115" x2="100" y2="165" stroke="#F5A623" stroke-width="1.5" class="tree-link"/>
-              <line x1="100" y1="115" x2="100" y2="215" stroke="#F5A623" stroke-width="1.5" class="tree-link"/>
-              <line x1="320" y1="115" x2="220" y2="165" stroke="#10B981" stroke-width="1.5" class="tree-link"/>
-              <line x1="320" y1="115" x2="320" y2="165" stroke="#10B981" stroke-width="1.5" class="tree-link"/>
-              <line x1="320" y1="115" x2="380" y2="165" stroke="#10B981" stroke-width="1.5" class="tree-link"/>
-
-              <!-- Gốc: html -->
-              <g class="tree-node" onclick="showTreeInfo('html','&lt;html&gt; — Phần tử GỐC (root), bao bọc toàn bộ trang. Không thể thiếu!','#38E1F0')">
-                <circle cx="210" cy="28" r="22" stroke="#38E1F0" fill="#38E1F0"/>
-                <text x="210" y="32" text-anchor="middle" fill="#0D1520">html</text>
-              </g>
-              <!-- head -->
-              <g class="tree-node" onclick="showTreeInfo('head','&lt;head&gt; — Phần đầu. Chứa &lt;meta&gt; và &lt;title&gt;. Không hiện trực tiếp trên trang.','#F5A623')">
-                <circle cx="100" cy="105" r="22" stroke="#F5A623" fill="#F5A623"/>
-                <text x="100" y="109" text-anchor="middle" fill="#0D1520">head</text>
-              </g>
-              <!-- body -->
-              <g class="tree-node" onclick="showTreeInfo('body','&lt;body&gt; — Toàn bộ NỘI DUNG trang web người xem nhìn thấy. Chứa h1, p, div, hr…','#10B981')">
-                <circle cx="320" cy="105" r="22" stroke="#10B981" fill="#10B981"/>
-                <text x="320" y="109" text-anchor="middle" fill="#0D1520">body</text>
-              </g>
-              <!-- meta -->
-              <g class="tree-node" onclick="showTreeInfo('meta','&lt;meta charset=utf-8&gt; — Thẻ đơn. Khai báo cách mã hoá UTF-8 → Tiếng Việt đúng dấu!','#F5A623')">
-                <circle cx="100" cy="175" r="20" stroke="#F5A623" fill="#F5A623" fill-opacity=".3"/>
-                <text x="100" y="180" text-anchor="middle" fill="#F5A623" font-size="12">meta</text>
-              </g>
-              <!-- title -->
-              <g class="tree-node" onclick="showTreeInfo('title','&lt;title&gt; — Tên hiện trên tab trình duyệt và Google. Chỉ chứa văn bản thuần.','#F5A623')">
-                <circle cx="100" cy="225" r="20" stroke="#F5A623" fill="#F5A623" fill-opacity=".3"/>
-                <text x="100" y="230" text-anchor="middle" fill="#F5A623" font-size="12">title</text>
-              </g>
-              <!-- div -->
-              <g class="tree-node" onclick="showTreeInfo('div','&lt;div&gt; — Khối gom nhóm. Ở đây nó là con trực tiếp của body và là cha của h1, p, hr, p.','#10B981')">
-                <circle cx="220" cy="175" r="20" stroke="#10B981" fill="#10B981" fill-opacity=".3"/>
-                <text x="220" y="180" text-anchor="middle" fill="#10B981" font-size="12">div</text>
-              </g>
-              <!-- p -->
-              <g class="tree-node" onclick="showTreeInfo('p','&lt;p&gt; — Đoạn văn bản. Đây là phần tử &lt;p&gt; thứ 2 của body (bên cạnh div), chứa em.','#10B981')">
-                <circle cx="320" cy="175" r="20" stroke="#10B981" fill="#10B981" fill-opacity=".3"/>
-                <text x="320" y="180" text-anchor="middle" fill="#10B981" font-size="12">p</text>
-              </g>
-              <!-- em -->
-              <g class="tree-node" onclick="showTreeInfo('em','&lt;em&gt; — Phần tử in nghiêng, là CON của &lt;p&gt;. Ví dụ: &lt;em&gt;nhóm bạn bè&lt;/em&gt;.','#8B5CF6')">
-                <circle cx="380" cy="175" r="20" stroke="#8B5CF6" fill="#8B5CF6" fill-opacity=".3"/>
-                <text x="380" y="180" text-anchor="middle" fill="#C4B5FD" font-size="12">em</text>
-              </g>
-            </svg>
-            <div id="tree-explain" style="font-size:12.5px;color:#94A3B8;text-align:center;padding:4px 8px;font-style:italic;">
-              ← Bấm vào ô màu để xem ý nghĩa từng nút
-            </div>
-          </div>
-
-          <!-- Giải thích bên phải -->
-          <div class="reveal-item" style="display:flex;flex-direction:column;gap:8px;">
-            <div class="card" style="border-top:3px solid #38E1F0;">
-              <div class="card-title">🌳 Cây thông tin là gì?</div>
-              <p style="font-size:13.5px;line-height:1.6;color:#CBD5E1;">
-                Mỗi tệp HTML gồm nhiều phần tử <strong>lồng nhau</strong>. Quan hệ lồng nhau hình dung như quan hệ <strong>cha–con</strong>, hay quan hệ giữa các nút trên <strong>sơ đồ hình cây</strong>.
-              </p>
-            </div>
-            <div class="card" style="border-left:4px solid #38E1F0;">
-              <p style="font-size:13.5px;line-height:1.6;color:#CBD5E1;">
-                🌱 <strong>Gốc của cây HTML là phần tử <code>&lt;html&gt;</code></strong>. Từ gốc sinh ra 2 nhánh lớn: <code>&lt;head&gt;</code> và <code>&lt;body&gt;</code>.
-              </p>
-            </div>
-            <div class="card" style="border-left:4px solid #10B981;">
-              <p style="font-size:13.5px;line-height:1.6;color:#CBD5E1;">
-                📦 <code>&lt;div&gt;</code> <strong>chứa</strong> bốn phần tử con: <code>h1</code>, <code>p</code>, <code>hr</code>, <code>p</code> → trên cây chúng là <strong>con của div</strong>. Còn <code>&lt;head&gt;</code> và <code>&lt;body&gt;</code> là hai phần tử <strong>rời nhau</strong>, không cái nào chứa cái nào.
-              </p>
-            </div>
-          </div>
-        </div>
-
-        <div class="card reveal-item" style="background:rgba(16,185,129,.1);border-color:rgba(52,211,153,.3);padding:10px 16px;font-size:13.5px;">
-          📖 <strong>Ghi nhớ SGK:</strong> "Cấu trúc cơ bản của tệp HTML có dạng như <strong>một cây thông tin các phần tử HTML</strong>. Quan hệ cha–con của các nút trên cây được mô tả bằng <strong>sự lồng nhau</strong> của các phần tử. <strong>Gốc của cây HTML chính là phần tử &lt;html&gt;.</strong>"
-        </div>
-      </div>
-    </section>
-
-    <!-- ══ SLIDE 7: THẺ ĐƠN vs THẺ ĐÔI — CHUYỂN ĐỘNG TRỰC TIẾP ════════════ -->
-    <section class="slide" id="slide-7" data-total-reveal="3">
-      <div class="slide-header">
-        <div>
-          <span class="slide-badge purple">So sánh · Trang 41</span>
-          <div class="slide-title">Thẻ đơn vs Thẻ đôi — Quan sát trực tiếp</div>
-          <div class="slide-subtitle">Xem chính xác trình duyệt hiển thị <code>&lt;hr&gt;</code> và <code>&lt;br&gt;</code> thế nào</div>
-        </div>
-        <div class="reveal-ctrl">
-          <span>✨</span><span class="reveal-status" id="slide-7-status">0 / 3</span>
-          <button class="reveal-btn" onclick="revealNext();">▶ Hiện ý</button>
-          <button class="reveal-btn" style="background:rgba(255,255,255,.15);" onclick="revealAll();">Hiện hết</button>
-        </div>
-      </div>
-      <div class="slide-body">
-        <div class="grid-2 reveal-item">
-          <div class="code-box">
-            <div class="code-header"><span>hr — kẻ ngang · br — ngắt dòng</span><span>single-tags.html</span></div>
-            <div class="code-content">&lt;<span class="tag-kw">p</span>&gt;Phần trên&lt;/<span class="tag-kw">p</span>&gt;
-&lt;<span class="tag-kw">hr</span>&gt;   <span class="cmt-kw">&lt;!-- Thẻ đơn: kẻ đường ngang --&gt;</span>
-&lt;<span class="tag-kw">p</span>&gt;Phần dưới có&lt;<span class="tag-kw">br</span>&gt;ngắt xuống dòng&lt;/<span class="tag-kw">p</span>&gt;</div>
-          </div>
-          <div class="preview-box" style="font-size:15px;color:#111827;">
-            <div class="preview-header"><span>🌐 Trình duyệt</span></div>
-            <p style="margin:0 0 8px 0;">Phần trên</p>
-            <hr style="margin:8px 0;">
-            <p style="margin:0;">Phần dưới có<br>ngắt xuống dòng</p>
-          </div>
-        </div>
-
-        <!-- Chú thích dạng chuyển động -->
-        <div class="grid-2 reveal-item">
-          <div class="card" style="border-left:4px solid #8B5CF6;">
-            <div class="card-title" style="color:#C4B5FD;">Bảng so sánh tổng hợp:</div>
-            <table style="width:100%;border-collapse:collapse;font-size:13px;">
-              <tr style="background:rgba(255,255,255,.06);">
-                <th style="padding:6px 8px;text-align:left;color:#94A3B8;border-bottom:1px solid rgba(255,255,255,.1);">Loại</th>
-                <th style="padding:6px 8px;text-align:left;color:#94A3B8;border-bottom:1px solid rgba(255,255,255,.1);">Ví dụ</th>
-                <th style="padding:6px 8px;text-align:left;color:#94A3B8;border-bottom:1px solid rgba(255,255,255,.1);">Tính năng</th>
-              </tr>
-              <tr>
-                <td style="padding:6px 8px;color:#38E1F0;font-weight:700;">Thẻ đôi</td>
-                <td style="padding:6px 8px;font-family:var(--font-mono);font-size:12px;color:#F2683C;">&lt;p&gt;, &lt;h1&gt;, &lt;em&gt;, &lt;html&gt;, &lt;div&gt;</td>
-                <td style="padding:6px 8px;color:#CBD5E1;">Có thẻ đóng <code>&lt;/p&gt;</code></td>
-              </tr>
-              <tr>
-                <td style="padding:6px 8px;color:#FFC043;font-weight:700;">Thẻ đơn</td>
-                <td style="padding:6px 8px;font-family:var(--font-mono);font-size:12px;color:#F2683C;">&lt;hr&gt;, &lt;br&gt;, &lt;meta&gt;</td>
-                <td style="padding:6px 8px;color:#CBD5E1;">Không có thẻ đóng</td>
-              </tr>
-            </table>
-          </div>
-          <div class="card" style="border-left:4px solid #38E1F0;">
-            <div class="card-title">Chú thích HTML — Bí mật chỉ người lập trình thấy:</div>
-            <div class="code-box" style="margin-top:6px;">
-              <div class="code-content" style="font-size:12.5px;">&lt;<span class="tag-kw">p</span>&gt;Dòng này hiện ra&lt;/<span class="tag-kw">p</span>&gt;
-<span class="cmt-kw">&lt;!-- Đây là chú thích, trình duyệt BỎ QUA --&gt;</span></div>
-            </div>
-            <div class="preview-box" style="margin-top:8px;max-height:60px;padding:8px 12px;font-size:14px;">
-              <p style="margin:0;color:#111827;">Dòng này hiện ra</p>
-            </div>
-            <p style="font-size:12.5px;color:#94A3B8;margin-top:6px;">Chú thích <code>&lt;!-- ... --&gt;</code> không hiện ra trên trang, chỉ để ghi chú cho người viết code.</p>
-          </div>
-        </div>
-
-        <div class="card reveal-item" style="background:rgba(139,92,246,.1);border-color:rgba(196,181,253,.3);padding:10px 16px;font-size:13.5px;">
-          📌 Tên thẻ HTML <strong>không phân biệt chữ hoa chữ thường</strong> (<code>&lt;P&gt;</code> = <code>&lt;p&gt;</code>), nhưng chuẩn hiện đại quy ước <strong>viết chữ thường</strong>. Dòng <code>&lt;!DOCTYPE html&gt;</code> ở đầu tệp <strong>không phải phần tử HTML</strong> — nó chỉ thông báo kiểu tệp.
-        </div>
-      </div>
-    </section>
-
-    <!-- ══ SLIDE 8: BỘ PHẦN MỀM SOẠN THẢO HTML ══════════════════════════════ -->
-    <section class="slide" id="slide-8" data-total-reveal="3">
-      <div class="slide-header">
-        <div>
-          <span class="slide-badge coral">Thực hành · Trang 44</span>
-          <div class="slide-title">Bốn cách soạn thảo tệp HTML phổ biến nhất</div>
-          <div class="slide-subtitle">Từ Notepad đơn giản nhất đến trình soạn thảo trực tuyến chuyên nghiệp</div>
-        </div>
-        <div class="reveal-ctrl">
-          <span>✨</span><span class="reveal-status" id="slide-8-status">0 / 3</span>
-          <button class="reveal-btn" onclick="revealNext();">▶ Hiện ý</button>
-          <button class="reveal-btn" style="background:rgba(255,255,255,.15);" onclick="revealAll();">Hiện hết</button>
-        </div>
-      </div>
-      <div class="slide-body">
-        <div class="grid-2 reveal-item" style="grid-template-columns:1fr 1fr;">
-          <div class="card" style="border-top:4px solid #38E1F0;">
-            <div class="card-title">📝 Notepad (Windows)</div>
-            <p style="font-size:13.5px;color:#CBD5E1;line-height:1.6;">Phần mềm soạn thảo văn bản đơn giản không định dạng, <strong>có sẵn trên Windows</strong>. MacOS có <strong>TextEdit</strong>. Đủ để viết HTML cơ bản!</p>
-            <div style="margin-top:8px;font-size:12px;color:#64748B;font-style:italic;">Cách mở: Start → Notepad → Lưu với đuôi .html</div>
-          </div>
-          <div class="card" style="border-top:4px solid #F5A623;">
-            <div class="card-title" style="color:#FFC043;">🧑‍💻 Notepad++ (Miễn phí)</div>
-            <p style="font-size:13.5px;color:#CBD5E1;line-height:1.6;">Soạn thảo đa năng, <strong>hỗ trợ HTML, tô màu cú pháp</strong>. Miễn phí, mã nguồn mở tại <strong>notepad-plus-plus.org</strong>.</p>
-            <div style="margin-top:8px;font-size:12px;color:#94A3B8;font-style:italic;">💡 Chọn Language → H → HTML để tô màu đúng cú pháp.</div>
-          </div>
-          <div class="card" style="border-top:4px solid #10B981;">
-            <div class="card-title" style="color:#34D399;">🎨 Sublime Text</div>
-            <p style="font-size:13.5px;color:#CBD5E1;line-height:1.6;">Soạn thảo nhiều ngôn ngữ, <strong>tương tự Notepad++</strong>, có phiên bản cơ bản miễn phí tại <strong>sublimetext.com</strong>.</p>
-            <div style="margin-top:8px;font-size:12px;color:#94A3B8;font-style:italic;">💡 Chọn View → Syntax → HTML để tô màu cú pháp.</div>
-          </div>
-          <div class="card" style="border-top:4px solid #8B5CF6;">
-            <div class="card-title" style="color:#C4B5FD;">🌐 Soạn thảo trực tuyến</div>
-            <p style="font-size:13.5px;color:#CBD5E1;line-height:1.6;">Cần Internet và trình duyệt chuẩn. Soạn bên trái, bấm <strong>Run</strong> xem kết quả bên phải. Ví dụ: <strong>w3schools.com</strong>, <strong>tutorialspoint.com</strong>.</p>
-            <div style="margin-top:8px;font-size:12px;color:#94A3B8;font-style:italic;">💡 Giống hệt Phòng Thực hành Live Code ở Slide tiếp theo!</div>
-          </div>
-        </div>
-
-        <div class="card reveal-item" style="border-left:5px solid #38E1F0;padding:10px 16px;">
-          <div class="card-title">🛠️ Quy trình tạo trang web cơ bản:</div>
-          <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;font-size:13.5px;color:#CBD5E1;">
-            <span style="background:rgba(56,225,240,.2);padding:4px 12px;border-radius:6px;color:#38E1F0;font-weight:700;">1. Mở trình soạn thảo</span>
-            <span class="pulse-arrow">→</span>
-            <span style="background:rgba(245,166,35,.2);padding:4px 12px;border-radius:6px;color:#FFC043;font-weight:700;">2. Viết code HTML</span>
-            <span class="pulse-arrow">→</span>
-            <span style="background:rgba(16,185,129,.2);padding:4px 12px;border-radius:6px;color:#34D399;font-weight:700;">3. Lưu thành file.html</span>
-            <span class="pulse-arrow">→</span>
-            <span style="background:rgba(139,92,246,.2);padding:4px 12px;border-radius:6px;color:#C4B5FD;font-weight:700;">4. Mở bằng trình duyệt</span>
-          </div>
-        </div>
-
-        <div class="card reveal-item" style="background:rgba(16,185,129,.1);border-color:rgba(52,211,153,.3);padding:10px 16px;font-size:13.5px;">
-          📖 <strong>Ghi nhớ SGK:</strong> Có thể soạn thảo tệp HTML bằng nhiều phần mềm khác nhau. Cũng có thể soạn thảo <strong>trực tuyến và kiểm tra kết quả trực tiếp trên trình duyệt</strong>.
-        </div>
-      </div>
-    </section>
-
-    <!-- ══ SLIDE 9: PHÒNG THỰC HÀNH LIVE CODE PLAYGROUND ════════════════════ -->
-    <section class="slide" id="slide-9" data-total-reveal="1">
-      <div class="slide-header">
-        <div>
-          <span class="slide-badge leaf">Thực hành thời gian thực</span>
-          <div class="slide-title">Phòng Thực hành Code Trực tiếp</div>
-          <div class="slide-subtitle">Chỉnh sửa code bên trái → Xem kết quả ngay bên phải. Thử nghiệm mọi thứ!</div>
-        </div>
-        <div class="reveal-ctrl">
-          <button class="sim-btn" onclick="loadTemplate('tpl_basic');">📄 Mẫu 1: Khung HTML cơ bản</button>
-          <button class="sim-btn" onclick="loadTemplate('tpl_tags');">🏷️ Mẫu 2: Thẻ đơn & đôi</button>
-          <button class="sim-btn" onclick="loadTemplate('tpl_color');">🎨 Mẫu 3: Thuộc tính màu sắc</button>
-        </div>
-      </div>
-      <div class="slide-body">
-        <div class="playground-wrapper reveal-item visible">
-          <div class="editor-pane">
-            <div class="editor-bar">
-              <span>📝 Soạn thảo HTML (gõ để thay đổi)</span>
-              <button class="sim-btn" onclick="updatePlayground();">▶ Chạy lại</button>
-            </div>
-            <textarea class="live-code-area" id="pg-code" oninput="updatePlayground();" spellcheck="false">&lt;!DOCTYPE html&gt;
-&lt;html&gt;
+<header class="topbar"><div class="brand">TIN HỌC 12 <b> / BÀI 07</b></div><div class="spacer"></div><button class="tool" id="contents" aria-haspopup="dialog">☰ Mục lục</button><button class="tool" id="motion" aria-pressed="true">✨ Hiệu ứng: Bật</button><button class="tool" id="sound" aria-pressed="false">🔇 Âm thanh: Tắt</button><button class="tool" id="fullscreen" title="Toàn màn hình (F)" aria-label="Toàn màn hình">⛶</button></header>
+<main class="stage" id="stage"><div id="deck"></div><noscript><h1>Bài 7: Giao tiếp và ứng xử trong không gian mạng</h1><p>Hãy bật JavaScript để dùng các hoạt động tương tác của bài trình chiếu.</p></noscript></main>
+<footer class="bottom"><button class="nav" id="prev" aria-label="Trang trước">←</button><div class="progress" aria-hidden="true"><span id="progress"></span></div><span class="counter" id="counter">01 / 16</span><span class="footer-count" id="reveal-counter"></span><button class="action" id="all-ideas">Hiện hết</button><button class="action primary next-idea" id="next-idea">Hiện ý tiếp ↓</button><button class="nav" id="next" aria-label="Trang tiếp">→</button><span class="key-help">Space/→: hiện ý, rồi chuyển trang<br>↑: ẩn ý · F: toàn màn hình · M: âm thanh</span></footer>
+<dialog id="toc" aria-labelledby="toc-title"><div class="dialog-head"><h2 id="toc-title">Hành trình Bài 7</h2><button class="action" id="close-toc">Đóng ✕</button></div><div id="toc-grid" class="toc-grid"></div></dialog>
+<div id="toast" class="toast" role="status" hidden></div><div class="confetti" id="confetti" aria-hidden="true"></div>
+<script>'use strict';
+const $=(s,r=document)=>r.querySelector(s), $$=(s,r=document)=>[...r.querySelectorAll(s)];
+const esc=v=>String(v).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const code=v=>`<code>${esc(v)}</code>`;
+const panel=(value,id='')=>`<pre class="code-panel" ${id?`id="${id}"`:''}>${esc(value)}</pre>`;
+const card=(icon,title,text)=>`<div class="card reveal" aria-hidden="true" inert><span class="icon" aria-hidden="true">${icon}</span><h3>${title}</h3><p>${text}</p></div>`;
+const ribbon=text=>`<div class="ribbon">${text}</div>`;
+const frame=(id,title)=>`<div class="browser-window"><div class="browser-chrome"><span class="browser-dots" aria-hidden="true">● ● ●</span><span>${title}</span></div><iframe id="${id}" sandbox="" title="${title}" referrerpolicy="no-referrer"></iframe></div>`;
+const basic=`<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <title>Câu lạc bộ Tin học</title>
+</head>
+<body>
+  <h1>Xin chào lớp 12!</h1>
+  <p>Chúng mình cùng học HTML.</p>
+</body>
+</html>`;
+const sections=[
+ {title:'HTML và cấu trúc trang web',tag:'Bài 7 · Tin học 12 · Kết nối tri thức',lead:'Chủ đề 4 · Giải quyết vấn đề với sự trợ giúp của máy tính',html:`
+ <div class="hero"><div><p class="prompt">TỪ NGƯỜI XEM ĐẾN NGƯỜI TẠO</p><div class="hero-title">Em viết <em>mã nguồn.</em><br>Trình duyệt dựng <em>trang web.</em></div><p class="lead">Một tệp văn bản có thể trở thành trang giới thiệu của lớp mình như thế nào?</p></div><div class="html-hero" aria-label="Từ mã HTML đến trang web"><div class="floating-code" aria-hidden="true">&lt;h1&gt;Xin chào!&lt;/h1&gt;</div><div class="hero-browser"><span>● ● ●</span><h3>Xin chào!</h3><p>Trang web đầu tiên của em</p></div><div class="html-token" aria-hidden="true">&lt;/&gt;</div></div></div><div class="grid three hero-small">${card('','🏷️ Đọc hiểu','Phân biệt thẻ và phần tử.')}${card('','🌳 Giải thích','Nhìn cấu trúc dưới dạng cây.')}${card('','⌨️ Thực hành','Tự viết và xem kết quả ngay.')}</div><p class="teacher-note">Câu hỏi mở đầu: Trang web và mã nguồn có phải là hai tệp hoàn toàn khác nhau?</p>`},
+ {title:'Một tệp văn bản đi qua trình duyệt như thế nào?',tag:'01 · Trang web và HTML · SGK 39–40',lead:'HTML là Hypertext Markup Language — ngôn ngữ đánh dấu siêu văn bản.',html:`
+ <div class="pipeline"><div class="pipe-step" data-pipe="0"><span>📄</span><h3>Tệp nguồn</h3><p>${code('lop12.html')}</p></div><span class="pipe-arrow" aria-hidden="true">→</span><div class="pipe-step" data-pipe="1"><span>🌐</span><h3>Trình duyệt</h3><p>Đọc và xử lý HTML</p></div><span class="pipe-arrow" aria-hidden="true">→</span><div class="pipe-step" data-pipe="2"><span>🖥️</span><h3>Trang hiển thị</h3><p>Nội dung người xem thấy</p></div></div><div class="grid two"><div>${panel('<h1>Lớp 12 thân mến!</h1>\n<p>Hôm nay chúng mình học HTML.</p>')}<button class="action primary" id="pipe-run">▶ Quan sát từng bước</button></div><div id="pipe-output" class="demo" aria-live="polite">Dự đoán: Trình duyệt có hiển thị nguyên các dấu &lt;h1&gt; không?</div></div>${ribbon('💡 HTML mô tả <strong>cấu trúc và nội dung</strong>. Tệp thường có đuôi <strong>.html</strong> hoặc <strong>.htm</strong>.')}`},
+ {title:'Thẻ và phần tử: phần nào là phần nào?',tag:'02 · Giải phẫu một phần tử · SGK 40',lead:'Chạm vào từng phần của dòng mã để xem nhiệm vụ của nó.',html:`
+ <div class="element-anatomy" aria-label="Các thành phần của phần tử p"><button class="anatomy-part" data-part="0" aria-pressed="false">&lt;p&gt;</button><button class="anatomy-part content-part" data-part="1" aria-pressed="false">Xin chào lớp 12!</button><button class="anatomy-part" data-part="2" aria-pressed="false">&lt;/p&gt;</button></div><div class="element-bracket">Toàn bộ ba phần trên tạo thành một phần tử HTML.</div><div id="part-info" class="demo" aria-live="polite">Chọn thẻ bắt đầu, nội dung hoặc thẻ kết thúc.</div><div class="grid two">${card('🏷️','Thẻ (tag)',`${code('<p>')} và ${code('</p>')} là hai thẻ đánh dấu.`)}${card('🧩','Phần tử (element)',`${code('<p>Xin chào lớp 12!</p>')} là một phần tử đầy đủ.`)}</div>`},
+ {title:'Thẻ đôi và thẻ đơn — đừng đóng nhầm!',tag:'03 · Phân loại nhanh · SGK 40',lead:'Thẻ đơn như br, hr không có thẻ kết thúc tương ứng.',html:`
+ <div class="grid two">${card('🔗','Thẻ đôi',`Có thẻ bắt đầu và thẻ kết thúc.<br>${code('<p>…</p>')} · ${code('<h1>…</h1>')}`)}${card('➖','Thẻ đơn',`Chỉ có thẻ bắt đầu.<br>${code('<br>')} ngắt dòng · ${code('<hr>')} kẻ ngang.`)}</div><div class="classify-box"><div class="quiz-meta"><span id="tag-progress"></span><button class="action" id="tag-reset">↺ Làm lại</button></div><div class="tag-question" id="tag-question"></div><div class="pills"><button class="action" data-tag-kind="pair">🔗 Thẻ đôi</button><button class="action" data-tag-kind="void">➖ Thẻ đơn</button><button class="action primary" id="tag-next" disabled>Thẻ tiếp →</button></div><div id="tag-feedback" class="feedback" aria-live="polite"></div></div>${ribbon(`📌 Có thể gặp ${code('<br/>')}, nhưng dấu / ở đây không biến nó thành một cặp thẻ. Không viết ${code('</br>')}.`)}`},
+ {title:'Thuộc tính: thêm thông tin cho phần tử',tag:'04 · Chọn màu, quan sát mã · SGK 40',lead:'Trong ví dụ này, style là tên thuộc tính; color là thuộc tính CSS nằm trong giá trị của style.',html:`
+ <div class="grid two"><div class="card"><h3>Thẻ bắt đầu có thêm thuộc tính</h3><pre class="code-panel attr-code">&lt;p <mark>style="color: <span id="attr-color">red</span>"</mark>&gt;
+  Xin chào lớp 12!
+&lt;/p&gt;</pre><div class="pills">${[['red','Đỏ'],['blue','Xanh dương'],['green','Xanh lá'],['purple','Tím']].map(([c,t],i)=>`<button class="tab" data-color="${c}" aria-pressed="${i===0}">${t}</button>`).join('')}</div></div>${frame('attr-preview','Kết quả thay đổi thuộc tính')}</div><div id="attr-note" class="demo" aria-live="polite">Chọn màu khác. Chữ nào trong mã thay đổi? Nội dung đoạn văn có thay đổi không?</div>${ribbon('🔎 Thuộc tính thường nằm trong <strong>thẻ bắt đầu</strong>, theo dạng tên="giá trị". Dấu ngoặc kép giúp giá trị rõ ràng.')}`},
+ {title:'Nhấn Enter trong mã có làm trang web xuống dòng?',tag:'05 · Dự đoán trước khi bấm · SGK 40',lead:'Đối chiếu mã nguồn và kết quả trong các đoạn văn bản thông thường dưới đây.',html:`
+ <div class="tabs"><button class="tab" data-space="0" aria-pressed="true">1. Nhiều dấu cách và Enter</button><button class="tab" data-space="1" aria-pressed="false">2. Dùng &lt;br&gt;</button><button class="tab" data-space="2" aria-pressed="false">3. Dùng hai &lt;p&gt;</button></div><div class="grid two"><div><p class="panel-label">Mã nguồn</p>${panel('', 'space-code')}</div>${frame('space-preview','Kết quả hiển thị khoảng trắng')}</div><div id="space-note" class="demo" aria-live="polite"></div>${ribbon(`💡 Enter trong mã ≠ ngắt dòng. Dùng ${code('<br>')} để ngắt dòng; dùng ${code('<p>')} mới để tạo đoạn.`)}`},
+ {title:'Khung sườn của một tài liệu HTML',tag:'06 · Khám phá từng vùng · SGK 41–42',lead:'Chọn một vùng; phần mã tương ứng sẽ được làm nổi bật.',html:`
+ <div class="structure-layout"><div class="structure-code" id="structure-code">${[
+ ['doctype','<!DOCTYPE html>'],['html','<html lang="vi">'],['head','  <head>'],['head','    <meta charset="utf-8">'],['head','    <title>Lớp 12</title>'],['head','  </head>'],['body','  <body>'],['body','    <h1>Chào lớp mình!</h1>'],['body','    <p>Chúng mình cùng học HTML.</p>'],['body','  </body>'],['html','</html>'],
+ ].map(([g,t])=>`<div class="code-line" data-region="${g}">${esc(t)}</div>`).join('')}</div><div class="responses">${[['doctype','DOCTYPE','Khai báo kiểu tài liệu; không phải phần tử HTML.'],['html','html','Phần tử gốc, bao các phần tử của tài liệu.'],['head','head','Thông tin chung: mã hóa, tên trang và các thông tin khác.'],['body','body','Nội dung trang mà người xem nhìn thấy.']].map(([id,t,d])=>`<button class="structure-choice" data-structure="${id}" aria-pressed="false"><strong>${esc(id==='doctype'?'<!DOCTYPE html>':`<${t}>`)}</strong><span>${d}</span></button>`).join('')}</div></div><div id="structure-note" class="demo" aria-live="polite">Dự đoán: Nội dung của title và h1 xuất hiện ở cùng một chỗ hay khác nhau?</div>`},
+ {title:'title và h1 — cùng là “tiêu đề” nhưng khác chỗ',tag:'07 · Thử thay hai nội dung · SGK 42',lead:'Tên trên tab trình duyệt khác với tiêu đề nằm trong trang.',html:`
+ <div class="grid two"><div class="card fields"><label for="tab-title">Nội dung ${code('<title>')}</label><input id="tab-title" maxlength="55" value="Câu lạc bộ Tin học"><label for="page-heading">Nội dung ${code('<h1>')}</label><input id="page-heading" maxlength="65" value="Chào mừng các bạn lớp 12!"><pre class="code-panel" id="title-code"></pre></div><div class="browser-window"><div class="browser-chrome"><span class="browser-dots" aria-hidden="true">● ● ●</span><span id="fake-tab" class="fake-tab"></span></div><div class="fake-page"><h3 id="fake-heading"></h3><p>Đây là phần nội dung trang.</p></div></div></div>${ribbon(`🇻🇳 ${code('<meta charset="utf-8">')} khai báo mã hóa UTF-8. Khi lưu tệp, cũng chọn <strong>UTF-8</strong> để tiếng Việt được thể hiện đúng.`)}`},
+ {title:'Cây HTML: phần tử nào chứa phần tử nào?',tag:'08 · Quan hệ cha – con · SGK 42–43',lead:'Chạm một nút để làm rõ nó nằm trong phần tử nào và chứa những phần tử nào.',html:`
+ <div class="tree-layout"><div class="dom-tree"><div class="tree-row"><button class="tree-node" data-node="html">html</button></div><div class="tree-branches"><div><div class="tree-row"><button class="tree-node" data-node="head">head</button></div><div class="tree-row"><button class="tree-node" data-node="meta">meta</button><button class="tree-node" data-node="title">title</button></div></div><div><div class="tree-row"><button class="tree-node" data-node="body">body</button></div><div class="tree-row"><button class="tree-node" data-node="h1">h1</button><div><button class="tree-node" data-node="p">p</button><div class="tree-row"><button class="tree-node" data-node="em">em</button></div></div></div></div></div></div><div><pre class="code-panel small-code">&lt;html&gt;
   &lt;head&gt;
     &lt;meta charset="utf-8"&gt;
-    &lt;title&gt;Trang web đầu tiên của em&lt;/title&gt;
+    &lt;title&gt;Lớp 12&lt;/title&gt;
   &lt;/head&gt;
   &lt;body&gt;
-    &lt;h1&gt;Trang Web và HTML&lt;/h1&gt;
-    &lt;p&gt;Đây là dòng đầu tiên.&lt;/p&gt;
-    &lt;hr&gt;
-    &lt;p&gt;Đây là dòng cuối. Có &lt;br&gt; xuống dòng ở đây!&lt;/p&gt;
-    &lt;p&gt;Trang được lập bởi &lt;em&gt;nhóm bạn bè&lt;/em&gt; thân thiết.&lt;/p&gt;
-    &lt;!-- Đây là chú thích, trình duyệt không hiện --&gt;
-    &lt;p style="color:blue"&gt;Dòng này màu xanh nhờ thuộc tính style!&lt;/p&gt;
+    &lt;h1&gt;Xin chào&lt;/h1&gt;
+    &lt;p&gt;Nhóm &lt;em&gt;bạn bè&lt;/em&gt;&lt;/p&gt;
   &lt;/body&gt;
-&lt;/html&gt;</textarea>
-          </div>
-          <div class="preview-pane">
-            <div class="preview-pane-bar">
-              <span>🌐</span> Kết quả hiển thị ngay lập tức
-            </div>
-            <iframe class="preview-frame" id="pg-frame"></iframe>
-          </div>
-        </div>
-      </div>
-    </section>
+&lt;/html&gt;</pre><div id="tree-note" class="demo" aria-live="polite">Chọn html để tìm gốc cây, rồi chọn p và em để tìm quan hệ cha – con.</div></div></div>${ribbon('🌳 Cây trong ví dụ có <strong>một phần tử gốc: html</strong>. DOCTYPE không phải một nút phần tử trong cây này.')}`},
+ {title:'Lồng phần tử: mở sau, đóng trước',tag:'09 · Tìm và sửa lỗi cấu trúc',lead:'Trình duyệt có thể tự sửa một số lỗi. Trang nhìn có vẻ đúng chưa chứng minh mã đã đúng.',html:`
+ <div class="grid two"><div class="card"><h3>Kiểm tra thứ tự thẻ</h3><div class="nesting-code" id="nesting-code"></div><div class="tabs"><button class="tab" data-nest="0" aria-pressed="true">Mã đang lồng sai</button><button class="tab" data-nest="1" aria-pressed="false">Sửa thứ tự đóng thẻ</button></div><div id="nesting-note" class="feedback" aria-live="polite"></div></div><div class="card"><h3>Hình dung như hai chiếc hộp</h3><div class="box-outer">p<div class="box-inner">em · bạn bè</div></div><p>Phần tử em nằm hoàn toàn bên trong phần tử p.</p></div></div>${ribbon(`✓ Viết rõ ${code('<p>Nhóm <em>bạn bè</em></p>')}. Ở ví dụ này, đóng <strong>em trước p</strong>.`)}`},
+ {title:'h1 đến h6: sáu cấp tiêu đề, không chỉ sáu cỡ chữ',tag:'10 · Cấu trúc nội dung · SGK 42',lead:'Chọn cấp tiêu đề để so sánh. Dùng cấp phù hợp với thứ bậc nội dung.',html:`
+ <div class="grid two"><div class="card"><h3>Chọn thẻ tiêu đề</h3><div class="tabs">${Array.from({length:6},(_,i)=>`<button class="tab" data-heading="${i+1}" aria-pressed="${i===0}">h${i+1}</button>`).join('')}</div><pre class="code-panel" id="heading-code"></pre><p>${code('<p>')} dùng cho một đoạn văn bản hoàn chỉnh.</p></div>${frame('heading-preview','Xem các cấp tiêu đề và đoạn văn')}</div>${ribbon('🧭 h1 là cấp cao nhất, h6 là cấp thấp nhất. Nếu chỉ muốn đổi hình thức chữ, đó là nhiệm vụ sẽ tìm hiểu thêm ở phần CSS.')}`},
+ {title:'Chú thích: có trong mã, không hiện thành nội dung',tag:'11 · Quan sát mã và kết quả · SGK 41',lead:'Dự đoán xem bật chú thích có làm thay đổi nội dung người xem nhìn thấy không.',html:`
+ <div class="grid two"><div class="card"><h3>Ghi chú cho người đọc mã</h3>${panel('', 'comment-code')}<button class="action" id="comment-toggle" aria-pressed="true">Ẩn chú thích khỏi mã</button></div>${frame('comment-preview','Kết quả với hoặc không có chú thích')}</div><div class="demo" id="comment-note" aria-live="polite">Chú thích giúp giải thích mã nguồn. Trình duyệt không hiển thị nó như nội dung trang.</div>${ribbon(`📝 Cú pháp: ${code('<!-- Đây là chú thích -->')}. Đừng dùng dấu // thay cho cú pháp chú thích HTML.`)}`},
+ {title:'Soạn mã bằng gì? Xem trang bằng gì?',tag:'12 · Phân biệt công cụ · SGK 43–44',lead:'Công cụ soạn thảo giúp viết tệp; trình duyệt giúp xem kết quả.',html:`
+ <div class="grid two">${card('⌨️','Phần mềm soạn thảo','Notepad, Notepad++, Sublime Text…<br>Viết và lưu mã nguồn dưới dạng văn bản.')}${card('🌐','Trình duyệt web','Chrome, Firefox, Microsoft Edge…<br>Mở tệp và hiển thị trang web.')}</div><div class="classify-box"><div class="quiz-meta"><span id="tool-progress"></span><button class="action" id="tool-reset">↺ Làm lại</button></div><div class="tag-question" id="tool-question"></div><div class="pills"><button class="action" data-tool-kind="editor">⌨️ Soạn thảo</button><button class="action" data-tool-kind="browser">🌐 Trình duyệt</button><button class="action primary" id="tool-next" disabled>Công cụ tiếp →</button></div><div class="feedback" id="tool-feedback" aria-live="polite"></div></div><p class="teacher-note">Cũng có thể dùng trang soạn thảo trực tuyến: nhập mã và xem kết quả ngay trong trình duyệt.</p>`},
+ {title:'Xưởng HTML: viết, chạy, sửa và quan sát',tag:'13 · Thực hành trực tiếp',lead:'Đổi tên câu lạc bộ hoặc câu chào trong mã rồi bấm “Chạy mã”.',html:`
+ <div class="editor-toolbar"><label for="template">Mẫu thử</label><select id="template"><option value="basic">Khung HTML cơ bản</option><option value="tags">Thẻ đơn và thẻ đôi</option><option value="nesting">Phần tử lồng nhau</option></select><button class="action primary" id="run-code">▶ Chạy mã</button><button class="action" id="restore-code">↺ Khôi phục mẫu</button><button class="action" id="download-code">↓ Lưu tệp .html</button></div><div class="grid two editor-layout"><div class="code-editor"><label for="code-editor">Mã nguồn · có thể chỉnh sửa</label><textarea id="code-editor" spellcheck="false" aria-describedby="editor-status"></textarea></div>${frame('editor-preview','Kết quả mã HTML do em viết')}</div><p class="teacher-note" id="editor-status" role="status">Thử thay đổi trong mã, rồi đối chiếu với khung kết quả.</p>${ribbon('🎯 Trang của em cần: tên tab title, tiêu đề h1 và đoạn p. Lưu <strong>index.html</strong> với <strong>UTF-8</strong>.')}`},
+ {title:'Thử thách đọc hiểu HTML',tag:'14 · Kiểm tra và giải thích',lead:'Tám câu hỏi ngắn. Mỗi câu đúng được 1 điểm; có thể xem giải thích và làm lại.',html:'<div class="quiz-layout" id="quiz" aria-live="polite"></div>'},
+ {title:'Trang web đầu tiên của em đã sẵn sàng chưa?',tag:'15 · Tổng kết và vận dụng',lead:'Tự kiểm tra ba việc, rồi vận dụng vào trang giới thiệu của lớp hoặc câu lạc bộ.',html:`
+ <div class="grid two"><div class="responses">${['Giải thích được thẻ và phần tử bằng một ví dụ.','Chỉ được html, head, body và quan hệ cha – con.','Viết, lưu và mở được một tệp HTML có tiếng Việt.'].map(t=>`<button class="check" aria-pressed="false"><span class="check-icon" aria-hidden="true">○</span><span>${t}</span></button>`).join('')}<div class="ribbon">💡 Ghi nhớ: <strong>HTML tạo cấu trúc.</strong> Trình duyệt đọc mã và hiển thị kết quả.</div><div class="links"><button class="action primary" id="back-editor">↶ Về xưởng HTML</button><a class="action" href="https://luyen-tin-12.vercel.app/luyen/bai-07" target="_blank" rel="noopener">Luyện tập Bài 7 ↗</a></div></div><div class="card"><span class="badge" id="badge" aria-hidden="true">🌱</span><p class="pledge-status" id="check-status" aria-live="polite">0 / 3 việc đã tự kiểm tra</p><div class="links"><button class="action gold" id="celebrate" disabled>🎉 Hoàn thành Bài 7</button></div><p class="history-note">Mở rộng: HTML gắn với công trình của Tim Berners-Lee; phiên bản ban đầu xuất hiện năm 1991. Ngày nay, HTML tiếp tục phát triển theo <a href="https://html.spec.whatwg.org/" target="_blank" rel="noopener">HTML Living Standard</a>.</p></div></div>`},
+];
+const quizQuestions=[
+ ['HTML là gì?',['Ngôn ngữ đánh dấu siêu văn bản.','Phần mềm dùng để duyệt web.','Giao thức truyền trang web.','Một loại tệp ảnh.'],0,'HTML là Hypertext Markup Language: dùng đánh dấu để mô tả cấu trúc và nội dung trang web.'],
+ ['Trong <p>Xin chào</p>, toàn bộ cụm này được gọi là gì?',['Chỉ là một thẻ bắt đầu.','Một phần tử HTML.','Một thuộc tính HTML.','Một trình duyệt web.'],1,'Phần tử này gồm thẻ bắt đầu <p>, nội dung Xin chào và thẻ kết thúc </p>.'],
+ ['Thẻ nào dưới đây là thẻ đơn?',['<p>','<h1>','<br>','<em>'],2,'<br> là thẻ đơn để ngắt dòng, không có thẻ kết thúc </br>.'],
+ ['Nội dung <title>Câu lạc bộ</title> thường xuất hiện ở đâu?',['Thành đoạn văn đầu tiên trong trang.','Luôn là tiêu đề h1 của trang.','Trong thanh địa chỉ thay tên miền.','Trên tab của trình duyệt.'],3,'title nằm trong head, cung cấp tên trang. h1 là một tiêu đề nằm trong phần nội dung.'],
+ ['Nhận định nào đúng về <!DOCTYPE html>?',['Đó là phần tử gốc của cây HTML.','Đó là khai báo kiểu tài liệu, không phải phần tử HTML.','Đó là một đoạn chú thích.','Đó là thẻ để tạo tiêu đề.'],1,'Phần tử gốc là html. DOCTYPE là khai báo riêng, không phải một phần tử trong cây.'],
+ ['Trong <p>Nhóm <em>bạn bè</em></p>, em là con trực tiếp của phần tử nào?',['html','body','p','title'],2,'em nằm bên trong p; vì thế p là cha trực tiếp của em trong ví dụ này.'],
+ ['Để tạo hai dòng trong cùng một đoạn p, nên dùng cách nào?',['Chèn <br> tại chỗ muốn ngắt dòng.','Gõ nhiều dấu cách.','Chỉ nhấn Enter trong mã.','Đổi tên tệp thành .txt.'],0,'Với văn bản hiển thị thông thường, Enter trong mã không tạo ngắt dòng như <br>.'],
+ ['Cách nào mô tả đúng quy trình thực hành?',['Viết bằng Chrome, lưu thành ảnh rồi mở bằng Notepad.','Viết trong Word và luôn lưu dạng .docx.','Chỉ đặt tên tệp .html, không cần nội dung.','Viết bằng trình soạn thảo, lưu .html rồi mở bằng trình duyệt.'],3,'Dùng văn bản thuần để soạn mã. Lưu đúng phần mở rộng và mã hóa rồi kiểm tra bằng trình duyệt.'],
+];
 
-    <!-- ══ SLIDE 10: ĐẤU TRƯỜNG TRẮC NGHIỆM (4 CÂU) ═════════════════════════ -->
-    <section class="slide" id="slide-10" data-total-reveal="2">
-      <div class="slide-header">
-        <div>
-          <span class="slide-badge coral">Kiểm tra kiến thức</span>
-          <div class="slide-title">Đấu trường Trắc nghiệm — Bài 7 HTML</div>
-          <div class="slide-subtitle">Nhấp vào đáp án để nhận phản hồi tức thì kèm giải thích từ SGK</div>
-        </div>
-        <div class="reveal-ctrl">
-          <span>✨</span><span class="reveal-status" id="slide-10-status">0 / 2</span>
-          <button class="reveal-btn" onclick="revealNext();">▶ Hiện ý</button>
-          <button class="reveal-btn" style="background:rgba(255,255,255,.15);" onclick="revealAll();">Hiện hết</button>
-        </div>
-      </div>
-      <div class="slide-body">
-        <div class="quiz-grid">
-          <div class="quiz-card reveal-item">
-            <div class="quiz-q">Câu 1: Thẻ nào dưới đây là thẻ ĐƠN (không có thẻ kết thúc)?</div>
-            <button class="quiz-btn" onclick="checkQ(this,false,'q1','Sai! &lt;p&gt; là thẻ đôi. Phải đóng bằng &lt;/p&gt;.')">A. &lt;p&gt;</button>
-            <button class="quiz-btn" onclick="checkQ(this,true,'q1','Chính xác! &lt;hr&gt; (kẻ ngang) là thẻ đơn — chỉ có thẻ bắt đầu. &lt;br&gt; cũng vậy!')">B. &lt;hr&gt;</button>
-            <button class="quiz-btn" onclick="checkQ(this,false,'q1','Sai! &lt;h1&gt; là thẻ đôi. Phải đóng bằng &lt;/h1&gt;.')">C. &lt;h1&gt;</button>
-            <button class="quiz-btn" onclick="checkQ(this,false,'q1','Sai! &lt;em&gt; là thẻ đôi. Phải đóng bằng &lt;/em&gt;.')">D. &lt;em&gt;</button>
-            <div class="quiz-feedback" id="q1-feedback"></div>
-          </div>
+let current = 0;
+let audioEnabled = false;
+let audioContext;
+let motion = !matchMedia('(prefers-reduced-motion: reduce)').matches;
+let liveTimer;
+let toastTimer;
+const reveals = sections.map(()=>0);
+$('#deck').innerHTML = sections.map((s,i)=>`<section class="slide" id="slide-${i+1}" ${i?'hidden':''} aria-labelledby="title-${i+1}"><div class="slide-head"><div class="heading"><p class="eyebrow">${s.tag}</p><h${i?2:1} id="title-${i+1}" tabindex="-1">${s.title}</h${i?2:1}><p class="lead">${s.lead}</p></div><div class="reveal-tools"><span class="count"></span><button class="action reveal-one">+ Hiện ý</button><button class="action reveal-all">Hiện hết</button></div></div><div class="body">${s.html}</div></section>`).join('');
+$('#toc-grid').innerHTML = sections.map((s,i)=>`<button class="action" data-goto="${i}">${String(i+1).padStart(2,'0')} · ${s.title}</button>`).join('');
 
-          <div class="quiz-card reveal-item">
-            <div class="quiz-q">Câu 2: Em gõ 10 dấu cách rồi nhấn Enter trong HTML. Trình duyệt sẽ hiển thị thế nào?</div>
-            <button class="quiz-btn" onclick="checkQ(this,false,'q2','Sai! Trình duyệt không hiểu nhiều dấu cách lẫn Enter.')">A. Đúng 10 dấu cách và xuống dòng</button>
-            <button class="quiz-btn" onclick="checkQ(this,true,'q2','Đúng! Bao nhiêu dấu cách = 1 dấu cách; Enter không xuống dòng. Phải dùng &lt;br&gt;!')">B. Chỉ một dấu cách, không xuống dòng</button>
-            <button class="quiz-btn" onclick="checkQ(this,false,'q2','Sai! HTML không báo lỗi cú pháp kiểu này.')">C. Báo lỗi cú pháp HTML</button>
-            <button class="quiz-btn" onclick="checkQ(this,false,'q2','Sai! Không bỏ hết, vẫn hiện 1 dấu cách.')">D. Bỏ hết dấu cách, viết liền</button>
-            <div class="quiz-feedback" id="q2-feedback"></div>
-          </div>
-
-          <div class="quiz-card reveal-item">
-            <div class="quiz-q">Câu 3: Dòng &lt;!DOCTYPE html&gt; ở đầu tệp có phải là phần tử HTML không?</div>
-            <button class="quiz-btn" onclick="checkQ(this,false,'q3','Sai! Dù trông giống thẻ nhưng DOCTYPE không phải phần tử HTML.')">A. Có, vì nó nằm trong dấu &lt; &gt;</button>
-            <button class="quiz-btn" onclick="checkQ(this,true,'q3','Chính xác! SGK ghi rõ: DOCTYPE không phải phần tử HTML, nó báo cho trình duyệt biết đây là tệp html.')">B. Không — nó chỉ báo cho trình duyệt biết đây là tệp html</button>
-            <button class="quiz-btn" onclick="checkQ(this,false,'q3','Sai! Phần tử gốc là &lt;html&gt;, không phải DOCTYPE.')">C. Có, và là phần tử gốc của trang</button>
-            <button class="quiz-btn" onclick="checkQ(this,false,'q3','Sai! DOCTYPE không phải chú thích.')">D. Không, vì nó là một dòng chú thích</button>
-            <div class="quiz-feedback" id="q3-feedback"></div>
-          </div>
-
-          <div class="quiz-card reveal-item">
-            <div class="quiz-q">Câu 4: Phần mềm nào dưới đây là công cụ soạn thảo HTML (không phải trình duyệt)?</div>
-            <button class="quiz-btn" onclick="checkQ(this,true,'q4','Chính xác! Notepad, Notepad++, Sublime Text đều là phần mềm soạn thảo HTML.')">A. Notepad, Notepad++, Sublime Text</button>
-            <button class="quiz-btn" onclick="checkQ(this,false,'q4','Sai! Opera, Chrome, Cốc Cốc đều là TRÌNH DUYỆT WEB.')">B. Opera, Chrome, Cốc Cốc</button>
-            <button class="quiz-btn" onclick="checkQ(this,false,'q4','Sai! FireFox là trình duyệt web, không phải phần mềm soạn thảo.')">C. Notepad++, FireFox, Sublime Text</button>
-            <button class="quiz-btn" onclick="checkQ(this,false,'q4','Sai! Microsoft Edge là trình duyệt web.')">D. Microsoft Edge, Notepad, Opera</button>
-            <div class="quiz-feedback" id="q4-feedback"></div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- ══ SLIDE 11: TỔNG KẾT & PHÁO HOA ════════════════════════════════════ -->
-    <section class="slide" id="slide-11" data-total-reveal="3">
-      <div class="slide-header">
-        <div>
-          <span class="slide-badge gold">Tổng kết bài học</span>
-          <div class="slide-title">🎉 Tổng kết Bài 7 — Đã nắm vững kiến thức!</div>
-          <div class="slide-subtitle">Sẵn sàng tự tay tạo trang web HTML đầu tiên</div>
-        </div>
-        <div class="reveal-ctrl">
-          <span>✨</span><span class="reveal-status" id="slide-11-status">0 / 3</span>
-          <button class="reveal-btn" onclick="revealNext();">▶ Hiện ý</button>
-          <button class="reveal-btn" style="background:rgba(255,255,255,.15);" onclick="revealAll();">Hiện hết</button>
-        </div>
-      </div>
-      <div class="slide-body">
-        <div class="grid-2">
-          <div class="card reveal-item" style="border-left:5px solid #38E1F0;">
-            <div class="card-title">📋 5 Điểm ghi nhớ cốt lõi SGK:</div>
-            <ul style="margin-left:18px;font-size:13.5px;line-height:1.75;color:#CBD5E1;">
-              <li><strong>HTML = Hypertext Markup Language</strong> — bộ quy tắc cấu trúc trang web. Tệp <code>.html</code> hoặc <code>.htm</code>.</li>
-              <li><strong>Phần tử = thẻ bắt đầu + nội dung + thẻ kết thúc.</strong> Thẻ đơn không có thẻ kết thúc.</li>
-              <li>Trình duyệt <strong>gộp nhiều khoảng trắng thành 1</strong> và <strong>không nhận biết Enter xuống dòng</strong>.</li>
-              <li>Khung sườn: <code>&lt;!DOCTYPE&gt;</code> (không phải phần tử) → <code>&lt;html&gt;</code> (gốc) → <code>&lt;head&gt;</code> + <code>&lt;body&gt;</code>.</li>
-              <li>Cấu trúc HTML là <strong>cây thông tin</strong> — phần tử lồng nhau = quan hệ cha–con. Gốc là <code>&lt;html&gt;</code>.</li>
-            </ul>
-          </div>
-
-          <div class="card reveal-item" style="border-left:5px solid #F5A623;">
-            <div class="card-title" style="color:#FFC043;">🏠 Bài tập vận dụng về nhà:</div>
-            <p style="font-size:13.5px;line-height:1.6;color:#CBD5E1;margin-bottom:10px;">
-              <strong>Nhiệm vụ:</strong> Dùng Notepad tạo một tệp <code>gioithieu.html</code> giới thiệu bản thân: Bao gồm <code>&lt;h1&gt;</code> tên em, <code>&lt;p&gt;</code> trường và lớp, <code>&lt;hr&gt;</code>, <code>&lt;p&gt;</code> sở thích. Thêm <code>style="color:..."</code> để đổi màu ít nhất 1 dòng. Mở bằng Chrome xem kết quả!
-            </p>
-            <div style="display:flex;gap:10px;">
-              <a href="/luyen/bai-07" style="display:inline-flex;align-items:center;gap:5px;background:#0D7C86;color:white;text-decoration:none;padding:8px 14px;border-radius:8px;font-weight:700;font-size:13px;">
-                ✍️ Luyện trắc nghiệm Bài 7
-              </a>
-              <a href="/sgk/bai-07.html" target="_blank" style="display:inline-flex;align-items:center;gap:5px;background:rgba(255,255,255,.08);color:white;text-decoration:none;padding:8px 14px;border-radius:8px;font-weight:700;font-size:13px;border:1px solid rgba(255,255,255,.2);">
-                📖 Đọc SGK điện tử
-              </a>
-            </div>
-          </div>
-        </div>
-
-        <div class="card reveal-item" style="text-align:center;padding:16px;background:rgba(56,225,240,.1);border-color:rgba(56,225,240,.4);">
-          <div style="font-size:19px;font-weight:800;color:#FFF;margin-bottom:10px;">
-            🌟 Chúc mừng em đã hoàn thành Bài 7 — HTML và Cấu trúc Trang Web!
-          </div>
-          <button class="sim-btn" onclick="fireConfetti();" style="background:linear-gradient(135deg,#0D7C86,#38E1F0);color:white;font-weight:800;padding:8px 20px;">
-            🎊 Bắn pháo hoa ăn mừng!
-          </button>
-        </div>
-      </div>
-    </section>
-
-  </div><!-- .deck-container -->
-
-  <!-- ─── DECK NAV ─── -->
-  <div class="deck-nav">
-    <button class="nav-btn" onclick="prevSlide();" title="Slide trước (←)">‹</button>
-    <div class="deck-progress"><div class="deck-progress-bar" id="progressBar"></div></div>
-    <div class="deck-counter" id="slideCounter">01 / 11</div>
-    <button class="nav-btn" onclick="nextSlide();" title="Slide tiếp (→ / Space)">›</button>
-    <button class="nav-btn" onclick="toggleMute();" id="muteBtn" title="Âm thanh (M)">🔊</button>
-    <button class="nav-btn" onclick="toggleFullScreen();" title="Toàn màn hình (F)">⛶</button>
-  </div>
-
-  <script>
-    let currentSlide = 1;
-    const TOTAL = 11;
-    let isMuted = false;
-
-    /* ─── WEB AUDIO ─── */
-    const audioCtx = (typeof AudioContext !== 'undefined' || typeof webkitAudioContext !== 'undefined')
-      ? new (window.AudioContext || window.webkitAudioContext)() : null;
-
-    function _play(freq, type, dur, volPeak) {
-      if (isMuted || !audioCtx) return;
-      if (audioCtx.state === 'suspended') audioCtx.resume();
-      const osc = audioCtx.createOscillator();
-      const g   = audioCtx.createGain();
-      osc.connect(g); g.connect(audioCtx.destination);
-      osc.type = type || 'sine';
-      osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
-      g.gain.setValueAtTime(volPeak || .18, audioCtx.currentTime);
-      g.gain.linearRampToValueAtTime(.001, audioCtx.currentTime + dur);
-      osc.start(); osc.stop(audioCtx.currentTime + dur);
-    }
-    function playClick()   { _play(600,'sine',.06,.12); }
-    function playReveal()  { _play(440,'triangle',.14,.2); setTimeout(()=>_play(880,'triangle',.1,.12),80); }
-    function playSuccess() { _play(523,'sine',.1,.2); setTimeout(()=>_play(659,'sine',.1,.18),90); setTimeout(()=>_play(784,'sine',.25,.15),180); }
-    function playWrong()   { _play(220,'sawtooth',.2,.2); }
-    function toggleMute()  { isMuted=!isMuted; document.getElementById('muteBtn').innerText=isMuted?'🔇':'🔊'; }
-
-    /* ─── REVEAL ENGINE ─── */
-    function getActiveSlide() { return document.getElementById('slide-'+currentSlide); }
-
-    function updateRevealStatus() {
-      const s = getActiveSlide(); if (!s) return;
-      const total   = s.querySelectorAll('.reveal-item').length;
-      const visible = s.querySelectorAll('.reveal-item.visible').length;
-      const el = document.getElementById('slide-'+currentSlide+'-status');
-      if (el) el.innerText = visible + ' / ' + total;
-    }
-
-    function revealNext() {
-      const s = getActiveSlide(); if (!s) return false;
-      const hidden = [...s.querySelectorAll('.reveal-item:not(.visible)')];
-      if (hidden.length) {
-        hidden[0].classList.add('visible','just-revealed');
-        playReveal();
-        setTimeout(()=>hidden[0].classList.remove('just-revealed'), 700);
-        updateRevealStatus(); return true;
-      }
-      return false;
-    }
-
-    function revealAll() {
-      const s = getActiveSlide(); if (!s) return;
-      s.querySelectorAll('.reveal-item').forEach(i=>i.classList.add('visible'));
-      playClick(); updateRevealStatus();
-    }
-
-    function autoStagger(slide) {
-      const items = slide.querySelectorAll('.reveal-item');
-      items.forEach((item,i)=>{
-        setTimeout(()=>{ item.classList.add('visible'); updateRevealStatus(); }, (i+1)*160);
-      });
-    }
-
-    /* ─── NAVIGATION ─── */
-    function updateSlide() {
-      document.querySelectorAll('.slide').forEach((s,i)=>{
-        const idx = i+1;
-        s.classList.remove('active','prev');
-        if (idx === currentSlide) {
-          s.classList.add('active');
-          s.querySelectorAll('.reveal-item').forEach(el=>el.classList.remove('visible'));
-          autoStagger(s);
-        } else if (idx < currentSlide) s.classList.add('prev');
-      });
-      const pct = (currentSlide/TOTAL)*100;
-      document.getElementById('progressBar').style.width = pct+'%';
-      document.getElementById('slideCounter').innerText =
-        String(currentSlide).padStart(2,'0')+' / '+String(TOTAL).padStart(2,'0');
-      if (currentSlide===9) setTimeout(updatePlayground, 120);
-      if (currentSlide===11) setTimeout(fireConfetti, 500);
-    }
-
-    function nextSlide() { if(currentSlide<TOTAL){currentSlide++;playClick();updateSlide();} }
-    function prevSlide() { if(currentSlide>1){currentSlide--;playClick();updateSlide();} }
-
-    function toggleFullScreen() {
-      if (!document.fullscreenElement) document.documentElement.requestFullscreen().catch(()=>{});
-      else document.exitFullscreen().catch(()=>{});
-    }
-
-    window.addEventListener('keydown', e => {
-      if (e.target.tagName==='TEXTAREA'||e.target.tagName==='INPUT') return;
-      if (e.key==='ArrowRight'||e.key===' '||e.key==='PageDown') { e.preventDefault(); nextSlide(); }
-      else if (e.key==='ArrowLeft'||e.key==='PageUp')            { e.preventDefault(); prevSlide(); }
-      else if (e.key==='ArrowDown')                               { e.preventDefault(); revealNext(); }
-      else if (e.key==='f'||e.key==='F')                         { e.preventDefault(); toggleFullScreen(); }
-      else if (e.key==='m'||e.key==='M')                         { e.preventDefault(); toggleMute(); }
-      else if (e.key==='Home')  { currentSlide=1; updateSlide(); }
-      else if (e.key==='End')   { currentSlide=TOTAL; updateSlide(); }
+function sound(kind='click') {
+  if (!audioEnabled) return;
+  try {
+    const Audio = window.AudioContext || window.webkitAudioContext;
+    if (!Audio) return;
+    audioContext ||= new Audio();
+    if(audioContext.state==='suspended') audioContext.resume().catch(()=>{});
+    const now=audioContext.currentTime;
+    (kind==='good'?[523,659,784]:kind==='bad'?[240]:[560]).forEach((f,i)=>{
+      const o=audioContext.createOscillator(),g=audioContext.createGain();
+      o.type='sine';o.frequency.value=f;o.connect(g);g.connect(audioContext.destination);
+      g.gain.setValueAtTime(.045,now+i*.075);g.gain.exponentialRampToValueAtTime(.001,now+i*.075+.13);
+      o.start(now+i*.075);o.stop(now+i*.075+.14);
     });
+  } catch { /* Audio is optional: interactions remain available. */ }
+}
+function notify(message) {
+  $('#toast').textContent=message;$('#toast').hidden=false;clearTimeout(toastTimer);
+  toastTimer=setTimeout(()=>$('#toast').hidden=true,3500);
+}
+function syncReveal() {
+  const slide=$(`#slide-${current+1}`),items=$$('.reveal',slide),count=reveals[current];
+  items.forEach((el,i)=>{const shown=i<count;el.classList.toggle('shown',shown);el.inert=!shown;el.setAttribute('aria-hidden',String(!shown));});
+  $('.reveal-tools',slide).hidden=!items.length;
+  $('.count',slide).textContent=`${count} / ${items.length}`;
+  $('.reveal-one',slide).disabled=count===items.length;
+  $('.reveal-all',slide).disabled=count===items.length;
+  $('#next-idea').textContent=count<items.length?'Hiện ý tiếp ↓':current===sections.length-1?'Về đầu bài ↺':'Trang tiếp →';
+  $('#all-ideas').hidden=!items.length;$('#all-ideas').disabled=count===items.length;
+  $('#reveal-counter').textContent=items.length?`Ý ${count}/${items.length}`:'';
+}
+function reveal(all=false) {
+  const length=$$('.reveal',$(`#slide-${current+1}`)).length;
+  if(reveals[current]>=length)return false;
+  reveals[current]=all?length:reveals[current]+1;syncReveal();sound();return true;
+}
+function showSlide(index,focus=true) {
+  if(index<0||index>=sections.length)return;
+  if(typeof onSlideLeave === "function")onSlideLeave(current,index);
+  current=index;
+  $$('.slide').forEach((s,i)=>{s.hidden=i!==index;s.classList.toggle('active',i===index);});
+  $('#stage').scrollTop=0;$('#counter').textContent=`${String(index+1).padStart(2,'0')} / ${sections.length}`;
+  $('#progress').style.width=`${(index+1)/sections.length*100}%`;
+  $('#prev').disabled=index===0;$('#next').disabled=index===sections.length-1;
+  $$('[data-goto]').forEach((b,i)=>b.setAttribute('aria-current',i===index?'step':'false'));
+  syncReveal();if(focus)$(`#title-${index+1}`).focus({preventScroll:true});
+}
+function nextIdea(){if(!reveal()){sound();showSlide(current===sections.length-1?0:current+1);}}
+$('#prev').onclick=()=>{sound();showSlide(current-1);};$('#next').onclick=()=>{sound();showSlide(current+1);};$('#next-idea').onclick=nextIdea;
+$('#all-ideas').onclick=()=>reveal(true);
+$$('.reveal-one').forEach(b=>b.onclick=()=>reveal());$$('.reveal-all').forEach(b=>b.onclick=()=>reveal(true));
+$('#contents').onclick=()=>$('#toc').showModal();$('#close-toc').onclick=()=>$('#toc').close();
+$$('[data-goto]').forEach(b=>b.onclick=()=>{$('#toc').close();showSlide(Number(b.dataset.goto));sound();});
+$('#sound').onclick=()=>{audioEnabled=!audioEnabled;$('#sound').setAttribute('aria-pressed',String(audioEnabled));$('#sound').textContent=audioEnabled?'🔊 Âm thanh: Bật':'🔇 Âm thanh: Tắt';sound();};
+function syncMotion(){document.body.classList.toggle('motion-off',!motion);$('#motion').setAttribute('aria-pressed',String(motion));$('#motion').textContent=motion?'✨ Hiệu ứng: Bật':'✨ Hiệu ứng: Tắt';}
+$('#motion').onclick=()=>{motion=!motion;syncMotion();};syncMotion();
+async function fullscreen(){try{if(document.fullscreenElement)await document.exitFullscreen();else if(document.documentElement.requestFullscreen)await document.documentElement.requestFullscreen();else notify('Trình duyệt này chưa hỗ trợ toàn màn hình. Hãy mở slide ở tab riêng.');}catch{notify('Hãy mở slide ở tab riêng để dùng chế độ toàn màn hình.');}}
+$('#fullscreen').onclick=fullscreen;
+document.addEventListener('keydown',e=>{
+  if($('#toc').open||e.altKey||e.ctrlKey||e.metaKey||e.target.closest('input,textarea,select,[contenteditable="true"]'))return;
+  if(e.code==='Space'&&e.target.closest('button,a'))return;
+  const key=e.key.toLowerCase();
+  if(['arrowright','pagedown'].includes(key)){e.preventDefault();nextIdea();}
+  else if(key===' '){e.preventDefault();nextIdea();}
+  else if(['arrowleft','pageup'].includes(key)){e.preventDefault();showSlide(current-1);}
+  else if(key==='arrowdown'){e.preventDefault();reveal();}
+  else if(key==='arrowup'){e.preventDefault();reveals[current]=Math.max(0,reveals[current]-1);syncReveal();}
+  else if(key==='home'){e.preventDefault();showSlide(0);}
+  else if(key==='end'){e.preventDefault();showSlide(sections.length-1);}
+  else if(key==='f'){e.preventDefault();fullscreen();}
+  else if(key==='m'){e.preventDefault();$('#sound').click();}
+});
 
-    /* ─── GIẢI PHẪU TƯƠNG TÁC SLIDE 3 ─── */
-    const anatData = {
-      open:    { el:'a-open',    color:'#38E1F0', msg:'<strong>Thẻ bắt đầu (opening tag)</strong>: &lt;p style="color:red"&gt; — tên thẻ là <code>p</code>, đi kèm thuộc tính <code>style</code> có giá trị <code>"color:red"</code>.' },
-      content: { el:'a-content', color:'#FFFFFF', msg:'<strong>Nội dung (content)</strong>: "Đây là đoạn văn." — đây là phần text mà trình duyệt hiển thị ra màn hình.' },
-      close:   { el:'a-close',   color:'#F2683C', msg:'<strong>Thẻ kết thúc (closing tag)</strong>: &lt;/p&gt; — tên thẻ giống thẻ mở nhưng có thêm dấu <strong>"/"</strong> phía trước.' },
-    };
-    let lastHighlight = null;
 
-    function highlightPart(part) {
-      playClick();
-      if (lastHighlight) {
-        document.getElementById(anatData[lastHighlight].el).style.background = '';
-        document.getElementById(anatData[lastHighlight].el).style.outline = '';
-      }
-      const d = anatData[part];
-      const el = document.getElementById(d.el);
-      el.style.background = d.color + '22';
-      el.style.outline = '2px solid ' + d.color;
-      document.getElementById('anatomy-explain').innerHTML = d.msg;
-      document.getElementById('anatomy-explain').style.color = d.color;
-      lastHighlight = part;
-    }
+let quizIndex=0;const quizAnswers=quizQuestions.map(()=>null);
+function renderQuiz(){
+  const score=quizAnswers.filter((a,i)=>a===quizQuestions[i][2]).length,done=quizAnswers.filter(a=>a!==null).length;
+  if(quizIndex===quizQuestions.length){$('#quiz').innerHTML=`<div class="card quiz-end"><div class="score-big">${score} / ${quizQuestions.length}</div><h3>Điểm của lượt chơi</h3><p>${score===quizQuestions.length?'Em đã vận dụng tốt. Hãy nêu một ví dụ ngoài đời!':'Xem lại lời giải, rồi thử một lượt mới nhé.'}</p><button class="action primary" id="quiz-reset">↺ Làm lại toàn bộ</button></div>`;$('#quiz-reset').onclick=resetQuiz;return;}
+  const [q,options,correct,explain]=quizQuestions[quizIndex],picked=quizAnswers[quizIndex],answered=picked!==null;
+  $('#quiz').innerHTML=`<div class="quiz-meta"><span>Câu ${quizIndex+1} / ${quizQuestions.length}</span><span>Đã làm ${done} · Đúng ${score}</span><button class="action" id="quiz-reset">↺ Làm lại</button></div><div class="card"><h3 class="quiz-question">${esc(q)}</h3><div class="quiz-options">${options.map((o,i)=>`<button class="choice ${answered?(i===correct?'correct':i===picked?'wrong':''):''}" data-quiz="${i}" ${answered?'disabled':''}><span class="letter">${answered&&i===correct?'✓':'ABCD'[i]}</span><span>${esc(o)}</span></button>`).join('')}</div><div class="feedback ${picked===correct?'good':''}">${answered?(picked===correct?'✓ Chính xác. ':'↪ Chưa đúng. ')+esc(explain):''}</div><div class="quiz-actions"><button class="action" id="quiz-prev" ${quizIndex===0?'disabled':''}>← Câu trước</button><button class="action primary" id="quiz-next" ${answered?'':'disabled'}>${quizIndex===quizQuestions.length-1?'Xem tổng điểm':'Câu tiếp →'}</button></div></div>`;
+  $('#quiz-reset').onclick=resetQuiz;$('#quiz-prev').onclick=()=>{quizIndex--;renderQuiz();};$('#quiz-next').onclick=()=>{quizIndex++;renderQuiz();if(quizIndex===quizQuestions.length){sound('good');if(score===quizQuestions.length)confetti();}};
+  $$('[data-quiz]').forEach(b=>b.onclick=()=>{if(quizAnswers[quizIndex]!==null)return;quizAnswers[quizIndex]=Number(b.dataset.quiz);sound(quizAnswers[quizIndex]===correct?'good':'bad');renderQuiz();$('#quiz-next').focus({preventScroll:true});});
+}
+function resetQuiz(){quizAnswers.fill(null);quizIndex=0;renderQuiz();sound();}renderQuiz();
 
-    /* ─── ĐỔI MÀU CHỮ TƯƠNG TÁC SLIDE 4 ─── */
-    function changeAttrColor(color, label) {
-      playClick();
-      document.getElementById('attr-preview').style.color = color;
-      document.querySelectorAll('#slide-4 .sim-btn').forEach(b=>{
-        b.classList.toggle('active', b.innerText.toLowerCase().includes(label) || b.getAttribute('onclick').includes("'"+color+"'"));
-      });
-      document.getElementById('attr-code').innerHTML =
-        '&lt;<span class="tag-kw">p</span> <span class="attr-kw">style</span>=<span class="val-kw">"color: '+color+'"</span>&gt;This is a paragraph.&lt;/<span class="tag-kw">p</span>&gt;';
-    }
 
-    /* ─── CÂY THÔNG TIN TƯƠNG TÁC SLIDE 6 ─── */
-    function showTreeInfo(tag, msg, color) {
-      playReveal();
-      const el = document.getElementById('tree-explain');
-      el.style.color = color;
-      el.innerHTML = '<strong style="color:'+color+'">'+tag+'</strong>: '+msg;
-    }
+let celebrationTimer;
+function confetti(){if(!motion||matchMedia('(prefers-reduced-motion: reduce)').matches)return;const layer=$('#confetti');clearTimeout(celebrationTimer);layer.replaceChildren();const colors=['#65e8e0','#ffcf77','#ffa7c4','#91e8b7'];for(let i=0;i<65;i++){const p=document.createElement('i');p.style.left=`${Math.random()*100}%`;p.style.animationDelay=`${Math.random()*.45}s`;p.style.background=colors[i%4];layer.append(p);}celebrationTimer=setTimeout(()=>layer.replaceChildren(),2500);}
 
-    /* ─── QUIZ ENGINE ─── */
-    function checkQ(btn, ok, qId, explain) {
-      const parent = btn.closest('.quiz-card');
-      parent.querySelectorAll('.quiz-btn').forEach(b=>{ b.disabled=true; b.style.pointerEvents='none'; });
-      btn.classList.add(ok?'correct':'wrong');
-      ok ? playSuccess() : playWrong();
-      const fb = document.getElementById(qId+'-feedback');
-      fb.style.display = 'block';
-      fb.style.background = ok ? 'rgba(16,185,129,.15)' : 'rgba(239,68,68,.15)';
-      fb.style.border = '1px solid '+(ok?'#10B981':'#EF4444');
-      fb.style.color  = ok ? '#34D399' : '#FCA5A5';
-      fb.innerHTML = (ok?'🎉 <strong>Chính xác!</strong> ':'❌ <strong>Chưa đúng!</strong> ') + explain;
-    }
+// All editable examples stay inside an opaque, script-free preview frame.
+function preview(id,html){
+  const policy="default-src 'none'; script-src 'none'; style-src 'unsafe-inline'; img-src data:; font-src 'none'; connect-src 'none'; form-action 'none'; base-uri 'none'";
+  $(id).srcdoc=`<!DOCTYPE html><html lang="vi"><head><meta charset="utf-8"><meta http-equiv="Content-Security-Policy" content="${policy}"><style>html{color-scheme:light}body{font-family:system-ui,sans-serif;color:#18384b;background:#fff;margin:20px;font-size:21px;line-height:1.5;overflow-wrap:anywhere}h1{font-size:34px;line-height:1.25}h2{font-size:30px}h3{font-size:26px}h4{font-size:23px}h5{font-size:21px}h6{font-size:19px}p{font-size:21px}hr{margin:18px 0}</style></head><body>${html}</body></html>`;
+}
+function selected(selector,b){$$(selector).forEach(x=>x.setAttribute('aria-pressed',String(x===b)));}
+function paint(selector,text){const el=$(selector);el.textContent=text;el.classList.remove('pop');void el.offsetWidth;el.classList.add('pop');}
 
-    /* ─── LIVE PLAYGROUND SLIDE 9 ─── */
-    const templates = {
-      tpl_basic: `<!DOCTYPE html>
-<html>
-  <head>
-    <meta charset="utf-8">
-    <title>Trang web đầu tiên của em</title>
-  </head>
-  <body>
-    <h1>Trang Web và HTML</h1>
-    <p>Đây là dòng đầu tiên.</p>
-    <hr>
-    <p>Đây là dòng cuối. Có <br> xuống dòng!</p>
-    <p>Trang được lập bởi <em>nhóm bạn bè</em>.</p>
-  </body>
-</html>`,
-      tpl_tags: `<p>Tôi <em>nghiêng</em> và <strong>đậm</strong> đây.</p>
-<hr>
-<p>Dòng 1<br>Dòng 2 sau khi xuống bằng br</p>
-<!-- Chú thích: dòng này ẩn với người xem -->
-<h1>h1 lớn nhất</h1>
-<h2>h2 nhỏ hơn</h2>
-<h3>h3 còn nhỏ hơn nữa</h3>`,
-      tpl_color: `<h2 style="color: #0D7C86;">Tiêu đề màu xanh ngọc</h2>
-<p style="color: red;">Đoạn này màu đỏ vì style="color:red"</p>
-<p style="color: blue; font-size: 20px;">Đoạn này màu xanh, cỡ chữ 20px</p>
-<p>Còn đây là màu đen mặc định — không có style.</p>
-<hr>
-<p>Thẻ &lt;em&gt; và &lt;strong&gt; đặc biệt: <em>in nghiêng</em> và <strong>in đậm</strong>.</p>`
-    };
+let pipeTimers=[];
+function resetPipe(){pipeTimers.forEach(clearTimeout);pipeTimers=[];$$('[data-pipe]').forEach(x=>x.classList.remove('lit'));$('#pipe-run').disabled=false;$('#pipe-run').textContent='▶ Quan sát từng bước';}
+function onSlideLeave(previous,next){if(previous===1&&next!==1)resetPipe();}
+$('#pipe-run').onclick=()=>{
+  resetPipe();$('#pipe-run').disabled=true;
+  const steps=['📄 Tệp nguồn chứa nội dung và các thẻ đánh dấu HTML.','🌐 Trình duyệt đọc mã và xác định cấu trúc, ý nghĩa các phần tử.','🖥️ Trình duyệt hiển thị tiêu đề và đoạn văn — không in nguyên các thẻ đánh dấu.'];
+  for(let i=0;i<3;i++)pipeTimers.push(setTimeout(()=>{
+    $$('[data-pipe]').forEach((x,j)=>x.classList.toggle('lit',j<=i));
+    const output=$('#pipe-output');output.replaceChildren();
+    if(i===2){const title=document.createElement('h3'),p=document.createElement('p');title.textContent='Lớp 12 thân mến!';p.textContent='Hôm nay chúng mình học HTML.';output.append(title,p);$('#pipe-run').disabled=false;$('#pipe-run').textContent='↺ Quan sát lại';}
+    else output.textContent=steps[i];
+    sound();
+  },motion?i*650:0));
+};
+const parts=['Thẻ bắt đầu <p>: cho biết một đoạn văn bản bắt đầu ở đây.','Nội dung: phần chữ Xin chào lớp 12! mà người xem đọc được.','Thẻ kết thúc </p>: dấu / đánh dấu vị trí kết thúc phần tử p.'];
+$$('[data-part]').forEach(b=>b.onclick=()=>{selected('[data-part]',b);paint('#part-info',parts[Number(b.dataset.part)]);sound();});
 
-    function loadTemplate(key) {
-      playClick();
-      document.getElementById('pg-code').value = templates[key];
-      updatePlayground();
-    }
+function classifier(prefix,items,selector,explain){
+  let index=0,score=0,answered=false;
+  const choices=$$(selector),progress=$(`#${prefix}-progress`),question=$(`#${prefix}-question`),feedback=$(`#${prefix}-feedback`),next=$(`#${prefix}-next`);
+  function render(){
+    answered=false;feedback.textContent='';feedback.classList.remove('good');
+    const ended=index===items.length;
+    progress.textContent=ended?`Hoàn thành · Đúng ${score}/${items.length}`:`Mục ${index+1}/${items.length} · Đúng ${score}`;
+    question.textContent=ended?'Hoàn thành lượt phân loại!':items[index][0];
+    choices.forEach(b=>b.disabled=ended);next.hidden=ended;next.disabled=true;
+    next.textContent=index===items.length-1?'Xem kết quả':'Mục tiếp →';
+    if(ended)feedback.textContent='Hãy chọn một ví dụ và giải thích vì sao em xếp vào nhóm đó.';
+  }
+  choices.forEach(b=>b.onclick=()=>{
+    if(answered||index>=items.length)return;answered=true;
+    const value=prefix==='tag'?b.dataset.tagKind:b.dataset.toolKind;
+    const correct=value===items[index][1];if(correct)score++;
+    choices.forEach(x=>x.disabled=true);feedback.textContent=(correct?'✓ Chính xác. ':'↪ Chưa đúng. ')+explain(items[index]);feedback.classList.toggle('good',correct);next.disabled=false;progress.textContent=`Mục ${index+1}/${items.length} · Đúng ${score}`;sound(correct?'good':'bad');
+  });
+  next.onclick=()=>{index++;render();};$(`#${prefix}-reset`).onclick=()=>{index=0;score=0;render();sound();};render();
+}
+classifier('tag',[['<p>','pair'],['<hr>','void'],['<title>','pair'],['<br>','void'],['<meta>','void'],['<em>','pair']],'[data-tag-kind]',item=>item[1]==='pair'?`${item[0]} thuộc nhóm thẻ đôi; trong các ví dụ của bài, viết kèm thẻ kết thúc tương ứng.`:`${item[0]} thuộc nhóm thẻ đơn, không có thẻ kết thúc tương ứng.`);
+classifier('tool',[['Notepad','editor'],['Chrome','browser'],['Notepad++','editor'],['Firefox','browser'],['Sublime Text','editor'],['Microsoft Edge','browser']],'[data-tool-kind]',item=>`${item[0]} là ${item[1]==='editor'?'công cụ soạn thảo mã nguồn':'trình duyệt để xem trang web'}.`);
 
-    function updatePlayground() {
-      const code = document.getElementById('pg-code').value;
-      const frame = document.getElementById('pg-frame');
-      const doc = frame.contentDocument || frame.contentWindow.document;
-      doc.open(); doc.write(code); doc.close();
-    }
+function setColor(value){$('#attr-color').textContent=value;preview('#attr-preview',`<p style="color:${value}">Xin chào lớp 12!</p>`);}
+$$('[data-color]').forEach(b=>b.onclick=()=>{selected('[data-color]',b);setColor(b.dataset.color);paint('#attr-note',`Đã đổi giá trị của style thành color: ${b.dataset.color}. Nội dung “Xin chào lớp 12!” vẫn giữ nguyên.`);sound();});setColor('red');
+const spaces=[
+ ['<p>Xin       chào\nlớp 12!</p>','Nhiều dấu cách và Enter trong mã được gộp thành khoảng trắng khi hiển thị đoạn p thông thường này.'],
+ ['<p>Xin chào<br>lớp 12!</p>','br tạo ngắt dòng ngay trong cùng một đoạn p.'],
+ ['<p>Xin chào</p>\n<p>Lớp 12!</p>','Hai phần tử p tạo thành hai đoạn văn bản riêng.'],
+];
+function setSpace(i){$('#space-code').textContent=spaces[i][0];preview('#space-preview',spaces[i][0]);paint('#space-note',spaces[i][1]);}
+$$('[data-space]').forEach(b=>b.onclick=()=>{selected('[data-space]',b);setSpace(Number(b.dataset.space));sound();});setSpace(0);
+const structures={doctype:'DOCTYPE là khai báo kiểu tài liệu. Nó không phải phần tử và không phải gốc của cây HTML.',html:'Cặp thẻ html bao toàn bộ các phần tử của tài liệu. Đây là phần tử gốc.',head:'head chứa thông tin chung. meta khai báo mã hóa; title cung cấp tên trang trên tab.',body:'body chứa nội dung trang, ví dụ tiêu đề h1 và đoạn văn p.'};
+$$('[data-structure]').forEach(b=>b.onclick=()=>{const region=b.dataset.structure;selected('[data-structure]',b);$$('[data-region]').forEach(line=>line.classList.toggle('highlight',line.dataset.region===region));paint('#structure-note',structures[region]);sound();});
+function setTitles(){const t=$('#tab-title').value,h=$('#page-heading').value;$('#fake-tab').textContent=t||'(Tên tab đang để trống)';$('#fake-heading').textContent=h||'(Tiêu đề trang đang để trống)';$('#title-code').textContent=`<title>${esc(t)}</title>\n<h1>${esc(h)}</h1>`;}
+$('#tab-title').oninput=setTitles;$('#page-heading').oninput=setTitles;setTitles();
+const tree={html:{parent:null,children:['head','body']},head:{parent:'html',children:['meta','title']},body:{parent:'html',children:['h1','p']},meta:{parent:'head',children:[]},title:{parent:'head',children:[]},h1:{parent:'body',children:[]},p:{parent:'body',children:['em']},em:{parent:'p',children:[]}};
+$$('[data-node]').forEach(b=>b.onclick=()=>{const id=b.dataset.node,node=tree[id];$$('[data-node]').forEach(x=>{x.classList.toggle('selected',x===b);x.classList.toggle('parent',x.dataset.node===node.parent);x.classList.toggle('child',node.children.includes(x.dataset.node));x.setAttribute('aria-pressed',String(x===b));});paint('#tree-note',`${id}: ${node.parent?'cha trực tiếp là '+node.parent:'là phần tử gốc, không có phần tử cha trong cây này'}. ${node.children.length?'Các phần tử con trực tiếp: '+node.children.join(', ')+'.':'Không có phần tử con trong ví dụ này.'}`);sound();});
+function setNest(i){$('#nesting-code').textContent=i?'<p>Nhóm <em>bạn bè</em></p>':'<p>Nhóm <em>bạn bè</p></em>';$('#nesting-note').textContent=i?'✓ Thứ tự đúng: mở p → mở em → đóng em → đóng p.':'↪ em được mở sau nhưng chưa đóng thì p đã đóng. Hãy sửa thứ tự đóng thẻ.';$('#nesting-note').classList.toggle('good',i===1);}
+$$('[data-nest]').forEach(b=>b.onclick=()=>{selected('[data-nest]',b);setNest(Number(b.dataset.nest));sound();});setNest(0);
+function setHeading(n){const value=`<h${n}>Câu lạc bộ Tin học</h${n}>\n<p>Chúng mình cùng học HTML.</p>`;$('#heading-code').textContent=value;preview('#heading-preview',value);}
+$$('[data-heading]').forEach(b=>b.onclick=()=>{selected('[data-heading]',b);setHeading(Number(b.dataset.heading));sound();});setHeading(1);
+let commentOn=true;
+function setComment(){const value='<h1>Xin chào!</h1>\n'+(commentOn?'<!-- Đây là lời chào của lớp 12 -->\n':'')+'<p>Chúng mình cùng học HTML.</p>';$('#comment-code').textContent=value;preview('#comment-preview',value);$('#comment-toggle').setAttribute('aria-pressed',String(commentOn));$('#comment-toggle').textContent=commentOn?'Ẩn chú thích khỏi mã':'Thêm lại chú thích vào mã';}
+$('#comment-toggle').onclick=()=>{commentOn=!commentOn;setComment();sound();};setComment();
 
-    /* ─── PHÁO HOA ─── */
-    function fireConfetti() {
-      playSuccess();
-      const cvs = document.getElementById('confettiCanvas');
-      const ctx = cvs.getContext('2d');
-      cvs.width = innerWidth; cvs.height = innerHeight;
-      const colors = ['#38E1F0','#F2683C','#F5A623','#10B981','#8B5CF6','#EC4899','#FFF'];
-      const parts = Array.from({length:110},()=>({
-        x: innerWidth/2, y: innerHeight*.42,
-        vx: (Math.random()-.5)*18,
-        vy: (Math.random()-.65)*18,
-        sz: Math.random()*9+4,
-        color: colors[Math.floor(Math.random()*colors.length)],
-        alpha:1, rot:Math.random()*360, vrot:(Math.random()-.5)*14
-      }));
-      function render() {
-        ctx.clearRect(0,0,cvs.width,cvs.height);
-        let alive=false;
-        parts.forEach(p=>{
-          p.x+=p.vx; p.y+=p.vy; p.vy+=.38; p.alpha-=.013; p.rot+=p.vrot;
-          if(p.alpha>0){ alive=true; ctx.save(); ctx.globalAlpha=p.alpha;
-            ctx.translate(p.x,p.y); ctx.rotate(p.rot*Math.PI/180);
-            ctx.fillStyle=p.color; ctx.fillRect(-p.sz/2,-p.sz/2,p.sz,p.sz);
-            ctx.restore(); }
-        });
-        if(alive) requestAnimationFrame(render);
-        else ctx.clearRect(0,0,cvs.width,cvs.height);
-      }
-      render();
-    }
-
-    /* ─── KHỞI ĐỘNG ─── */
-    updateSlide();
-  </script>
-</body>
-</html>
+const templates={basic,tags:'<h1>Hai dòng trong một đoạn</h1>\n<p>Dòng thứ nhất<br>Dòng thứ hai</p>\n<hr>\n<p>Đây là đoạn văn mới.</p>',nesting:'<h1>Trang của nhóm em</h1>\n<p>Trang này do <em>nhóm bạn bè</em> cùng tạo.</p>\n<p>Chúng mình cùng học HTML.</p>'};
+let downloadUrl;
+function runCode(){const value=$('#code-editor').value;if(value.length>30000){$('#editor-status').textContent='Đoạn mã quá dài cho ví dụ này. Em rút gọn dưới 30.000 kí tự nhé.';return;}preview('#editor-preview',value);$('#editor-status').textContent='Đã chạy mã. Đối chiếu phần em vừa sửa với kết quả bên cạnh.';}
+function loadTemplate(){const key=$('#template').value;$('#code-editor').value=templates[key];runCode();}
+$('#template').onchange=()=>{loadTemplate();sound();};$('#restore-code').onclick=()=>{loadTemplate();sound();};$('#run-code').onclick=()=>{runCode();sound();};
+$('#code-editor').addEventListener('input',()=>$('#editor-status').textContent='Mã đã thay đổi. Bấm “Chạy mã” để cập nhật kết quả.');
+$('#code-editor').addEventListener('keydown',e=>{if((e.ctrlKey||e.metaKey)&&e.key==='Enter'){e.preventDefault();runCode();sound();}});
+$('#download-code').onclick=()=>{if(downloadUrl)URL.revokeObjectURL(downloadUrl);downloadUrl=URL.createObjectURL(new Blob(['\uFEFF',$('#code-editor').value],{type:'text/html;charset=utf-8'}));const link=document.createElement('a');link.href=downloadUrl;link.download='index.html';document.body.append(link);link.click();link.remove();$('#editor-status').textContent='Đã tạo tệp index.html. Mở tệp đã lưu bằng trình duyệt để kiểm tra.';};
+window.addEventListener('pagehide',()=>{if(downloadUrl)URL.revokeObjectURL(downloadUrl);resetPipe();});loadTemplate();
+$('#back-editor').onclick=()=>showSlide(13);
+$$('.check').forEach(b=>b.onclick=()=>{const on=b.getAttribute('aria-pressed')!=='true';b.setAttribute('aria-pressed',String(on));$('.check-icon',b).textContent=on?'✓':'○';const count=$$('.check[aria-pressed="true"]').length;$('#badge').textContent=count===3?'🏅':'🌱';$('#check-status').textContent=count===3?'3 / 3 · Sẵn sàng tạo trang web đầu tiên!':`${count} / 3 việc đã tự kiểm tra`;$('#celebrate').disabled=count!==3;sound();});
+$('#celebrate').onclick=()=>{sound('good');confetti();notify('🏅 Hoàn thành Bài 7! Hãy tạo một trang giới thiệu của riêng em.');};
+showSlide(0,false);
+</script>
+</body></html>
