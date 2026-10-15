@@ -1,1297 +1,253 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Bài 8: Định dạng văn bản — Tin học 12</title>
-  <style>
-    /* ─── RESET & BIẾN MÀU SẮC CHUẨN 2026 ─── */
-    :root {
-      --bg: #070E18;
-      --bg-card: rgba(13, 24, 38, 0.95);
-      --border-card: rgba(56, 225, 240, 0.18);
-      --ink: #FFFFFF;
-      --ink-soft: #94A3B8;
-      --sea: #0D7C86;
-      --sea-light: #38E1F0;
-      --coral: #F2683C;
-      --gold: #F5A623;
-      --leaf: #10B981;
-      --leaf-light: #34D399;
-      --purple: #8B5CF6;
-      --berry: #EC4899;
-      --font-main: system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-      --font-mono: 'Consolas', 'Fira Code', 'Courier New', monospace;
-      --ease-spring: cubic-bezier(0.16, 1, 0.3, 1);
-    }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Bài 8 Tin học 12: bài trình chiếu tương tác về Định dạng văn bản. So sánh trước sau, mô phỏng định dạng, pha màu RGB, sửa lỗi, xưởng thiết kế và trắc nghiệm.">
+<title>Bài 8 · Định dạng văn bản</title>
+<style>:root{color-scheme:dark;--bg:#071522;--panel:#112839;--ink:#f1f8ff;--muted:#b3c8d9;--cyan:#65e8e0;--gold:#ffcf77;--pink:#ffa7c4;--green:#91e8b7;--line:#ffffff24;--radius:24px;font-family:system-ui,-apple-system,'Segoe UI',sans-serif}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);height:100vh;height:100dvh;display:grid;grid-template-rows:62px minmax(0,1fr) 70px;overflow:hidden}button,a{-webkit-tap-highlight-color:transparent}button{font:inherit;color:inherit;cursor:pointer}button:disabled{cursor:default;opacity:.55}a{color:var(--cyan)}button:focus-visible,a:focus-visible{outline:3px solid var(--gold);outline-offset:4px}[hidden]{display:none!important}
+body:before{content:'';position:fixed;inset:0;z-index:-1;background:radial-gradient(ellipse at 10% 15%,#13464e90,transparent 58%),radial-gradient(ellipse at 95% 80%,#48264870,transparent 55%)}
+.topbar,.bottom{display:flex;align-items:center;gap:12px;padding:10px 3vw;background:#071522e8;z-index:10}.topbar{border-bottom:1px solid var(--line)}.brand{font-size:15px;letter-spacing:.08em;font-weight:750}.brand b{color:var(--cyan)}.spacer{flex:1}.tool,.nav,.action,.choice,.tab{border:1px solid var(--line);border-radius:12px;background:#ffffff09;min-height:44px;padding:9px 15px;transition:background .2s,border-color .2s,box-shadow .2s}.tool{font-size:14px}.tool:hover,.nav:hover,.action:hover,.choice:hover,.tab:hover{background:#65e8e018;border-color:var(--cyan)}.action.primary{background:var(--cyan);color:#071522;font-weight:800;border-color:transparent}.action.gold{background:var(--gold);color:#15232e;font-weight:800}.action:disabled{opacity:.5}.tool[aria-pressed=true],.tab[aria-pressed=true]{border-color:var(--cyan);background:#65e8e01c}.stage{overflow:auto;padding:18px 3vw 14px;scroll-behavior:smooth}.slide{max-width:1340px;min-height:100%;margin:auto;display:flex;flex-direction:column;gap:18px}.slide.active{animation:pageIn .35s ease both}.slide-head{display:flex;align-items:flex-start;gap:20px}.heading{flex:1}.eyebrow{font-size:14px;font-weight:750;letter-spacing:.1em;color:var(--cyan);text-transform:uppercase;margin:0 0 6px}.slide h1,.slide h2{margin:0;font-size:clamp(27px,3vw,42px);line-height:1.17;letter-spacing:-.035em;font-weight:820}.lead{margin:9px 0 0;font-size:clamp(17px,1.6vw,22px);line-height:1.45;color:var(--muted)}.reveal-tools{display:flex;align-items:center;gap:7px;flex-wrap:wrap;justify-content:flex-end;max-width:300px}.reveal-tools button{font-size:14px}.count{font-variant-numeric:tabular-nums;color:var(--cyan);font-size:14px;min-width:50px;text-align:center}.body{flex:1;display:flex;flex-direction:column;justify-content:center;gap:16px;padding:2px 0 8px}.grid{display:grid;gap:16px}.two{grid-template-columns:repeat(2,minmax(0,1fr))}.three{grid-template-columns:repeat(3,minmax(0,1fr))}.four{grid-template-columns:repeat(4,minmax(0,1fr))}.card{border:1px solid var(--line);background:linear-gradient(145deg,#193648c9,#102435ec);border-radius:var(--radius);padding:20px;min-width:0;position:relative}.card h3{font-size:clamp(19px,1.9vw,26px);line-height:1.25;margin:8px 0}.card p,.card li{font-size:clamp(17px,1.6vw,22px);line-height:1.45;margin:7px 0;color:var(--muted)}.icon{display:block;font-size:40px;line-height:1.25}.accent{color:var(--cyan)}.gold-text{color:var(--gold)}.pink-text{color:var(--pink)}.green-text{color:var(--green)}.ribbon{border-left:4px solid var(--cyan);background:#65e8e00c;border-radius:0 14px 14px 0;padding:12px 18px;font-size:clamp(17px,1.6vw,22px);line-height:1.45}.ribbon strong{color:var(--cyan)}.reveal{visibility:hidden;opacity:0;pointer-events:none}.reveal.shown{visibility:visible;opacity:1;pointer-events:auto;animation:ideaIn .45s ease both}.reveal.shown:nth-child(even){animation-name:ideaSide}.reveal.shown strong{color:var(--ink)}.prompt{font-size:14px;color:var(--gold);margin:0}.bottom{border-top:1px solid var(--line);gap:14px}.progress{height:7px;border-radius:8px;background:#ffffff15;flex:1;overflow:hidden}.progress>span{display:block;width:0;height:100%;background:linear-gradient(90deg,var(--cyan),var(--pink));transition:width .35s}.counter{font-variant-numeric:tabular-nums;font-size:15px;color:var(--muted);white-space:nowrap}.next-idea{font-size:15px;min-width:130px}.key-help{font-size:12px;color:var(--muted)}.nav{font-size:18px;min-width:48px}.toast{position:fixed;bottom:85px;left:50%;transform:translateX(-50%);padding:12px 20px;border-radius:12px;background:#23475a;border:1px solid var(--cyan);max-width:90vw;z-index:40;font-size:16px}.sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
+.hero{display:grid;grid-template-columns:1.2fr .8fr;gap:24px;align-items:center}.hero-title{font-size:clamp(32px,4.2vw,62px);line-height:1.12;letter-spacing:-.04em;margin:8px 0 18px}.hero-title em{font-style:normal;color:var(--cyan)}.hero-orbit{min-height:190px;position:relative;display:grid;place-items:center;border:1px solid #65e8e040;border-radius:50%;aspect-ratio:1.6;max-width:400px;width:100%;margin:auto;background:radial-gradient(ellipse,#65e8e014,transparent 70%)}.hero-orbit:before,.hero-orbit:after{content:'';position:absolute;inset:18px;border:1px dashed #65e8e040;border-radius:50%;animation:orbit 35s linear infinite}.hero-orbit:after{inset:35px;animation-direction:reverse;border-color:#ffa7c430}.hero-core{font-size:76px;filter:drop-shadow(0 0 20px #65e8e040)}.satellite{position:absolute;z-index:1;background:#193648;border:1px solid var(--line);padding:9px;border-radius:16px;font-size:28px;animation:bob 4s ease-in-out infinite}.satellite:nth-of-type(2){left:3%;top:12%}.satellite:nth-of-type(3){right:3%;top:18%;animation-delay:-1s}.satellite:nth-of-type(4){bottom:-5%;animation-delay:-2s}.hero-small .card{padding:15px 18px}.hero-small h3{margin:0 0 5px;font-size:22px}.hero-small p{font-size:18px;margin:0}.teacher-note{font-size:14px;color:var(--muted);margin:0}
+.network{display:grid;grid-template-columns:1fr 1.1fr;gap:20px;align-items:center}.network-visual{position:relative;min-height:260px;display:grid;grid-template-columns:1fr 1fr;gap:70px 30px;padding:10px 20px}.network-visual:before,.network-visual:after{content:'';position:absolute;inset:49% 15%;height:2px;background:linear-gradient(90deg,transparent,var(--cyan),transparent);transform:rotate(28deg);animation:packet 2s linear infinite}.network-visual:after{transform:rotate(-28deg);animation-delay:-1s}.node{z-index:1;border:1px solid var(--line);border-radius:20px;background:#193648;padding:14px;text-align:center;font-size:20px}.node i{display:block;font-style:normal;font-size:34px}.node-core{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);border-radius:50%;width:100px;height:100px;display:grid;place-items:center;border:2px solid var(--cyan);background:#0b2535;z-index:2;font-size:40px;box-shadow:0 0 35px #65e8e020}.tabs{display:flex;gap:9px;flex-wrap:wrap}.tab{font-size:17px}.demo{min-height:85px;padding:17px 20px;border-radius:18px;background:#081c2b;border:1px solid var(--line);font-size:clamp(18px,1.7vw,24px);line-height:1.45}.demo strong{color:var(--cyan)}.demo.pop{animation:ideaIn .35s ease}.card button{font-size:17px}.reveal-list .card{text-align:left;width:100%;color:inherit}.example{font-size:18px!important;border-top:1px dashed var(--line);padding-top:10px;margin-top:12px!important;color:var(--gold)!important}.example:empty{display:none}
+.balance-layout{display:grid;grid-template-columns:1fr 1fr;align-items:center;gap:24px}.scale{height:220px;position:relative;max-width:500px;width:100%;margin:auto}.scale-base{position:absolute;bottom:12px;left:35%;width:30%;height:18px;background:#91abba;border-radius:14px}.scale-post{position:absolute;width:18px;height:155px;background:#6b8a9d;bottom:28px;left:calc(50% - 9px);border-radius:9px}.beam{position:absolute;height:12px;width:80%;left:10%;top:50px;background:var(--gold);border-radius:10px;transition:transform .65s cubic-bezier(.2,1.5,.4,1);transform-origin:center}.pan{position:absolute;top:7px;width:115px;text-align:center;font-size:18px;font-weight:750;line-height:1.5;padding-top:52px}.pan:before{content:'';position:absolute;top:0;left:50%;height:50px;border-left:2px solid var(--muted)}.pan span{display:block;padding:10px;background:#164441;border:1px solid var(--cyan);border-radius:0 0 22px 22px}.pan.left{left:-35px}.pan.right{right:-35px}.pan.right span{background:#493047;border-color:var(--pink)}.scale-focus{font-size:19px;color:var(--gold);text-align:center}.message-lab{text-align:center;padding:25px}.mood-face{font-size:64px;display:block;margin:5px}.speech{font-size:clamp(26px,3vw,42px);font-weight:800;border:1px solid var(--line);border-radius:22px;padding:18px;margin:15px 0;background:#081c2b}.pills{display:flex;gap:9px;justify-content:center;flex-wrap:wrap}.steps{counter-reset:step}.step{display:flex;gap:16px;align-items:center;padding:14px 20px}.step:before{counter-increment:step;content:counter(step);font-weight:800;flex-shrink:0;width:40px;height:40px;background:#65e8e01a;color:var(--cyan);border-radius:50%;display:grid;place-items:center}.step h3{margin:0;font-size:21px}.step p{margin:2px 0 0;font-size:18px}.stop-timer{display:grid;place-items:center;width:95px;height:95px;border-radius:50%;border:4px solid var(--gold);font-size:44px;font-variant-numeric:tabular-nums;font-weight:800;margin:auto}.timer-panel{display:flex;align-items:center;gap:20px;flex-wrap:wrap}.timer-panel>div:last-child{flex:1;min-width:210px}.date{font-size:18px;color:var(--gold);padding:10px 16px;background:#ffcf7710;border-radius:12px;display:inline-block}.sources{font-size:13px;color:var(--muted);margin:0}
+.chat-layout{display:grid;grid-template-columns:1fr 1.1fr;gap:20px;align-items:start}.chat-window{border:1px solid var(--line);border-radius:22px;background:#081c2b;overflow:hidden}.chat-head{padding:14px 18px;background:#193648;font-size:17px;color:var(--cyan);font-weight:750}.messages{padding:18px;display:flex;flex-direction:column;gap:12px;max-height:300px;overflow:auto;min-height:155px}.bubble{background:#213c4f;border-radius:16px 16px 16px 3px;padding:14px 16px;font-size:clamp(18px,1.7vw,23px);line-height:1.45;max-width:95%}.bubble.me{background:#145a65;border-radius:16px 16px 3px 16px;align-self:flex-end}.bubble.reply{animation:messageIn .3s ease both}.responses{display:flex;flex-direction:column;gap:10px}.choice{display:flex;align-items:flex-start;gap:12px;text-align:left;font-size:clamp(17px,1.55vw,21px);line-height:1.4;width:100%;padding:13px 16px}.letter{border:1px solid var(--line);border-radius:9px;padding:2px 8px;font-weight:800;flex-shrink:0}.choice.selected{border-color:var(--gold);background:#ffcf7710}.choice.correct{border-color:var(--green);background:#91e8b718}.choice.wrong{border-color:var(--pink);background:#ffa7c412}.feedback{min-height:62px;font-size:18px;line-height:1.45;padding:12px 16px;border-left:4px solid var(--gold);background:#ffcf770c;border-radius:0 12px 12px 0;margin-top:12px}.feedback.good{border-color:var(--green);background:#91e8b70c}.feedback:empty{visibility:hidden}.typing{color:var(--muted);font-size:16px}.quiz-layout{max-width:1050px;width:100%;margin:auto}.quiz-meta{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;font-size:18px;color:var(--muted)}.quiz-question{font-size:clamp(22px,2.3vw,31px);line-height:1.3;margin:0 0 18px}.quiz-options{display:grid;grid-template-columns:1fr 1fr;gap:12px}.quiz-end{text-align:center;padding:20px}.score-big{font-size:70px;line-height:1.15;font-weight:850;color:var(--cyan)}.quiz-end p{font-size:22px;line-height:1.4}.quiz-actions{display:flex;justify-content:flex-end;gap:12px;margin-top:14px}.check{display:flex;gap:12px;align-items:center;border:1px solid var(--line);border-radius:14px;padding:12px 16px;background:#ffffff05;font-size:18px;text-align:left;min-height:52px;width:100%}.check[aria-pressed=true]{border-color:var(--green);background:#91e8b711}.check-icon{font-size:24px}.badge{font-size:64px;text-align:center;display:block}.pledge-status{font-size:23px!important;color:var(--cyan)!important;text-align:center}.links{display:flex;gap:12px;flex-wrap:wrap;justify-content:center}.links a{text-decoration:none;display:inline-flex;align-items:center}.confetti{position:fixed;inset:0;pointer-events:none;z-index:90;overflow:hidden}.confetti i{position:absolute;top:-30px;width:9px;height:17px;animation:fall 1.8s ease-in both;background:var(--cyan)}dialog{background:#112839;color:var(--ink);border:1px solid var(--line);border-radius:24px;max-width:920px;width:92vw;max-height:88vh;padding:24px}dialog::backdrop{background:#000a;backdrop-filter:blur(5px)}.toc-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:18px}.toc-grid button{text-align:left;font-size:17px}.dialog-head{display:flex;align-items:center;justify-content:space-between;gap:14px}.dialog-head h2{font-size:25px;margin:0}
+@keyframes pageIn{from{opacity:0}to{opacity:1}}@keyframes ideaIn{from{opacity:0;filter:blur(4px);transform:translateY(12px)}to{opacity:1;filter:blur(0);transform:none}}@keyframes ideaSide{from{opacity:0;transform:translateX(12px)}to{opacity:1;transform:none}}@keyframes messageIn{from{opacity:0;transform:scale(.96)}to{opacity:1;transform:none}}@keyframes bob{50%{translate:0 -9px}}@keyframes orbit{to{rotate:360deg}}@keyframes packet{50%{opacity:.3;filter:drop-shadow(0 0 7px var(--cyan))}}@keyframes fall{to{transform:translateY(110vh) rotate(650deg);opacity:.3}}
+body.motion-off *,body.motion-off *:before,body.motion-off *:after{animation:none!important;transition:none!important;scroll-behavior:auto!important}
+@media(max-width:1050px){.four{grid-template-columns:repeat(2,minmax(0,1fr))}.hero-title{font-size:40px}.card{padding:17px}.slide h1,.slide h2{font-size:30px}.slide-head{gap:12px}.brand{font-size:13px}.key-help{display:none}.reveal-tools{max-width:245px}.topbar{gap:7px}.tool{padding:8px 11px}.card p{font-size:18px}}
+@media(max-width:700px){body{grid-template-rows:auto minmax(0,1fr) 68px}.topbar{flex-wrap:wrap;padding:8px 12px;gap:6px}.brand{width:100%;font-size:12px}.spacer{display:none}.tool{font-size:12px;min-height:38px;padding:7px 10px}.stage{padding:16px 14px}.slide-head{flex-direction:column;gap:10px}.slide h1,.slide h2{font-size:28px}.lead{font-size:17px}.reveal-tools{max-width:none;justify-content:flex-start}.body{justify-content:flex-start}.grid.three,.grid.four,.grid.two,.hero,.network,.balance-layout,.chat-layout{grid-template-columns:1fr}.hero-title{font-size:39px}.hero-orbit{min-height:165px;max-width:300px}.hero-small .card h3{font-size:21px}.hero-small .card p{font-size:18px}.hero .hero-orbit{display:none}.network-visual{min-height:230px}.card p,.card li{font-size:18px}.quiz-options{grid-template-columns:1fr}.bottom{padding:10px 12px;gap:7px}.next-idea{min-width:95px;font-size:13px;padding:8px}.bottom .nav{min-width:42px;padding:8px}.counter{font-size:13px}.progress{min-width:20px}.choice{font-size:18px}.toc-grid{grid-template-columns:1fr}.slide{gap:16px}.messages{max-height:240px}.timer-panel{flex-direction:column;text-align:center}.timer-panel>div:last-child{min-width:0}.slide .card{border-radius:18px}}
+@media(prefers-reduced-motion:reduce){*,*:before,*:after{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
+/* Keep the teaching controls in the footer so titles get the full screen width. */
+.slide-head{display:block}.reveal-tools{display:none!important}.slide h1,.slide h2{font-size:clamp(27px,2.6vw,40px)}.slide{gap:14px}.body{gap:12px}.card{padding:16px}.grid.two>.card>.icon,.reveal-list>.card>.icon{float:left;font-size:32px;width:45px;margin-right:8px}.grid.two>.card>h3,.reveal-list>.card>h3{min-height:40px;margin:0 0 6px}.grid.two>.card>p,.reveal-list>.card>p{clear:both}.steps{display:grid;gap:8px}.step{padding:10px 14px}.step h3{font-size:20px}.step p{font-size:17px;line-height:1.35}.footer-count{font-size:14px;color:var(--cyan);white-space:nowrap}#all-ideas{font-size:14px;white-space:nowrap}
+#slide-2 .network .icon{display:none}#slide-2 .network .card h3{margin-top:0}#slide-2 .network-visual{min-height:230px;gap:45px 25px}#slide-2 .network .grid{gap:12px}#slide-2 .network .card{padding:14px 18px}#slide-2 .network .card p{font-size:19px}#slide-2 .network-result{min-height:65px}#slide-6 .responses>.card .icon{float:left;font-size:28px;width:36px}#slide-6 .responses>.card h3{font-size:22px;margin:0 0 5px}#slide-6 .responses>.card p{font-size:19px}#slide-6 .message-lab{padding:18px}.date{font-size:17px}#slide-7 .sources{font-size:12px}
+@media(max-width:700px){.progress,.footer-count{display:none}#all-ideas{font-size:12px;padding:8px 10px}.bottom{gap:7px}.slide h1,.slide h2{font-size:28px}.grid.two>.card>.icon{float:none}.grid.two>.card>h3{min-height:0}.key-help{display:none}.network-visual{min-height:225px}.hero-title{font-size:36px}}
+.reveal-list>.card{padding:14px 16px}.reveal-list .example{font-size:17px!important;line-height:1.4}
 
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-
-    body {
-      font-family: var(--font-main);
-      background: var(--bg);
-      color: var(--ink);
-      overflow: hidden;
-      width: 100vw; height: 100vh;
-      user-select: none;
-      -webkit-font-smoothing: antialiased;
-    }
-
-    /* ─── NỀN VŨ TRỤ SỐ MÃ NGUỒN ─── */
-    .bg-mesh {
-      position: fixed; inset: 0;
-      background:
-        radial-gradient(circle at 14% 16%, rgba(13, 124, 134, 0.32) 0, transparent 45%),
-        radial-gradient(circle at 86% 84%, rgba(245, 166, 35, 0.25) 0, transparent 45%),
-        radial-gradient(circle at 50% 50%, rgba(139, 92, 246, 0.18) 0, transparent 60%);
-      animation: meshPulse 14s ease-in-out infinite alternate;
-      pointer-events: none; z-index: 0;
-    }
-    @keyframes meshPulse {
-      0%   { transform: scale(1) translate(0, 0); opacity: 0.9; }
-      100% { transform: scale(1.06) translate(-10px, 10px); opacity: 1; }
-    }
-
-    /* Thẻ định dạng HTML trôi nổi */
-    .float-layer { position: fixed; inset: 0; pointer-events: none; z-index: 1; overflow: hidden; }
-    .float-tag {
-      position: absolute;
-      font-family: var(--font-mono); font-size: 13px; font-weight: 700;
-      color: rgba(56, 225, 240, 0.18);
-      border: 1px solid rgba(56, 225, 240, 0.12);
-      padding: 3px 10px; border-radius: 8px;
-      background: rgba(13, 124, 134, 0.05);
-      animation: floatUp 22s linear infinite;
-    }
-    @keyframes floatUp {
-      0%   { transform: translateY(108vh) rotate(0deg); opacity: 0; }
-      10%  { opacity: 0.45; }
-      90%  { opacity: 0.45; }
-      100% { transform: translateY(-10vh) rotate(360deg); opacity: 0; }
-    }
-
-    /* ─── DECK CONTAINER ─── */
-    .deck-container {
-      position: relative; width: 100vw; height: 100vh;
-      display: flex; justify-content: center; align-items: center; z-index: 2;
-    }
-
-    /* ─── SLIDE FRAME ─── */
-    .slide {
-      position: absolute;
-      width: 95vw; max-width: 1380px;
-      height: 88vh; max-height: 870px;
-      background: var(--bg-card);
-      border: 1px solid var(--border-card);
-      border-radius: 24px;
-      backdrop-filter: blur(28px);
-      box-shadow: 0 38px 85px rgba(0, 0, 0, 0.78), inset 0 1px 0 rgba(255, 255, 255, 0.12);
-      padding: 26px 42px;
-      display: flex; flex-direction: column;
-      opacity: 0; pointer-events: none;
-      transform: translateX(70px) scale(0.96);
-      transition: transform 0.6s var(--ease-spring), opacity 0.5s ease;
-      overflow-y: auto;
-    }
-    .slide::-webkit-scrollbar { width: 6px; }
-    .slide::-webkit-scrollbar-thumb { background: rgba(56, 225, 240, 0.25); border-radius: 4px; }
-    .slide.active  { opacity: 1; pointer-events: auto; transform: translateX(0) scale(1); z-index: 3; }
-    .slide.prev    { opacity: 0; pointer-events: none; transform: translateX(-70px) scale(0.96); }
-
-    /* ─── SLIDE HEADER ─── */
-    .slide-header {
-      display: flex; justify-content: space-between; align-items: flex-start;
-      margin-bottom: 12px; border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-      padding-bottom: 10px; flex-shrink: 0;
-    }
-    .slide-badge {
-      display: inline-flex; align-items: center; gap: 5px;
-      padding: 3px 13px; border-radius: 20px;
-      font-size: 12px; font-weight: 700; letter-spacing: 0.5px; text-transform: uppercase;
-      background: rgba(13, 124, 134, 0.28); color: #38E1F0;
-      border: 1px solid rgba(56, 225, 240, 0.35); margin-bottom: 4px;
-    }
-    .slide-badge.coral  { background: rgba(242, 104, 60, 0.25);  color: #FF855D; border-color: rgba(255, 133, 93, 0.35); }
-    .slide-badge.gold   { background: rgba(245, 166, 35, 0.25);  color: #FFC043; border-color: rgba(255, 192, 67, 0.35); }
-    .slide-badge.leaf   { background: rgba(16, 185, 129, 0.25);  color: #34D399; border-color: rgba(52, 211, 153, 0.35); }
-    .slide-badge.purple { background: rgba(139, 92, 246, 0.25);  color: #C4B5FD; border-color: rgba(196, 181, 253, 0.35); }
-
-    .slide-title {
-      font-size: 26px; font-weight: 800; letter-spacing: -0.4px; line-height: 1.25;
-      background: linear-gradient(135deg, #FFFFFF 40%, #BFEAF2 100%);
-      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-    }
-    .slide-subtitle { font-size: 13.5px; color: var(--ink-soft); margin-top: 2px; }
-
-    .slide-body {
-      flex: 1; display: flex; flex-direction: column;
-      justify-content: center; gap: 12px; position: relative;
-    }
-
-    /* ─── REVEAL CONTROLLER ─── */
-    .reveal-ctrl {
-      display: flex; align-items: center; gap: 8px;
-      background: rgba(0, 0, 0, 0.35); padding: 5px 13px;
-      border-radius: 30px; border: 1px solid rgba(255, 255, 255, 0.1); font-size: 13px;
-    }
-    .reveal-status { font-weight: 800; color: #38E1F0; font-family: var(--font-mono); }
-    .reveal-btn {
-      background: linear-gradient(135deg, #0D7C86, #16A8B6); color: #FFF; border: none;
-      padding: 5px 12px; border-radius: 16px; font-size: 12px; font-weight: 700;
-      cursor: pointer; transition: all 0.25s var(--ease-spring);
-      display: inline-flex; align-items: center; gap: 4px;
-    }
-    .reveal-btn:hover { transform: translateY(-2px); box-shadow: 0 4px 14px rgba(56, 225, 240, 0.45); }
-
-    /* ─── REVEAL ITEMS ─── */
-    .reveal-item {
-      opacity: 0; transform: translateY(22px) scale(0.97);
-      transition: opacity 0.5s var(--ease-spring), transform 0.5s var(--ease-spring), box-shadow 0.4s;
-      will-change: opacity, transform;
-    }
-    .slide.active .reveal-item.visible { opacity: 1; transform: translateY(0) scale(1); }
-    .reveal-item.just-revealed {
-      box-shadow: 0 0 28px rgba(56, 225, 240, 0.4), inset 0 0 16px rgba(56, 225, 240, 0.15);
-      border-color: #38E1F0 !important;
-    }
-
-    /* ─── CARDS & GRIDS ─── */
-    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
-    .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
-    .card {
-      background: rgba(255, 255, 255, 0.04); border: 1px solid rgba(255, 255, 255, 0.09);
-      border-radius: 16px; padding: 14px 18px; position: relative; overflow: hidden;
-      transition: transform 0.3s var(--ease-spring), border-color 0.3s;
-    }
-    .card:hover { transform: translateY(-3px); border-color: rgba(56, 225, 240, 0.3); }
-    .card-title {
-      font-size: 15px; font-weight: 700; color: #FFF; margin-bottom: 6px;
-      display: flex; align-items: center; gap: 8px;
-    }
-
-    /* ─── CODE BOX ─── */
-    .code-box {
-      background: #0D1520; border: 1px solid rgba(56, 225, 240, 0.25);
-      border-radius: 14px; overflow: hidden; box-shadow: 0 10px 26px rgba(0,0,0,0.5);
-    }
-    .code-header {
-      background: rgba(255, 255, 255, 0.06); padding: 7px 13px;
-      display: flex; justify-content: space-between; align-items: center;
-      font-size: 11.5px; font-family: var(--font-mono); color: #94A3B8;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-    }
-    .code-content {
-      padding: 13px 16px; font-family: var(--font-mono);
-      font-size: 13px; line-height: 1.65; color: #E2E8F0;
-      white-space: pre-wrap; overflow-x: auto;
-    }
-    .tag-kw  { color: #F2683C; font-weight: bold; }
-    .attr-kw { color: #38E1F0; }
-    .val-kw  { color: #10B981; }
-    .cmt-kw  { color: #64748B; font-style: italic; }
-
-    /* ─── PREVIEW BOX (NỀN TRẮNG CHUẨN TRÌNH DUYỆT) ─── */
-    .preview-box {
-      background: #FFFFFF; color: #111827; border-radius: 14px;
-      padding: 14px 18px; font-family: var(--font-main);
-      border: 2px solid #38E1F0; overflow-y: auto; max-height: 380px;
-      box-shadow: 0 10px 28px rgba(0,0,0,0.5);
-    }
-    .preview-header {
-      font-size: 10.5px; text-transform: uppercase; color: #64748B;
-      font-weight: 700; margin-bottom: 8px;
-      display: flex; justify-content: space-between;
-      border-bottom: 1px dashed #CBD5E1; padding-bottom: 5px;
-    }
-
-    /* NÚT THAO TÁC SIMULATOR */
-    .sim-btn {
-      background: rgba(255, 255, 255, 0.08); color: #E2E8F0;
-      border: 1px solid rgba(255, 255, 255, 0.18); padding: 5px 12px;
-      border-radius: 8px; font-size: 12px; font-weight: 600; cursor: pointer;
-      transition: all 0.2s var(--ease-spring); display: inline-flex; align-items: center; gap: 5px;
-    }
-    .sim-btn:hover { background: rgba(56, 225, 240, 0.2); border-color: #38E1F0; color: #FFF; transform: translateY(-1px); }
-    .sim-btn.active { background: #0D7C86; border-color: #38E1F0; color: #FFF; box-shadow: 0 0 12px rgba(56, 225, 240, 0.4); }
-
-    /* ─── PLAYGROUND ─── */
-    .playground-wrapper {
-      display: grid; grid-template-columns: 1.1fr 1fr; gap: 14px; height: 460px;
-    }
-    .editor-pane {
-      background: #0A1118; border: 1px solid rgba(56, 225, 240, 0.3);
-      border-radius: 14px; display: flex; flex-direction: column; overflow: hidden;
-    }
-    .editor-bar {
-      background: rgba(255, 255, 255, 0.05); padding: 7px 13px;
-      display: flex; justify-content: space-between; align-items: center;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.08); font-size: 11.5px;
-    }
-    .live-code-area {
-      flex: 1; background: transparent; border: none; color: #F8FAFC;
-      font-family: var(--font-mono); font-size: 13px; line-height: 1.65;
-      padding: 13px; resize: none; outline: none; white-space: pre;
-    }
-    .preview-pane {
-      background: #FFF; border-radius: 14px; border: 2px solid #38E1F0;
-      overflow: hidden; display: flex; flex-direction: column;
-    }
-    .preview-pane-bar {
-      background: #F1F5F9; padding: 7px 13px; border-bottom: 1px solid #CBD5E1;
-      font-size: 11px; font-weight: 700; color: #64748B; text-transform: uppercase;
-      display: flex; align-items: center; gap: 6px;
-    }
-    .preview-frame { flex: 1; border: none; width: 100%; height: 100%; background: white; }
-
-    /* QUIZ CARDS */
-    .quiz-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
-    .quiz-card {
-      background: rgba(255, 255, 255, 0.04); border: 1px solid rgba(255, 255, 255, 0.12);
-      border-radius: 14px; padding: 14px; display: flex; flex-direction: column; gap: 8px;
-    }
-    .quiz-q { font-size: 13.5px; font-weight: 700; color: #FFF; line-height: 1.4; }
-    .quiz-btn {
-      background: rgba(255, 255, 255, 0.06); color: #E2E8F0;
-      border: 1px solid rgba(255, 255, 255, 0.12); padding: 7px 11px;
-      border-radius: 8px; font-size: 12px; text-align: left; cursor: pointer;
-      transition: all 0.2s var(--ease-spring);
-    }
-    .quiz-btn:hover { background: rgba(56, 225, 240, 0.15); border-color: #38E1F0; color: #FFF; transform: translateX(4px); }
-    .quiz-btn.correct { background: #059669 !important; border-color: #34D399 !important; color: #FFF !important; font-weight: 700; }
-    .quiz-btn.wrong   { background: #DC2626 !important; border-color: #F87171 !important; color: #FFF !important; animation: shake 0.4s ease; }
-    @keyframes shake { 0%, 100% { transform: translateX(0); } 20%, 60% { transform: translateX(-6px); } 40%, 80% { transform: translateX(6px); } }
-    .quiz-feedback { font-size: 12px; margin-top: 3px; padding: 5px 9px; border-radius: 6px; display: none; line-height: 1.4; }
-
-    /* CHECKLIST */
-    .checklist-item {
-      display: flex; align-items: center; gap: 10px;
-      padding: 8px 12px; background: rgba(255, 255, 255, 0.04);
-      border-radius: 8px; cursor: pointer; transition: all 0.2s;
-      border: 1px solid rgba(255, 255, 255, 0.06); font-size: 13.5px;
-    }
-    .checklist-item:hover { background: rgba(56, 225, 240, 0.1); border-color: rgba(56, 225, 240, 0.3); }
-    .checklist-item.done {
-      background: rgba(16, 185, 129, 0.15); border-color: #10B981; color: #34D399; text-decoration: line-through;
-    }
-
-    /* ─── DECK NAV DƯỚI CÙNG ─── */
-    .deck-nav {
-      position: fixed; bottom: 13px; left: 50%; transform: translateX(-50%);
-      background: rgba(8, 15, 24, 0.9); border: 1px solid rgba(255, 255, 255, 0.14);
-      border-radius: 40px; padding: 6px 16px;
-      display: flex; align-items: center; gap: 12px;
-      backdrop-filter: blur(18px); z-index: 100;
-      box-shadow: 0 10px 32px rgba(0, 0, 0, 0.65);
-    }
-    .nav-btn {
-      background: transparent; border: none; color: #E2E8F0; font-size: 18px;
-      cursor: pointer; padding: 3px 9px; border-radius: 20px;
-      transition: all 0.2s; display: flex; align-items: center;
-    }
-    .nav-btn:hover { color: #38E1F0; background: rgba(255, 255, 255, 0.1); transform: scale(1.12); }
-    .deck-progress { width: 220px; height: 6px; background: rgba(255, 255, 255, 0.14); border-radius: 3px; overflow: hidden; }
-    .deck-progress-bar { height: 100%; width: 0; background: linear-gradient(90deg, #0D7C86, #F5A623, #38E1F0); transition: width 0.3s var(--ease-spring); }
-    .deck-counter { font-size: 13px; font-weight: 700; color: #94A3B8; font-family: var(--font-mono); min-width: 56px; text-align: center; }
-
-    #confettiCanvas { position: fixed; inset: 0; pointer-events: none; z-index: 999; }
-  </style>
+/* Classroom typography lab. Sources and previews stay side by side on a projector. */
+:root{--cyan:#89d8ff;--gold:#ffcf77;--pink:#f6b6ce}body:before{background:radial-gradient(ellipse at 0 0,#123e6090,transparent 60%),radial-gradient(ellipse at 95% 90%,#41304c80,transparent 60%)}
+code{font-family:Consolas,monospace;color:var(--cyan);font-size:.95em;overflow-wrap:anywhere}.code-panel{margin:0;padding:15px 18px;border:1px solid #89d8ff30;border-radius:17px;background:#081722;color:#d0ebf4;font:18px/1.5 Consolas,monospace;white-space:pre-wrap;overflow-wrap:anywhere;tab-size:2}.lab-grid{display:grid;grid-template-columns:1fr 1fr;gap:22px;align-items:stretch;min-width:0}.lab-controls{display:flex;flex-direction:column;gap:14px;justify-content:center;min-width:0}.browser-window{border:1px solid #ffffff40;border-radius:19px;background:#fff;overflow:hidden;display:flex;flex-direction:column;min-width:0}.browser-chrome{display:flex;align-items:center;gap:15px;background:#264459;padding:11px 15px;font-size:15px;color:#e0edf5;min-height:43px}.browser-chrome>span:first-child{font-size:10px;letter-spacing:3px;color:var(--pink)}iframe{border:0;width:100%;height:235px;min-height:190px;flex:1;background:white;color-scheme:light}.hero-eight{display:grid;grid-template-columns:1.05fr 1fr;gap:40px;align-items:center}.hero-title{font-size:clamp(34px,3.5vw,52px);margin:10px 0 15px}.kicker{font-size:13px;letter-spacing:.15em;color:var(--gold)}.poster{padding:28px 32px;background:#e9f4ed;color:#143344;rotate:2deg;border-radius:5px 28px 5px 28px;box-shadow:12px 14px 0 #89d8ff24;position:relative;animation:bob 5s ease-in-out infinite}.poster:after{content:'Aa';position:absolute;right:22px;top:22px;font-size:26px;font-family:Georgia,serif;font-style:italic;color:#28605b}.poster-label{font-size:12px;letter-spacing:.2em;color:#28605b}.poster-big{font:700 clamp(38px,4.7vw,67px)/1.05 Georgia,serif;letter-spacing:-.05em;margin:24px 0 17px}.poster-big span{color:#ae3e66}.poster p{font-size:18px}.poster-tags{display:flex;gap:9px;margin-top:24px;flex-wrap:wrap}.poster-tags span{font:14px Consolas,monospace;border:1px solid #14334450;border-radius:7px;padding:5px 8px}.hero-small .icon{display:none}.hero-small .card h3{font-size:21px}.hero-small .card p{font-size:17px}.compare{height:300px;border-radius:23px;overflow:hidden;position:relative;border:1px solid #ffffff40;background:white;color:#18384b}.news{position:absolute;inset:0;padding:24px 36px;background:#fff}.raw{font:20px/1.5 Arial,sans-serif;padding-top:38px;background:#eef1f4}.designed{clip-path:inset(0 50% 0 0)}.news-label{font-size:12px;letter-spacing:.15em;color:#335c78;font-weight:800}.designed h3{font-size:35px;margin:15px 0;color:#184c87}.designed p{font-size:21px;margin:13px 0}.designed mark{background:#ffdf85;color:#18384b;padding:3px 6px;border-radius:4px}.compare-line{position:absolute;inset:0 auto 0 50%;border-left:2px solid #bf4978}.compare-line:after{content:'↔';display:grid;place-items:center;position:absolute;top:45%;left:-20px;width:38px;height:38px;border-radius:50%;background:#bf4978;color:white}.range-label{display:flex;align-items:center;gap:14px;justify-content:center;font-size:17px}.range-label input{flex:1;max-width:600px}input[type=range]{accent-color:var(--cyan);min-height:38px;cursor:pointer;min-width:0}.syntax{display:flex;justify-content:center;gap:5px;flex-wrap:wrap}.syntax-token{padding:16px 9px;font:clamp(20px,2vw,28px) Consolas,monospace;border:1px solid #89d8ff50;background:#15364b;border-radius:10px}.syntax-token[aria-pressed=true]{border-color:var(--gold);color:var(--gold)}.demo{min-height:66px;font-size:20px}.fields{display:grid;gap:14px}.fields label{display:flex;align-items:center;justify-content:space-between;gap:12px;font-size:19px}.fields select,select{font:16px system-ui;color:var(--ink);background:#102939;border:1px solid var(--line);border-radius:9px;padding:10px;min-height:44px;max-width:100%;min-width:0}.fields input[type=range]{flex:1}.heading-map{display:grid;gap:8px;border-left:2px solid #89d8ff50;padding:15px 20px;background:#0b2030;border-radius:0 18px 18px 0}.heading-map>div{padding:9px 16px;border-radius:9px;width:fit-content}.level-one{background:#89d8ff20;font-size:27px}.level-two{margin-left:40px;background:#ffcf7720;font-size:23px}.level-three{margin-left:80px;background:#f6b6ce20;font-size:21px}.challenge{padding:15px 20px;background:#ffffff05;border:1px solid var(--line);border-radius:19px}.challenge>p{margin:0 0 14px;font-size:23px}.pills{display:flex;align-items:center;justify-content:center;gap:10px;flex-wrap:wrap}.challenge .feedback:empty{display:none}.feedback{min-height:0;font-size:18px;margin-top:10px;padding:10px 14px}.mini-status{font-size:15px;color:var(--muted);margin-top:9px}.format-gallery{display:grid;grid-template-columns:repeat(10,1fr);gap:8px}.format-tile{padding:15px 8px;border:1px solid var(--line);border-radius:13px;background:#ffffff05;font-size:18px;min-height:60px}.format-tile[aria-pressed=true]{border-color:var(--gold);background:#ffcf7718}.formula-target{font:48px Georgia,serif;text-align:center;background:#e9f4ed;color:#18384b;padding:25px;border-radius:20px}.mixer{display:grid;gap:12px}.mixer label{display:grid;grid-template-columns:75px 1fr 35px;gap:10px;align-items:center;font-size:18px}.mixer output{font-variant-numeric:tabular-nums;text-align:right}.color-card{background:white;color:#18384b;padding:24px;border-radius:20px;display:flex;flex-direction:column;justify-content:center;gap:20px}.color-card #rgb-swatch{height:85px;border-radius:14px;border:1px solid #0002}.color-card #rgb-text{font-size:31px;font-weight:750;margin:0}.contrast-label{font-size:16px;line-height:1.5;margin:0;color:#344e60}.debug-top{display:flex;justify-content:space-between;align-items:center;font-size:18px}.debug-top .action{font-size:15px}.responses .choice{font-family:Consolas,monospace;font-size:17px;padding:11px 14px}.responses{gap:9px}.panel-label{display:block;font-size:14px;color:var(--muted);margin:0 0 8px}#math-code{font-size:15px;line-height:1.4;max-height:310px;overflow:auto}#math-preview{min-height:300px}.sprint-grid{display:grid;grid-template-columns:.85fr 1.15fr;gap:22px}.timer-card{border:1px solid var(--line);background:#ffffff06;border-radius:22px;padding:20px;text-align:center}.timer-card #sprint-time{font-size:75px;font-weight:850;color:var(--gold);font-variant-numeric:tabular-nums;line-height:1.2;margin-bottom:15px}.timer-card p{font-size:16px;color:var(--muted);margin:15px 0 0}.target-paper{background:#f4f8f3;color:#18384b;border-radius:20px;padding:23px 30px}.target-paper h3{font-size:29px;margin:13px 0}.target-paper p{font-size:20px;margin:12px 0}.target-paper .news-label{font-size:13px}.solution{font-size:16px;line-height:1.35;max-height:160px;overflow:auto}.studio-toolbar{display:flex;align-items:center;gap:9px;flex-wrap:wrap}.studio-toolbar label{font-size:15px}.studio-toolbar select{font-size:14px;padding:8px;max-width:185px}.studio-toolbar .action{font-size:14px;padding:9px 12px}.studio textarea{background:#081722;border:1px solid #89d8ff40;border-radius:17px;color:#d0ebf4;font:16px/1.4 Consolas,monospace;white-space:pre;tab-size:2;padding:14px;width:100%;height:230px;resize:vertical}.studio textarea:focus{outline:2px solid var(--cyan)}.studio iframe{height:250px;min-height:230px}.studio-status{font-size:15px;color:var(--gold);min-height:21px}.goal-list{display:flex;gap:7px;flex-wrap:wrap}.goal-list span{font-size:14px;border:1px solid var(--line);border-radius:8px;padding:6px 9px;color:var(--muted)}.goal-list span.met{border-color:var(--green);color:var(--green)}.finish-card{text-align:center}.finish-card .links{margin-top:18px}.sources{font-size:13px}.quiz-question{font-size:27px}.quiz-options .choice{font-size:18px}.quiz-layout .card{padding:18px}.quiz-meta{margin-bottom:9px}.quiz-layout .feedback{font-size:17px}.ribbon{font-size:19px;padding:11px 16px}.teacher-note{font-size:14px;line-height:1.4}.lab-controls .teacher-note{font-size:16px}.card p{font-size:19px}.slide .body{justify-content:center}.reveal-tools{display:none!important}
+@media(max-width:1050px){.format-gallery{grid-template-columns:repeat(5,1fr)}.format-tile{padding:9px;font-size:17px}.hero-title{font-size:39px}.poster{padding:22px}.fields label{font-size:17px}.code-panel{font-size:17px}.topbar{gap:6px}}
+@media(max-width:700px){.hero-eight,.lab-grid,.sprint-grid{grid-template-columns:1fr}.hero-eight{gap:25px}.hero-title{font-size:39px}.poster{margin:0 9px 14px;padding:24px}.poster-big{font-size:51px}.hero-small .card p{font-size:18px}.compare{height:330px}.news{padding:25px 20px}.raw{font-size:18px}.designed h3{font-size:29px}.designed p{font-size:19px}.range-label{font-size:12px;gap:7px}.syntax{justify-content:flex-start}.syntax-token{font-size:20px;padding:12px 9px}.fields label{font-size:17px}.fields select{max-width:210px}.level-one{font-size:21px}.level-two{font-size:19px;margin-left:15px}.level-three{font-size:18px;margin-left:30px}.heading-map{padding:12px}.challenge{padding:14px}.challenge>p{font-size:21px}.format-gallery{gap:6px}.format-tile{padding:10px 3px;font-size:15px;min-height:48px}.formula-target{font-size:40px}.mixer label{font-size:16px;grid-template-columns:63px 1fr 30px}.code-panel{font-size:16px}.studio-toolbar .action{font-size:13px}.studio textarea{height:290px;font-size:16px}.goal-list span{font-size:13px}.teacher-note{font-size:14px}.quiz-question{font-size:24px}.quiz-meta{flex-wrap:wrap;gap:8px;font-size:16px}.quiz-meta .action{font-size:13px}.quiz-options .choice{font-size:17px}.ribbon{font-size:18px}.slide .body{justify-content:flex-start}.format-gallery code{font-size:14px}.range-label input{width:100px}.fields label:has(#font-size){flex-wrap:wrap}#font-size{min-width:100px}.poster-label{font-size:11px}.studio-toolbar select{max-width:180px}.timer-card #sprint-time{font-size:65px}}
+#slide-9 iframe{height:220px}#math-code{max-height:255px;font-size:14px}#math-preview{height:230px;min-height:230px}#slide-14 .ribbon{font-size:17px}.studio textarea{height:210px}.studio iframe{height:210px;min-height:190px}#slide-13 .lab-controls{gap:9px}#slide-13 .code-panel{font-size:17px;line-height:1.35;padding:12px 15px}#slide-13 .feedback:empty{display:none}@media(max-width:700px){.debug-top{gap:9px;align-items:flex-start;flex-wrap:wrap}.studio textarea{height:290px}#math-code{font-size:15px;max-height:300px}#math-preview{height:310px;min-height:310px}}
+.choice.correct:disabled{opacity:1}.solution{max-height:140px}
+@media(max-width:700px){.format-gallery{grid-template-columns:repeat(4,minmax(0,1fr))}.format-tile code{white-space:nowrap}}
+#slide-9 .body{gap:10px}#slide-15 .body{gap:10px}#slide-15 .target-paper{padding-top:18px;padding-bottom:18px}#slide-15 .timer-card{padding:16px}#slide-15 .timer-card p{margin-top:10px}#math-code{font-size:16px}
+</style>
 </head>
 <body>
+<header class="topbar"><div class="brand">TIN HỌC 12 <b> / BÀI 08</b></div><div class="spacer"></div><button class="tool" id="contents" aria-haspopup="dialog">☰ Mục lục</button><button class="tool" id="motion" aria-pressed="true">✨ Hiệu ứng: Bật</button><button class="tool" id="sound" aria-pressed="false">🔇 Âm thanh: Tắt</button><button class="tool" id="fullscreen" title="Toàn màn hình (F)" aria-label="Toàn màn hình">⛶</button></header>
+<main class="stage" id="stage"><div id="deck"></div><noscript><h1>Bài 8: Định dạng văn bản</h1><p>Hãy bật JavaScript để dùng các hoạt động tương tác của bài trình chiếu.</p></noscript></main>
+<footer class="bottom"><button class="nav" id="prev" aria-label="Trang trước">←</button><div class="progress" aria-hidden="true"><span id="progress"></span></div><span class="counter" id="counter">01 / 18</span><span class="footer-count" id="reveal-counter"></span><button class="action" id="all-ideas">Hiện hết</button><button class="action primary next-idea" id="next-idea">Hiện ý tiếp ↓</button><button class="nav" id="next" aria-label="Trang tiếp">→</button><span class="key-help">Space/→: hiện ý, rồi chuyển trang<br>↑: ẩn ý · F: toàn màn hình · M: âm thanh</span></footer>
+<dialog id="toc" aria-labelledby="toc-title"><div class="dialog-head"><h2 id="toc-title">Hành trình Bài 8</h2><button class="action" id="close-toc">Đóng ✕</button></div><div id="toc-grid" class="toc-grid"></div></dialog>
+<div id="toast" class="toast" role="status" hidden></div><div class="confetti" id="confetti" aria-hidden="true"></div>
+<script>'use strict';
+const $=(s,r=document)=>r.querySelector(s), $$=(s,r=document)=>[...r.querySelectorAll(s)];
+const esc=v=>String(v).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const code=v=>`<code>${esc(v)}</code>`;
+const panel=(id)=>`<pre class="code-panel" id="${id}"></pre>`;
+const frame=(id,title)=>`<div class="browser-window"><div class="browser-chrome"><span aria-hidden="true">● ● ●</span><span>${title}</span></div><iframe id="${id}" sandbox="" referrerpolicy="no-referrer" title="${title}"></iframe></div>`;
+const ribbon=t=>`<div class="ribbon">${t}</div>`;
+const card=(icon,title,text)=>`<div class="card reveal" aria-hidden="true" inert><span class="icon" aria-hidden="true">${icon}</span><h3>${title}</h3><p>${text}</p></div>`;
+const tabs=(attr,items)=>`<div class="tabs">${items.map((t,i)=>`<button class="tab" ${attr}="${i}" aria-pressed="${i===0}">${t}</button>`).join('')}</div>`;
+const lab=(left,right)=>`<div class="lab-grid"><div class="lab-controls">${left}</div>${right}</div>`;
+const quizQuestions=[
+ ['Thuộc tính style được đặt ở đâu?', ['Trong thẻ đóng','Trong thẻ mở, sau tên thẻ','Ở ngoài phần tử','Chỉ trong head'],1,'Thuộc tính nằm trong thẻ mở. Ví dụ: <p style="color:blue">…</p>.'],
+ ['Cách gộp hai định dạng nào đúng?', ['style="color:blue;font-size:24px"','style="color=blue;font-size=24px"','style="color:blue,font-size:24px"','style="color:blue" style="font-size:24px"'],0,'Trong một style, dùng dấu : giữa tên và giá trị, dấu ; giữa các khai báo.'],
+ ['Muốn nhấn mạnh mức độ quan trọng của cảnh báo, chọn thẻ nào?', ['small','span','strong','br'],2,'strong biểu thị nội dung có mức độ quan trọng cao. Nó thường được trình duyệt hiển thị đậm.'],
+ ['Cách viết công thức nước đúng là gì?', ['H<sup>2</sup>O','H<sub>2</sub>O','H<small>2</small>O','H<br>2O'],1,'sub đặt số 2 làm chỉ số dưới; sup dành cho chỉ số trên, như x².'],
+ ['Với cách hiển thị mặc định, span khác div thế nào?', ['span luôn xuống dòng','span không chứa được chữ','span là thẻ rỗng','span nằm trong dòng; div tạo khối mới'],3,'Mặc định span hiển thị trong dòng, còn div hiển thị dạng khối. CSS có thể thay đổi cách hiển thị này.'],
+ ['Tiêu đề mục con của một mục h2 nên dùng gì?', ['h1 vì chữ to','h3 theo cấu trúc','p rồi phóng to là đủ','h6 vì là mục con'],1,'Chọn cấp tiêu đề theo quan hệ nội dung. Điều chỉnh kích thước bằng CSS khi cần.'],
+ ['red và rgb(255,0,0) cho màu gì?', ['Đỏ như nhau','Một đỏ, một xanh','Hai sắc đỏ khác nhau','RGB không dùng trong style'],0,'Cả hai cùng chỉ màu đỏ. RGB dùng ba thành phần đỏ, lục, lam từ 0 đến 255.'],
+ ['Cần ngắt dòng trong cùng một đoạn địa chỉ. Chọn gì?', ['Tạo một h1 mới','Đặt div trong p','Dùng br tại điểm ngắt','Nhấn Enter trong mã là luôn đủ'],2,'br tạo ngắt dòng trong cùng đoạn. p tạo đoạn mới; hr biểu thị sự chuyển chủ đề, thường hiện thành đường ngang.']
+];
+const sections=[
+ {tag:'BÀI 8 · TIN HỌC 12 · KẾT NỐI TRI THỨC',title:'Định dạng văn bản',lead:'Từ trang có chữ → trang có điểm nhấn → trang dễ đọc.',html:`<div class="hero-eight"><div><p class="kicker">HÔM NAY, EM LÀ NGƯỜI THIẾT KẾ</p><p class="hero-title">Để người đọc<br><em>thấy đúng điều<br>em muốn nói.</em></p><p class="teacher-note">Một bản tin câu lạc bộ. Nhiều cách kể bằng HTML.</p></div><div class="poster"><span class="poster-label">TIN TỪ CÂU LẠC BỘ</span><div class="poster-big">Chữ có<br><span>tiếng nói.</span></div><p>Đọc rõ. Hiểu nhanh. Nhớ lâu.</p><div class="poster-tags"><span>&lt;strong&gt;</span><span>style="…"</span><span>&lt;span&gt;</span></div></div></div><div class="grid three hero-small">${card('👁️','Nhìn ra','So sánh trước – sau, dự đoán kết quả.')}${card('🧪','Thử ngay','Thay mã, màu, cỡ chữ và quan sát.')}${card('🛠️','Tự làm','Sửa lỗi và thiết kế bản tin của em.')}</div>`},
+ {tag:'01 · KHỞI ĐỘNG / CÙNG NỘI DUNG',title:'Chữ vẫn vậy. Điều gì làm em đọc dễ hơn?',lead:'Kéo thanh so sánh. Nêu hai thay đổi giúp tìm nhanh thời gian và địa điểm.',html:`<div class="compare"><div class="news raw"><div>BẢN TIN CÂU LẠC BỘ</div><div>Ngày hội sáng tạo</div><div>Chúng mình cùng khám phá HTML.</div><div>Thời gian: 14:00, thứ Sáu.</div><div>Địa điểm: Phòng Tin học.</div></div><div class="news designed" id="after-news"><div class="news-label">BẢN TIN CÂU LẠC BỘ</div><h3>Ngày hội sáng tạo</h3><p>Chúng mình cùng khám phá HTML.</p><p><strong>Thời gian:</strong> <mark>14:00, thứ Sáu.</mark></p><p><strong>Địa điểm:</strong> Phòng Tin học.</p></div><span class="compare-line" id="compare-line" aria-hidden="true"></span></div><label class="range-label" for="compare-range">Chưa định dạng ← <input id="compare-range" type="range" min="0" max="100" value="50"> → Đã định dạng</label>${ribbon('Thiết kế tốt giúp người đọc nhận ra <strong>thứ bậc, ý chính và thông tin cần hành động</strong>.')}`},
+ {tag:'02 · GIẢI MÃ CÚ PHÁP',title:'Một thuộc tính HTML chứa các khai báo CSS',lead:'Bấm từng mảnh mã để xem vai trò. Nhớ ba dấu: =  :  ;',html:`<div class="syntax">${['&lt;p','style=','"','color:blue;','font-size:24px','"','&gt;Xin chào&lt;/p&gt;'].map((t,i)=>`<button class="syntax-token" data-syntax="${i}">${t}</button>`).join('')}</div><div class="demo" id="syntax-note" role="status">Bấm vào một mảnh mã ở phía trên.</div><div class="grid three">${card('=','Thuộc tính HTML','style="…" nằm trong thẻ mở, sau tên thẻ.')}${card(':','Tên : giá trị','color:blue là một khai báo CSS.')}${card(';','Tách khai báo','color:blue; font-size:24px đặt trong cùng một style.')}</div>${ribbon('Nhiều thuộc tính HTML ngăn nhau bằng <strong>dấu cách</strong>; nhiều khai báo trong style ngăn nhau bằng <strong>dấu chấm phẩy</strong>.')}`},
+ {tag:'03 · BÀN ĐIỀU KHIỂN STYLE',title:'Ba lựa chọn. Một đoạn mã do em tạo.',lead:'Chọn màu, cỡ chữ và phông. Mã và kết quả cập nhật cùng lúc.',html:lab(`<div class="fields"><label for="style-color">Màu chữ <select id="style-color"><option value="#184c87">Xanh lam</option><option value="#9d2059">Hồng đậm</option><option value="#176348">Xanh lục</option></select></label><label for="style-size">Cỡ chữ <select id="style-size"><option value="24px">24px</option><option value="32px">32px</option><option value="40px">40px</option></select></label><label for="style-font">Phông chữ <select id="style-font"><option value="Arial, sans-serif">Arial</option><option value="Georgia, serif">Georgia</option><option value="monospace">Monospace</option></select></label></div>${panel('style-code')}`,frame('style-preview','Kết quả từ style'))+ribbon('Một phần tử chỉ cần <strong>một thuộc tính style</strong> chứa các khai báo cần dùng.')},
+ {tag:'04 · CẤU TRÚC TRƯỚC, TRANG TRÍ SAU',title:'Chọn cấp tiêu đề theo quan hệ nội dung',lead:'Đừng chọn h1…h6 chỉ vì muốn chữ to hay nhỏ. Chọn theo cấu trúc trước.',html:`<div class="heading-map"><div class="level-one">h1 · Câu lạc bộ Tin học</div><div class="level-two">h2 · Hoạt động</div><div class="level-three">? · Lập trình web</div></div><div class="challenge"><p id="heading-question"></p><div class="pills">${['h1','h2','h3','h4'].map(t=>`<button class="action" data-rank="${t}">${t}</button>`).join('')}<button class="action" id="heading-next" disabled>Tình huống tiếp →</button><button class="action" id="heading-reset">↺</button></div><div class="feedback" id="heading-feedback" role="status"></div><div class="mini-status" id="heading-score"></div></div>`},
+ {tag:'05 · ĐOẠN HAY NGẮT DÒNG?',title:'Enter trong mã chưa chắc xuống dòng trên trang',lead:'Dự đoán trước, rồi chọn một cách viết và đối chiếu kết quả.',html:`${tabs('data-paragraph',['Enter trong mã','Thẻ br','Hai đoạn p','Đường phân cách hr'])}${lab(panel('paragraph-code'),frame('paragraph-preview','Quan sát dòng và khoảng cách'))}<div class="demo" id="paragraph-note" role="status"></div>`},
+ {tag:'06 · PHẠM VI ĐỊNH DẠNG',title:'Đổi cả khối hay chỉ một cụm từ?',lead:'Cùng một nội dung và màu nền: đổi span thành div, chuyện gì xảy ra?',html:`${tabs('data-container',['span · Trong dòng','div · Một khối'])}${lab(panel('container-code'),frame('container-preview','Phạm vi hiển thị mặc định'))}${ribbon('Mặc định: <strong>div tạo khối</strong>, <strong>span nằm trong dòng</strong>. CSS có thể thay đổi cách hiển thị này. Không đặt div bên trong p.')}`},
+ {tag:'07 · BẢNG MÀU CỦA NGÔN TỪ',title:'Mỗi ý định có một thẻ phù hợp',lead:'Chọn một thẻ để thấy mã, kết quả và ý nghĩa. Hình thức là cách hiển thị mặc định.',html:`<div class="format-gallery">${['strong','em','mark','small','sup','sub','del','u','b','i'].map((t,i)=>`<button class="format-tile" data-format="${i}" aria-pressed="${!i}">${code('<'+t+'>')}</button>`).join('')}</div>${lab(`<div class="demo" id="format-note"></div>${panel('format-code')}`,frame('format-preview','Từ mã đến kiểu chữ'))}<p class="teacher-note">Lưu ý chuẩn hiện hành: u vẫn tồn tại với ý nghĩa chú giải; để chỉ trang trí gạch chân, dùng CSS text-decoration. big đã lỗi thời. <a href="https://html.spec.whatwg.org/dev/text-level-semantics.html#the-u-element" target="_blank" rel="noopener">Đối chiếu chuẩn HTML ↗</a></p>`},
+ {tag:'08 · CÙNG CÂU, KHÁC TRỌNG TÂM',title:'Em muốn nhấn mạnh điều gì?',lead:'Di chuyển thẻ em bằng cách chọn cụm từ. Đọc câu thành tiếng theo điểm nhấn.',html:`${tabs('data-emphasis',['CHÚNG MÌNH cùng học','Chúng mình CÙNG học','Chúng mình cùng học HTML'])}${lab(panel('emphasis-code'),frame('emphasis-preview','Nhấn mạnh bằng em'))}<div class="demo" id="emphasis-note" role="status"></div>${ribbon('<strong>strong</strong> biểu thị tầm quan trọng. <strong>em</strong> biểu thị sự nhấn giọng. b và i có ngữ nghĩa khác, không thay thế mọi trường hợp.')}`},
+ {tag:'09 · PHÒNG THÍ NGHIỆM CHỈ SỐ',title:'Một con số, hai vị trí hoàn toàn khác nhau',lead:'Chọn thẻ cần điền để viết đúng công thức. Mỗi đáp án đều có giải thích.',html:`<div class="formula-target" id="formula-target"></div><div class="challenge"><p id="formula-question"></p><div class="pills">${['sup','sub','small'].map(t=>`<button class="action" data-formula="${t}">${code('<'+t+'>')}</button>`).join('')}<button class="action" id="formula-next" disabled>Công thức tiếp →</button><button class="action" id="formula-reset">↺</button></div><div class="feedback" id="formula-feedback" role="status"></div><div class="mini-status" id="formula-score"></div></div>`},
+ {tag:'10 · PHA MÀU RGB',title:'Tự pha màu bằng ba thành phần ánh sáng',lead:'Đỏ, lục, lam: mỗi thành phần từ 0 đến 255. Kéo thanh và nhìn mã đổi.',html:lab(`<div class="mixer">${[['red','R · Đỏ',24],['green','G · Lục',76],['blue','B · Lam',135]].map(([id,t,v])=>`<label for="rgb-${id}">${t}<input id="rgb-${id}" type="range" min="0" max="255" value="${v}"><output id="rgb-${id}-value">${v}</output></label>`).join('')}</div><div class="pills"><button class="action" data-rgb="255,0,0">red</button><button class="action" data-rgb="0,128,0">green</button><button class="action" data-rgb="0,0,255">blue</button></div>${panel('rgb-code')}`,`<div class="color-card"><div id="rgb-swatch"></div><p id="rgb-text">Màu chữ em vừa pha</p><p class="contrast-label" id="contrast-note" role="status"></p></div>`)+ribbon('Màu đẹp cần đi cùng <strong>độ tương phản đủ rõ</strong>. Thử kéo cả ba thanh lên 255: chữ trên nền trắng sẽ ra sao?')},
+ {tag:'11 · PHÔNG VÀ CỠ CHỮ',title:'Đổi cách thể hiện, giữ nguyên nội dung',lead:'Thử cùng một câu với các họ phông và cỡ chữ khác nhau.',html:lab(`<div class="fields"><label for="font-family">Họ phông <select id="font-family"><option value="Arial, sans-serif">Arial → sans-serif</option><option value="Georgia, serif">Georgia → serif</option><option value="monospace">monospace</option></select></label><label for="font-size">Cỡ chữ: <output id="font-size-value">28px</output><input id="font-size" type="range" min="16" max="52" value="28"></label></div>${panel('font-code')}<p class="teacher-note">Dùng danh sách dự phòng nếu máy không có phông đầu tiên. Cỡ chữ có thể dùng px hoặc từ khóa như small, medium, large.</p>`,frame('font-preview','Cùng câu, khác hình thức'))},
+ {tag:'12 · THÁM TỬ MÃ NGUỒN',title:'Tìm lỗi trước khi bấm sửa',lead:'Đoạn mã đang sai ở đâu? Chọn bản sửa và đối chiếu kết quả thực tế.',html:`<div class="debug-top"><span id="debug-count"></span><div class="pills"><button class="action" id="debug-next" disabled>Lỗi tiếp →</button><button class="action" id="debug-reset">↺ Làm lại</button></div></div>${lab(`<p class="panel-label">Mã đang xem</p>${panel('debug-code')}<div class="responses" id="debug-options"></div>`,frame('debug-preview','Kết quả của mã đang xem'))}<div class="feedback" id="debug-feedback" role="status"></div>`},
+ {tag:'13 · THỰC HÀNH THEO SGK',title:'Dựng một bài toán theo từng lớp thông tin',lead:'Quan sát ba bước: chia cấu trúc → đặt chỉ số → nhấn mạnh và tô màu.',html:`${tabs('data-math',['1 · Chia tiêu đề, đoạn','2 · Thêm sup, sub','3 · Nhấn mạnh, đổi màu'])}${lab(panel('math-code'),frame('math-preview','Biện luận phương trình bậc hai'))}${ribbon('Mã dùng <strong>h1, h2, p, br, span, strong, em, sup, sub và style</strong>. Δ = 0: phương trình có nghiệm kép.')}`},
+ {tag:'14 · THỬ THÁCH CẶP ĐÔI',title:'90 giây: em là biên tập viên HTML',lead:'Một bạn đề xuất mã, một bạn giải thích. Sau đó đổi vai.',html:`<div class="sprint-grid"><div class="timer-card"><div id="sprint-time" role="timer" aria-label="Thời gian còn lại">01:30</div><div class="pills"><button class="action primary" id="sprint-start">▶ Bắt đầu</button><button class="action" id="sprint-reset">↺ Đặt lại</button></div><p id="sprint-status" role="status">Đồng hồ chỉ chạy khi thầy cô bấm bắt đầu.</p></div><div class="target-paper"><p class="news-label">MẪU CẦN TẠO</p><h3 style="color:#184c87">Ngày hội sáng tạo</h3><p>Hẹn gặp lúc <strong>14:00</strong><br>Tại Phòng Tin học.</p><p>Chủ đề: H<sub>2</sub>O và x<sup>2</sup></p></div></div><div class="pills"><button class="action" id="sprint-solution" aria-expanded="false">🔍 Xem một cách làm</button><button class="action gold" id="sprint-editor">Mở xưởng để thử →</button></div><pre class="code-panel solution" id="sprint-code" hidden></pre>`},
+ {tag:'15 · XƯỞNG THIẾT KẾ TRỰC TIẾP',title:'Tạo bản tin có dấu ấn của em',lead:'Sửa mã → chạy → tự kiểm tra → tải trang HTML để dùng tiếp.',html:`<div class="studio-toolbar"><label for="studio-template">Mẫu <select id="studio-template"><option value="news">Bản tin câu lạc bộ</option><option value="sprint">Thử thách 90 giây</option><option value="math">Bài toán SGK</option></select></label><button class="action primary" id="studio-run">▶ Chạy mã</button><button class="action" id="studio-check">✓ Kiểm tra mục tiêu</button><button class="action" id="studio-restore">↺ Khôi phục mẫu</button><button class="action gold" id="studio-download">↓ Tải HTML</button></div><div class="lab-grid studio"><div><label class="panel-label" for="studio-code">Mã HTML · Ctrl + Enter để chạy</label><textarea id="studio-code" spellcheck="false"></textarea></div>${frame('studio-preview','Trang do em thiết kế')}</div><div class="studio-status" id="studio-status" role="status"></div><div class="goal-list" id="studio-goals" aria-label="Năm mục tiêu thực hành"></div><p class="teacher-note">Mục tiêu: h1 · p · strong · một cụm span có style · ít nhất hai khai báo trong cùng style. Kiểm tra này chỉ gợi ý theo mục tiêu, không thay thế kiểm tra cú pháp HTML.</p>`},
+ {tag:'16 · CHỐT KIẾN THỨC',title:'Tám tình huống để kiểm tra cách em hiểu',lead:'Chọn một đáp án. Đọc phản hồi rồi chuyển câu; có thể làm lại toàn bộ.',html:'<div class="quiz-layout" id="quiz" aria-live="polite"></div>'},
+ {tag:'17 · VÉ RA CỬA',title:'Trang đẹp khi người đọc hiểu nhanh hơn',lead:'Tự kiểm tra, rồi giải thích cho bạn một lựa chọn định dạng của em.',html:`<div class="grid two"><div class="responses">${['Đặt đúng cấp tiêu đề và tách đoạn hợp lí.','Dùng thẻ theo ý nghĩa; viết chỉ số trên, dưới đúng.','Gộp khai báo style đúng và kiểm tra kết quả.'].map(t=>`<button class="check" aria-pressed="false"><span class="check-icon">○</span>${t}</button>`).join('')}${ribbon('Nhiệm vụ tiếp nối: tạo một bản tin lớp. Hãy chỉ ra <strong>ba quyết định định dạng</strong> và lí do chọn chúng.')}</div><div class="card finish-card"><span class="badge" id="badge">🌱</span><p class="pledge-status" id="check-status">0 / 3 việc đã tự kiểm tra</p><button class="action primary" id="celebrate" disabled>🎉 Hoàn thành Bài 8</button><div class="links"><button class="action" id="back-studio">↶ Về xưởng thiết kế</button><a class="action" href="/luyen/bai-08" target="_blank" rel="noopener">Luyện tập Bài 8 ↗</a></div></div></div><p class="sources">Nội dung theo Bài 8, SGK Tin học 12 Kết nối tri thức, tr. 46–51. Đối chiếu ngữ nghĩa thẻ: <a href="https://html.spec.whatwg.org/dev/text-level-semantics.html" target="_blank" rel="noopener">HTML Living Standard</a> · <a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Global_attributes/style" target="_blank" rel="noopener">Thuộc tính style</a>.</p>`}
+];
 
-  <div class="bg-mesh"></div>
-  <div class="float-layer">
-    <div class="float-tag" style="left: 5%; animation-delay: 0s;">&lt;h1&gt;</div>
-    <div class="float-tag" style="left: 18%; animation-delay: 4s;">&lt;p&gt;</div>
-    <div class="float-tag" style="left: 32%; animation-delay: 9s;">style="color:red"</div>
-    <div class="float-tag" style="left: 48%; animation-delay: 2s;">&lt;div&gt;</div>
-    <div class="float-tag" style="left: 64%; animation-delay: 7s;">&lt;span&gt;</div>
-    <div class="float-tag" style="left: 78%; animation-delay: 12s;">&lt;strong&gt;</div>
-    <div class="float-tag" style="left: 88%; animation-delay: 16s;">font-size: 20px</div>
-  </div>
+let current = 0;
+let audioEnabled = false;
+let audioContext;
+let motion = !matchMedia('(prefers-reduced-motion: reduce)').matches;
+let liveTimer;
+let toastTimer;
+const reveals = sections.map(()=>0);
+$('#deck').innerHTML = sections.map((s,i)=>`<section class="slide" id="slide-${i+1}" ${i?'hidden':''} aria-labelledby="title-${i+1}"><div class="slide-head"><div class="heading"><p class="eyebrow">${s.tag}</p><h${i?2:1} id="title-${i+1}" tabindex="-1">${s.title}</h${i?2:1}><p class="lead">${s.lead}</p></div><div class="reveal-tools"><span class="count"></span><button class="action reveal-one">+ Hiện ý</button><button class="action reveal-all">Hiện hết</button></div></div><div class="body">${s.html}</div></section>`).join('');
+$('#toc-grid').innerHTML = sections.map((s,i)=>`<button class="action" data-goto="${i}">${String(i+1).padStart(2,'0')} · ${s.title}</button>`).join('');
 
-  <canvas id="confettiCanvas"></canvas>
-  <div class="deck-container">
-
-    <!-- ══ SLIDE 1: TRANG BÌA ════════════════════════════════════════════════ -->
-    <section class="slide active" id="slide-1" data-total-reveal="3">
-      <div class="slide-header">
-        <div>
-          <span class="slide-badge">Tin học 12 · Định hướng ICT · Kết nối tri thức</span>
-          <div class="slide-title">Bài 8. Định dạng văn bản trong HTML</div>
-          <div class="slide-subtitle">Sách giáo khoa Tin học 12 (Trang 46 – 51) · Làm cho trang web đẹp và chuyên nghiệp</div>
-        </div>
-        <div class="reveal-ctrl">
-          <span>✨ Hiệu ứng:</span>
-          <span class="reveal-status" id="slide-1-status">0 / 3</span>
-          <button class="reveal-btn" onclick="revealNext();">▶ Hiện ý (↓)</button>
-          <button class="reveal-btn" style="background: rgba(255,255,255,0.15);" onclick="revealAll();">Hiện hết</button>
-        </div>
-      </div>
-      <div class="slide-body">
-        <div class="grid-3" style="margin-top: 8px;">
-          <div class="card reveal-item" style="border-top: 4px solid #38E1F0; text-align: center; padding: 22px 16px;">
-            <div style="font-size: 42px; margin-bottom: 10px;">📰</div>
-            <div style="font-size: 16px; font-weight: 700; color: #38E1F0; margin-bottom: 6px;">Tiêu đề h1 – h6 &amp; Đoạn p</div>
-            <p style="font-size: 13.5px; color: #CBD5E1; line-height: 1.5;">6 Cấp tiêu đề giảm dần về độ quan trọng · Đoạn văn bản tách biệt dòng với khoảng trống chuẩn.</p>
-          </div>
-          <div class="card reveal-item" style="border-top: 4px solid #F5A623; text-align: center; padding: 22px 16px;">
-            <div style="font-size: 42px; margin-bottom: 10px;">🧱</div>
-            <div style="font-size: 16px; font-weight: 700; color: #FFC043; margin-bottom: 6px;">Khối div &amp; Span</div>
-            <p style="font-size: 13.5px; color: #CBD5E1; line-height: 1.5;">Phân biệt rõ ràng khối lớn xuống dòng mới (div) vs khối nhỏ nội dòng (span).</p>
-          </div>
-          <div class="card reveal-item" style="border-top: 4px solid #10B981; text-align: center; padding: 22px 16px;">
-            <div style="font-size: 42px; margin-bottom: 10px;">🎨</div>
-            <div style="font-size: 16px; font-weight: 700; color: #34D399; margin-bottom: 6px;">Kiểu chữ &amp; Thuộc tính style</div>
-            <p style="font-size: 13.5px; color: #CBD5E1; line-height: 1.5;">8 Kiểu chữ Bảng 8.1 SGK · Đổi màu, cỡ chữ, phông chữ qua thuộc tính style linh hoạt.</p>
-          </div>
-        </div>
-
-        <div class="card reveal-item" style="background: rgba(13, 124, 134, 0.15); border: 1px dashed rgba(56, 225, 240, 0.4); padding: 10px 18px; display: flex; align-items: center; justify-content: space-between;">
-          <span style="font-size: 13.5px; color: #E2E8F0;">⌨️ <strong>Space/→</strong> chuyển slide · <strong>↓</strong> mở từng ý · <strong>F</strong> toàn màn hình · <strong>M</strong> bật/tắt âm thanh</span>
-          <button class="sim-btn" onclick="nextSlide();" style="background: #0D7C86; color: white;">Khám phá ngay 🚀</button>
-        </div>
-      </div>
-    </section>
-
-    <!-- ══ SLIDE 2: THUỘC TÍNH THẺ HTML ═══════════════════════════════════════ -->
-    <section class="slide" id="slide-2" data-total-reveal="3">
-      <div class="slide-header">
-        <div>
-          <span class="slide-badge coral">Cú pháp cốt lõi · Trang 46</span>
-          <div class="slide-title">Thuộc tính của Thẻ HTML — Bổ sung siêu năng lực</div>
-          <div class="slide-subtitle">Mọi phần tử HTML đều có thể có thuộc tính để điều khiển cách hiển thị</div>
-        </div>
-        <div class="reveal-ctrl">
-          <span>✨</span><span class="reveal-status" id="slide-2-status">0 / 3</span>
-          <button class="reveal-btn" onclick="revealNext();">▶ Hiện ý</button>
-          <button class="reveal-btn" style="background: rgba(255,255,255,0.15);" onclick="revealAll();">Hiện hết</button>
-        </div>
-      </div>
-      <div class="slide-body">
-        <div class="card reveal-item" style="border-left: 5px solid #38E1F0; padding: 12px 18px;">
-          <div class="card-title">📖 Cú pháp thuộc tính chuẩn SGK:</div>
-          <div style="font-family: var(--font-mono); font-size: 16px; font-weight: 700; color: #38E1F0; background: #0D1520; padding: 10px 16px; border-radius: 8px; margin: 8px 0; border: 1px solid rgba(56, 225, 240, 0.3);">
-            &lt;Tên_thẻ <span style="color:#FFC043;">tên_thuộc_tính</span>=<span style="color:#10B981;">"giá trị"</span>&gt; Nội dung &lt;/Tên_thẻ&gt;
-          </div>
-          <p style="font-size: 13.5px; color: #CBD5E1; line-height: 1.6;">
-            Thuộc tính của thẻ có tác dụng <strong>bổ sung thông tin, làm rõ các điều khiển được thẻ chỉ định</strong>.
-          </p>
-        </div>
-
-        <div class="grid-2 reveal-item">
-          <div class="card" style="border-top: 4px solid #10B981;">
-            <div class="card-title" style="color: #34D399;">📍 Vị trí &amp; Quy tắc viết thuộc tính:</div>
-            <ul style="margin-left: 18px; font-size: 13.5px; line-height: 1.7; color: #CBD5E1;">
-              <li>Thuộc tính nằm trong <strong>thẻ bắt đầu (opening tag)</strong>, sau tên thẻ.</li>
-              <li><strong>TUYỆT ĐỐI KHÔNG nằm trong thẻ kết thúc!</strong></li>
-              <li>Nếu có nhiều hơn một thuộc tính, chúng được <strong>ngăn cách nhau bởi dấu cách</strong>.</li>
-            </ul>
-          </div>
-
-          <div class="card" style="border-top: 4px solid #F5A623;">
-            <div class="card-title" style="color: #FFC043;">🎨 Thuộc tính thần thánh: style</div>
-            <p style="font-size: 13.5px; color: #CBD5E1; line-height: 1.6;">
-              Một trong những thuộc tính dùng thường xuyên nhất là <strong>style</strong>. Nó cho phép thiết lập định dạng văn bản: <strong>màu sắc, phông chữ, cỡ chữ, kiểu chữ, căn lề, viền khung</strong>,... ngay tại phần tử đó!
-            </p>
-          </div>
-        </div>
-
-        <div class="card reveal-item" style="background: rgba(13, 124, 134, 0.12); padding: 10px 16px; font-size: 13px;">
-          💡 <strong>Ví dụ:</strong> <code>&lt;p style="color:red" align="center"&gt;</code> mang 2 thuộc tính là <code>style</code> và <code>align</code>, cách nhau bởi một dấu cách!
-        </div>
-      </div>
-    </section>
-
-    <!-- ══ SLIDE 3: ĐỊNH DẠNG TIÊU ĐỀ H1 ĐẾN H6 ═══════════════════════════════ -->
-    <section class="slide" id="slide-3" data-total-reveal="3">
-      <div class="slide-header">
-        <div>
-          <span class="slide-badge gold">Trọng tâm SGK · Trang 46-47</span>
-          <div class="slide-title">Sáu cấp tiêu đề: &lt;h1&gt; đến &lt;h6&gt;</div>
-          <div class="slide-subtitle">Độ quan trọng và kích cỡ giảm dần từ h1 (lớn nhất) đến h6 (nhỏ nhất)</div>
-        </div>
-        <div class="reveal-ctrl">
-          <span>✨</span><span class="reveal-status" id="slide-3-status">0 / 3</span>
-          <button class="reveal-btn" onclick="revealNext();">▶ Hiện ý</button>
-          <button class="reveal-btn" style="background: rgba(255,255,255,0.15);" onclick="revealAll();">Hiện hết</button>
-        </div>
-      </div>
-      <div class="slide-body">
-        <div class="grid-2">
-          <!-- CODE MẪU SGK -->
-          <div class="code-box reveal-item">
-            <div class="code-header"><span>headings.html — Mã nguồn HTML</span><span>Màu đen mặc định</span></div>
-            <div class="code-content">&lt;<span class="tag-kw">h1</span>&gt;Tin học 12 (Cấp 1 - Lớn nhất)&lt;/<span class="tag-kw">h1</span>&gt;
-&lt;<span class="tag-kw">h2</span>&gt;Phần chung (Cấp 2)&lt;/<span class="tag-kw">h2</span>&gt;
-&lt;<span class="tag-kw">h3</span>&gt;Chủ đề 1. Máy tính và xã hội (Cấp 3)&lt;/<span class="tag-kw">h3</span>&gt;
-&lt;<span class="tag-kw">h4</span>&gt;1. Trí tuệ nhân tạo (Cấp 4)&lt;/<span class="tag-kw">h4</span>&gt;
-&lt;<span class="tag-kw">h5</span>&gt;Tiêu đề cấp 5&lt;/<span class="tag-kw">h5</span>&gt;
-&lt;<span class="tag-kw">h6</span>&gt;Tiêu đề cấp 6 - Nhỏ nhất&lt;/<span class="tag-kw">h6</span>&gt;</div>
-          </div>
-
-          <!-- PREVIEW CHUẨN SƯ PHẠM (CHỮ ĐEN ĐỒNG NHẤT) -->
-          <div class="preview-box reveal-item">
-            <div class="preview-header"><span>🌐 Kết quả hiển thị mặc định của trình duyệt</span></div>
-            <h1 style="margin: 0 0 6px 0; font-size: 26px; color: #111827;">Tin học 12 (Cấp 1 - Lớn nhất)</h1>
-            <h2 style="margin: 0 0 6px 0; font-size: 22px; color: #111827;">Phần chung (Cấp 2)</h2>
-            <h3 style="margin: 0 0 6px 0; font-size: 18px; color: #111827;">Chủ đề 1. Máy tính và xã hội (Cấp 3)</h3>
-            <h4 style="margin: 0 0 6px 0; font-size: 15px; color: #111827;">1. Trí tuệ nhân tạo (Cấp 4)</h4>
-            <h5 style="margin: 0 0 4px 0; font-size: 13px; color: #111827;">Tiêu đề cấp 5</h5>
-            <h6 style="margin: 0; font-size: 11px; color: #111827;">Tiêu đề cấp 6 - Nhỏ nhất</h6>
-          </div>
-        </div>
-
-        <div class="card reveal-item" style="border-left: 5px solid #F5A623; padding: 10px 16px; font-size: 13px;">
-          📌 <strong>Lưu ý sư phạm quan trọng:</strong> Trình duyệt mặc định hiển thị toàn bộ tiêu đề h1–h6 bằng <strong>màu đen đồng nhất</strong>. Tiêu đề không chỉ để chỉnh cỡ chữ, mà các công cụ tìm kiếm (như Google) dùng thẻ <code>&lt;h1&gt;</code> để xác định chủ đề chính của cả trang web!
-        </div>
-      </div>
-    </section>
-
-    <!-- ══ SLIDE 4: ĐOẠN VĂN BẢN <P> ═══════════════════════════════════════════ -->
-    <section class="slide" id="slide-4" data-total-reveal="3">
-      <div class="slide-header">
-        <div>
-          <span class="slide-badge leaf">Cấu trúc đoạn · Trang 47</span>
-          <div class="slide-title">Đoạn văn bản: Thẻ &lt;p&gt; và Quy tắc khoảng trống</div>
-          <div class="slide-subtitle">Cách đơn giản nhất để ngắt đoạn văn và tạo khoảng thở cho trang web</div>
-        </div>
-        <div class="reveal-ctrl">
-          <span>✨</span><span class="reveal-status" id="slide-4-status">0 / 3</span>
-          <button class="reveal-btn" onclick="revealNext();">▶ Hiện ý</button>
-          <button class="reveal-btn" style="background: rgba(255,255,255,0.15);" onclick="revealAll();">Hiện hết</button>
-        </div>
-      </div>
-      <div class="slide-body">
-        <div class="grid-2">
-          <!-- CODE VÀ MÔ TẢ -->
-          <div class="card reveal-item" style="border-left: 4px solid #10B981;">
-            <div class="card-title" style="color: #34D399;">Quy tắc thẻ &lt;p&gt; (Paragraph):</div>
-            <ul style="margin-left: 18px; font-size: 13.5px; line-height: 1.7; color: #CBD5E1;">
-              <li>Đặt nội dung trong cặp thẻ <code>&lt;p&gt;Nội dung&lt;/p&gt;</code>.</li>
-              <li>Trình duyệt tự động hiển thị đoạn văn trên <strong>dòng mới</strong>, kèm <strong>khoảng trống nhỏ phía trước và phía sau đoạn</strong>.</li>
-              <li>Phù hợp với văn bản chứa nhiều chữ, bài báo, tài liệu.</li>
-            </ul>
-            <div style="margin-top: 10px; padding: 8px 12px; background: rgba(239, 68, 68, 0.1); border-radius: 6px; border: 1px dashed #EF4444; font-size: 12.5px; color: #FCA5A5;">
-              ⚠️ <strong>Điều cấm kỵ SGK:</strong> Trong thẻ <code>&lt;p&gt;</code> <strong>KHÔNG ĐƯỢC CHỨA</strong> tiêu đề h1–h6, danh sách, hay các phần tử dạng khối khác!
-            </div>
-          </div>
-
-          <!-- MINH HOẠ SO SÁNH -->
-          <div class="code-box reveal-item">
-            <div class="code-header"><span>paragraph.html</span></div>
-            <div class="code-content">&lt;<span class="tag-kw">p</span>&gt;Thẻ p tạo đoạn nội dung,&lt;/<span class="tag-kw">p</span>&gt;&lt;<span class="tag-kw">p</span>&gt;thẻ div tạo khối chứa dữ liệu.&lt;/<span class="tag-kw">p</span>&gt;
-&lt;<span class="tag-kw">p</span>&gt;Các thẻ này&lt;<span class="tag-kw">br</span>&gt;không có hình thức riêng&lt;/<span class="tag-kw">p</span>&gt;&lt;<span class="tag-kw">p</span>&gt;mà được định dạng bằng style.&lt;/<span class="tag-kw">p</span>&gt;</div>
-          </div>
-        </div>
-
-        <div class="preview-box reveal-item" style="max-height: 110px;">
-          <div class="preview-header"><span>🌐 Kết quả hiển thị (Dù viết dính nhau trong code, trình duyệt vẫn tách dòng và có khoảng trống!)</span></div>
-          <p style="margin: 4px 0;">Thẻ p tạo đoạn nội dung,</p>
-          <p style="margin: 4px 0;">thẻ div tạo khối chứa dữ liệu.</p>
-        </div>
-      </div>
-    </section>
-
-    <!-- ══ SLIDE 5: KHỐI DIV VS SPAN (BLOCK VS INLINE) ═════════════════════════ -->
-    <section class="slide" id="slide-5" data-total-reveal="3">
-      <div class="slide-header">
-        <div>
-          <span class="slide-badge purple">Trọng tâm phân biệt · Trang 47-48</span>
-          <div class="slide-title">Khối lớn &lt;div&gt; vs. Khối nhỏ &lt;span&gt;</div>
-          <div class="slide-subtitle">Quan sát sự khác biệt kinh điển giữa Block-level (xuống dòng) và Inline-level (trong dòng)</div>
-        </div>
-        <div class="reveal-ctrl">
-          <span>✨</span><span class="reveal-status" id="slide-5-status">0 / 3</span>
-          <button class="reveal-btn" onclick="revealNext();">▶ Hiện ý</button>
-          <button class="reveal-btn" style="background: rgba(255,255,255,0.15);" onclick="revealAll();">Hiện hết</button>
-        </div>
-      </div>
-      <div class="slide-body">
-        <div class="grid-2">
-          <!-- BẢNG SO SÁNH DIV VS SPAN -->
-          <div class="card reveal-item" style="border-top: 4px solid #38E1F0;">
-            <div class="card-title" style="color: #38E1F0;">📦 &lt;div&gt; — Khối lớn (Division)</div>
-            <ul style="margin-left: 18px; font-size: 13.5px; line-height: 1.7; color: #CBD5E1;">
-              <li>Là <strong>một khối độc lập</strong>, luôn <strong>bắt đầu trên dòng mới</strong>.</li>
-              <li>Chiếm trọn 100% chiều ngang của dòng.</li>
-              <li>Dùng để gom nhóm nhiều phần tử, tạo khung phân chia bố cục trang web.</li>
-            </ul>
-          </div>
-
-          <div class="card reveal-item" style="border-top: 4px solid #F5A623;">
-            <div class="card-title" style="color: #FFC043;">🏷️ &lt;span&gt; — Khối nhỏ nội dòng</div>
-            <ul style="margin-left: 18px; font-size: 13.5px; line-height: 1.7; color: #CBD5E1;">
-              <li>Sử dụng cho <strong>quy mô nhỏ hơn</strong>.</li>
-              <li>Hiển thị <strong>ngay trên cùng dòng đang viết</strong> (không ngắt dòng).</li>
-              <li>Dùng để đổi màu, đổi phông cho <strong>một vài chữ nằm giữa câu</strong>.</li>
-            </ul>
-          </div>
-        </div>
-
-        <!-- MÔ PHỎNG VISUAL BOX MODEL -->
-        <div class="grid-2 reveal-item">
-          <div class="code-box">
-            <div class="code-header"><span>div-span.html</span></div>
-            <div class="code-content">&lt;<span class="tag-kw">p</span>&gt;Đoạn văn có &lt;<span class="tag-kw">span</span> <span class="attr-kw">style</span>=<span class="val-kw">"color:red"</span>&gt;một cụm span&lt;/<span class="tag-kw">span</span>&gt; nằm giữa dòng.&lt;/<span class="tag-kw">p</span>&gt;
-&lt;<span class="tag-kw">div</span> <span class="attr-kw">style</span>=<span class="val-kw">"color:blue"</span>&gt;Còn div thì tự xuống dòng mới.&lt;/<span class="tag-kw">div</span>&gt;
-&lt;<span class="tag-kw">p</span>&gt;Đoạn tiếp theo.&lt;/<span class="tag-kw">p</span>&gt;</div>
-          </div>
-
-          <div class="preview-box" style="font-size: 14.5px;">
-            <div class="preview-header"><span>🌐 Kết quả trực quan</span></div>
-            <p style="margin: 0 0 8px 0;">Đoạn văn có <span style="color:red; background: #FEE2E2; padding: 2px 6px; border-radius: 4px; border: 1px dashed red;">một cụm span</span> nằm giữa dòng.</p>
-            <div style="color:blue; background: #DBEAFE; padding: 6px; border-radius: 4px; border: 1px dashed blue; margin-bottom: 8px;">
-              Còn div thì tự xuống dòng mới (chiếm trọn khối ngang).
-            </div>
-            <p style="margin: 0;">Đoạn tiếp theo.</p>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- ══ SLIDE 6: BẢNG 8 KIỂU CHỮ SGK (BẢNG 8.1) ═════════════════════════════ -->
-    <section class="slide" id="slide-6" data-total-reveal="3">
-      <div class="slide-header">
-        <div>
-          <span class="slide-badge gold">Bảng tra cứu · Trang 48</span>
-          <div class="slide-title">Bảng 8 Kiểu chữ thông dụng (Bảng 8.1 SGK)</div>
-          <div class="slide-subtitle">Nhấn mạnh ngữ nghĩa và thay đổi hình thức trình bày văn bản</div>
-        </div>
-        <div class="reveal-ctrl">
-          <span>✨</span><span class="reveal-status" id="slide-6-status">0 / 3</span>
-          <button class="reveal-btn" onclick="revealNext();">▶ Hiện ý</button>
-          <button class="reveal-btn" style="background: rgba(255,255,255,0.15);" onclick="revealAll();">Hiện hết</button>
-        </div>
-      </div>
-      <div class="slide-body">
-        <div class="card reveal-item" style="padding: 10px;">
-          <table style="width: 100%; border-collapse: collapse; font-size: 13px;">
-            <tr style="background: rgba(255,255,255,0.06); color: #38E1F0; border-bottom: 1px solid rgba(255,255,255,0.15);">
-              <th style="padding: 7px; text-align: left;">Thẻ HTML</th>
-              <th style="padding: 7px; text-align: left;">Ý nghĩa định dạng</th>
-              <th style="padding: 7px; text-align: left;">Ví dụ trong mã</th>
-              <th style="padding: 7px; text-align: left;">Kết quả hiển thị</th>
-            </tr>
-            <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);">
-              <td style="padding: 6px; font-family: var(--font-mono); color: #F2683C;">&lt;strong&gt; ; &lt;b&gt;</td>
-              <td style="padding: 6px;">Chữ in <strong>đậm</strong></td>
-              <td style="padding: 6px; font-family: var(--font-mono); font-size: 11.5px;">&lt;strong&gt;đậm&lt;/strong&gt;</td>
-              <td style="padding: 6px; color: #34D399;"><strong>chữ đậm</strong></td>
-            </tr>
-            <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);">
-              <td style="padding: 6px; font-family: var(--font-mono); color: #F2683C;">&lt;em&gt; ; &lt;i&gt;</td>
-              <td style="padding: 6px;">Chữ in <em>nghiêng</em></td>
-              <td style="padding: 6px; font-family: var(--font-mono); font-size: 11.5px;">&lt;em&gt;nghiêng&lt;/em&gt;</td>
-              <td style="padding: 6px; color: #34D399;"><em>chữ nghiêng</em></td>
-            </tr>
-            <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);">
-              <td style="padding: 6px; font-family: var(--font-mono); color: #F2683C;">&lt;u&gt;</td>
-              <td style="padding: 6px;">Chữ <u>gạch chân</u></td>
-              <td style="padding: 6px; font-family: var(--font-mono); font-size: 11.5px;">&lt;u&gt;gạch chân&lt;/u&gt;</td>
-              <td style="padding: 6px; color: #34D399;"><u>chữ gạch chân</u></td>
-            </tr>
-            <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);">
-              <td style="padding: 6px; font-family: var(--font-mono); color: #F2683C;">&lt;mark&gt;</td>
-              <td style="padding: 6px;">Đánh dấu (bôi vàng)</td>
-              <td style="padding: 6px; font-family: var(--font-mono); font-size: 11.5px;">&lt;mark&gt;bôi vàng&lt;/mark&gt;</td>
-              <td style="padding: 6px;"><mark style="background:#FDE047;color:#111;padding:0 3px;">bôi vàng</mark></td>
-            </tr>
-            <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);">
-              <td style="padding: 6px; font-family: var(--font-mono); color: #F2683C;">&lt;small&gt;</td>
-              <td style="padding: 6px;">Giảm kích cỡ chữ</td>
-              <td style="padding: 6px; font-family: var(--font-mono); font-size: 11.5px;">&lt;small&gt;nhỏ hơn&lt;/small&gt;</td>
-              <td style="padding: 6px; color: #94A3B8;"><small>chữ nhỏ hơn</small></td>
-            </tr>
-            <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);">
-              <td style="padding: 6px; font-family: var(--font-mono); color: #F2683C;">&lt;sup&gt; / &lt;sub&gt;</td>
-              <td style="padding: 6px;">Chỉ số trên / Chỉ số dưới</td>
-              <td style="padding: 6px; font-family: var(--font-mono); font-size: 11.5px;">x&lt;sup&gt;2&lt;/sup&gt; / H&lt;sub&gt;2&lt;/sub&gt;O</td>
-              <td style="padding: 6px; color: #38E1F0;">x<sup>2</sup> / H<sub>2</sub>O</td>
-            </tr>
-            <tr>
-              <td style="padding: 6px; font-family: var(--font-mono); color: #F2683C;">&lt;del&gt;</td>
-              <td style="padding: 6px;">Đánh dấu xoá (gạch giữa chữ)</td>
-              <td style="padding: 6px; font-family: var(--font-mono); font-size: 11.5px;">&lt;del&gt;gạch bỏ&lt;/del&gt;</td>
-              <td style="padding: 6px; color: #F87171;"><del>chữ gạch bỏ</del></td>
-            </tr>
-          </table>
-        </div>
-
-        <div class="grid-2 reveal-item">
-          <div class="card" style="border-left: 4px solid #38E1F0; font-size: 12.5px;">
-            💡 <strong>strong/em vs b/i:</strong> Cùng có tác dụng in đậm/nghiêng, nhưng <code>&lt;strong&gt;</code> và <code>&lt;em&gt;</code> mang ý nghĩa <strong>nhấn mạnh về mặt ngữ nghĩa</strong> nên được khuyến khích sử dụng hơn.
-          </div>
-          <div class="card" style="border-left: 4px solid #F5A623; font-size: 12.5px;">
-            ⚠️ <strong>Lưu ý HTML5:</strong> HTML5 không hỗ trợ thẻ <code>&lt;big&gt;</code> và <code>&lt;u&gt;</code>, nên thay bằng <code>font-size</code> và <code>text-decoration: underline</code> trong thuộc tính style.
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- ══ SLIDE 7: PHÒNG THÍ NGHIỆM KIỂU CHỮ TƯƠNG TÁC ════════════════════════ -->
-    <section class="slide" id="slide-7" data-total-reveal="1">
-      <div class="slide-header">
-        <div>
-          <span class="slide-badge leaf">Thí nghiệm tương tác</span>
-          <div class="slide-title">Phòng Thí nghiệm 8 Kiểu chữ — Bấm để biến hóa!</div>
-          <div class="slide-subtitle">Nhấp chọn kiểu chữ để xem hiệu ứng thay đổi trực tiếp trên văn bản</div>
-        </div>
-        <div class="reveal-ctrl">
-          <button class="sim-btn" onclick="resetTypographyDemo();">🔄 Đặt lại mặc định</button>
-        </div>
-      </div>
-      <div class="slide-body">
-        <div class="grid-2 reveal-item visible">
-          <!-- BẢNG NÚT BẤM -->
-          <div class="card">
-            <div class="card-title">🎛️ Chọn hiệu ứng định dạng chữ:</div>
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 10px;">
-              <button class="sim-btn" onclick="applyTypeEffect('strong');"><strong>&lt;strong&gt; In đậm</strong></button>
-              <button class="sim-btn" onclick="applyTypeEffect('em');"><em>&lt;em&gt; In nghiêng</em></button>
-              <button class="sim-btn" onclick="applyTypeEffect('u');"><u>&lt;u&gt; Gạch chân</u></button>
-              <button class="sim-btn" onclick="applyTypeEffect('mark');"><mark style="padding:0 4px;">&lt;mark&gt; Bôi vàng</mark></button>
-              <button class="sim-btn" onclick="applyTypeEffect('small');"><small>&lt;small&gt; Chữ nhỏ</small></button>
-              <button class="sim-btn" onclick="applyTypeEffect('sup');">x<sup>2</sup> &lt;sup&gt; Mũ trên</button>
-              <button class="sim-btn" onclick="applyTypeEffect('sub');">H<sub>2</sub>O &lt;sub&gt; Chỉ số dưới</button>
-              <button class="sim-btn" onclick="applyTypeEffect('del');"><del>&lt;del&gt; Gạch xóa</del></button>
-            </div>
-            <div id="type-code-display" style="margin-top: 12px; font-family: var(--font-mono); font-size: 12.5px; background: #0D1520; color: #38E1F0; padding: 10px; border-radius: 6px; border: 1px solid rgba(56, 225, 240, 0.3);">
-              Mã HTML tương ứng sẽ xuất hiện tại đây...
-            </div>
-          </div>
-
-          <!-- MÀN HÌNH PREVIEW TRỰC QUAN -->
-          <div class="preview-box" style="display: flex; flex-direction: column; justify-content: center; align-items: center; min-height: 240px;">
-            <div class="preview-header" style="width: 100%;"><span>🌐 Khung xem trước trực tiếp</span></div>
-            <div id="type-preview-text" style="font-size: 22px; color: #111827; text-align: center; margin: 20px 0;">
-              Tin học 12 rất thú vị!
-            </div>
-            <div id="type-explain-text" style="font-size: 13px; color: #64748B; font-style: italic;">
-              ← Nhấp các nút bên trái để đổi kiểu chữ ngay lập tức!
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- ══ SLIDE 8: THUỘC TÍNH STYLE ĐỊNH DẠNG PHÔNG CHỮ ═══════════════════════ -->
-    <section class="slide" id="slide-8" data-total-reveal="3">
-      <div class="slide-header">
-        <div>
-          <span class="slide-badge coral">Kỹ thuật trọng tâm · Trang 49</span>
-          <div class="slide-title">Định dạng Phông chữ qua thuộc tính &lt;code&gt;style&lt;/code&gt;</div>
-          <div class="slide-subtitle">Ba thuộc tính cốt lõi: color (màu sắc), font-family (phông chữ), font-size (cỡ chữ)</div>
-        </div>
-        <div class="reveal-ctrl">
-          <span>✨</span><span class="reveal-status" id="slide-8-status">0 / 3</span>
-          <button class="reveal-btn" onclick="revealNext();">▶ Hiện ý</button>
-          <button class="reveal-btn" style="background: rgba(255,255,255,0.15);" onclick="revealAll();">Hiện hết</button>
-        </div>
-      </div>
-      <div class="slide-body">
-        <div class="grid-3 reveal-item">
-          <!-- 1. MÀU SẮC -->
-          <div class="card" style="border-top: 4px solid #38E1F0;">
-            <div class="card-title" style="color: #38E1F0;">1. color: màu_sắc</div>
-            <p style="font-size: 13px; color: #CBD5E1; line-height: 1.6;">
-              Có thể đặt tên tiếng Anh (<code>red</code>, <code>green</code>, <code>blue</code>) hoặc dùng hệ màu RGB (<code>rgb(0,0,255)</code>).
-            </p>
-          </div>
-
-          <!-- 2. PHÔNG CHỮ -->
-          <div class="card" style="border-top: 4px solid #F5A623;">
-            <div class="card-title" style="color: #FFC043;">2. font-family: tên_phông</div>
-            <p style="font-size: 13px; color: #CBD5E1; line-height: 1.6;">
-              Chọn kiểu phông hiển thị (<code>Tahoma</code>, <code>Arial</code>, <code>Times New Roman</code>, <code>Courier New</code>).
-            </p>
-          </div>
-
-          <!-- 3. CỠ CHỮ -->
-          <div class="card" style="border-top: 4px solid #10B981;">
-            <div class="card-title" style="color: #34D399;">3. font-size: cỡ_chữ</div>
-            <p style="font-size: 13px; color: #CBD5E1; line-height: 1.6;">
-              Dùng số kèm đơn vị pixel (<code>20px</code>, <code>24px</code>) hoặc từ thông dụng (<code>small</code>, <code>large</code>).
-            </p>
-          </div>
-        </div>
-
-        <div class="card reveal-item" style="border-left: 5px solid #F5A623; padding: 12px 18px;">
-          <div class="card-title" style="color: #FFC043;">⚠️ Quy tắc vàng khi gộp nhiều định dạng:</div>
-          <p style="font-size: 14px; color: #E2E8F0; line-height: 1.6;">
-            Khi muốn thực hiện <strong>nhiều định dạng phông đồng thời</strong>, ta đặt các cặp <code>tên:giá_trị</code> trong cùng MỘT thuộc tính style, <strong>ngăn cách nhau bởi dấu chấm phẩy ";"</strong>!
-          </p>
-          <div style="font-family: var(--font-mono); font-size: 14px; background: #0D1520; color: #34D399; padding: 10px; border-radius: 6px; margin-top: 6px; border: 1px solid #10B981;">
-            &lt;p style="<span style="color:#38E1F0;">color: green</span>; <span style="color:#FFC043;">font-family: Tahoma</span>; <span style="color:#F472B6;">font-size: 20px</span>"&gt;Nội dung&lt;/p&gt;
-          </div>
-        </div>
-
-        <div class="card reveal-item" style="background: rgba(239, 68, 68, 0.1); border-color: rgba(248, 113, 113, 0.3); padding: 10px 16px; font-size: 13px;">
-          ❌ <strong>Lỗi học sinh hay mắc:</strong> Viết nhiều chữ style rời rạc (<code>&lt;p style="color:red" style="font-size:20px"&gt;</code>) hoặc dùng dấu phẩy để ngăn cách là SAI cú pháp!
-        </div>
-      </div>
-    </section>
-
-    <!-- ══ SLIDE 9: LIVE FONT STUDIO (THAY ĐỔI CỠ, MÀU, PHÔNG THỜI GIAN THỰC) ═ -->
-    <section class="slide" id="slide-9" data-total-reveal="1">
-      <div class="slide-header">
-        <div>
-          <span class="slide-badge leaf">Studio tương tác độc quyền</span>
-          <div class="slide-title">Live Font Studio — Tự tay pha trộn định dạng</div>
-          <div class="slide-subtitle">Kéo thanh trượt cỡ chữ, chọn màu, đổi phông và quan sát mã code tự sinh ra</div>
-        </div>
-        <div class="reveal-ctrl">
-          <button class="sim-btn" onclick="resetFontStudio();">🔄 Đặt lại mặc định</button>
-        </div>
-      </div>
-      <div class="slide-body">
-        <div class="grid-2 reveal-item visible">
-          <!-- BẢNG ĐIỀU KHIỂN STUDIO -->
-          <div class="card" style="display: flex; flex-direction: column; gap: 12px;">
-            <!-- THANH KÉO CỠ CHỮ -->
-            <div>
-              <div style="display: flex; justify-content: space-between; font-size: 13px; font-weight: 700; color: #38E1F0;">
-                <span>Cỡ chữ (font-size):</span>
-                <span id="lbl-size" style="font-family: var(--font-mono);">24px</span>
-              </div>
-              <input type="range" id="rng-size" min="14" max="42" value="24" oninput="updateFontStudio();" style="width: 100%; margin-top: 6px; cursor: pointer;">
-            </div>
-
-            <!-- CHỌN MÀU -->
-            <div>
-              <div style="font-size: 13px; font-weight: 700; color: #FFC043; margin-bottom: 6px;">Màu sắc (color):</div>
-              <div style="display: flex; gap: 6px; flex-wrap: wrap;">
-                <button class="sim-btn active" onclick="setStudioColor('red');" style="color: tomato; border-color: tomato;">red</button>
-                <button class="sim-btn" onclick="setStudioColor('blue');" style="color: #60CDFF; border-color: #60CDFF;">blue</button>
-                <button class="sim-btn" onclick="setStudioColor('green');" style="color: #34D399; border-color: #34D399;">green</button>
-                <button class="sim-btn" onclick="setStudioColor('#8B5CF6');" style="color: #C4B5FD; border-color: #C4B5FD;">#8B5CF6</button>
-                <button class="sim-btn" onclick="setStudioColor('#EC4899');" style="color: #F472B6; border-color: #F472B6;">#EC4899</button>
-              </div>
-            </div>
-
-            <!-- CHỌN PHÔNG -->
-            <div>
-              <div style="font-size: 13px; font-weight: 700; color: #34D399; margin-bottom: 6px;">Phông chữ (font-family):</div>
-              <div style="display: flex; gap: 6px; flex-wrap: wrap;">
-                <button class="sim-btn active" onclick="setStudioFont('Tahoma');">Tahoma</button>
-                <button class="sim-btn" onclick="setStudioFont('Arial');">Arial</button>
-                <button class="sim-btn" onclick="setStudioFont('Courier New');">Courier New</button>
-                <button class="sim-btn" onclick="setStudioFont('Times New Roman');">Times New Roman</button>
-              </div>
-            </div>
-
-            <!-- MÃ CODE TỰ ĐỘNG SINH -->
-            <div style="font-family: var(--font-mono); font-size: 12px; background: #0A1118; color: #E2E8F0; padding: 10px; border-radius: 6px; border: 1px solid rgba(56, 225, 240, 0.3);">
-              &lt;p style="<span id="code-style-out" style="color: #38E1F0;">color: red; font-family: Tahoma; font-size: 24px;</span>"&gt;Văn bản mẫu&lt;/p&gt;
-            </div>
-          </div>
-
-          <!-- MÀN HÌNH PREVIEW CHỮ SỐNG ĐỘNG -->
-          <div class="preview-box" style="display: flex; flex-direction: column; justify-content: center; align-items: center; min-height: 260px;">
-            <div class="preview-header" style="width: 100%;"><span>🌐 Kết quả trực tiếp</span></div>
-            <div id="studio-preview-text" style="font-size: 24px; color: red; font-family: Tahoma; text-align: center; margin: auto; transition: all 0.2s var(--ease-spring);">
-              Tin học 12 — Thiết kế Trang Web!
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- ══ SLIDE 10: BÀI TOÁN THỰC HÀNH PHƯƠNG TRÌNH BẬC 2 (SGK TRANG 50) ══════ -->
-    <section class="slide" id="slide-10" data-total-reveal="2">
-      <div class="slide-header">
-        <div>
-          <span class="slide-badge gold">Bài thực hành SGK · Hình 8.3 Trang 50</span>
-          <div class="slide-title">Bài toán thực hành: Biện luận Phương trình bậc 2</div>
-          <div class="slide-subtitle">Vận dụng kết hợp tiêu đề h1/h3, thẻ span, chỉ số sup/sub, đậm strong, nghiêng em</div>
-        </div>
-        <div class="reveal-ctrl">
-          <span>✨</span><span class="reveal-status" id="slide-10-status">0 / 2</span>
-          <button class="reveal-btn" onclick="revealNext();">▶ Hiện ý</button>
-          <button class="reveal-btn" style="background: rgba(255,255,255,0.15);" onclick="revealAll();">Hiện hết</button>
-        </div>
-      </div>
-      <div class="slide-body">
-        <div class="grid-2">
-          <!-- CODE SGK -->
-          <div class="code-box reveal-item">
-            <div class="code-header"><span>phuongtrinhbac2.html</span></div>
-            <div class="code-content">&lt;<span class="tag-kw">h1</span>&gt;Biện luận số nghiệm của phương trình bậc 2&lt;/<span class="tag-kw">h1</span>&gt;
-&lt;<span class="tag-kw">h3</span>&gt;&lt;<span class="tag-kw">span</span> <span class="attr-kw">style</span>=<span class="val-kw">"color:rgb(205,0,0)"</span>&gt;Bài toán:&lt;/<span class="tag-kw">span</span>&gt;
-Xác định số nghiệm của ax&lt;<span class="tag-kw">sup</span>&gt;2&lt;/<span class="tag-kw">sup</span>&gt; + bx + c = 0&lt;/<span class="tag-kw">h3</span>&gt;
-
-&lt;<span class="tag-kw">h3</span> <span class="attr-kw">style</span>=<span class="val-kw">"color:rgb(205,0,0)"</span>&gt;Cách làm:&lt;/<span class="tag-kw">h3</span>&gt;
-&lt;<span class="tag-kw">p</span>&gt;&lt;<span class="tag-kw">strong</span>&gt;B&lt;<span class="tag-kw">sub</span>&gt;1&lt;/<span class="tag-kw">sub</span>&gt;&lt;/<span class="tag-kw">strong</span>&gt;: Xác định hệ số a, b và c&lt;/<span class="tag-kw">p</span>&gt;
-&lt;<span class="tag-kw">p</span>&gt;&lt;<span class="tag-kw">strong</span>&gt;B&lt;<span class="tag-kw">sub</span>&gt;2&lt;/<span class="tag-kw">sub</span>&gt;&lt;/<span class="tag-kw">strong</span>&gt;: Tính delta = b&lt;<span class="tag-kw">sup</span>&gt;2&lt;/<span class="tag-kw">sup</span>&gt; - 4ac&lt;/<span class="tag-kw">p</span>&gt;
-&lt;<span class="tag-kw">p</span>&gt;&lt;<span class="tag-kw">strong</span>&gt;B&lt;<span class="tag-kw">sub</span>&gt;3&lt;/<span class="tag-kw">sub</span>&gt;&lt;/<span class="tag-kw">strong</span>&gt;: Kết luận&lt;<span class="tag-kw">br</span>&gt;
-+ Nếu delta &lt; 0: Phương trình &lt;<span class="tag-kw">em</span>&gt;vô nghiệm&lt;/<span class="tag-kw">em</span>&gt;&lt;<span class="tag-kw">br</span>&gt;
-+ Nếu delta = 0: Có &lt;<span class="tag-kw">em</span>&gt;nghiệm duy nhất&lt;/<span class="tag-kw">em</span>&gt;&lt;<span class="tag-kw">br</span>&gt;
-+ Nếu delta &gt; 0: Có hai &lt;<span class="tag-kw">em</span>&gt;nghiệm phân biệt&lt;/<span class="tag-kw">em</span>&gt;&lt;/<span class="tag-kw">p</span>&gt;</div>
-          </div>
-
-          <!-- KẾT QUẢ PREVIEW CHUẨN SGK -->
-          <div class="preview-box reveal-item" style="font-size: 13.5px;">
-            <div class="preview-header"><span>🌐 Kết quả hiển thị (Khớp 100% Hình 8.3 SGK)</span></div>
-            <h1 style="font-size: 20px; margin: 0 0 8px 0; color: #111827;">Biện luận số nghiệm của phương trình bậc 2</h1>
-            <h3 style="font-size: 15px; margin: 0 0 6px 0; color: #111827;">
-              <span style="color: rgb(205,0,0);">Bài toán:</span> Xác định số nghiệm của ax<sup>2</sup> + bx + c = 0 (a != 0)
-            </h3>
-            <h3 style="font-size: 15px; margin: 0 0 6px 0; color: rgb(205,0,0);">Cách làm:</h3>
-            <p style="margin: 0 0 4px 0;"><strong>B<sub>1</sub></strong>: Xác định hệ số a, b và c</p>
-            <p style="margin: 0 0 4px 0;"><strong>B<sub>2</sub></strong>: Tính <strong>delta</strong> = b<sup>2</sup> - 4ac</p>
-            <p style="margin: 0 0 4px 0;">
-              <strong>B<sub>3</sub></strong>: Kết luận<br>
-              + Nếu <strong>delta</strong> &lt; 0: Phương trình <em>vô nghiệm</em><br>
-              + Nếu <strong>delta</strong> = 0: Phương trình có <em>nghiệm duy nhất</em><br>
-              + Nếu <strong>delta</strong> &gt; 0: Phương trình có hai <em>nghiệm phân biệt</em>
-            </p>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- ══ SLIDE 11: LIVE CODE PLAYGROUND ═════════════════════════════════════ -->
-    <section class="slide" id="slide-11" data-total-reveal="1">
-      <div class="slide-header">
-        <div>
-          <span class="slide-badge leaf">Thực hành thời gian thực</span>
-          <div class="slide-title">Phòng Thực hành Code Trực tiếp — Bài 8</div>
-          <div class="slide-subtitle">Chỉnh sửa code bên trái → Xem ngay bên phải. Thử nghiệm mọi thẻ định dạng!</div>
-        </div>
-        <div class="reveal-ctrl">
-          <button class="sim-btn" onclick="loadTemplate8('tpl_headings');">📰 Mẫu 1: Tiêu đề</button>
-          <button class="sim-btn" onclick="loadTemplate8('tpl_math');">📐 Mẫu 2: Toán &amp; Hóa</button>
-          <button class="sim-btn" onclick="loadTemplate8('tpl_sgk');">🏆 Mẫu 3: Bài mẫu SGK</button>
-        </div>
-      </div>
-      <div class="slide-body">
-        <div class="playground-wrapper reveal-item visible">
-          <div class="editor-pane">
-            <div class="editor-bar">
-              <span>📝 Soạn thảo HTML (gõ để thay đổi)</span>
-              <button class="sim-btn" onclick="updatePlayground8();">▶ Chạy lại</button>
-            </div>
-            <textarea class="live-code-area" id="pg8-code" oninput="updatePlayground8();" spellcheck="false">&lt;h1 style="color: #0D7C86;"&gt;Tiêu đề lớn màu xanh ngọc&lt;/h1&gt;
-&lt;p&gt;Đoạn văn có chữ &lt;strong&gt;in đậm&lt;/strong&gt;, &lt;em&gt;in nghiêng&lt;/em&gt; và &lt;mark&gt;bôi vàng&lt;/mark&gt;.&lt;/p&gt;
-&lt;hr&gt;
-&lt;p style="color: red; font-size: 20px; font-family: Tahoma;"&gt;
-  Đoạn này chữ màu đỏ, phông Tahoma, cỡ 20px!
-&lt;/p&gt;
-&lt;p&gt;Công thức Hóa học: H&lt;sub&gt;2&lt;/sub&gt;O và Toán học: a&lt;sup&gt;2&lt;/sup&gt; + b&lt;sup&gt;2&lt;/sup&gt; = c&lt;sup&gt;2&lt;/sup&gt;&lt;/p&gt;</textarea>
-          </div>
-          <div class="preview-pane">
-            <div class="preview-pane-bar">
-              <span>🌐</span> Kết quả hiển thị ngay lập tức
-            </div>
-            <iframe class="preview-frame" id="pg8-frame"></iframe>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- ══ SLIDE 12: ĐẤU TRƯỜNG TRẮC NGHIỆM 4 CÂU ═════════════════════════════ -->
-    <section class="slide" id="slide-12" data-total-reveal="2">
-      <div class="slide-header">
-        <div>
-          <span class="slide-badge coral">Kiểm tra kiến thức</span>
-          <div class="slide-title">Đấu trường Trắc nghiệm — Bài 8 Tin học 12</div>
-          <div class="slide-subtitle">Nhấp chọn đáp án để nhận phản hồi phân tích chi tiết và tính điểm tức thì</div>
-        </div>
-        <div class="reveal-ctrl">
-          <span>✨</span><span class="reveal-status" id="slide-12-status">0 / 2</span>
-          <button class="reveal-btn" onclick="revealNext();">▶ Hiện ý</button>
-          <button class="reveal-btn" style="background: rgba(255,255,255,0.15);" onclick="revealAll();">Hiện hết</button>
-        </div>
-      </div>
-      <div class="slide-body">
-        <div class="quiz-grid">
-          <!-- CÂU 1 -->
-          <div class="quiz-card reveal-item">
-            <div class="quiz-q">Câu 1: Thuộc tính của thẻ HTML được viết ở vị trí nào?</div>
-            <button class="quiz-btn" onclick="checkQ(this, true, 'q1', 'Chính xác! Thuộc tính nằm trong thẻ bắt đầu, sau tên thẻ. Không nằm trong thẻ kết thúc!')">A. Trong thẻ bắt đầu, sau tên thẻ</button>
-            <button class="quiz-btn" onclick="checkQ(this, false, 'q1', 'Sai rồi! Thẻ kết thúc chỉ có tên thẻ sau dấu /, không chứa thuộc tính.')">B. Trong thẻ kết thúc, sau dấu /</button>
-            <button class="quiz-btn" onclick="checkQ(this, false, 'q1', 'Sai rồi! Chỉ viết ở thẻ bắt đầu.')">C. Ở cả thẻ bắt đầu và thẻ kết thúc</button>
-            <button class="quiz-btn" onclick="checkQ(this, false, 'q1', 'Sai rồi! Thuộc tính phải nằm trong cặp dấu < >.')">D. Ở dòng riêng phía trên thẻ</button>
-            <div class="quiz-feedback" id="q1-feedback"></div>
-          </div>
-
-          <!-- CÂU 2 -->
-          <div class="quiz-card reveal-item">
-            <div class="quiz-q">Câu 2: Điểm khác nhau cơ bản nhất giữa &lt;div&gt; và &lt;span&gt; là gì?</div>
-            <button class="quiz-btn" onclick="checkQ(this, false, 'q2', 'Sai rồi! Cả hai đều có thể chứa chữ và hình ảnh.')">A. div dùng cho chữ, span dùng cho hình ảnh</button>
-            <button class="quiz-btn" onclick="checkQ(this, true, 'q2', 'Chính xác! div là khối bắt đầu trên dòng mới (block), còn span dùng cho quy mô nhỏ trong dòng (inline)!')">B. div bắt đầu trên dòng mới, span nằm gọn trong dòng</button>
-            <button class="quiz-btn" onclick="checkQ(this, false, 'q2', 'Sai rồi! Cả hai đều có thể dùng thuộc tính style.')">C. div bắt buộc có style, còn span thì không</button>
-            <button class="quiz-btn" onclick="checkQ(this, false, 'q2', 'Sai rồi! Cả hai đều là thẻ đôi có thẻ đóng.')">D. span là thẻ đơn, còn div là thẻ đôi</button>
-            <div class="quiz-feedback" id="q2-feedback"></div>
-          </div>
-
-          <!-- CÂU 3 -->
-          <div class="quiz-card reveal-item">
-            <div class="quiz-q">Câu 3: Muốn một đoạn văn bản vừa có chữ xanh, phông Tahoma, cỡ 20px thì viết thế nào?</div>
-            <button class="quiz-btn" onclick="checkQ(this, false, 'q3', 'Sai rồi! Không được viết nhiều chữ style rời rạc.')">A. &lt;p style="color:blue" style="font-family:Tahoma" style="font-size:20px"&gt;</button>
-            <button class="quiz-btn" onclick="checkQ(this, false, 'q3', 'Sai rồi! Các định dạng trong style phải ngăn nhau bằng dấu chấm phẩy ;, không phải dấu phẩy.')">B. &lt;p style="color:blue,font-family:Tahoma,font-size:20px"&gt;</button>
-            <button class="quiz-btn" onclick="checkQ(this, true, 'q3', 'Chính xác! Đặt trong MỘT thuộc tính style và ngăn nhau bởi dấu chấm phẩy ; chuẩn cú pháp SGK!')">C. &lt;p style="color:blue; font-family:Tahoma; font-size:20px"&gt;</button>
-            <button class="quiz-btn" onclick="checkQ(this, false, 'q3', 'Sai rồi! Đây là cú pháp HTML cổ xưa, HTML5 dùng style.')">D. &lt;p color="blue" font="Tahoma" size="20px"&gt;</button>
-            <div class="quiz-feedback" id="q3-feedback"></div>
-          </div>
-
-          <!-- CÂU 4 -->
-          <div class="quiz-card reveal-item">
-            <div class="quiz-q">Câu 4: Vì sao SGK khuyến khích dùng &lt;strong&gt; và &lt;em&gt; hơn &lt;b&gt; và &lt;i&gt;?</div>
-            <button class="quiz-btn" onclick="checkQ(this, false, 'q4', 'Sai rồi! Hình thức hiển thị hoàn toàn giống nhau.')">A. Vì strong và em hiển thị đẹp mắt hơn hẳn</button>
-            <button class="quiz-btn" onclick="checkQ(this, true, 'q4', 'Chính xác! strong và em có ý nghĩa nhấn mạnh vào ngữ nghĩa của nội dung!')">B. Vì strong và em nhấn mạnh vào ngữ nghĩa của nội dung</button>
-            <button class="quiz-btn" onclick="checkQ(this, false, 'q4', 'Sai rồi! b và i vẫn tồn tại trong HTML5.')">C. Vì b và i đã bị HTML5 loại bỏ hoàn toàn</button>
-            <button class="quiz-btn" onclick="checkQ(this, false, 'q4', 'Sai rồi! b và i gõ ngắn hơn.')">D. Vì strong và em gõ nhanh hơn khi soạn thảo</button>
-            <div class="quiz-feedback" id="q4-feedback"></div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- ══ SLIDE 13: CHECKLIST KỸ NĂNG & TỔNG KẾT ═════════════════════════════ -->
-    <section class="slide" id="slide-13" data-total-reveal="3">
-      <div class="slide-header">
-        <div>
-          <span class="slide-badge gold">Tự đánh giá kỹ năng</span>
-          <div class="slide-title">🎉 Chúc mừng em đã hoàn thành xuất sắc Bài 8!</div>
-          <div class="slide-subtitle">Tự đánh giá các kỹ năng định dạng văn bản HTML mà em đã làm chủ</div>
-        </div>
-        <div class="reveal-ctrl">
-          <span>✨</span><span class="reveal-status" id="slide-13-status">0 / 3</span>
-          <button class="reveal-btn" onclick="revealNext();">▶ Hiện ý</button>
-          <button class="reveal-btn" style="background: rgba(255,255,255,0.15);" onclick="revealAll();">Hiện hết</button>
-        </div>
-      </div>
-      <div class="slide-body">
-        <div class="grid-2">
-          <!-- BẢNG CHECKLIST -->
-          <div class="card reveal-item" style="border-left: 5px solid #10B981;">
-            <div class="card-title" style="color: #34D399;">
-              📋 Bấm để đánh dấu kỹ năng em đã thành thạo:
-            </div>
-            <div style="display: flex; flex-direction: column; gap: 6px; margin-top: 8px;">
-              <div class="checklist-item" onclick="toggleChecklistItem(this);">
-                <span>⬜</span> <span>1. Sử dụng đúng 6 cấp tiêu đề &lt;h1&gt; đến &lt;h6&gt;</span>
-              </div>
-              <div class="checklist-item" onclick="toggleChecklistItem(this);">
-                <span>⬜</span> <span>2. Tạo đoạn văn &lt;p&gt; và hiểu rõ quy tắc khoảng trống</span>
-              </div>
-              <div class="checklist-item" onclick="toggleChecklistItem(this);">
-                <span>⬜</span> <span>3. Phân biệt chính xác khối lớn &lt;div&gt; vs khối nhỏ &lt;span&gt;</span>
-              </div>
-              <div class="checklist-item" onclick="toggleChecklistItem(this);">
-                <span>⬜</span> <span>4. Thành thạo 8 kiểu chữ: strong, em, mark, sup, sub, del...</span>
-              </div>
-              <div class="checklist-item" onclick="toggleChecklistItem(this);">
-                <span>⬜</span> <span>5. Định dạng màu sắc, cỡ chữ và phông chữ qua thuộc tính style</span>
-              </div>
-              <div class="checklist-item" onclick="toggleChecklistItem(this);">
-                <span>⬜</span> <span>6. Kết hợp nhiều định dạng trong style bằng dấu chấm phẩy ";"</span>
-              </div>
-            </div>
-          </div>
-
-          <!-- TỔNG KẾT & LIÊN KẾT HỌC TẬP -->
-          <div class="reveal-item" style="display: flex; flex-direction: column; gap: 10px;">
-            <div class="card" style="border-left: 5px solid #38E1F0;">
-              <div class="card-title" style="color: #38E1F0;">💡 Lời nhắn nhủ từ bài học:</div>
-              <p style="font-size: 13.5px; line-height: 1.6; color: #CBD5E1;">
-                Định dạng văn bản hợp lý giúp trang web rõ ràng, mạch lạc, thu hút người đọc và thân thiện với các cỗ máy tìm kiếm. Hãy luôn giữ cho mã nguồn HTML sạch sẽ và đúng chuẩn!
-              </p>
-            </div>
-
-            <div class="card" style="text-align: center; padding: 16px;">
-              <div style="font-size: 16px; font-weight: 700; color: white; margin-bottom: 10px;">
-                Luyện tập trắc nghiệm &amp; Xem SGK điện tử
-              </div>
-              <div style="display: flex; gap: 10px; justify-content: center;">
-                <a href="/luyen/bai-08" style="display: inline-flex; align-items: center; gap: 6px; background: #0D7C86; color: white; text-decoration: none; padding: 8px 16px; border-radius: 8px; font-weight: 700; font-size: 13px;">
-                  ✍️ Luyện trắc nghiệm Bài 8
-                </a>
-                <a href="/sgk/bai-08.html" target="_blank" style="display: inline-flex; align-items: center; gap: 6px; background: rgba(255,255,255,0.08); color: white; text-decoration: none; padding: 8px 16px; border-radius: 8px; font-weight: 700; font-size: 13px; border: 1px solid rgba(255,255,255,0.2);">
-                  📖 Đọc SGK Điện tử
-                </a>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div class="card reveal-item" style="text-align: center; padding: 12px; background: rgba(13, 124, 134, 0.12); border-color: rgba(56, 225, 240, 0.4);">
-          <button class="sim-btn" onclick="fireConfetti();" style="background: linear-gradient(135deg, #0D7C86, #38E1F0); color: white; font-weight: 800; padding: 8px 22px; font-size: 14px;">
-            🎊 Bắn pháo hoa ăn mừng hoàn thành Bài 8!
-          </button>
-        </div>
-      </div>
-    </section>
-
-  </div><!-- .deck-container -->
-
-  <!-- ─── DECK NAV DƯỚI CÙNG ─── -->
-  <div class="deck-nav">
-    <button class="nav-btn" onclick="prevSlide();" title="Slide trước (←)">‹</button>
-    <div class="deck-progress"><div class="deck-progress-bar" id="progressBar"></div></div>
-    <div class="deck-counter" id="slideCounter">01 / 13</div>
-    <button class="nav-btn" onclick="nextSlide();" title="Slide tiếp (→ / Space)">›</button>
-    <button class="nav-btn" onclick="toggleMute();" id="muteBtn" title="Bật/Tắt âm thanh (M)">🔊</button>
-    <button class="nav-btn" onclick="toggleFullScreen();" title="Toàn màn hình (F)">⛶</button>
-  </div>
-
-  <script>
-    let currentSlide = 1;
-    const TOTAL = 13;
-    let isMuted = false;
-
-    /* ─── WEB AUDIO API ─── */
-    const audioCtx = (typeof AudioContext !== 'undefined' || typeof webkitAudioContext !== 'undefined')
-      ? new (window.AudioContext || window.webkitAudioContext)() : null;
-
-    function _play(freq, type, dur, volPeak) {
-      if (isMuted || !audioCtx) return;
-      if (audioCtx.state === 'suspended') audioCtx.resume();
-      const osc = audioCtx.createOscillator();
-      const g = audioCtx.createGain();
-      osc.connect(g); g.connect(audioCtx.destination);
-      osc.type = type || 'sine';
-      osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
-      g.gain.setValueAtTime(volPeak || 0.18, audioCtx.currentTime);
-      g.gain.linearRampToValueAtTime(0.001, audioCtx.currentTime + dur);
-      osc.start(); osc.stop(audioCtx.currentTime + dur);
-    }
-    function playClick()   { _play(620, 'sine', 0.05, 0.12); }
-    function playReveal()  { _play(440, 'triangle', 0.12, 0.18); setTimeout(() => _play(880, 'triangle', 0.1, 0.12), 70); }
-    function playSuccess() { _play(523, 'sine', 0.09, 0.18); setTimeout(() => _play(659, 'sine', 0.09, 0.16), 80); setTimeout(() => _play(784, 'sine', 0.22, 0.15), 160); }
-    function playWrong()   { _play(210, 'sawtooth', 0.18, 0.18); }
-    function toggleMute()  { isMuted = !isMuted; document.getElementById('muteBtn').innerText = isMuted ? '🔇' : '🔊'; }
-
-    /* ─── REVEAL ENGINE ─── */
-    function getActiveSlide() { return document.getElementById('slide-' + currentSlide); }
-
-    function updateRevealStatus() {
-      const s = getActiveSlide(); if (!s) return;
-      const total = s.querySelectorAll('.reveal-item').length;
-      const visible = s.querySelectorAll('.reveal-item.visible').length;
-      const el = document.getElementById('slide-' + currentSlide + '-status');
-      if (el) el.innerText = visible + ' / ' + total;
-    }
-
-    function revealNext() {
-      const s = getActiveSlide(); if (!s) return false;
-      const hidden = [...s.querySelectorAll('.reveal-item:not(.visible)')];
-      if (hidden.length) {
-        hidden[0].classList.add('visible', 'just-revealed');
-        playReveal();
-        setTimeout(() => hidden[0].classList.remove('just-revealed'), 700);
-        updateRevealStatus(); return true;
-      }
-      return false;
-    }
-
-    function revealAll() {
-      const s = getActiveSlide(); if (!s) return;
-      s.querySelectorAll('.reveal-item').forEach(i => i.classList.add('visible'));
-      playClick(); updateRevealStatus();
-    }
-
-    function autoStagger(slide) {
-      const items = slide.querySelectorAll('.reveal-item');
-      items.forEach((item, i) => {
-        setTimeout(() => { item.classList.add('visible'); updateRevealStatus(); }, (i + 1) * 150);
-      });
-    }
-
-    /* ─── NAVIGATION ─── */
-    function updateSlide() {
-      document.querySelectorAll('.slide').forEach((s, i) => {
-        const idx = i + 1;
-        s.classList.remove('active', 'prev');
-        if (idx === currentSlide) {
-          s.classList.add('active');
-          s.querySelectorAll('.reveal-item').forEach(el => el.classList.remove('visible'));
-          autoStagger(s);
-        } else if (idx < currentSlide) s.classList.add('prev');
-      });
-      const pct = (currentSlide / TOTAL) * 100;
-      document.getElementById('progressBar').style.width = pct + '%';
-      document.getElementById('slideCounter').innerText =
-        String(currentSlide).padStart(2, '0') + ' / ' + String(TOTAL).padStart(2, '0');
-      if (currentSlide === 11) setTimeout(updatePlayground8, 120);
-      if (currentSlide === 13) setTimeout(fireConfetti, 400);
-    }
-
-    function nextSlide() { if (currentSlide < TOTAL) { currentSlide++; playClick(); updateSlide(); } }
-    function prevSlide() { if (currentSlide > 1) { currentSlide--; playClick(); updateSlide(); } }
-
-    function toggleFullScreen() {
-      if (!document.fullscreenElement) document.documentElement.requestFullscreen().catch(() => {});
-      else document.exitFullscreen().catch(() => {});
-    }
-
-    window.addEventListener('keydown', e => {
-      if (e.target.tagName === 'TEXTAREA' || e.target.tagName === 'INPUT' || e.target.tagName === 'SELECT') return;
-      if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown') { e.preventDefault(); nextSlide(); }
-      else if (e.key === 'ArrowLeft' || e.key === 'PageUp')            { e.preventDefault(); prevSlide(); }
-      else if (e.key === 'ArrowDown')                               { e.preventDefault(); revealNext(); }
-      else if (e.key === 'f' || e.key === 'F')                         { e.preventDefault(); toggleFullScreen(); }
-      else if (e.key === 'm' || e.key === 'M')                         { e.preventDefault(); toggleMute(); }
-      else if (e.key === 'Home')  { currentSlide = 1; updateSlide(); }
-      else if (e.key === 'End')   { currentSlide = TOTAL; updateSlide(); }
+function sound(kind='click') {
+  if (!audioEnabled) return;
+  try {
+    const Audio = window.AudioContext || window.webkitAudioContext;
+    if (!Audio) return;
+    audioContext ||= new Audio();
+    if(audioContext.state==='suspended') audioContext.resume().catch(()=>{});
+    const now=audioContext.currentTime;
+    (kind==='good'?[523,659,784]:kind==='bad'?[240]:[560]).forEach((f,i)=>{
+      const o=audioContext.createOscillator(),g=audioContext.createGain();
+      o.type='sine';o.frequency.value=f;o.connect(g);g.connect(audioContext.destination);
+      g.gain.setValueAtTime(.045,now+i*.075);g.gain.exponentialRampToValueAtTime(.001,now+i*.075+.13);
+      o.start(now+i*.075);o.stop(now+i*.075+.14);
     });
+  } catch { /* Audio is optional: interactions remain available. */ }
+}
+function notify(message) {
+  $('#toast').textContent=message;$('#toast').hidden=false;clearTimeout(toastTimer);
+  toastTimer=setTimeout(()=>$('#toast').hidden=true,3500);
+}
+function syncReveal() {
+  const slide=$(`#slide-${current+1}`),items=$$('.reveal',slide),count=reveals[current];
+  items.forEach((el,i)=>{const shown=i<count;el.classList.toggle('shown',shown);el.inert=!shown;el.setAttribute('aria-hidden',String(!shown));});
+  $('.reveal-tools',slide).hidden=!items.length;
+  $('.count',slide).textContent=`${count} / ${items.length}`;
+  $('.reveal-one',slide).disabled=count===items.length;
+  $('.reveal-all',slide).disabled=count===items.length;
+  $('#next-idea').textContent=count<items.length?'Hiện ý tiếp ↓':current===sections.length-1?'Về đầu bài ↺':'Trang tiếp →';
+  $('#all-ideas').hidden=!items.length;$('#all-ideas').disabled=count===items.length;
+  $('#reveal-counter').textContent=items.length?`Ý ${count}/${items.length}`:'';
+}
+function reveal(all=false) {
+  const length=$$('.reveal',$(`#slide-${current+1}`)).length;
+  if(reveals[current]>=length)return false;
+  reveals[current]=all?length:reveals[current]+1;syncReveal();sound();return true;
+}
+function showSlide(index,focus=true) {
+  if(index<0||index>=sections.length)return;
+  if(typeof onSlideLeave === "function")onSlideLeave(current,index);
+  current=index;
+  $$('.slide').forEach((s,i)=>{s.hidden=i!==index;s.classList.toggle('active',i===index);});
+  $('#stage').scrollTop=0;$('#counter').textContent=`${String(index+1).padStart(2,'0')} / ${sections.length}`;
+  $('#progress').style.width=`${(index+1)/sections.length*100}%`;
+  $('#prev').disabled=index===0;$('#next').disabled=index===sections.length-1;
+  $$('[data-goto]').forEach((b,i)=>b.setAttribute('aria-current',i===index?'step':'false'));
+  syncReveal();if(focus)$(`#title-${index+1}`).focus({preventScroll:true});
+}
+function nextIdea(){if(!reveal()){sound();showSlide(current===sections.length-1?0:current+1);}}
+$('#prev').onclick=()=>{sound();showSlide(current-1);};$('#next').onclick=()=>{sound();showSlide(current+1);};$('#next-idea').onclick=nextIdea;
+$('#all-ideas').onclick=()=>reveal(true);
+$$('.reveal-one').forEach(b=>b.onclick=()=>reveal());$$('.reveal-all').forEach(b=>b.onclick=()=>reveal(true));
+$('#contents').onclick=()=>$('#toc').showModal();$('#close-toc').onclick=()=>$('#toc').close();
+$$('[data-goto]').forEach(b=>b.onclick=()=>{$('#toc').close();showSlide(Number(b.dataset.goto));sound();});
+$('#sound').onclick=()=>{audioEnabled=!audioEnabled;$('#sound').setAttribute('aria-pressed',String(audioEnabled));$('#sound').textContent=audioEnabled?'🔊 Âm thanh: Bật':'🔇 Âm thanh: Tắt';sound();};
+function syncMotion(){document.body.classList.toggle('motion-off',!motion);$('#motion').setAttribute('aria-pressed',String(motion));$('#motion').textContent=motion?'✨ Hiệu ứng: Bật':'✨ Hiệu ứng: Tắt';}
+$('#motion').onclick=()=>{motion=!motion;syncMotion();};syncMotion();
+async function fullscreen(){try{if(document.fullscreenElement)await document.exitFullscreen();else if(document.documentElement.requestFullscreen)await document.documentElement.requestFullscreen();else notify('Trình duyệt này chưa hỗ trợ toàn màn hình. Hãy mở slide ở tab riêng.');}catch{notify('Hãy mở slide ở tab riêng để dùng chế độ toàn màn hình.');}}
+$('#fullscreen').onclick=fullscreen;
+document.addEventListener('keydown',e=>{
+  if($('#toc').open||e.altKey||e.ctrlKey||e.metaKey||e.target.closest('input,textarea,select,[contenteditable="true"]'))return;
+  if(e.code==='Space'&&e.target.closest('button,a'))return;
+  const key=e.key.toLowerCase();
+  if(['arrowright','pagedown'].includes(key)){e.preventDefault();nextIdea();}
+  else if(key===' '){e.preventDefault();nextIdea();}
+  else if(['arrowleft','pageup'].includes(key)){e.preventDefault();showSlide(current-1);}
+  else if(key==='arrowdown'){e.preventDefault();reveal();}
+  else if(key==='arrowup'){e.preventDefault();reveals[current]=Math.max(0,reveals[current]-1);syncReveal();}
+  else if(key==='home'){e.preventDefault();showSlide(0);}
+  else if(key==='end'){e.preventDefault();showSlide(sections.length-1);}
+  else if(key==='f'){e.preventDefault();fullscreen();}
+  else if(key==='m'){e.preventDefault();$('#sound').click();}
+});
 
-    /* ─── PHÒNG THÍ NGHIỆM KIỂU CHỮ (SLIDE 7) ─── */
-    const typeEffects = {
-      strong: { html: 'Tin học 12 &lt;strong&gt;rất thú vị&lt;/strong&gt;!', text: 'Tin học 12 <strong>rất thú vị</strong>!', msg: 'Đã bọc bằng &lt;strong&gt;...&lt;/strong&gt; để in đậm nhấn mạnh ngữ nghĩa!' },
-      em:     { html: 'Tin học 12 &lt;em&gt;rất thú vị&lt;/em&gt;!',     text: 'Tin học 12 <em>rất thú vị</em>!',     msg: 'Đã bọc bằng &lt;em&gt;...&lt;/em&gt; để in nghiêng nhấn mạnh cảm xúc!' },
-      u:      { html: 'Tin học 12 &lt;u&gt;rất thú vị&lt;/u&gt;!',       text: 'Tin học 12 <u>rất thú vị</u>!',       msg: 'Đã bọc bằng &lt;u&gt;...&lt;/u&gt; để gạch chân dưới chữ!' },
-      mark:   { html: 'Tin học 12 &lt;mark&gt;rất thú vị&lt;/mark&gt;!', text: 'Tin học 12 <mark style="background:#FDE047;color:#111;">rất thú vị</mark>!', msg: 'Đã bọc bằng &lt;mark&gt;...&lt;/mark&gt; để bôi vàng đánh dấu như bút highlight!' },
-      small:  { html: 'Tin học 12 &lt;small&gt;rất thú vị&lt;/small&gt;!', text: 'Tin học 12 <small>rất thú vị</small>!', msg: 'Đã bọc bằng &lt;small&gt;...&lt;/small&gt; để giảm kích cỡ chữ!' },
-      sup:    { html: 'Phương trình x&lt;sup&gt;2&lt;/sup&gt; + y&lt;sup&gt;2&lt;/sup&gt; = z&lt;sup&gt;2&lt;/sup&gt;', text: 'Phương trình x<sup>2</sup> + y<sup>2</sup> = z<sup>2</sup>', msg: 'Thẻ &lt;sup&gt; tạo chỉ số trên dùng cho lũy thừa, số mũ!' },
-      sub:    { html: 'Công thức H&lt;sub&gt;2&lt;/sub&gt;O và CO&lt;sub&gt;2&lt;/sub&gt;', text: 'Công thức H<sub>2</sub>O và CO<sub>2</sub>', msg: 'Thẻ &lt;sub&gt; tạo chỉ số dưới dùng cho công thức hóa học!' },
-      del:    { html: 'Giá cũ: &lt;del&gt;100.000đ&lt;/del&gt; -> 80.000đ', text: 'Giá cũ: <del>100.000đ</del> -> 80.000đ', msg: 'Thẻ &lt;del&gt; tạo nét gạch ngang giữa chữ để đánh dấu nội dung bị xóa!' }
-    };
 
-    function applyTypeEffect(key) {
-      playClick();
-      const d = typeEffects[key];
-      document.getElementById('type-code-display').innerHTML = '<code>' + d.html + '</code>';
-      document.getElementById('type-preview-text').innerHTML = d.text;
-      document.getElementById('type-explain-text').innerHTML = d.msg;
-    }
+let quizIndex=0;const quizAnswers=quizQuestions.map(()=>null);
+function renderQuiz(){
+  const score=quizAnswers.filter((a,i)=>a===quizQuestions[i][2]).length,done=quizAnswers.filter(a=>a!==null).length;
+  if(quizIndex===quizQuestions.length){$('#quiz').innerHTML=`<div class="card quiz-end"><div class="score-big">${score} / ${quizQuestions.length}</div><h3>Điểm của lượt chơi</h3><p>${score===quizQuestions.length?'Em đã vận dụng tốt. Hãy nêu một ví dụ ngoài đời!':'Xem lại lời giải, rồi thử một lượt mới nhé.'}</p><button class="action primary" id="quiz-reset">↺ Làm lại toàn bộ</button></div>`;$('#quiz-reset').onclick=resetQuiz;return;}
+  const [q,options,correct,explain]=quizQuestions[quizIndex],picked=quizAnswers[quizIndex],answered=picked!==null;
+  $('#quiz').innerHTML=`<div class="quiz-meta"><span>Câu ${quizIndex+1} / ${quizQuestions.length}</span><span>Đã làm ${done} · Đúng ${score}</span><button class="action" id="quiz-reset">↺ Làm lại</button></div><div class="card"><h3 class="quiz-question">${esc(q)}</h3><div class="quiz-options">${options.map((o,i)=>`<button class="choice ${answered?(i===correct?'correct':i===picked?'wrong':''):''}" data-quiz="${i}" ${answered?'disabled':''}><span class="letter">${answered&&i===correct?'✓':'ABCD'[i]}</span><span>${esc(o)}</span></button>`).join('')}</div><div class="feedback ${picked===correct?'good':''}">${answered?(picked===correct?'✓ Chính xác. ':'↪ Chưa đúng. ')+esc(explain):''}</div><div class="quiz-actions"><button class="action" id="quiz-prev" ${quizIndex===0?'disabled':''}>← Câu trước</button><button class="action primary" id="quiz-next" ${answered?'':'disabled'}>${quizIndex===quizQuestions.length-1?'Xem tổng điểm':'Câu tiếp →'}</button></div></div>`;
+  $('#quiz-reset').onclick=resetQuiz;$('#quiz-prev').onclick=()=>{quizIndex--;renderQuiz();};$('#quiz-next').onclick=()=>{quizIndex++;renderQuiz();if(quizIndex===quizQuestions.length){sound('good');if(score===quizQuestions.length)confetti();}};
+  $$('[data-quiz]').forEach(b=>b.onclick=()=>{if(quizAnswers[quizIndex]!==null)return;quizAnswers[quizIndex]=Number(b.dataset.quiz);sound(quizAnswers[quizIndex]===correct?'good':'bad');renderQuiz();$('#quiz-next').focus({preventScroll:true});});
+}
+function resetQuiz(){quizAnswers.fill(null);quizIndex=0;renderQuiz();sound();}renderQuiz();
 
-    function resetTypographyDemo() {
-      playClick();
-      document.getElementById('type-code-display').innerText = 'Mã HTML tương ứng sẽ xuất hiện tại đây...';
-      document.getElementById('type-preview-text').innerText = 'Tin học 12 rất thú vị!';
-      document.getElementById('type-explain-text').innerText = '← Nhấp các nút bên trái để đổi kiểu chữ ngay lập tức!';
-    }
 
-    /* ─── LIVE FONT STUDIO (SLIDE 9) ─── */
-    let curStudioSize = '24px';
-    let curStudioColor = 'red';
-    let curStudioFont = 'Tahoma';
+let celebrationTimer;
+function confetti(){if(!motion||matchMedia('(prefers-reduced-motion: reduce)').matches)return;const layer=$('#confetti');clearTimeout(celebrationTimer);layer.replaceChildren();const colors=['#65e8e0','#ffcf77','#ffa7c4','#91e8b7'];for(let i=0;i<65;i++){const p=document.createElement('i');p.style.left=`${Math.random()*100}%`;p.style.animationDelay=`${Math.random()*.45}s`;p.style.background=colors[i%4];layer.append(p);}celebrationTimer=setTimeout(()=>layer.replaceChildren(),2500);}
 
-    function setStudioColor(col) {
-      playClick(); curStudioColor = col; updateFontStudio();
-    }
+// Preview frames have opaque origins, no scripts, and no remote resources.
+function preview(id,html){const policy="default-src 'none'; script-src 'none'; style-src 'unsafe-inline'; img-src data:; font-src 'none'; connect-src 'none'; form-action 'none'; base-uri 'none'";$(id).srcdoc=`<!DOCTYPE html><html lang="vi"><head><meta charset="utf-8"><meta http-equiv="Content-Security-Policy" content="${policy}"><style>html{color-scheme:light}body{font-family:Arial,sans-serif;color:#18384b;background:white;margin:20px;font-size:20px;line-height:1.5;overflow-wrap:anywhere}h1{font-size:30px;line-height:1.2;margin:12px 0}h2{font-size:24px;margin:12px 0}h3{font-size:21px}p{margin:12px 0}hr{margin:18px 0}</style></head><body>${html}</body></html>`;}
+function selected(s,b){$$(s).forEach(x=>x.setAttribute('aria-pressed',String(x===b)));}
+function paint(s,t){const el=$(s);el.textContent=t;el.classList.remove('pop');void el.offsetWidth;el.classList.add('pop');}
+$('#compare-range').oninput=()=>{const n=$('#compare-range').value;$('#after-news').style.clipPath=`inset(0 ${100-n}% 0 0)`;$('#compare-line').style.left=n+'%';};
+const syntaxNotes=['p là tên thẻ đoạn văn. Thuộc tính được viết trong thẻ mở này.','style là thuộc tính HTML; dấu = gán giá trị cho thuộc tính.','Dấu nháy mở đầu giá trị của style. Ví dụ này dùng cặp nháy kép.','color:blue là một khai báo CSS. Dấu : nối tên với giá trị; dấu ; tách nó khỏi khai báo tiếp theo.','font-size:24px đặt cỡ chữ. 24 đi cùng đơn vị px, không viết thành 24 px.','Dấu nháy đóng kết thúc giá trị của style.','Dấu > kết thúc thẻ mở; sau đó là nội dung và thẻ đóng p.'];
+$$('[data-syntax]').forEach(b=>b.onclick=()=>{selected('[data-syntax]',b);paint('#syntax-note',syntaxNotes[Number(b.dataset.syntax)]);sound();});
+function setStyle(){const value=`<p style="color:${$('#style-color').value};font-size:${$('#style-size').value};font-family:${$('#style-font').value}">Ngày hội sáng tạo</p>`;$('#style-code').textContent=value;preview('#style-preview',value);}
+['color','size','font'].forEach(id=>$('#style-'+id).onchange=setStyle);setStyle();
 
-    function setStudioFont(font) {
-      playClick(); curStudioFont = font; updateFontStudio();
-    }
-
-    function updateFontStudio() {
-      const val = document.getElementById('rng-size').value;
-      curStudioSize = val + 'px';
-      document.getElementById('lbl-size').innerText = curStudioSize;
-
-      const preview = document.getElementById('studio-preview-text');
-      preview.style.fontSize = curStudioSize;
-      preview.style.color = curStudioColor;
-      preview.style.fontFamily = curStudioFont;
-
-      const codeStr = 'color: ' + curStudioColor + '; font-family: ' + curStudioFont + '; font-size: ' + curStudioSize + ';';
-      document.getElementById('code-style-out').innerText = codeStr;
-    }
-
-    function resetFontStudio() {
-      playClick();
-      document.getElementById('rng-size').value = 24;
-      curStudioSize = '24px';
-      curStudioColor = 'red';
-      curStudioFont = 'Tahoma';
-      updateFontStudio();
-    }
-
-    /* ─── LIVE PLAYGROUND (SLIDE 11) ─── */
-    const templates8 = {
-      tpl_headings: `<h1>Tiêu đề cấp 1: Tin học 12</h1>
-<h2>Tiêu đề cấp 2: Chủ đề B</h2>
-<h3>Tiêu đề cấp 3: Bài 8. Định dạng văn bản</h3>
-<p>Mặc định trình duyệt hiển thị các tiêu đề h1-h6 bằng <strong>màu đen đồng nhất</strong>.</p>`,
-      tpl_math: `<h2 style="color: #0D7C86;">Toán học & Hóa học</h2>
-<p>Phương trình Pythagore: a<sup>2</sup> + b<sup>2</sup> = c<sup>2</sup></p>
-<p>Phương trình Einstein: E = m · c<sup>2</sup></p>
-<hr>
-<p>Axit Sunfuric: H<sub>2</sub>SO<sub>4</sub></p>
-<p>Khí Cacbonic: CO<sub>2</sub></p>`,
-      tpl_sgk: `<h1>Biện luận số nghiệm phương trình bậc 2</h1>
-<h3><span style="color:rgb(205,0,0)">Bài toán:</span> ax<sup>2</sup> + bx + c = 0</h3>
-<h3 style="color:rgb(205,0,0)">Cách làm:</h3>
-<p><strong>B<sub>1</sub></strong>: Xác định hệ số a, b, c</p>
-<p><strong>B<sub>2</sub></strong>: Tính <strong>delta</strong> = b<sup>2</sup> - 4ac</p>
-<p><strong>B<sub>3</sub></strong>: Kết luận<br>
-+ delta &lt; 0: Phương trình <em>vô nghiệm</em><br>
-+ delta = 0: <em>Nghiệm duy nhất</em><br>
-+ delta &gt; 0: Hai <em>nghiệm phân biệt</em></p>`
-    };
-
-    function loadTemplate8(key) {
-      playClick();
-      document.getElementById('pg8-code').value = templates8[key];
-      updatePlayground8();
-    }
-
-    function updatePlayground8() {
-      const code = document.getElementById('pg8-code').value;
-      const frame = document.getElementById('pg8-frame');
-      const doc = frame.contentDocument || frame.contentWindow.document;
-      doc.open(); doc.write(code); doc.close();
-    }
-
-    /* ─── QUIZ ENGINE (SLIDE 12) ─── */
-    function checkQ(btn, ok, qId, explain) {
-      const parent = btn.closest('.quiz-card');
-      parent.querySelectorAll('.quiz-btn').forEach(b => { b.disabled = true; b.style.pointerEvents = 'none'; });
-      btn.classList.add(ok ? 'correct' : 'wrong');
-      ok ? playSuccess() : playWrong();
-      const fb = document.getElementById(qId + '-feedback');
-      fb.style.display = 'block';
-      fb.style.background = ok ? 'rgba(16, 185, 129, 0.15)' : 'rgba(239, 68, 68, 0.15)';
-      fb.style.border = '1px solid ' + (ok ? '#10B981' : '#EF4444');
-      fb.style.color  = ok ? '#34D399' : '#FCA5A5';
-      fb.innerHTML = (ok ? '🎉 <strong>Chính xác!</strong> ' : '❌ <strong>Chưa đúng!</strong> ') + explain;
-    }
-
-    /* ─── CHECKLIST (SLIDE 13) ─── */
-    function toggleChecklistItem(item) {
-      playClick();
-      item.classList.toggle('done');
-      const box = item.querySelector('span:first-child');
-      box.innerText = item.classList.contains('done') ? '✅' : '⬜';
-    }
-
-    /* ─── CONFETTI CANVAS ─── */
-    function fireConfetti() {
-      playSuccess();
-      const cvs = document.getElementById('confettiCanvas');
-      const ctx = cvs.getContext('2d');
-      cvs.width = window.innerWidth; cvs.height = window.innerHeight;
-      const colors = ['#38E1F0', '#F5A623', '#F2683C', '#10B981', '#8B5CF6', '#FFFFFF'];
-      const parts = Array.from({ length: 110 }, () => ({
-        x: window.innerWidth / 2, y: window.innerHeight * 0.42,
-        vx: (Math.random() - 0.5) * 18,
-        vy: (Math.random() - 0.65) * 18,
-        sz: Math.random() * 9 + 4,
-        color: colors[Math.floor(Math.random() * colors.length)],
-        alpha: 1, rot: Math.random() * 360, vrot: (Math.random() - 0.5) * 14
-      }));
-      function render() {
-        ctx.clearRect(0, 0, cvs.width, cvs.height);
-        let alive = false;
-        parts.forEach(p => {
-          p.x += p.vx; p.y += p.vy; p.vy += 0.38; p.alpha -= 0.013; p.rot += p.vrot;
-          if (p.alpha > 0) {
-            alive = true; ctx.save(); ctx.globalAlpha = p.alpha;
-            ctx.translate(p.x, p.y); ctx.rotate(p.rot * Math.PI / 180);
-            ctx.fillStyle = p.color; ctx.fillRect(-p.sz / 2, -p.sz / 2, p.sz, p.sz);
-            ctx.restore();
-          }
-        });
-        if (alive) requestAnimationFrame(render);
-        else ctx.clearRect(0, 0, cvs.width, cvs.height);
-      }
-      render();
-    }
-
-    /* KHỞI ĐỘNG */
-    updateSlide();
-  </script>
-</body>
-</html>
+// Small challenges lock an answer until the next item; retry resets the score.
+function challenge(prefix,selector,items,render){let index=0,score=0,answered=false;const next=$('#'+prefix+'-next');function draw(){answered=false;const item=items[index];render(item,index);$('#'+prefix+'-question').textContent=item.q;$('#'+prefix+'-feedback').textContent='';$('#'+prefix+'-feedback').classList.remove('good');$('#'+prefix+'-score').textContent=`Mục ${index+1}/${items.length} · Đúng ${score}`;$$(selector).forEach(b=>{b.disabled=false;b.classList.remove('correct','wrong');});next.disabled=true;next.textContent=index===items.length-1?'Đã hết lượt ✓':'Mục tiếp →';} $$(selector).forEach(b=>b.onclick=()=>{if(answered)return;answered=true;const item=items[index],ok=b.dataset[prefix==='heading'?'rank':'formula']===item.a;if(ok)score++;$$(selector).forEach(x=>{x.disabled=true;x.classList.toggle('correct',x.dataset[prefix==='heading'?'rank':'formula']===item.a);});b.classList.toggle('wrong',!ok);const f=$('#'+prefix+'-feedback');f.textContent=(ok?'✓ Chính xác. ':'↪ Chưa đúng. ')+item.explain;f.classList.toggle('good',ok);$('#'+prefix+'-score').textContent=`Mục ${index+1}/${items.length} · Đúng ${score}`;next.disabled=index===items.length-1;sound(ok?'good':'bad');});next.onclick=()=>{if(index<items.length-1){index++;draw();}};$('#'+prefix+'-reset').onclick=()=>{index=0;score=0;draw();};draw();}
+const headings=[{q:'“Lập trình web” là mục con của “Hoạt động” (h2). Chọn thẻ nào?',a:'h3',map:['h1 · Câu lạc bộ Tin học','h2 · Hoạt động','? · Lập trình web'],explain:'Mục con của h2 dùng h3. Cỡ chữ có thể đổi bằng style.'},{q:'“Thành viên” ngang cấp với “Hoạt động” (h2). Chọn thẻ nào?',a:'h2',map:['h1 · Câu lạc bộ Tin học','h2 · Hoạt động','? · Thành viên (ngang cấp)'],explain:'Các mục cùng cấp dùng cùng mức tiêu đề: h2.'},{q:'Tên chính của toàn trang “Câu lạc bộ Tin học” nên dùng thẻ nào?',a:'h1',map:['? · Câu lạc bộ Tin học','h2 · Hoạt động','h3 · Lập trình web'],explain:'Dùng h1 cho tiêu đề chính của trang trong cấu trúc này.'}];
+challenge('heading','[data-rank]',headings,(item,index)=>{$$('.heading-map>div').forEach((x,i)=>{x.textContent=item.map[i];x.className=['level-one','level-two',index===1?'level-two':'level-three'][i];});});
+const paragraphs=[['<p>Hẹn gặp lúc 14:00.\nTại Phòng Tin học.</p>','Enter trong mã của p thông thường được gộp thành khoảng trắng khi hiển thị.'],['<p>Hẹn gặp lúc 14:00.<br>Tại Phòng Tin học.</p>','br tạo ngắt dòng ngay trong cùng một đoạn văn.'],['<p>Hẹn gặp lúc 14:00.</p>\n<p>Tại Phòng Tin học.</p>','Hai phần tử p tạo hai đoạn riêng, mặc định có khoảng trống trước và sau.'],['<p>Thông báo sự kiện.</p>\n<hr>\n<p>Thông tin đăng kí.</p>','hr biểu thị sự chuyển chủ đề; trình duyệt thường hiển thị bằng đường ngang.']];
+function setParagraph(i){$('#paragraph-code').textContent=paragraphs[i][0];preview('#paragraph-preview',paragraphs[i][0]);paint('#paragraph-note',paragraphs[i][1]);}
+$$('[data-paragraph]').forEach(b=>b.onclick=()=>{selected('[data-paragraph]',b);setParagraph(Number(b.dataset.paragraph));sound();});setParagraph(0);
+function setContainer(i){const tag=i?'div':'span',value=`<div>Hẹn gặp tại\n  <${tag} style="background:#ffe3a0;color:#18384b">Phòng Tin học</${tag}>\n  vào thứ Sáu.\n</div>`;$('#container-code').textContent=value;preview('#container-preview',value);}
+$$('[data-container]').forEach(b=>b.onclick=()=>{selected('[data-container]',b);setContainer(Number(b.dataset.container));sound();});setContainer(0);
+const formats=[['strong','Hãy <strong>lưu tệp trước khi đóng</strong>.','strong: biểu thị tầm quan trọng cao; mặc định thường hiển thị đậm.'],['em','Mình <em>rất</em> thích thiết kế web.','em: nhấn giọng một phần câu; mặc định thường hiển thị nghiêng.'],['mark','Kết quả tìm kiếm: học <mark>HTML</mark> cơ bản.','mark: đánh dấu nội dung có liên quan trong ngữ cảnh hiện tại.'],['small','<small>Ghi chú: lịch có thể thay đổi.</small>','small: chú thích phụ hoặc chữ in nhỏ; mặc định thường nhỏ hơn chữ xung quanh.'],['sup','Diện tích hình vuông: a<sup>2</sup>.','sup: chỉ số trên, ví dụ số mũ.'],['sub','Công thức nước: H<sub>2</sub>O.','sub: chỉ số dưới, ví dụ công thức hóa học.'],['del','Lịch cũ: <del>thứ Năm</del>. Lịch mới: thứ Sáu.','del: biểu thị nội dung đã bị xóa khỏi tài liệu; thường gạch ngang.'],['u','Từ viết sai cần chú giải: <u>họcc</u>.','u: chú giải phi văn bản, chẳng hạn đánh dấu lỗi chính tả; thường gạch chân. Nếu chỉ trang trí, dùng style="text-decoration:underline".'],['b','Từ khóa: <b>HTML</b> và CSS.','b: thu hút chú ý vào chữ mà không tăng mức độ quan trọng, ví dụ từ khóa.'],['i','Thuật ngữ: <i>inline</i> (trong dòng).','i: biểu thị giọng hoặc cách gọi khác, ví dụ thuật ngữ; không tự mang ý nghĩa nhấn giọng như em.']];
+function setFormat(i){const f=formats[i],value='<p>'+f[1]+'</p>';$('#format-code').textContent=value;paint('#format-note',f[2]);preview('#format-preview',value);}
+$$('[data-format]').forEach(b=>b.onclick=()=>{selected('[data-format]',b);setFormat(Number(b.dataset.format));sound();});setFormat(0);
+const emphases=[['<em>Chúng mình</em> cùng học HTML.','Nhấn vào người tham gia: chúng mình, không phải một nhóm khác.'],['Chúng mình <em>cùng</em> học HTML.','Nhấn vào việc học cùng nhau, hợp tác với nhau.'],['Chúng mình cùng học <em>HTML</em>.','Nhấn vào nội dung học: HTML.']];
+function setEmphasis(i){const value='<p>'+emphases[i][0]+'</p>';$('#emphasis-code').textContent=value;paint('#emphasis-note',emphases[i][1]);preview('#emphasis-preview',value);}
+$$('[data-emphasis]').forEach(b=>b.onclick=()=>{selected('[data-emphasis]',b);setEmphasis(Number(b.dataset.emphasis));sound();});setEmphasis(0);
+const formulas=[{q:'Đặt số 2 ở vị trí nào để có công thức nước?',target:'H₂O',a:'sub',explain:'H<sub>2</sub>O: số 2 là chỉ số dưới.'},{q:'Viết x bình phương bằng HTML, chọn thẻ nào cho số 2?',target:'x²',a:'sup',explain:'x<sup>2</sup>: số 2 là chỉ số trên.'},{q:'Viết B kèm chỉ số dưới 1, chọn thẻ nào cho số 1?',target:'B₁',a:'sub',explain:'B<sub>1</sub>: số 1 là chỉ số dưới. small chỉ làm chữ nhỏ, không đặt đúng vị trí chỉ số.'}];
+challenge('formula','[data-formula]',formulas,item=>$('#formula-target').textContent=item.target);
+function setRgb(){const values=['red','green','blue'].map(id=>{const v=Number($('#rgb-'+id).value);$('#rgb-'+id+'-value').value=v;return v;}),rgb=`rgb(${values.join(',')})`;$('#rgb-swatch').style.background=rgb;$('#rgb-text').style.color=rgb;$('#rgb-code').textContent=`<p style="color:${rgb}">\n  Màu chữ em vừa pha\n</p>`;const linear=values.map(v=>{v/=255;return v<=.04045?v/12.92:((v+.055)/1.055)**2.4;}),ratio=1.05/(.2126*linear[0]+.7152*linear[1]+.0722*linear[2]+.05);$('#contrast-note').textContent=`Tương phản với nền trắng: ${ratio.toFixed(1)} : 1. `+(ratio>=4.5?'Dễ đọc cho chữ thông thường theo ngưỡng 4,5 : 1.':'Thử giảm độ sáng của màu để chữ thường đạt ngưỡng 4,5 : 1.');}
+['red','green','blue'].forEach(id=>$('#rgb-'+id).oninput=setRgb);$$('[data-rgb]').forEach(b=>b.onclick=()=>{b.dataset.rgb.split(',').forEach((v,i)=>$('#rgb-'+['red','green','blue'][i]).value=v);setRgb();sound();});setRgb();
+function setFont(){const size=$('#font-size').value+'px',value=`<p style="font-family:${$('#font-family').value};font-size:${size}">Chữ có tiếng nói.</p>`;$('#font-size-value').value=size;$('#font-code').textContent=value;preview('#font-preview',value);}
+$('#font-family').onchange=setFont;$('#font-size').oninput=setFont;setFont();
+const debugItems=[{bad:'<p style="color:blue,font-size:28px">Xin chào!</p>',options:['color:blue;font-size:28px','color=blue;font-size=28px','color:blue/font-size:28px'],answer:0,explain:'Dùng dấu ; để tách hai khai báo. Dấu phẩy ở đây làm giá trị color không hợp lệ.',fixed:'<p style="color:blue;font-size:28px">Xin chào!</p>'},{bad:'<p style="font-size=32px">Xin chào!</p>',options:['font-size;32px','font-size:32px','font-size,32px'],answer:1,explain:'Trong CSS dùng dấu : giữa tên thuộc tính và giá trị; dấu = thuộc cú pháp thuộc tính HTML.',fixed:'<p style="font-size:32px">Xin chào!</p>'},{bad:'<p style="color:blue" style="font-size:28px">Xin chào!</p>',options:['Giữ hai thuộc tính style','Đổi style thứ hai thành size','Gộp vào một style, cách nhau bằng ;'],answer:2,explain:'Không lặp thuộc tính style trên cùng phần tử. Gộp các khai báo vào một giá trị style.',fixed:'<p style="color:blue;font-size:28px">Xin chào!</p>'}];
+let debugIndex=0,debugScore=0,debugAnswered=false;
+function drawDebug(){debugAnswered=false;const item=debugItems[debugIndex];$('#debug-code').textContent=item.bad;preview('#debug-preview',item.bad);$('#debug-count').textContent=`Lỗi ${debugIndex+1}/3 · Sửa đúng ${debugScore}`;$('#debug-feedback').textContent='';$('#debug-feedback').classList.remove('good');$('#debug-next').disabled=true;$('#debug-next').textContent=debugIndex===2?'Đã hết lượt ✓':'Lỗi tiếp →';$('#debug-options').innerHTML=item.options.map((s,i)=>`<button class="choice" data-fix="${i}"><span class="letter">${'ABC'[i]}</span><span>${esc(s)}</span></button>`).join('');$$('[data-fix]').forEach(b=>b.onclick=()=>{if(debugAnswered)return;debugAnswered=true;const ok=Number(b.dataset.fix)===item.answer;if(ok)debugScore++;$$('[data-fix]').forEach(x=>{x.disabled=true;x.classList.toggle('correct',Number(x.dataset.fix)===item.answer);});b.classList.toggle('wrong',!ok);$('#debug-code').textContent=item.fixed;preview('#debug-preview',item.fixed);$('#debug-feedback').textContent=(ok?'✓ Chính xác. ':'↪ Chưa đúng. ')+item.explain+' Đang hiển thị mã đã sửa.';$('#debug-feedback').classList.toggle('good',ok);$('#debug-count').textContent=`Lỗi ${debugIndex+1}/3 · Sửa đúng ${debugScore}`;$('#debug-next').disabled=debugIndex===2;sound(ok?'good':'bad');});}
+$('#debug-next').onclick=()=>{if(debugIndex<2){debugIndex++;drawDebug();}};$('#debug-reset').onclick=()=>{debugIndex=0;debugScore=0;drawDebug();};drawDebug();
+const mathSteps=[
+ '<h1>Phương trình bậc hai</h1>\n<h2>Bài toán</h2>\n<p>Biện luận số nghiệm.</p>\n<h2>Cách làm</h2>\n<p>Bước 1: Xác định a, b, c.</p>\n<p>Bước 2: Tính delta.</p>\n<p>Bước 3: Kết luận.</p>',
+ '<h1>Phương trình bậc hai</h1>\n<h2>Bài toán</h2>\n<p>ax<sup>2</sup> + bx + c = 0 (a ≠ 0)</p>\n<h2>Cách làm</h2>\n<p>B<sub>1</sub>: Xác định a, b, c.</p>\n<p>B<sub>2</sub>: Δ = b<sup>2</sup> − 4ac.</p>\n<p>B<sub>3</sub>: Kết luận.</p>',
+ '<h1>Phương trình bậc hai</h1>\n<h2 style="color:rgb(180,25,40)">Bài toán</h2>\n<p>ax<sup>2</sup> + bx + c = 0 (a ≠ 0)</p>\n<h2>Cách làm</h2>\n<p><strong>B<sub>1</sub></strong>: Xác định a, b, c.</p>\n<p><strong>B<sub>2</sub></strong>: <span style="color:blue">Δ = b<sup>2</sup> − 4ac</span>.</p>\n<p><strong>B<sub>3</sub></strong>: Kết luận<br>\nΔ &lt; 0: <em>vô nghiệm</em><br>\nΔ = 0: <em>nghiệm kép</em><br>\nΔ &gt; 0: <em>hai nghiệm phân biệt</em></p>'
+];
+function setMath(i){$('#math-code').textContent=mathSteps[i];preview('#math-preview',mathSteps[i]);}
+$$('[data-math]').forEach(b=>b.onclick=()=>{selected('[data-math]',b);setMath(Number(b.dataset.math));sound();});setMath(0);
+const sprintCode='<h1 style="color:#184c87">Ngày hội sáng tạo</h1>\n<p>Hẹn gặp lúc <strong>14:00</strong><br>\nTại Phòng Tin học.</p>\n<p>Chủ đề: H<sub>2</sub>O và x<sup>2</sup></p>';
+let sprintRemaining=90,sprintEnd=0,sprintInterval=null;
+function displaySprint(){const m=Math.floor(sprintRemaining/60),s=sprintRemaining%60;$('#sprint-time').textContent=`${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;}
+function pauseSprint(){if(sprintInterval!==null){sprintRemaining=Math.max(0,Math.ceil((sprintEnd-Date.now())/1000));clearInterval(sprintInterval);sprintInterval=null;displaySprint();$('#sprint-start').textContent=sprintRemaining?'▶ Tiếp tục':'▶ Bắt đầu lại';$('#sprint-status').textContent=sprintRemaining?'Đã tạm dừng.':'Hết giờ! So sánh cách làm và giải thích lựa chọn.';}}
+function tickSprint(){sprintRemaining=Math.max(0,Math.ceil((sprintEnd-Date.now())/1000));displaySprint();if(!sprintRemaining){pauseSprint();sound('good');notify('⏰ Hết 90 giây. Hãy trao đổi cách làm của nhóm!');}}
+$('#sprint-start').onclick=()=>{if(sprintInterval!==null){pauseSprint();return;}if(!sprintRemaining)sprintRemaining=90;sprintEnd=Date.now()+sprintRemaining*1000;sprintInterval=setInterval(tickSprint,250);$('#sprint-start').textContent='Ⅱ Tạm dừng';$('#sprint-status').textContent='Đang làm bài. Hãy cùng giải thích mã của nhóm.';sound();};
+$('#sprint-reset').onclick=()=>{pauseSprint();sprintRemaining=90;displaySprint();$('#sprint-start').textContent='▶ Bắt đầu';$('#sprint-status').textContent='Đã đặt lại 90 giây.';};
+$('#sprint-code').textContent=sprintCode;$('#sprint-solution').onclick=()=>{const show=$('#sprint-code').hidden;$('#sprint-code').hidden=!show;$('#sprint-solution').setAttribute('aria-expanded',String(show));$('#sprint-solution').textContent=show?'Ẩn cách làm':'🔍 Xem một cách làm';sound();};
+function onSlideLeave(previous,next){if(previous===14&&next!==14)pauseSprint();}
+document.addEventListener('visibilitychange',()=>{if(document.hidden)pauseSprint();});
+const studioTemplates={news:'<h1 style="color:#184c87">Ngày hội sáng tạo</h1>\n<p>Chúng mình cùng khám phá HTML.</p>\n<p>Hẹn gặp lúc <strong>14:00</strong>.</p>\n<p>Địa điểm: Phòng Tin học.</p>',sprint:sprintCode,math:mathSteps[2]};
+let downloadUrl;
+const goalNames=['Có h1','Có đoạn p','Có strong','span có style','style có ≥ 2 khai báo'];
+function clearGoals(){ $('#studio-goals').innerHTML=goalNames.map(t=>`<span>○ ${t}</span>`).join('');}
+function runStudio(){const value=$('#studio-code').value;if(value.length>30000){$('#studio-status').textContent='Ví dụ quá dài. Hãy rút gọn dưới 30.000 kí tự.';return false;}preview('#studio-preview',value);$('#studio-status').textContent='Đã chạy. Đối chiếu mã với trang bên cạnh.';return true;}
+function loadStudio(){ $('#studio-code').value=studioTemplates[$('#studio-template').value];clearGoals();runStudio();}
+$('#studio-template').onchange=loadStudio;$('#studio-restore').onclick=loadStudio;$('#studio-run').onclick=()=>{runStudio();sound();};
+$('#studio-code').oninput=()=>{clearGoals();$('#studio-status').textContent='Mã đã đổi. Bấm Chạy mã hoặc Ctrl + Enter.';};
+$('#studio-code').addEventListener('keydown',e=>{if((e.ctrlKey||e.metaKey)&&e.key==='Enter'){e.preventDefault();runStudio();sound();}});
+$('#studio-check').onclick=()=>{if(!runStudio())return;const doc=new DOMParser().parseFromString($('#studio-code').value,'text/html'),visibleText=el=>el&&el.textContent.trim().length>0;const goals=[visibleText(doc.querySelector('h1')),visibleText(doc.querySelector('p')),visibleText(doc.querySelector('strong')),[...doc.querySelectorAll('span[style]')].some(el=>visibleText(el)&&el.style.length>0),[...doc.querySelectorAll('[style]')].some(el=>el.style.length>=2)];$('#studio-goals').innerHTML=goalNames.map((t,i)=>`<span class="${goals[i]?'met':''}">${goals[i]?'✓':'○'} ${t}</span>`).join('');const score=goals.filter(Boolean).length;$('#studio-status').textContent=`Đạt ${score}/5 mục tiêu trong mẫu thực hành. `+(score===5?'Hãy giải thích một lựa chọn định dạng của em.':'Bổ sung mục còn thiếu, rồi kiểm tra lại.');sound(score===5?'good':'click');if(score===5)confetti();};
+$('#studio-download').onclick=()=>{const value=$('#studio-code').value;if(value.length>30000){$('#studio-status').textContent='Hãy rút gọn ví dụ dưới 30.000 kí tự trước khi tải.';return;}if(downloadUrl)URL.revokeObjectURL(downloadUrl);const full=/<!doctype|<html[\s>]/i.test(value)?value:`<!DOCTYPE html>\n<html lang="vi">\n<head>\n<meta charset="utf-8">\n<title>Bản tin của em</title>\n</head>\n<body>\n${value}\n</body>\n</html>`;downloadUrl=URL.createObjectURL(new Blob(['\uFEFF',full],{type:'text/html;charset=utf-8'}));const a=document.createElement('a');a.href=downloadUrl;a.download='bai-8-ban-tin.html';document.body.append(a);a.click();a.remove();$('#studio-status').textContent='Đã tạo tệp bai-8-ban-tin.html. Mở tệp bằng trình duyệt để xem.';};
+window.addEventListener('pagehide',()=>{pauseSprint();if(downloadUrl)URL.revokeObjectURL(downloadUrl);});
+$('#sprint-editor').onclick=()=>{$('#studio-template').value='sprint';loadStudio();showSlide(15);};$('#back-studio').onclick=()=>showSlide(15);loadStudio();displaySprint();
+$$('.check').forEach(b=>b.onclick=()=>{const on=b.getAttribute('aria-pressed')!=='true';b.setAttribute('aria-pressed',String(on));$('.check-icon',b).textContent=on?'✓':'○';const n=$$('.check[aria-pressed="true"]').length;$('#badge').textContent=n===3?'🏅':'🌱';$('#check-status').textContent=`${n} / 3 việc đã tự kiểm tra`;$('#celebrate').disabled=n!==3;sound();});
+$('#celebrate').onclick=()=>{sound('good');confetti();notify('🏅 Hoàn thành Bài 8! Chữ của em đã có tiếng nói.');};
+showSlide(0,false);
+</script>
+</body></html>
