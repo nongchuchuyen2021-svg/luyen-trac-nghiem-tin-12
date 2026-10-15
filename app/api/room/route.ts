@@ -1,350 +1,187 @@
 import { NextResponse } from "next/server";
+import { randomBytes, randomInt } from "node:crypto";
+import { createRoom, readRoom, replaceRoom } from "@/lib/room-store";
 
-export interface RoomPlayer {
-  id: string;
-  name: string;
-  emoji: string;
-  color: string;
-  score: number;
-  altitude: number; // 0 -> 1000m
-  correctCount: number;
-  streak: number;
-  maxStreak: number;
-  currentChoice: number | null; // 0..3
-  timeMs: number | null;
+export const runtime = "nodejs";
+export const dynamic = "force-dynamic";
+
+interface RoomPlayer {
+  id: string; secret: string; name: string; emoji: string; color: string;
+  score: number; altitude: number; correctCount: number; streak: number;
+  maxStreak: number; currentChoice: number | null; timeMs: number | null;
   lastDelta: number;
-  lastActive: number;
 }
-
-export interface RoomQuestion {
-  id: string;
-  question: string;
-  code?: string;
-  options: [string, string, string, string];
-  correctAnswer: number;
-  explanation: string;
+interface RoomQuestion {
+  id: string; question: string; code?: string;
+  options: [string, string, string, string]; correctAnswer: number; explanation: string;
 }
-
-export interface BattleRoom {
-  pin: string;
-  topicId: string;
-  topicTitle: string;
-  hostSecret: string;
+interface BattleRoom {
+  pin: string; topicId: string; topicTitle: string; hostSecret: string;
   status: "lobby" | "playing" | "revealed" | "ended";
-  questions: RoomQuestion[];
-  currentQIndex: number;
-  roundTime: number; // seconds
-  roundStartTime: number;
-  players: Record<string, RoomPlayer>;
-  createdAt: number;
-  lastActive: number;
+  questions: RoomQuestion[]; currentQIndex: number; roundTime: number;
+  roundStartTime: number; players: Record<string, RoomPlayer>;
+}
+class RequestError extends Error {
+  constructor(message: string, public status = 400) { super(message); }
+}
+const secret = () => randomBytes(32).toString("hex");
+const text = (v: unknown, max: number) => typeof v === "string" && v.trim().length > 0 && v.trim().length <= max;
+function fail(message: string, status = 400): never { throw new RequestError(message, status); }
+
+function evaluate(room: BattleRoom) {
+  // Repeated reveals and simultaneous final answers can only score a round once.
+  if (room.status !== "playing") return;
+  const q = room.questions[room.currentQIndex];
+  room.status = "revealed";
+  const players = Object.values(room.players);
+  const fastest = players.filter(p => p.currentChoice === q.correctAnswer && p.timeMs !== null)
+    .sort((a, b) => a.timeMs! - b.timeMs! || a.id.localeCompare(b.id))[0]?.id;
+  for (const p of players) {
+    let delta = p.altitude > 0 ? -20 : 0;
+    if (p.currentChoice === q.correctAnswer) {
+      p.correctCount++;
+      p.streak++;
+      p.maxStreak = Math.max(p.maxStreak, p.streak);
+      delta = 100 + (p.id === fastest ? 50 : 0) + (p.streak >= 3 ? 40 : p.streak === 2 ? 20 : 0);
+    } else p.streak = 0;
+    p.lastDelta = delta;
+    p.altitude = Math.min(1000, Math.max(0, p.altitude + delta));
+    p.score = p.altitude;
+  }
+}
+function beginRound(room: BattleRoom) {
+  room.status = "playing";
+  room.roundStartTime = Date.now();
+  for (const p of Object.values(room.players)) {
+    p.currentChoice = null; p.timeMs = null; p.lastDelta = 0;
+  }
+}
+function snapshot(room: BattleRoom, b: Record<string, unknown>) {
+  const isHost = b.hostSecret === room.hostSecret;
+  const me = typeof b.playerId === "string" ? room.players[b.playerId] : undefined;
+  const isPlayer = !!me && b.playerSecret === me.secret;
+  const visible = room.status === "revealed" || room.status === "ended";
+  const q = room.questions[room.currentQIndex];
+  return {
+    ok: true, pin: room.pin, status: room.status, topicId: room.topicId,
+    topicTitle: room.topicTitle, currentQIndex: room.currentQIndex,
+    totalQuestions: room.questions.length, roundTime: room.roundTime,
+    roundStartTime: room.roundStartTime, serverTime: Date.now(), isHost,
+    question: room.status === "lobby" ? null : isHost || visible ? q : {
+      id: q.id, question: q.question, code: q.code, options: q.options,
+    },
+    players: Object.values(room.players).map(p => ({
+      id: p.id, name: p.name, emoji: p.emoji, color: p.color, score: p.score,
+      altitude: p.altitude, correctCount: p.correctCount, streak: p.streak,
+      maxStreak: p.maxStreak, hasAnswered: p.currentChoice !== null,
+      currentChoice: isHost || visible || (isPlayer && p.id === b.playerId) ? p.currentChoice : null,
+      timeMs: isHost || visible || (isPlayer && p.id === b.playerId) ? p.timeMs : null,
+      lastDelta: p.lastDelta,
+    })),
+  };
 }
 
-// In-memory global store that survives across hot reloads and local dev/prod
-const globalStore = globalThis as unknown as {
-  __BATTLE_ROOMS__?: Map<string, BattleRoom>;
-};
-
-if (!globalStore.__BATTLE_ROOMS__) {
-  globalStore.__BATTLE_ROOMS__ = new Map<string, BattleRoom>();
-}
-
-const rooms = globalStore.__BATTLE_ROOMS__;
-
-// Dọn dẹp các phòng quá 3 tiếng không hoạt động
-function cleanupOldRooms() {
-  const now = Date.now();
-  rooms.forEach((room, pin) => {
-    if (now - room.lastActive > 3 * 60 * 60 * 1000) {
-      rooms.delete(pin);
-    }
-  });
+function act(room: BattleRoom, b: Record<string, unknown>) {
+  const expired = room.status === "playing" && Date.now() >= room.roundStartTime + room.roundTime * 1000;
+  if (expired) evaluate(room);
+  if (b.action === "state") return snapshot(room, b);
+  if (b.action === "join") {
+    if (room.status !== "lobby") return { ok: false, error: "Trận đấu đã bắt đầu. Em chờ phòng mới nhé." };
+    if (!text(b.name, 30)) fail("Tên người chơi phải có từ 1 đến 30 kí tự.");
+    if (Object.keys(room.players).length >= 100) fail("Phòng đã đủ 100 người chơi.");
+    const id = "p_" + randomBytes(12).toString("hex");
+    const playerSecret = secret();
+    room.players[id] = {
+      id, secret: playerSecret, name: (b.name as string).trim(),
+      emoji: text(b.emoji, 12) ? b.emoji as string : "🐉",
+      color: ["rose", "cyan", "emerald", "amber", "purple"].includes(b.color as string) ? b.color as string : "cyan",
+      score: 0, altitude: 0, correctCount: 0, streak: 0, maxStreak: 0,
+      currentChoice: null, timeMs: null, lastDelta: 0,
+    };
+    return { ok: true, playerId: id, playerSecret, pin: room.pin, topicTitle: room.topicTitle };
+  }
+  if (b.action === "answer") {
+    const p = typeof b.playerId === "string" ? room.players[b.playerId] : undefined;
+    if (!p || typeof b.playerSecret !== "string" || b.playerSecret !== p.secret) fail("Người chơi không hợp lệ!", 403);
+    if (room.status !== "playing") return { ok: false, error: "Vòng đã khóa hoặc hết thời gian." };
+    if (b.questionIndex !== room.currentQIndex) fail("Câu hỏi đã thay đổi. Em thử lại nhé.", 409);
+    if (!Number.isInteger(b.choice) || (b.choice as number) < 0 || (b.choice as number) > 3) fail("Đáp án không hợp lệ.");
+    if (p.currentChoice !== null) return { ok: true, answered: true };
+    p.currentChoice = b.choice as number;
+    p.timeMs = Math.max(0, Date.now() - room.roundStartTime);
+    if (Object.values(room.players).every(player => player.currentChoice !== null)) evaluate(room);
+    return { ok: true, answered: true };
+  }
+  if (b.action === "hostAction") {
+    if (b.hostSecret !== room.hostSecret) fail("Quyền truy cập không hợp lệ!", 403);
+    // Tie commands to a round so a retried 'next' cannot skip a question.
+    if (b.questionIndex !== room.currentQIndex) fail("Phòng đã chuyển sang câu khác.", 409);
+    if (b.type === "start") {
+      if (room.status === "lobby") {
+        if (!Object.keys(room.players).length) fail("Cần ít nhất một người chơi để bắt đầu.");
+        beginRound(room);
+      }
+    } else if (b.type === "reveal") evaluate(room);
+    else if (b.type === "next") {
+      if (room.status !== "revealed") fail("Hãy khóa câu hiện tại trước khi chuyển câu.", 409);
+      if (room.currentQIndex + 1 >= room.questions.length) room.status = "ended";
+      else { room.currentQIndex++; beginRound(room); }
+    } else if (b.type === "end") room.status = "ended";
+    else fail("Lệnh điều khiển không hợp lệ.");
+    return { ok: true, status: room.status, currentQIndex: room.currentQIndex };
+  }
+  fail("Hành động không hợp lệ.");
 }
 
 export async function POST(req: Request) {
   try {
-    cleanupOldRooms();
-    const body = await req.json();
-    const { action } = body;
-
-    // 1. TẠO PHÒNG MỚI (DÀNH CHO GIÁO VIÊN / HOST)
-    if (action === "create") {
-      const { topicId, topicTitle, questions, roundTime = 25 } = body;
-      // Sinh mã PIN 6 chữ số ngẫu nhiên không trùng lặp
-      let pin = "";
-      do {
-        pin = Math.floor(100000 + Math.random() * 900000).toString();
-      } while (rooms.has(pin));
-
-      const hostSecret = Math.random().toString(36).substring(2) + Date.now().toString(36);
-
-      const newRoom: BattleRoom = {
-        pin,
-        topicId: topicId || "bai-04",
-        topicTitle: topicTitle || "Bài 4. Giao thức mạng",
-        hostSecret,
-        status: "lobby",
-        questions: questions || [],
-        currentQIndex: 0,
-        roundTime,
-        roundStartTime: 0,
-        players: {},
-        createdAt: Date.now(),
-        lastActive: Date.now(),
+    const raw = await req.text();
+    if (raw.length > 150_000) fail("Dữ liệu quá lớn.", 413);
+    let b: Record<string, unknown>;
+    try {
+      b = JSON.parse(raw);
+      if (!b || typeof b !== "object" || Array.isArray(b)) fail("Dữ liệu không hợp lệ.");
+    } catch { fail("Dữ liệu không hợp lệ."); }
+    if (b.action === "create") {
+      const qs = b.questions;
+      if (!Array.isArray(qs) || qs.length < 1 || qs.length > 50 || qs.some(q =>
+        !q || !text(q.id, 100) || !text(q.question, 4000) || !Array.isArray(q.options) || q.options.length !== 4 ||
+        q.options.some((o: unknown) => !text(o, 2000)) || !Number.isInteger(q.correctAnswer) || q.correctAnswer < 0 || q.correctAnswer > 3 ||
+        (q.code !== undefined && (typeof q.code !== "string" || q.code.length > 8000)) ||
+        typeof q.explanation !== "string" || q.explanation.length > 4000)) fail("Bộ câu hỏi không hợp lệ.");
+      const roundTime = b.roundTime ?? 25;
+      if (!Number.isInteger(roundTime) || (roundTime as number) < 5 || (roundTime as number) > 180) fail("Thời gian phải từ 5 đến 180 giây.");
+      const room: BattleRoom = {
+        pin: "", topicId: text(b.topicId, 50) ? b.topicId as string : "bai-04",
+        topicTitle: text(b.topicTitle, 200) ? b.topicTitle as string : "Đấu trường Tin học 12",
+        hostSecret: secret(), status: "lobby", questions: qs as RoomQuestion[],
+        currentQIndex: 0, roundTime: roundTime as number, roundStartTime: 0, players: {},
       };
-
-      rooms.set(pin, newRoom);
-
-      return NextResponse.json({
-        ok: true,
-        pin,
-        hostSecret,
-        room: {
-          pin,
-          topicId: newRoom.topicId,
-          topicTitle: newRoom.topicTitle,
-          status: newRoom.status,
-          playerCount: 0,
-          roundTime: newRoom.roundTime,
-        },
-      });
+      for (let i = 0; i < 10; i++) {
+        room.pin = randomInt(100000, 1000000).toString();
+        if (await createRoom(room.pin, room)) return NextResponse.json({
+          ok: true, pin: room.pin, hostSecret: room.hostSecret,
+          room: { pin: room.pin, topicId: room.topicId, topicTitle: room.topicTitle,
+            status: room.status, playerCount: 0, roundTime: room.roundTime },
+        });
+      }
+      fail("Chưa tạo được phòng. Vui lòng thử lại.", 503);
     }
-
-    // 2. HỌC SINH THAM GIA PHÒNG
-    if (action === "join") {
-      const { pin, name, emoji = "🐉", color = "cyan" } = body;
-      const room = rooms.get(pin?.trim());
-      if (!room) {
-        return NextResponse.json({ ok: false, error: "Không tìm thấy phòng với mã PIN này. Vui lòng kiểm tra lại!" }, { status: 404 });
-      }
-
-      if (room.status === "ended") {
-        return NextResponse.json({ ok: false, error: "Phòng đấu này đã kết thúc!" }, { status: 400 });
-      }
-
-      const playerId = "p_" + Math.random().toString(36).substring(2, 9);
-      const cleanName = (name || "Học sinh").trim().substring(0, 30);
-
-      const player: RoomPlayer = {
-        id: playerId,
-        name: cleanName,
-        emoji,
-        color,
-        score: 0,
-        altitude: 0,
-        correctCount: 0,
-        streak: 0,
-        maxStreak: 0,
-        currentChoice: null,
-        timeMs: null,
-        lastDelta: 0,
-        lastActive: Date.now(),
-      };
-
-      room.players[playerId] = player;
-      room.lastActive = Date.now();
-
-      return NextResponse.json({
-        ok: true,
-        playerId,
-        pin: room.pin,
-        topicTitle: room.topicTitle,
-      });
+    if (typeof b.pin !== "string" || !/^\d{6}$/.test(b.pin.trim())) fail("Mã PIN phải gồm 6 chữ số.");
+    const pin = (b.pin as string).trim();
+    for (let i = 0; i < 24; i++) {
+      const previous = await readRoom(pin);
+      if (!previous) fail("Phòng không tồn tại hoặc đã đóng.", 404);
+      const room = JSON.parse(previous!) as BattleRoom;
+      const result = act(room, b);
+      if (await replaceRoom(pin, previous!, room)) return NextResponse.json(result);
+      // Spread retries when an entire class answers at the same instant.
+      await new Promise(resolve => setTimeout(resolve, randomInt(10, 80)));
     }
-
-    // 3. LẤY TRẠNG THÁI PHÒNG (POLL STATE)
-    if (action === "state") {
-      const { pin, playerId, hostSecret } = body;
-      const room = rooms.get(pin?.trim());
-      if (!room) {
-        return NextResponse.json({ ok: false, error: "Phòng không tồn tại hoặc đã đóng." }, { status: 404 });
-      }
-
-      room.lastActive = Date.now();
-      const isHost = hostSecret && hostSecret === room.hostSecret;
-
-      if (playerId && room.players[playerId]) {
-        room.players[playerId].lastActive = Date.now();
-      }
-
-      const currentQ = room.questions[room.currentQIndex];
-
-      // Nếu đang trong vòng chơi và là học sinh -> giấu đáp án đúng
-      let sanitizedQuestion = null;
-      if (currentQ) {
-        if (isHost || room.status === "revealed" || room.status === "ended") {
-          sanitizedQuestion = currentQ;
-        } else {
-          sanitizedQuestion = {
-            id: currentQ.id,
-            question: currentQ.question,
-            code: currentQ.code,
-            options: currentQ.options,
-            // Không gửi correctAnswer cho học sinh khi chưa revealed!
-          };
-        }
-      }
-
-      const playerList = Object.values(room.players).map((p) => ({
-        id: p.id,
-        name: p.name,
-        emoji: p.emoji,
-        color: p.color,
-        score: p.score,
-        altitude: p.altitude,
-        correctCount: p.correctCount,
-        streak: p.streak,
-        maxStreak: p.maxStreak,
-        hasAnswered: p.currentChoice !== null,
-        currentChoice: isHost || room.status === "revealed" || p.id === playerId ? p.currentChoice : null,
-        timeMs: isHost || room.status === "revealed" || p.id === playerId ? p.timeMs : null,
-        lastDelta: p.lastDelta,
-      }));
-
-      return NextResponse.json({
-        ok: true,
-        pin: room.pin,
-        status: room.status,
-        topicId: room.topicId,
-        topicTitle: room.topicTitle,
-        currentQIndex: room.currentQIndex,
-        totalQuestions: room.questions.length,
-        question: sanitizedQuestion,
-        roundTime: room.roundTime,
-        roundStartTime: room.roundStartTime,
-        players: playerList,
-        isHost: Boolean(isHost),
-      });
-    }
-
-    // 4. HỌC SINH NỘP ĐÁP ÁN (ANSWER)
-    if (action === "answer") {
-      const { pin, playerId, choice, timeMs } = body;
-      const room = rooms.get(pin?.trim());
-      if (!room || room.status !== "playing") {
-        return NextResponse.json({ ok: false, error: "Không thể nộp đáp án lúc này!" }, { status: 400 });
-      }
-
-      const player = room.players[playerId];
-      if (!player) {
-        return NextResponse.json({ ok: false, error: "Người chơi không hợp lệ!" }, { status: 404 });
-      }
-
-      if (player.currentChoice !== null) {
-        return NextResponse.json({ ok: true, message: "Bạn đã chốt đáp án rồi!" });
-      }
-
-      player.currentChoice = typeof choice === "number" ? choice : null;
-      player.timeMs = typeof timeMs === "number" ? timeMs : 10;
-      room.lastActive = Date.now();
-
-      // Kiểm tra nếu tất cả học sinh trong phòng đã trả lời xong -> tự động chuyển revealed
-      const allAnswered = Object.values(room.players).length > 0 &&
-        Object.values(room.players).every((p) => p.currentChoice !== null);
-
-      if (allAnswered) {
-        evaluateRoomRound(room);
-      }
-
-      return NextResponse.json({ ok: true, answered: true });
-    }
-
-    // 5. GIÁO VIÊN / HOST ĐIỀU KHIỂN (HOST ACTION)
-    if (action === "hostAction") {
-      const { pin, hostSecret, type } = body;
-      const room = rooms.get(pin?.trim());
-      if (!room || room.hostSecret !== hostSecret) {
-        return NextResponse.json({ ok: false, error: "Quyền truy cập không hợp lệ!" }, { status: 403 });
-      }
-
-      room.lastActive = Date.now();
-
-      if (type === "start") {
-        room.status = "playing";
-        room.currentQIndex = 0;
-        room.roundStartTime = Date.now();
-        // Reset player round answers
-        for (const p of Object.values(room.players)) {
-          p.currentChoice = null;
-          p.timeMs = null;
-          p.lastDelta = 0;
-        }
-      } else if (type === "reveal") {
-        evaluateRoomRound(room);
-      } else if (type === "next") {
-        if (room.currentQIndex + 1 >= room.questions.length) {
-          room.status = "ended";
-        } else {
-          room.status = "playing";
-          room.currentQIndex += 1;
-          room.roundStartTime = Date.now();
-          for (const p of Object.values(room.players)) {
-            p.currentChoice = null;
-            p.timeMs = null;
-            p.lastDelta = 0;
-          }
-        }
-      } else if (type === "end") {
-        room.status = "ended";
-      }
-
-      return NextResponse.json({ ok: true, status: room.status, currentQIndex: room.currentQIndex });
-    }
-
-    return NextResponse.json({ ok: false, error: "Hành động không hợp lệ" }, { status: 400 });
-  } catch (err: unknown) {
-    console.error("Room API error:", err);
-    return NextResponse.json({ ok: false, error: "Lỗi máy chủ phòng đấu" }, { status: 500 });
-  }
-}
-
-// Logic tính điểm & độ cao leo tháp khi hết vòng
-function evaluateRoomRound(room: BattleRoom) {
-  room.status = "revealed";
-  const currentQ = room.questions[room.currentQIndex];
-  if (!currentQ) return;
-
-  const players = Object.values(room.players);
-  let fastestTime = 99999;
-  let fastestPlayerId: string | null = null;
-
-  for (const p of players) {
-    if (p.currentChoice === currentQ.correctAnswer && p.timeMs !== null) {
-      if (p.timeMs < fastestTime) {
-        fastestTime = p.timeMs;
-        fastestPlayerId = p.id;
-      }
-    }
-  }
-
-  for (const p of players) {
-    const isCorrect = p.currentChoice === currentQ.correctAnswer;
-    let delta = 0;
-
-    if (isCorrect) {
-      p.correctCount += 1;
-      p.streak += 1;
-      if (p.streak > p.maxStreak) p.maxStreak = p.streak;
-
-      // Cơ bản: +100m
-      delta = 100;
-      // Nhanh nhất: +50m
-      if (p.id === fastestPlayerId) {
-        delta += 50;
-      }
-      // Streak
-      if (p.streak >= 3) {
-        delta += 40;
-      } else if (p.streak === 2) {
-        delta += 20;
-      }
-    } else {
-      delta = p.altitude > 0 ? -20 : 0;
-      p.streak = 0;
-    }
-
-    p.lastDelta = delta;
-    p.altitude = Math.min(1000, Math.max(0, p.altitude + delta));
-    p.score = p.altitude;
+    fail("Phòng đang bận. Em thử lại nhé.", 409);
+  } catch (err) {
+    if (err instanceof RequestError) return NextResponse.json({ ok: false, error: err.message }, { status: err.status });
+    console.error("Room API:", err instanceof Error ? err.message : "unknown error");
+    return NextResponse.json({ ok: false, error: "Chưa kết nối được kho dữ liệu phòng đấu. Vui lòng thử lại sau." }, { status: 503 });
   }
 }

@@ -56,7 +56,7 @@ const TEAM_COLORS = [
 
 export default function DauTruongClient({ initialPin = "" }: { initialPin?: string }) {
   // Chế độ: "select" (chọn vào phòng hay tạo phòng) | "player" | "host"
-  const [role, setRole] = useState<"select" | "player" | "host">(initialPin ? "player" : "select");
+  const [role, setRole] = useState<"select" | "player" | "host">("select");
 
   // Form Học sinh
   const [pinInput, setPinInput] = useState<string>(initialPin);
@@ -64,6 +64,8 @@ export default function DauTruongClient({ initialPin = "" }: { initialPin?: stri
   const [selectedEmoji, setSelectedEmoji] = useState<string>("🐉");
   const [selectedColor, setSelectedColor] = useState<string>("rose");
   const [playerId, setPlayerId] = useState<string | null>(null);
+  const [playerSecret, setPlayerSecret] = useState<string | null>(null);
+  const [hostBusy, setHostBusy] = useState(false);
 
   // Form Giáo viên / Host
   const [hostTopic, setHostTopic] = useState<string>("bai-04");
@@ -96,6 +98,9 @@ export default function DauTruongClient({ initialPin = "" }: { initialPin?: stri
   const prevStatusRef = useRef<string>("lobby");
   const prevQIndexRef = useRef<number>(-1);
   const pollTimerRef = useRef<NodeJS.Timeout | null>(null);
+  const pollInFlight = useRef(false);
+  const serverOffsetRef = useRef(0);
+  const hostBusyRef = useRef(false);
 
   useEffect(() => {
     setSoundOn(isSoundEnabled());
@@ -111,7 +116,6 @@ export default function DauTruongClient({ initialPin = "" }: { initialPin?: stri
       const urlPin = params.get("pin");
       if (urlPin) {
         setPinInput(urlPin.trim());
-        setRole("player");
       }
     }
   }, []);
@@ -124,27 +128,35 @@ export default function DauTruongClient({ initialPin = "" }: { initialPin?: stri
   };
 
   // ───────────────────────────────────────────────────────────────────────────
-  // POLLING ĐỒNG BỘ TRẠNG THÁI PHÒNG (MỖI 700ms)
+  // Đồng bộ mỗi 1,5 giây, không chồng yêu cầu khi mạng chậm.
   // ───────────────────────────────────────────────────────────────────────────
   const pollRoomState = useCallback(async () => {
     const pin = roomPin || pinInput;
-    if (!pin) return;
+    if (!pin || pollInFlight.current) return;
+    pollInFlight.current = true;
 
     try {
+      const requestedAt = Date.now();
       const res = await fetch("/api/room", {
+        signal: AbortSignal.timeout(10000),
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           action: "state",
           pin,
           playerId,
+          playerSecret,
           hostSecret,
         }),
       });
 
-      if (!res.ok) return;
       const data = await res.json();
-      if (!data.ok) return;
+      if (!res.ok || !data.ok) {
+        setErrorMessage(data.error || "Không thể đồng bộ phòng đấu. Đang thử lại…");
+        return;
+      }
+      setErrorMessage(null);
+      serverOffsetRef.current = data.serverTime - (requestedAt + Date.now()) / 2;
 
       setRoomStatus(data.status);
       setTopicTitle(data.topicTitle);
@@ -157,7 +169,7 @@ export default function DauTruongClient({ initialPin = "" }: { initialPin?: stri
 
       // Âm thanh khi chuyển trạng thái
       if (prevStatusRef.current !== data.status || prevQIndexRef.current !== data.currentQIndex) {
-        if (data.status === "playing" && prevStatusRef.current !== "playing") {
+        if (data.status === "playing" && (prevStatusRef.current !== "playing" || prevQIndexRef.current !== data.currentQIndex)) {
           playWhistle();
           setMyChoice(null);
           setMyTimeMs(null);
@@ -178,30 +190,37 @@ export default function DauTruongClient({ initialPin = "" }: { initialPin?: stri
         prevStatusRef.current = data.status;
         prevQIndexRef.current = data.currentQIndex;
       }
+      if (playerId) {
+        const me = (data.players as PlayerData[]).find(p => p.id === playerId);
+        setMyChoice(me?.currentChoice ?? null);
+        setMyTimeMs(me?.timeMs == null ? null : me.timeMs / 1000);
+      }
     } catch {
-      // Ignored during network fluctuation
+      setErrorMessage("Mất kết nối phòng đấu. Đang thử kết nối lại…");
+    } finally {
+      pollInFlight.current = false;
     }
-  }, [roomPin, pinInput, playerId, hostSecret]);
+  }, [roomPin, pinInput, playerId, playerSecret, hostSecret]);
 
   useEffect(() => {
     if (role === "select") return;
     const pin = roomPin || pinInput;
-    if (!pin) return;
+    if (!pin || (!playerId && !hostSecret)) return;
 
     pollRoomState();
-    pollTimerRef.current = setInterval(pollRoomState, 750);
+    pollTimerRef.current = setInterval(pollRoomState, 1500);
 
     return () => {
       if (pollTimerRef.current) clearInterval(pollTimerRef.current);
     };
-  }, [role, roomPin, pinInput, pollRoomState]);
+  }, [role, roomPin, pinInput, playerId, hostSecret, pollRoomState]);
 
   // Bộ đếm thời gian mượt mà tại client
   useEffect(() => {
     if (roomStatus !== "playing" || !roundStartTime) return;
 
     const timer = setInterval(() => {
-      const elapsed = (Date.now() - roundStartTime) / 1000;
+      const elapsed = (Date.now() + serverOffsetRef.current - roundStartTime) / 1000;
       const rem = Math.max(0, Math.ceil(roundTime - elapsed));
       setTimeLeft(rem);
       if (rem <= 4 && rem > 0 && role === "host") {
@@ -230,6 +249,7 @@ export default function DauTruongClient({ initialPin = "" }: { initialPin?: stri
     try {
       playClick();
       const res = await fetch("/api/room", {
+        signal: AbortSignal.timeout(10000),
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -248,6 +268,7 @@ export default function DauTruongClient({ initialPin = "" }: { initialPin?: stri
       }
 
       setPlayerId(data.playerId);
+      setPlayerSecret(data.playerSecret);
       setRoomPin(data.pin);
       setTopicTitle(data.topicTitle);
       setRole("player");
@@ -261,6 +282,9 @@ export default function DauTruongClient({ initialPin = "" }: { initialPin?: stri
   // GIÁO VIÊN TẠO PHÒNG MỚI (HOST)
   // ───────────────────────────────────────────────────────────────────────────
   const handleCreateRoom = async () => {
+    if (hostBusyRef.current) return;
+    hostBusyRef.current = true;
+    setHostBusy(true);
     setErrorMessage(null);
     playClick();
 
@@ -270,6 +294,7 @@ export default function DauTruongClient({ initialPin = "" }: { initialPin?: stri
       const selectedTopicObj = BATTLE_TOPICS.find((t) => t.id === hostTopic);
 
       const res = await fetch("/api/room", {
+        signal: AbortSignal.timeout(10000),
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -294,6 +319,9 @@ export default function DauTruongClient({ initialPin = "" }: { initialPin?: stri
       playWhistle();
     } catch {
       setErrorMessage("Không thể tạo phòng đấu. Vui lòng thử lại!");
+    } finally {
+      hostBusyRef.current = false;
+      setHostBusy(false);
     }
   };
 
@@ -301,23 +329,32 @@ export default function DauTruongClient({ initialPin = "" }: { initialPin?: stri
   // GIÁO VIÊN ĐIỀU KHIỂN TRẬN ĐẤU (START, REVEAL, NEXT)
   // ───────────────────────────────────────────────────────────────────────────
   const handleHostAction = async (type: "start" | "reveal" | "next" | "end") => {
-    if (!roomPin || !hostSecret) return;
+    if (!roomPin || !hostSecret || hostBusyRef.current) return;
+    hostBusyRef.current = true;
+    setHostBusy(true);
     playClick();
 
     try {
-      await fetch("/api/room", {
+      const res = await fetch("/api/room", {
+        signal: AbortSignal.timeout(10000),
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           action: "hostAction",
           pin: roomPin,
           hostSecret,
+          questionIndex: currentQIndex,
           type,
         }),
       });
+      const data = await res.json();
+      if (!res.ok || !data.ok) throw new Error(data.error || "Không thể điều khiển phòng.");
       pollRoomState();
-    } catch {
-      // Ignored
+    } catch (err) {
+      setErrorMessage(err instanceof Error ? err.message : "Mất kết nối. Thầy thử lại nhé.");
+    } finally {
+      hostBusyRef.current = false;
+      setHostBusy(false);
     }
   };
 
@@ -325,29 +362,33 @@ export default function DauTruongClient({ initialPin = "" }: { initialPin?: stri
   // HỌC SINH NỘP ĐÁP ÁN (A, B, C, D)
   // ───────────────────────────────────────────────────────────────────────────
   const handleStudentAnswer = async (choiceIdx: number) => {
-    if (myChoice !== null || hasSubmitting || roomStatus !== "playing") return;
+    if (myChoice !== null || hasSubmitting || roomStatus !== "playing" || timeLeft <= 0) return;
 
     playBuzzer();
     setHasSubmitting(true);
-    setMyChoice(choiceIdx);
-    const elapsed = Math.max(0.1, Math.round(((Date.now() - roundStartTime) / 100) / 10));
-    setMyTimeMs(elapsed);
 
     try {
-      await fetch("/api/room", {
+      const res = await fetch("/api/room", {
+        signal: AbortSignal.timeout(10000),
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           action: "answer",
           pin: roomPin || pinInput,
           playerId,
+          playerSecret,
+          questionIndex: currentQIndex,
           choice: choiceIdx,
-          timeMs: elapsed,
         }),
       });
-      setHasSubmitting(false);
+      const data = await res.json();
+      if (!res.ok || !data.ok) throw new Error(data.error || "Chưa gửi được đáp án.");
+      setMyChoice(choiceIdx);
+      setMyTimeMs(Math.max(0, Date.now() + serverOffsetRef.current - roundStartTime) / 1000);
       pollRoomState();
-    } catch {
+    } catch (err) {
+      setErrorMessage(err instanceof Error ? err.message : "Chưa gửi được đáp án. Em thử lại nhé.");
+    } finally {
       setHasSubmitting(false);
     }
   };
@@ -420,6 +461,7 @@ export default function DauTruongClient({ initialPin = "" }: { initialPin?: stri
                 setRole("select");
                 setRoomPin("");
                 setPlayerId(null);
+                setPlayerSecret(null);
                 setHostSecret(null);
               }}
               className="px-3 py-1.5 rounded-xl border border-slate-700 bg-slate-800 font-mono text-xs font-semibold text-rose-300 hover:bg-rose-500/20 transition"
@@ -450,12 +492,12 @@ export default function DauTruongClient({ initialPin = "" }: { initialPin?: stri
                 </span>
               </div>
               <a
-                href="https://chinh-phuc-tin-12.vercel.app/dau-truong"
+                href="https://luyen-trac-nghiem-tin-12.vercel.app/dau-truong"
                 target="_blank"
                 rel="noreferrer"
                 className="font-bold underline text-amber-300 hover:text-white"
               >
-                chinh-phuc-tin-12.vercel.app/dau-truong →
+                luyen-trac-nghiem-tin-12.vercel.app/dau-truong →
               </a>
             </div>
           )}
@@ -645,6 +687,7 @@ export default function DauTruongClient({ initialPin = "" }: { initialPin?: stri
               <button
                 type="button"
                 onClick={handleCreateRoom}
+                disabled={hostBusy}
                 className="w-full rounded-2xl border border-amber-400 bg-gradient-to-r from-amber-500 via-coral to-rose-600 py-3.5 font-display text-base font-black text-white shadow-xl shadow-amber-500/30 transition hover:scale-[1.02] active:scale-[0.98]"
               >
                 👑 TẠO PHÒNG MÁY CHIẾU NGAY
@@ -685,7 +728,7 @@ export default function DauTruongClient({ initialPin = "" }: { initialPin?: stri
                   </p>
                   <div className="pt-1 flex flex-wrap items-center gap-2">
                     <a
-                      href="https://chinh-phuc-tin-12.vercel.app/dau-truong"
+                      href="https://luyen-trac-nghiem-tin-12.vercel.app/dau-truong"
                       target="_blank"
                       rel="noreferrer"
                       className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-amber-400 to-yellow-400 px-4 py-2 font-bold text-slate-950 text-xs shadow-lg hover:brightness-110 transition"
@@ -777,7 +820,7 @@ export default function DauTruongClient({ initialPin = "" }: { initialPin?: stri
               {/* NÚT BẮT ĐẦU */}
               <div>
                 <button
-                  disabled={players.length === 0}
+                  disabled={players.length === 0 || hostBusy}
                   onClick={() => handleHostAction("start")}
                   className="group relative inline-flex items-center gap-3 rounded-full border border-amber-400 bg-gradient-to-r from-amber-500 via-coral to-rose-600 px-10 py-4 font-display text-lg font-black text-white shadow-2xl shadow-amber-500/40 transition hover:scale-105 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
@@ -819,6 +862,7 @@ export default function DauTruongClient({ initialPin = "" }: { initialPin?: stri
                   {roomStatus === "playing" ? (
                     <button
                       onClick={() => handleHostAction("reveal")}
+                      disabled={hostBusy}
                       className="rounded-xl border border-amber-400 bg-amber-500/20 px-3.5 py-1.5 font-mono text-xs font-bold text-amber-300 hover:bg-amber-500 hover:text-black transition"
                     >
                       Khóa câu & Xem kết quả
@@ -826,6 +870,7 @@ export default function DauTruongClient({ initialPin = "" }: { initialPin?: stri
                   ) : (
                     <button
                       onClick={() => handleHostAction("next")}
+                      disabled={hostBusy}
                       className="rounded-xl border border-cyan-400 bg-cyan-500 px-4 py-1.5 font-mono text-xs font-bold text-black hover:bg-cyan-400 transition"
                     >
                       {currentQIndex + 1 >= totalQuestions ? "Xem kết quả chung cuộc 🏆" : "Câu tiếp theo →"}
@@ -1038,7 +1083,7 @@ export default function DauTruongClient({ initialPin = "" }: { initialPin?: stri
                     ĐÃ CHỐT PHƯƠNG ÁN {String.fromCharCode(65 + myChoice)}!
                   </h3>
                   <p className="font-mono text-xs text-slate-300">
-                    Thời gian phản xạ: <strong className="text-white">{myTimeMs}s</strong>. Đang đợi cả lớp trả lời...
+                    Thời gian phản xạ: <strong className="text-white">{myTimeMs?.toFixed(2)}s</strong>. Đang đợi cả lớp trả lời...
                   </p>
                 </div>
               ) : (
@@ -1053,6 +1098,7 @@ export default function DauTruongClient({ initialPin = "" }: { initialPin?: stri
                     <button
                       key={btn.label}
                       onClick={() => handleStudentAnswer(idx)}
+                      disabled={hasSubmitting || timeLeft <= 0}
                       className={`h-36 sm:h-44 rounded-3xl border-2 ${btn.border} ${btn.bg} flex flex-col items-center justify-center p-3 text-white shadow-2xl transition-all duration-200 active:scale-95`}
                     >
                       <span className="font-mono text-4xl sm:text-5xl font-black">{btn.label}</span>

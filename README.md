@@ -54,7 +54,29 @@ Mở http://localhost:3002 (web lớp 10 dùng cổng 3001 nên chạy song song
 
 1. Đẩy code lên GitHub repo **private** (repo công khai sẽ lộ đáp án).
 2. Vào https://vercel.com → New Project → chọn repo → Deploy.
-3. Xong. Không cần cấu hình biến môi trường (web tĩnh hoàn toàn).
+3. Luyện tập và thi thử chạy ngay. Tính năng **Nộp bài** cần các biến Google
+   Sheets trong `.env.example` (xem `HUONG_DAN_NOP_BAI.md`).
+4. **Đấu trường trực tuyến** cần kết nối **Upstash Redis** trong Vercel →
+   Storage/Marketplace, cho cả Production và Preview. Cung cấp
+   `UPSTASH_REDIS_REST_URL` + `UPSTASH_REDIS_REST_TOKEN` hoặc cặp
+   `KV_REST_API_URL` + `KV_REST_API_TOKEN`, sau đó triển khai lại.
+
+Phòng đấu lưu trong Redis, tự hết hạn sau 3 giờ kể từ lần cập nhật cuối. Mọi
+đáp án và lệnh chuyển câu được cập nhật nguyên tử để không mất dữ liệu khi
+nhiều học sinh gửi cùng lúc. Khi chạy trên Vercel mà thiếu Redis, web báo lỗi
+cấu hình thay vì tạo phòng tạm dễ mất. Chạy ở máy cá nhân vẫn dùng được bộ nhớ
+tạm; dừng máy chủ thì mất phòng.
+
+Mỗi người chơi có mã xác thực riêng; máy chủ tự đo thời gian và khóa câu khi
+hết hạn (được xử lý ở yêu cầu đồng bộ tiếp theo). Chỉ tham gia khi phòng đang
+ở sảnh chờ, tối đa 100 người. Thời gian phản hồi tính theo lúc máy chủ nhận
+được yêu cầu, nên phụ thuộc độ trễ mạng của người chơi.
+
+Kiểm tra các lỗi Đấu trường đã sửa:
+
+```bash
+npm run test:arena
+```
 
 ## Tính năng
 
