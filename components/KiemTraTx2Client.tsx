@@ -7,6 +7,7 @@ import { TX2_ID, TX2_COUNT, TX2_MINUTES, TX2_TITLE } from "@/lib/tx2-config";
 import { soGiayTx2ConLai, theoDoiTabTx2 } from "@/lib/tx2-visibility";
 import { getHocSinh, saveHocSinh, hopLe, chuanHoa } from "@/lib/hocsinh";
 import { playCorrect, playWrong, playCelebration, playClick } from "@/lib/sound";
+import { TX2_OPENING_LABEL, type Tx2Access } from "@/lib/tx2-schedule";
 import Confetti from "@/components/Confetti";
 import NopBai from "@/components/NopBai";
 
@@ -41,6 +42,17 @@ export default function KiemTraTx2Client() {
   const [soLanDoiDe, setSoLanDoiDe] = useState(0);
   const [tabDangAn, setTabDangAn] = useState(false);
 
+  const [access,setAccess] = useState<Tx2Access|null>(null);
+  const [accessError,setAccessError] = useState("");
+  const [starting,setStarting] = useState(false);
+  const startingRef = useRef(false);
+  useEffect(()=>{
+    if(giaiDoan!=="gioi-thieu")return;
+    const controller=new AbortController();
+    async function refresh(){try{const response=await fetch("/api/tx2/access",{cache:"no-store",signal:controller.signal});const data=await response.json();if(!response.ok||data.ok!==true)throw new Error();if(!controller.signal.aborted){setAccess(data);setAccessError("");}}catch{if(!controller.signal.aborted){setAccess(null);setAccessError("Chưa kiểm tra được giờ mở bài. Vui lòng kiểm tra kết nối mạng.");}}}
+    void refresh();const timer=setInterval(()=>void refresh(),15000);return()=>{controller.abort();clearInterval(timer);};
+  },[giaiDoan]);
+
   const cauHoiRef = useRef<HTMLDivElement>(null);
   const deHienTaiRef = useRef<CauDaTron[]>([]);
   const hetGioLucRef = useRef(0);
@@ -59,7 +71,7 @@ export default function KiemTraTx2Client() {
   useEffect(() => {
     if (giaiDoan !== "dang-lam") return;
     const timer = setInterval(() => {
-      setGiayConLai(soGiayTx2ConLai(hetGioLucRef.current));
+      setGiayConLai(soGiayTx2ConLai(hetGioLucRef.current, performance.now()));
     }, 1000);
     return () => clearInterval(timer);
   }, [giaiDoan]);
@@ -70,7 +82,7 @@ export default function KiemTraTx2Client() {
     return theoDoiTabTx2(document, (hidden) => {
       if (daNopRef.current) return;
       setTabDangAn(hidden);
-      const remaining = soGiayTx2ConLai(hetGioLucRef.current);
+      const remaining = soGiayTx2ConLai(hetGioLucRef.current, performance.now());
       setGiayConLai(remaining);
       if (!hidden || remaining === 0) return;
       const boDe = tronDe(deHienTaiRef.current.map((q) => q.id));
@@ -85,8 +97,8 @@ export default function KiemTraTx2Client() {
 
   // Hết giờ tự động nộp bài
   useEffect(() => {
-    if (giaiDoan === "dang-lam" && giayConLai === 0 && !tabDangAn) {
-      nopBai();
+    if (giaiDoan === "dang-lam" && giayConLai === 0) {
+      nopBai(true);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [giayConLai, giaiDoan, tabDangAn]);
@@ -100,28 +112,24 @@ export default function KiemTraTx2Client() {
 
   const thongTinHopLe = hopLe({ hoTen, lop });
 
-  function batDauLamBai() {
-    if (!thongTinHopLe) return;
-    const hs = chuanHoa({ hoTen, lop });
-    saveHocSinh(hs);
-    setHoTen(hs.hoTen);
-    setLop(hs.lop);
-
-    playClick();
-    const boDe = tronDe();
-    const batDauLuc = Date.now();
-    deHienTaiRef.current = boDe;
-    hetGioLucRef.current = batDauLuc + DE_KIEM_TRA_TX2.thoiGianPhut * 60 * 1000;
-    daNopRef.current = false;
-    setSoLanDoiDe(0);
-    setTabDangAn(false);
-    setDe(boDe);
-    setDapAnDaChon(new Array(boDe.length).fill(null));
-    setCauHienTai(0);
-    setGiayConLai(DE_KIEM_TRA_TX2.thoiGianPhut * 60);
-    setThoiGianBatDau(batDauLuc);
-    setHoiXacNhanNop(false);
-    setGiaiDoan("dang-lam");
+  async function batDauLamBai() {
+    if (!thongTinHopLe || startingRef.current) return;
+    startingRef.current=true;setStarting(true);setAccessError("");
+    const hs = chuanHoa({ hoTen, lop }), requestBegan=performance.now();
+    try {
+      const response=await fetch("/api/tx2/access",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(hs)});
+      const data=await response.json();
+      if(!response.ok||data.ok!==true||typeof data.deadline!=="number"||typeof data.serverNow!=="number")throw new Error(data.loi||"Chưa thể bắt đầu bài kiểm tra.");
+      const deadline=requestBegan+data.deadline-data.serverNow;
+      if(deadline<=performance.now())throw new Error("Đã hết giờ bắt đầu bài kiểm tra.");
+      saveHocSinh(hs);setHoTen(hs.hoTen);setLop(hs.lop);playClick();
+      const boDe=tronDe(),batDauLuc=performance.now();
+      deHienTaiRef.current=boDe;hetGioLucRef.current=deadline;daNopRef.current=false;
+      setSoLanDoiDe(0);setTabDangAn(false);setDe(boDe);setDapAnDaChon(new Array(boDe.length).fill(null));
+      setCauHienTai(0);setGiayConLai(soGiayTx2ConLai(deadline,batDauLuc));setThoiGianBatDau(batDauLuc);
+      setHoiXacNhanNop(false);setGiaiDoan("dang-lam");
+    } catch(error) { setAccessError(error instanceof Error?error.message:"Không kết nối được máy chủ, em thử lại nhé."); }
+    finally {startingRef.current=false;setStarting(false);}
   }
 
   function chonDapAn(phuongAnIndex: number) {
@@ -147,11 +155,11 @@ export default function KiemTraTx2Client() {
     };
   }, [de, dapAnDaChon]);
 
-  function nopBai() {
-    if (giaiDoan !== "dang-lam" || document.hidden || daNopRef.current) return;
+  function nopBai(tuDong = false) {
+    if (giaiDoan !== "dang-lam" || (!tuDong && document.hidden) || daNopRef.current) return;
     daNopRef.current = true;
     playClick();
-    const tgGiay = Math.max(1, Math.round((Date.now() - thoiGianBatDau) / 1000));
+    const tgGiay = Math.max(1, Math.round((performance.now() - thoiGianBatDau) / 1000));
     setThoiGianHoanThanh(dinhDangGio(tgGiay));
     setGiaiDoan("da-nop");
     setHoiXacNhanNop(false);
@@ -330,13 +338,18 @@ export default function KiemTraTx2Client() {
             )}
           </div>
 
+          <div className="mt-6 rounded-2xl border border-sea/20 bg-sea/5 p-4" role="status" aria-live="polite">
+            <p className="font-semibold text-sea-deep">Lịch mở bài: {TX2_OPENING_LABEL}</p>
+            <p className="mt-2 text-sm text-ink-soft">{accessError || access?.message || "Đang kiểm tra giờ mở bài từ máy chủ…"}</p>
+            <p className="mt-2 text-xs text-ink-soft">Tối đa 16 phút, bài kết thúc chậm nhất lúc 10:30. Vào muộn sẽ còn ít thời gian hơn. Trang tự cập nhật trạng thái mở bài mỗi 15 giây.</p>
+          </div>
           <div className="mt-6">
             <button
               onClick={batDauLamBai}
-              disabled={!thongTinHopLe}
+              disabled={!thongTinHopLe || !access?.open || starting}
               className="flex w-full items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-sea to-coral py-4 font-display text-base font-bold text-white shadow-lg transition hover:opacity-95 hover:shadow-xl disabled:cursor-not-allowed disabled:opacity-40 sm:text-lg"
             >
-              Bắt đầu làm bài kiểm tra 🚀
+              {starting ? "Đang kiểm tra giờ mở bài…" : "Bắt đầu làm bài kiểm tra 🚀"}
             </button>
             {!thongTinHopLe && (
               <p className="mt-2 text-center font-mono text-xs text-ink-soft/70">
@@ -579,7 +592,7 @@ export default function KiemTraTx2Client() {
                   Làm tiếp
                 </button>
                 <button
-                  onClick={nopBai}
+                  onClick={()=>nopBai()}
                   className="rounded-xl bg-gradient-to-r from-leaf to-leaf-deep py-2.5 font-display text-sm font-bold text-white shadow-md transition hover:opacity-95"
                 >
                   Đồng ý nộp bài

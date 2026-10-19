@@ -47,6 +47,7 @@ test('TX2 accepts decimal /10 while preserving integer /100 practice scores',()=
 test('same-site and configured origins pass, unrelated and null origins fail',()=>{for(const host of ['luyen-trac-nghiem-tin-12.vercel.app','school.example','preview-123.vercel.app'])assert.equal(dungMienNopBai(new Request('https://'+host+'/api/nop-bai',{headers:{origin:'https://'+host}}),{}),true);for(const origin of ['null','bad url','https://unrelated.example'])assert.equal(dungMienNopBai(new Request('https://school.example/api/nop-bai',{headers:{origin}}),{}),false);});
 // Tất cả yêu cầu Google dưới đây được giả lập; không đọc khóa thật, không ghi Sheets thật.
 test('API writes /10 into a dedicated TX2 tab; classroom IPs work; failures stay errors',async()=>{
+  const originalNow=Date.now;Date.now=()=>Date.parse('2026-10-19T08:00:00+07:00');
   const savedFetch=global.fetch,keys=['GOOGLE_SERVICE_ACCOUNT_EMAIL','GOOGLE_PRIVATE_KEY','GOOGLE_SHEET_ID'],saved=keys.map(k=>process.env[k]);
   const {privateKey}=crypto.generateKeyPairSync('rsa',{modulusLength:2048,privateKeyEncoding:{type:'pkcs8',format:'pem'},publicKeyEncoding:{type:'spki',format:'pem'}});
   process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL='test@example.invalid';process.env.GOOGLE_PRIVATE_KEY=privateKey;process.env.GOOGLE_SHEET_ID='mock-sheet';
@@ -60,5 +61,5 @@ test('API writes /10 into a dedicated TX2 tab; classroom IPs work; failures stay
     assert.equal((await call({...body,hoTen:'Luyện Tập',baiId:'bai-01',dang:'Trắc nghiệm',diem:93})).status,200);assert.ok(rows.at(-1).url.includes('/values/A:I:append'));assert.equal(rows.at(-1).row[6],93);
     failAppend=true;const failed=await call({...body,hoTen:'Lỗi Máy Chủ'});assert.equal(failed.status,502);assert.equal(failed.body.ok,false);
     failAppend=false;header=['Cột cũ không đúng cấu trúc'];const before=rows.length;const badHeader=await call({...body,hoTen:'Kiểm Tra Tiêu Đề'});assert.equal(badHeader.status,502);assert.equal(rows.length,before);assert.deepEqual(header,['Cột cũ không đúng cấu trúc']);
-  }finally{global.fetch=savedFetch;keys.forEach((k,i)=>{if(saved[i]===undefined)delete process.env[k];else process.env[k]=saved[i];});}
+  }finally{Date.now=originalNow;global.fetch=savedFetch;keys.forEach((k,i)=>{if(saved[i]===undefined)delete process.env[k];else process.env[k]=saved[i];});}
 });

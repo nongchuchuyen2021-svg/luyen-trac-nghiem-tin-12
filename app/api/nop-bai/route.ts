@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { themDong, themDongTx2, daCauHinh } from "@/lib/google-sheets";
 import { dungMienNopBai } from "@/lib/submission-origin";
 import { docBaiNop } from "@/lib/submission-data";
+import { tx2CanSubmit, TX2_OPENING_LABEL } from "@/lib/tx2-schedule";
 import { TX2_ID } from "@/lib/tx2-config";
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -20,6 +21,7 @@ export async function POST(req: Request) {
   try { input = await req.json(); } catch { return NextResponse.json({ ok: false, loi: "Dữ liệu gửi lên không đọc được" }, { status: 400 }); }
   const b = docBaiNop(input);
   if (!b) return NextResponse.json({ ok: false, loi: "Dữ liệu gửi lên không hợp lệ" }, { status: 400 });
+  if (b.baiId === TX2_ID && !tx2CanSubmit()) return NextResponse.json({ ok:false, loi:"Ngoài thời gian nhận bài kiểm tra. Lịch mở: " + TX2_OPENING_LABEL }, { status:403 });
   const ip = req.headers.get("x-forwarded-for")?.split(",")[0].trim() ?? "khong-ro";
   if (tooMany(JSON.stringify([ip, b.lop.toUpperCase(), b.hoTen.toLocaleLowerCase("vi")]))) return NextResponse.json({ ok: false, loi: "Em nộp hơi nhiều lần, thử lại sau ít phút nhé" }, { status: 429 });
   if (!daCauHinh()) return NextResponse.json({ ok: false, loi: "Máy chủ chưa được cấu hình để nhận bài nộp" }, { status: 503 });
