@@ -23,8 +23,8 @@ export async function POST(req:Request){
  if(!daCauHinh())return NextResponse.json({ok:false,loi:"Chưa cấu hình bảng điểm, tiến độ vẫn được giữ trên máy"},{status:503});
  const safe=(s:string)=>/^[=+\-@]/.test(s)?"'"+s:s,thoiGian=new Date().toLocaleString("vi-VN",{timeZone:"Asia/Ho_Chi_Minh"});
  const detail={saveId:b.saveId,version:REVIEW_VERSION,summary,answers};
- const title="Ôn tập 1–8 | TN "+summary.mcDone+"/60 | ĐS "+summary.tfDone+"/12 | TL "+summary.essayDone+"/8 | Tự đánh giá TL "+(summary.essaySelf??"chưa có")+"/10\nCHI_TIET_JSON:"+JSON.stringify(detail);
+ const title="Ôn tập bài 1–8 — Tin học 12";
  const payload={thoiGian,hoTen:safe(hs.hoTen),lop:safe(hs.lop),baiId:"on-tap-1-8",tenBai:title,dang:"Ôn tập",diem:summary.objectiveScore,soCauDung:summary.correct,tongSoCau:108,review:detail};
- const promise=themDong([thoiGian,payload.hoTen,payload.lop,payload.baiId,title,payload.dang,payload.diem,payload.soCauDung,108],payload).then(()=>({ok:true,thoiGian,summary,saveId:b.saveId}));saved.set(key,{hash,at:now,promise});
+ const promise=themDong([thoiGian,payload.hoTen,payload.lop,payload.baiId,title,payload.dang,payload.diem,payload.soCauDung,108],payload).then(result=>({ok:true,thoiGian,summary,saveId:b.saveId,detailSaved:result?.reviewSaved===true}));saved.set(key,{hash,at:now,promise});
  try{return NextResponse.json(await promise);}catch(error){saved.delete(key);console.error("Lưu ôn tập thất bại",error instanceof Error?error.message:"unknown");return NextResponse.json({ok:false,loi:"Chưa lưu được Google Sheets. Tiến độ vẫn trên máy; em có thể thử lại."},{status:502});}
 }

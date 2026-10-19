@@ -27,11 +27,11 @@ Tiến độ trên trình duyệt lưu theo phiên bản đề, họ tên và l�
 
 `POST /api/on-tap` xác thực cấu trúc câu trả lời và tính điểm trên máy chủ, dùng kết nối Apps Script Tin 12 hiện có. Không đưa khóa Google vào trình duyệt. Lưu bằng nút hoặc sau 20 giây ngừng thao tác; lỗi mạng giữ lại tiến độ trên máy và cho phép thử lại.
 
-Bản ghi có mã bài `on-tap-1-8`. Giữ cấu trúc 9 cột A:I tương thích webhook đang dùng; cột E chứa diễn giải tiến độ và phần `CHI_TIET_JSON:` gồm câu trả lời, tự luận, rubric và điểm từng dạng. Không tạo bảng tính mới.
+Bản ghi có mã bài `on-tap-1-8`. Giữ cấu trúc 9 cột A:I; cột E chỉ chứa tên đề cương. Dữ liệu câu trả lời nằm trong trường `review` riêng của yêu cầu. Webhook v2 trong `scripts/google-apps-script.js` lưu tóm tắt ở J và toàn bộ JSON trong ghi chú J. Cần cập nhật bản triển khai Apps Script theo `SUA_COT_TEN_BAI.md`; webhook cũ chỉ lưu điểm khách quan và website thông báo rõ giới hạn này. Không tạo bảng tính mới.
 
-Trong `Trang tính1`, K:O tổng hợp họ tên/lớp, điểm khách quan tốt nhất, số ý đúng tốt nhất và số bản ghi lưu. R:V tổng hợp số học sinh, trung bình điểm tốt nhất, cao nhất và thấp nhất theo lớp. Công thức đọc cả `Trang tính1` và `TX2` để tương thích webhook cũ ghi vào trang đang hoạt động. Các lần lưu tiến độ là bản ghi, không được coi là các lần thi độc lập. Điểm tự luận tự đánh giá nằm trong chi tiết từng bản ghi.
+Trong `Trang tính1`, K:O tổng hợp họ tên/lớp, điểm khách quan tốt nhất, số ý đúng tốt nhất và số bản ghi lưu. R:V tổng hợp số học sinh, trung bình điểm tốt nhất, cao nhất và thấp nhất theo lớp. Công thức đọc cả `Trang tính1` và `TX2` để tương thích webhook cũ ghi vào trang đang hoạt động. Các lần lưu tiến độ là bản ghi, không được coi là các lần thi độc lập. Sau khi cập nhật webhook v2, điểm tự luận tự đánh giá nằm trong ghi chú chi tiết từng bản ghi ở cột J.
 
-Mã lưu giúp tránh gửi trùng khi bấm lại trong một trang; máy chủ ghi nhớ chống trùng 30 phút trong cùng tiến trình. Không bảo đảm chống trùng tuyệt đối qua việc khởi động lại hay nhiều máy chủ đồng thời.
+Mã lưu giúp tránh gửi trùng khi bấm lại trong một trang; máy chủ ghi nhớ chống trùng 30 phút trong cùng tiến trình. Webhook v2 dùng khóa ghi và tra mã lưu ở J để chống trùng cả khi máy chủ web khởi động lại. Webhook cũ không bảo đảm chống trùng qua nhiều tiến trình.
 
 ## Kiểm tra
 

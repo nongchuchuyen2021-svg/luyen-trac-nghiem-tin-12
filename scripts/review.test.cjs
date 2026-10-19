@@ -40,17 +40,17 @@ test('invalid question IDs, unchecked answers and invalid essay shapes are rejec
  for(const patch of [{mc:{unknown:{choice:0,checked:true}}},{mc:{[mc[0].id]:{choice:null,checked:true}}},{tf:{[tf[0].id]:{choices:[true,null,false,false],checked:true}}},{essays:{[es[0].id]:{text:'short',rubric:[true,true,true,true],reviewed:true}}}])assert.equal(validateReviewAnswers({...emptyReviewAnswers(),...patch}),null);
 });
 test('API validates origin, computes score, deduplicates retries and surfaces upstream failures',async()=>{
- const originalFetch=global.fetch;let rows=[],fail=false,missing=false;
- global.fetch=async(url,init)=>{assert.ok(String(url).includes('script.google.com'));if(fail)return new Response('failed',{status:503});if(missing)return Response.json({});rows.push(JSON.parse(init.body));return Response.json({ok:true});};
+ const originalFetch=global.fetch;let rows=[],fail=false,missing=false,details=false;
+ global.fetch=async(url,init)=>{assert.ok(String(url).includes('script.google.com'));if(fail)return new Response('failed',{status:503});if(missing)return Response.json({});rows.push(JSON.parse(init.body));return Response.json({ok:true,reviewSaved:details});};
  const {POST}=require('../app/api/on-tap/route.ts');
  const answers=emptyReviewAnswers();answers.mc[mc[0].id]={choice:mc[0].answer,checked:true};
  const body={hoTen:'Kiểm Tra Test',lop:'12TEST',version:REVIEW_VERSION,saveId:'test-save-0001',answers,diem:10};
  const call=async(b,origin='https://school.example')=>{const r=await POST(new Request('https://school.example/api/on-tap',{method:'POST',headers:{origin,'content-type':'application/json'},body:JSON.stringify(b)}));return {status:r.status,body:await r.json()};};
  try{assert.equal((await call(body,'https://foreign.example')).status,403);assert.equal((await call({...body,answers:emptyReviewAnswers()})).status,400);
- const good=await call(body);assert.equal(good.status,200);assert.equal(good.body.summary.objectiveScore,.09);assert.equal(rows.length,1);assert.equal(rows[0].diem,.09);assert.equal(rows[0].tongSoCau,108);assert.ok(rows[0].tenBai.includes('CHI_TIET_JSON:'));
+ const good=await call(body);assert.equal(good.status,200);assert.equal(good.body.summary.objectiveScore,.09);assert.equal(rows.length,1);assert.equal(rows[0].diem,.09);assert.equal(rows[0].tongSoCau,108);assert.equal(rows[0].tenBai,'Ôn tập bài 1–8 — Tin học 12');assert.ok(!rows[0].tenBai.includes('CHI_TIET_JSON:'));assert.deepEqual(rows[0].review.answers,answers);assert.equal(good.body.detailSaved,false);
  assert.equal((await call(body)).status,200);assert.equal(rows.length,1);
  const changed=JSON.parse(JSON.stringify(body));changed.answers.mc[mc[0].id].choice=(mc[0].answer+1)%4;assert.equal((await call(changed)).status,409);
  fail=true;assert.equal((await call({...body,saveId:'test-save-0002'})).status,502);fail=false;assert.equal((await call({...body,saveId:'test-save-0002'})).status,200);
- missing=true;assert.equal((await call({...body,saveId:'test-save-0003'})).status,502);
+ missing=true;assert.equal((await call({...body,saveId:'test-save-0003'})).status,502);missing=false;details=true;assert.equal((await call({...body,saveId:'test-save-0004'})).body.detailSaved,true);
  }finally{global.fetch=originalFetch;}
 });

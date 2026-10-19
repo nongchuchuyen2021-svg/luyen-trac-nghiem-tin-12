@@ -77,7 +77,7 @@ async function layAccessToken(email: string, khoa: string): Promise<string> {
 }
 
 /** Ghi thêm một dòng vào cuối trang tính. Ném lỗi nếu thất bại. */
-export async function themDong(dong: (string | number)[], duLieuGoc?: Record<string, unknown>): Promise<void> {
+export async function themDong(dong: (string | number)[], duLieuGoc?: Record<string, unknown>): Promise<{reviewSaved:boolean}|void> {
   const appsScriptUrl = layCauHinhAppsScript();
   if (appsScriptUrl && process.env.GOOGLE_SHEET_ID !== "mock-sheet") {
     const payload = duLieuGoc ?? {
@@ -99,7 +99,7 @@ export async function themDong(dong: (string | number)[], duLieuGoc?: Record<str
     if (!res.ok) throw new Error(`Google Apps Script HTTP ${res.status}`);
     const data = await res.json().catch(() => ({}));
     if (data.ok !== true) throw new Error(data.error || "Apps Script chưa xác nhận lưu thành công");
-    return;
+    return {reviewSaved:data.reviewSaved===true};
   }
 
   const env = bienMoiTruong();
