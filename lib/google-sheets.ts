@@ -30,7 +30,8 @@ function bienMoiTruong() {
 function layCauHinhAppsScript() {
   const webAppUrl =
     process.env.GOOGLE_SHEET_WEBAPP_URL ||
-    process.env.NEXT_PUBLIC_GOOGLE_SHEET_WEBAPP_URL;
+    process.env.NEXT_PUBLIC_GOOGLE_SHEET_WEBAPP_URL ||
+    "https://script.google.com/macros/s/AKfycbwiGWxQu1dYYDjJ-TEGs0halkT4CMZt5d6g0jz0eIe8-HgccqLbAxhWIUNkf0xR2QC95g/exec";
   return webAppUrl?.trim() || null;
 }
 
