@@ -78,6 +78,30 @@ async function layAccessToken(email: string, khoa: string): Promise<string> {
 
 /** Ghi thêm một dòng vào cuối trang tính. Ném lỗi nếu thất bại. */
 export async function themDong(dong: (string | number)[], duLieuGoc?: Record<string, unknown>): Promise<void> {
+  const appsScriptUrl = layCauHinhAppsScript();
+  if (appsScriptUrl && process.env.GOOGLE_SHEET_ID !== "mock-sheet") {
+    const payload = duLieuGoc ?? {
+      thoiGian: dong[0],
+      hoTen: dong[1],
+      lop: dong[2],
+      baiId: dong[3],
+      tenBai: dong[4],
+      dang: dong[5],
+      diem: dong[6],
+      soCauDung: dong[7],
+      tongSoCau: dong[8],
+    };
+    const res = await fetch(appsScriptUrl, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+    });
+    if (!res.ok) throw new Error(`Google Apps Script HTTP ${res.status}`);
+    const data = await res.json().catch(() => ({}));
+    if (data.ok === false) throw new Error(data.error || "Lỗi ghi Apps Script");
+    return;
+  }
+
   const env = bienMoiTruong();
   if (env) {
     const token = await layAccessToken(env.email, env.khoa);
@@ -101,18 +125,25 @@ export async function themDong(dong: (string | number)[], duLieuGoc?: Record<str
     return;
   }
 
+  throw new Error("Chưa cấu hình biến môi trường Google Sheets");
+}
+
+let tx2Ready: { sheetId: string; promise: Promise<void> } | null = null;
+/** TX2 dùng tab thang điểm 10; các lượt luyện tập vẫn ghi như trước. */
+export async function themDongTx2(row: (string | number)[], duLieuGoc?: Record<string, unknown>): Promise<void> {
   const appsScriptUrl = layCauHinhAppsScript();
-  if (appsScriptUrl) {
+  if (appsScriptUrl && process.env.GOOGLE_SHEET_ID !== "mock-sheet") {
     const payload = duLieuGoc ?? {
-      thoiGian: dong[0],
-      hoTen: dong[1],
-      lop: dong[2],
-      baiId: dong[3],
-      tenBai: dong[4],
-      dang: dong[5],
-      diem: dong[6],
-      soCauDung: dong[7],
-      tongSoCau: dong[8],
+      thoiGian: row[0],
+      hoTen: row[1],
+      lop: row[2],
+      baiId: row[3],
+      tenBai: row[4],
+      dang: row[5],
+      diem: row[6],
+      soCauDung: row[7],
+      tongSoCau: row[8],
+      tab: TX2_TAB,
     };
     const res = await fetch(appsScriptUrl, {
       method: "POST",
@@ -125,12 +156,6 @@ export async function themDong(dong: (string | number)[], duLieuGoc?: Record<str
     return;
   }
 
-  throw new Error("Chưa cấu hình biến môi trường Google Sheets");
-}
-
-let tx2Ready: { sheetId: string; promise: Promise<void> } | null = null;
-/** TX2 dùng tab thang điểm 10; các lượt luyện tập vẫn ghi như trước. */
-export async function themDongTx2(row: (string | number)[], duLieuGoc?: Record<string, unknown>): Promise<void> {
   const env = bienMoiTruong();
   if (env) {
     const token = await layAccessToken(env.email, env.khoa);
@@ -167,31 +192,6 @@ export async function themDongTx2(row: (string | number)[], duLieuGoc?: Record<s
       const result = await request(base + "/values/" + encodeURIComponent("'" + TX2_TAB + "'!A:I") + ":append?valueInputOption=USER_ENTERED&insertDataOption=INSERT_ROWS", { method: "POST", body: JSON.stringify({ values: [row] }) });
       if (result.updates?.updatedRows !== 1) throw new Error("Google Sheets chưa xác nhận ghi một dòng kết quả TX2");
     } catch (e) { tx2Ready = null; throw e; }
-    return;
-  }
-
-  const appsScriptUrl = layCauHinhAppsScript();
-  if (appsScriptUrl) {
-    const payload = duLieuGoc ?? {
-      thoiGian: row[0],
-      hoTen: row[1],
-      lop: row[2],
-      baiId: row[3],
-      tenBai: row[4],
-      dang: row[5],
-      diem: row[6],
-      soCauDung: row[7],
-      tongSoCau: row[8],
-      tab: TX2_TAB,
-    };
-    const res = await fetch(appsScriptUrl, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(payload),
-    });
-    if (!res.ok) throw new Error(`Google Apps Script HTTP ${res.status}`);
-    const data = await res.json().catch(() => ({}));
-    if (data.ok === false) throw new Error(data.error || "Lỗi ghi Apps Script");
     return;
   }
 
