@@ -98,7 +98,7 @@ export async function themDong(dong: (string | number)[], duLieuGoc?: Record<str
     });
     if (!res.ok) throw new Error(`Google Apps Script HTTP ${res.status}`);
     const data = await res.json().catch(() => ({}));
-    if (data.ok === false) throw new Error(data.error || "Lỗi ghi Apps Script");
+    if (data.ok !== true) throw new Error(data.error || "Apps Script chưa xác nhận lưu thành công");
     return;
   }
 
@@ -152,7 +152,7 @@ export async function themDongTx2(row: (string | number)[], duLieuGoc?: Record<s
     });
     if (!res.ok) throw new Error(`Google Apps Script HTTP ${res.status}`);
     const data = await res.json().catch(() => ({}));
-    if (data.ok === false) throw new Error(data.error || "Lỗi ghi Apps Script");
+    if (data.ok !== true) throw new Error(data.error || "Apps Script chưa xác nhận lưu thành công");
     return;
   }
 

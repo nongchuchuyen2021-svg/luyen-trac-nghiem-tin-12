@@ -66,6 +66,10 @@ export default function HomeClient({ counts }: { counts: Record<string, LessonCo
           )}
         </header>
 
+        <Link href="/on-tap/bai-1-8" className="mt-8 flex items-center justify-between gap-4 rounded-2xl border-2 border-sea/30 bg-white p-5 shadow-card sm:p-6">
+          <div><p className="font-display text-lg font-bold text-ink">📚 Đề cương ôn tập — Bài 1–8</p><p className="mt-1 text-sm text-ink-soft">60 TNKQ · 12 đúng–sai · 8 tự luận · Lưu kết quả Google Sheets</p></div>
+          <span className="shrink-0 rounded-full bg-sea-deep px-4 py-2 text-sm font-medium text-white">Ôn tập →</span>
+        </Link>
         <Link href="/kiem-tra/thuong-xuyen-2" className="mt-8 flex items-center justify-between gap-4 rounded-2xl border-2 border-sea/30 bg-gradient-to-r from-sea/10 to-coral/10 p-5 shadow-card transition hover:-translate-y-0.5 sm:p-6">
           <div><p className="font-display text-lg font-bold text-ink">📝 Kiểm tra thường xuyên 2 — Bài 1–6</p><p className="mt-1 text-sm text-ink-soft">15 câu · 16 phút · Bốc theo mức độ · Lưu điểm Google Sheets</p></div>
           <span className="shrink-0 rounded-full bg-sea px-4 py-2 text-sm font-medium text-white">Làm bài →</span>
