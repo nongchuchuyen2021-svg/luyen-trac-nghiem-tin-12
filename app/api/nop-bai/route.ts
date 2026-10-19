@@ -26,7 +26,18 @@ export async function POST(req: Request) {
   const safe = (s: string) => /^[=+\-@]/.test(s) ? "'" + s : s;
   const thoiGian = new Date().toLocaleString("vi-VN", { timeZone: "Asia/Ho_Chi_Minh" });
   const row = [thoiGian, safe(b.hoTen), safe(b.lop), b.baiId, safe(b.tenBai), b.dang, b.diem, b.soCauDung, b.tongSoCau];
-  try { if (b.baiId === TX2_ID) await themDongTx2(row); else await themDong(row); }
+  const payload = {
+    thoiGian,
+    hoTen: safe(b.hoTen),
+    lop: safe(b.lop),
+    baiId: b.baiId,
+    tenBai: safe(b.tenBai),
+    dang: b.dang,
+    diem: b.diem,
+    soCauDung: b.soCauDung,
+    tongSoCau: b.tongSoCau,
+  };
+  try { if (b.baiId === TX2_ID) await themDongTx2(row, payload); else await themDong(row, payload); }
   catch (e) { console.error("Ghi bảng tính thất bại:", e); return NextResponse.json({ ok: false, loi: "Chưa gửi được lên bảng tính, em giữ kết quả và thử lại sau nhé" }, { status: 502 }); }
   return NextResponse.json({ ok: true, thoiGian });
 }

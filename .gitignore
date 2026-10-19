@@ -2,7 +2,6 @@ node_modules/
 .next/
 out/
 *.tsbuildinfo
-.git_new/
 .env*.local
 
 # Tài liệu tham khảo có bản quyền, dung lượng lớn — chỉ để ở máy, không đẩy lên GitHub

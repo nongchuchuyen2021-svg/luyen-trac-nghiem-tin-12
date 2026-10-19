@@ -27,8 +27,15 @@ function bienMoiTruong() {
   return { email, khoa, sheetId };
 }
 
+function layCauHinhAppsScript() {
+  const webAppUrl =
+    process.env.GOOGLE_SHEET_WEBAPP_URL ||
+    process.env.NEXT_PUBLIC_GOOGLE_SHEET_WEBAPP_URL;
+  return webAppUrl?.trim() || null;
+}
+
 export function daCauHinh() {
-  return bienMoiTruong() !== null;
+  return bienMoiTruong() !== null || layCauHinhAppsScript() !== null;
 }
 
 function base64url(o: unknown) {
@@ -69,67 +76,123 @@ async function layAccessToken(email: string, khoa: string): Promise<string> {
 }
 
 /** Ghi thêm một dòng vào cuối trang tính. Ném lỗi nếu thất bại. */
-export async function themDong(dong: (string | number)[]): Promise<void> {
+export async function themDong(dong: (string | number)[], duLieuGoc?: Record<string, unknown>): Promise<void> {
   const env = bienMoiTruong();
-  if (!env) throw new Error("Chưa cấu hình biến môi trường Google Sheets");
+  if (env) {
+    const token = await layAccessToken(env.email, env.khoa);
+    const url =
+      `https://sheets.googleapis.com/v4/spreadsheets/${env.sheetId}` +
+      `/values/A:I:append?valueInputOption=USER_ENTERED&insertDataOption=INSERT_ROWS`;
 
-  const token = await layAccessToken(env.email, env.khoa);
-  const url =
-    `https://sheets.googleapis.com/v4/spreadsheets/${env.sheetId}` +
-    `/values/A:I:append?valueInputOption=USER_ENTERED&insertDataOption=INSERT_ROWS`;
+    const res = await fetch(url, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ values: [dong] }),
+    });
 
-  const res = await fetch(url, {
-    method: "POST",
-    headers: {
-      Authorization: `Bearer ${token}`,
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({ values: [dong] }),
-  });
-
-  if (!res.ok) {
-    const chiTiet = await res.text();
-    throw new Error(`Ghi bảng tính thất bại (HTTP ${res.status}): ${chiTiet.slice(0, 300)}`);
+    if (!res.ok) {
+      const chiTiet = await res.text();
+      throw new Error(`Ghi bảng tính thất bại (HTTP ${res.status}): ${chiTiet.slice(0, 300)}`);
+    }
+    return;
   }
+
+  const appsScriptUrl = layCauHinhAppsScript();
+  if (appsScriptUrl) {
+    const payload = duLieuGoc ?? {
+      thoiGian: dong[0],
+      hoTen: dong[1],
+      lop: dong[2],
+      baiId: dong[3],
+      tenBai: dong[4],
+      dang: dong[5],
+      diem: dong[6],
+      soCauDung: dong[7],
+      tongSoCau: dong[8],
+    };
+    const res = await fetch(appsScriptUrl, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+    });
+    if (!res.ok) throw new Error(`Google Apps Script HTTP ${res.status}`);
+    const data = await res.json().catch(() => ({}));
+    if (data.ok === false) throw new Error(data.error || "Lỗi ghi Apps Script");
+    return;
+  }
+
+  throw new Error("Chưa cấu hình biến môi trường Google Sheets");
 }
 
 let tx2Ready: { sheetId: string; promise: Promise<void> } | null = null;
 /** TX2 dùng tab thang điểm 10; các lượt luyện tập vẫn ghi như trước. */
-export async function themDongTx2(row: (string | number)[]): Promise<void> {
+export async function themDongTx2(row: (string | number)[], duLieuGoc?: Record<string, unknown>): Promise<void> {
   const env = bienMoiTruong();
-  if (!env) throw new Error("Chưa cấu hình biến môi trường Google Sheets");
-  const token = await layAccessToken(env.email, env.khoa);
-  const base = "https://sheets.googleapis.com/v4/spreadsheets/" + env.sheetId;
-  const headers = { Authorization: "Bearer " + token, "Content-Type": "application/json" };
-  async function request(url: string, init: RequestInit = {}) {
-    const res = await fetch(url, { ...init, headers });
-    if (!res.ok) throw new Error("Google Sheets HTTP " + res.status);
-    return res.json();
-  }
-  async function initTab() {
-    const metaUrl = base + "?fields=sheets(properties(title))";
-    const metadata = await request(metaUrl);
-    if (!metadata.sheets?.some((sheet: { properties?: { title?: string } }) => sheet.properties?.title === TX2_TAB)) {
-      const created = await fetch(base + ":batchUpdate", { method: "POST", headers, body: JSON.stringify({ requests: [{ addSheet: { properties: { title: TX2_TAB, gridProperties: { frozenRowCount: 1 } } } }] }) });
-      if (!created.ok) {
-        // Hai học sinh đầu tiên có thể cùng tạo tab; chỉ bỏ qua nếu đã có tab.
-        if (created.status !== 400 && created.status !== 409) throw new Error("Tạo tab TX2 HTTP " + created.status);
-        const refreshed = await request(metaUrl);
-        if (!refreshed.sheets?.some((sheet: { properties?: { title?: string } }) => sheet.properties?.title === TX2_TAB)) throw new Error("Không tạo được tab TX2");
+  if (env) {
+    const token = await layAccessToken(env.email, env.khoa);
+    const base = "https://sheets.googleapis.com/v4/spreadsheets/" + env.sheetId;
+    const headers = { Authorization: "Bearer " + token, "Content-Type": "application/json" };
+    const request = async (url: string, init: RequestInit = {}) => {
+      const res = await fetch(url, { ...init, headers });
+      if (!res.ok) throw new Error("Google Sheets HTTP " + res.status);
+      return res.json();
+    };
+    const initTab = async () => {
+      const metaUrl = base + "?fields=sheets(properties(title))";
+      const metadata = await request(metaUrl);
+      if (!metadata.sheets?.some((sheet: { properties?: { title?: string } }) => sheet.properties?.title === TX2_TAB)) {
+        const created = await fetch(base + ":batchUpdate", { method: "POST", headers, body: JSON.stringify({ requests: [{ addSheet: { properties: { title: TX2_TAB, gridProperties: { frozenRowCount: 1 } } } }] }) });
+        if (!created.ok) {
+          // Hai học sinh đầu tiên có thể cùng tạo tab; chỉ bỏ qua nếu đã có tab.
+          if (created.status !== 400 && created.status !== 409) throw new Error("Tạo tab TX2 HTTP " + created.status);
+          const refreshed = await request(metaUrl);
+          if (!refreshed.sheets?.some((sheet: { properties?: { title?: string } }) => sheet.properties?.title === TX2_TAB)) throw new Error("Không tạo được tab TX2");
+        }
       }
-    }
-    const headerUrl = base + "/values/" + encodeURIComponent("'" + TX2_TAB + "'!A1:I1");
-    const current = await request(headerUrl);
-    if (!current.values?.[0]?.some((value: unknown) => String(value ?? "").trim())) {
-      await request(headerUrl + "?valueInputOption=RAW", { method: "PUT", body: JSON.stringify({ values: [TX2_HEADERS] }) });
-    } else if (JSON.stringify(current.values[0]) !== JSON.stringify(TX2_HEADERS)) {
-      throw new Error("Tab TX2 có tiêu đề khác cấu trúc điểm /10; cần giáo viên kiểm tra trước khi ghi");
-    }
+      const headerUrl = base + "/values/" + encodeURIComponent("'" + TX2_TAB + "'!A1:I1");
+      const current = await request(headerUrl);
+      if (!current.values?.[0]?.some((value: unknown) => String(value ?? "").trim())) {
+        await request(headerUrl + "?valueInputOption=RAW", { method: "PUT", body: JSON.stringify({ values: [TX2_HEADERS] }) });
+      } else if (JSON.stringify(current.values[0]) !== JSON.stringify(TX2_HEADERS)) {
+        throw new Error("Tab TX2 có tiêu đề khác cấu trúc điểm /10; cần giáo viên kiểm tra trước khi ghi");
+      }
+    };
+    if (!tx2Ready || tx2Ready.sheetId !== env.sheetId) tx2Ready = { sheetId: env.sheetId, promise: initTab() };
+    try {
+      await tx2Ready.promise;
+      const result = await request(base + "/values/" + encodeURIComponent("'" + TX2_TAB + "'!A:I") + ":append?valueInputOption=USER_ENTERED&insertDataOption=INSERT_ROWS", { method: "POST", body: JSON.stringify({ values: [row] }) });
+      if (result.updates?.updatedRows !== 1) throw new Error("Google Sheets chưa xác nhận ghi một dòng kết quả TX2");
+    } catch (e) { tx2Ready = null; throw e; }
+    return;
   }
-  if (!tx2Ready || tx2Ready.sheetId !== env.sheetId) tx2Ready = { sheetId: env.sheetId, promise: initTab() };
-  try {
-    await tx2Ready.promise;
-    const result = await request(base + "/values/" + encodeURIComponent("'" + TX2_TAB + "'!A:I") + ":append?valueInputOption=USER_ENTERED&insertDataOption=INSERT_ROWS", { method: "POST", body: JSON.stringify({ values: [row] }) });
-    if (result.updates?.updatedRows !== 1) throw new Error("Google Sheets chưa xác nhận ghi một dòng kết quả TX2");
-  } catch (e) { tx2Ready = null; throw e; }
+
+  const appsScriptUrl = layCauHinhAppsScript();
+  if (appsScriptUrl) {
+    const payload = duLieuGoc ?? {
+      thoiGian: row[0],
+      hoTen: row[1],
+      lop: row[2],
+      baiId: row[3],
+      tenBai: row[4],
+      dang: row[5],
+      diem: row[6],
+      soCauDung: row[7],
+      tongSoCau: row[8],
+      tab: TX2_TAB,
+    };
+    const res = await fetch(appsScriptUrl, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+    });
+    if (!res.ok) throw new Error(`Google Apps Script HTTP ${res.status}`);
+    const data = await res.json().catch(() => ({}));
+    if (data.ok === false) throw new Error(data.error || "Lỗi ghi Apps Script");
+    return;
+  }
+
+  throw new Error("Chưa cấu hình biến môi trường Google Sheets");
 }
