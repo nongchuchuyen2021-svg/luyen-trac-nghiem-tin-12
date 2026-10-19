@@ -8,6 +8,7 @@ import type { Question } from "@/lib/types";
 const questions: Question[] = [
   {
     id: "b1-01",
+    difficulty: "nhan-biet",
     q: "Theo cách hiểu thông thường được nêu trong bài, Trí tuệ nhân tạo (AI) là gì?",
     options: [
       "Khả năng của máy tính làm những công việc mang tính trí tuệ của con người",
@@ -21,6 +22,7 @@ const questions: Question[] = [
   },
   {
     id: "b1-02",
+    difficulty: "nhan-biet",
     q: "Phép thử Turing do ai đưa ra, vào năm nào và nhằm mục đích gì?",
     options: [
       "Do Alan Turing đưa ra năm 1950, để đánh giá hành vi thông minh của máy",
@@ -34,6 +36,7 @@ const questions: Question[] = [
   },
   {
     id: "b1-03",
+    difficulty: "nhan-biet",
     q: "Sự kiện nào được coi là điểm mốc ghi nhận sự ra đời của thuật ngữ AI?",
     options: [
       "Hội thảo Dartmouth năm 1956 tại bang New Hampshire, Mỹ",
@@ -47,6 +50,7 @@ const questions: Question[] = [
   },
   {
     id: "b1-04",
+    difficulty: "nhan-biet",
     q: "Một số đặc trưng cơ bản của AI thường được nói tới nhiều nhất gồm những gì?",
     options: [
       "Khả năng học, suy luận, nhận thức, hiểu ngôn ngữ và giải quyết vấn đề",
@@ -60,7 +64,8 @@ const questions: Question[] = [
   },
   {
     id: "b1-05",
-    q: "Hệ thống khuyến nghị trên YouTube học từ lịch sử xem để đề xuất video mới cho từng người. Đó là đặc trưng nào của AI?",
+    difficulty: "van-dung",
+    q: "Một thư viện muốn đề xuất sách phù hợp từng bạn đọc dựa trên lịch sử mượn và điều chỉnh gợi ý khi có dữ liệu mới. Cần ưu tiên khả năng nào của AI?",
     options: [
       "Khả năng học — nắm bắt thông tin từ dữ liệu và điều chỉnh hành vi",
       "Khả năng nhận thức — cảm nhận môi trường qua các cảm biến đầu vào",
@@ -73,6 +78,7 @@ const questions: Question[] = [
   },
   {
     id: "b1-06",
+    difficulty: "thong-hieu",
     q: "Hệ thống chẩn đoán y tế dựa trên tri thức về triệu chứng và bệnh lí để đưa ra chẩn đoán. Đó là đặc trưng nào của AI?",
     options: [
       "Khả năng suy luận — vận dụng logic và tri thức để đưa ra kết luận",
@@ -86,6 +92,7 @@ const questions: Question[] = [
   },
   {
     id: "b1-07",
+    difficulty: "thong-hieu",
     q: "Máy tính điều khiển xe tự lái dùng cảm biến radar và camera để phát hiện xe xung quanh, chướng ngại vật, biển báo. Đó là đặc trưng nào của AI?",
     options: [
       "Khả năng nhận thức — cảm nhận môi trường qua các cảm biến đầu vào",
@@ -99,6 +106,7 @@ const questions: Question[] = [
   },
   {
     id: "b1-08",
+    difficulty: "thong-hieu",
     q: "Máy tìm kiếm như Google, Bing hiểu được yêu cầu tra cứu nhập vào bằng văn bản hay bằng tiếng nói. Đó là đặc trưng nào của AI?",
     options: [
       "Khả năng hiểu ngôn ngữ — xử lí văn bản và tiếng nói của người dùng",
@@ -112,6 +120,7 @@ const questions: Question[] = [
   },
   {
     id: "b1-09",
+    difficulty: "thong-hieu",
     q: "Hệ thống dự báo thời tiết dùng mô hình dựa trên dữ liệu thời tiết trước đây để đưa ra bản tin dự báo. Đó là đặc trưng nào của AI?",
     options: [
       "Khả năng giải quyết vấn đề — tìm cách xử lí các tình huống phức tạp",
@@ -125,6 +134,7 @@ const questions: Question[] = [
   },
   {
     id: "b1-10",
+    difficulty: "thong-hieu",
     q: "Trường hợp nào sau đây KHÔNG được coi là một ứng dụng của AI?",
     options: [
       "Ấm đun nước tự ngắt điện khi nước đã sôi tới nhiệt độ đặt sẵn",
@@ -138,6 +148,7 @@ const questions: Question[] = [
   },
   {
     id: "b1-11",
+    difficulty: "thong-hieu",
     q: "Vì sao các dây chuyền lắp ráp, robot cơ giới hoá trong nhà máy không được coi là hệ thống có ứng dụng AI?",
     options: [
       "Vì chúng chỉ thực hiện lặp đi lặp lại một vài thao tác cố định, đơn điệu",
@@ -151,6 +162,7 @@ const questions: Question[] = [
   },
   {
     id: "b1-12",
+    difficulty: "nhan-biet",
     q: "Trí tuệ nhân tạo hẹp (còn gọi là Trí tuệ nhân tạo yếu) là loại AI như thế nào?",
     options: [
       "Loại AI được thiết kế để thực hiện một nhiệm vụ cụ thể đã xác định",
@@ -164,6 +176,7 @@ const questions: Question[] = [
   },
   {
     id: "b1-13",
+    difficulty: "nhan-biet",
     q: "Trí tuệ nhân tạo tổng quát (còn gọi là Trí tuệ nhân tạo mạnh) có đặc điểm gì?",
     options: [
       "Có khả năng tự học, tự thích nghi, làm nhiều việc giống như con người",
@@ -177,6 +190,7 @@ const questions: Question[] = [
   },
   {
     id: "b1-14",
+    difficulty: "nhan-biet",
     q: "Hệ chuyên gia MYCIN được giới thiệu trong bài là ứng dụng AI trong lĩnh vực nào?",
     options: [
       "Y học — đưa ra danh sách vi khuẩn nghi ngờ và đề xuất dùng kháng sinh",
@@ -190,6 +204,7 @@ const questions: Question[] = [
   },
   {
     id: "b1-15",
+    difficulty: "nhan-biet",
     q: "Robot Asimo của hãng Honda được nêu trong bài là ví dụ tiêu biểu cho điều gì?",
     options: [
       "Robot hình người tích hợp nhiều ứng dụng AI: đi lại, nhìn, nghe, nói",
@@ -203,7 +218,8 @@ const questions: Question[] = [
   },
   {
     id: "b1-16",
-    q: "Ứng dụng nào sau đây thể hiện khả năng nhận dạng chữ viết tay của AI?",
+    difficulty: "van-dung",
+    q: "Nhà trường có nhiều phiếu trả lời viết tay cần đưa vào máy tính để tìm kiếm theo nội dung. Nên chọn ứng dụng AI nào?",
     options: [
       "Chuyển ảnh chụp chữ viết tay thành dữ liệu văn bản máy xử lí được",
       "Chuyển một đoạn văn bản tiếng Anh trên trang web sang tiếng Việt",

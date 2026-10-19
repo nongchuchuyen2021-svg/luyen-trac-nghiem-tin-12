@@ -10,6 +10,7 @@ import type { Question } from "@/lib/types";
 const questions: Question[] = [
   {
     id: "b6-01",
+    difficulty: "nhan-biet",
     q: "Không gian mạng là gì?",
     options: [
       "Môi trường được tạo ra nhờ sử dụng các mạng máy tính",
@@ -23,6 +24,7 @@ const questions: Question[] = [
   },
   {
     id: "b6-02",
+    difficulty: "thong-hieu",
     q: "Trường hợp nào sau đây KHÔNG phải là giao tiếp trong không gian mạng?",
     options: [
       "Hẹn gặp bạn tại một quán cà phê Internet để nói chuyện",
@@ -36,6 +38,7 @@ const questions: Question[] = [
   },
   {
     id: "b6-03",
+    difficulty: "thong-hieu",
     q: "Ưu điểm nào của giao tiếp trực tuyến đặc biệt có lợi cho những người sống xa nhau?",
     options: [
       "Thuận tiện — thực hiện được mọi nơi, mọi lúc, miễn là có mạng",
@@ -49,6 +52,7 @@ const questions: Question[] = [
   },
   {
     id: "b6-04",
+    difficulty: "thong-hieu",
     q: "Hội nghị truyền hình giúp giảm nhu cầu đi lại và chi phí ăn ở. Đó là ưu điểm nào?",
     options: [
       "Tiết kiệm thời gian và chi phí so với giao tiếp trực tiếp",
@@ -62,6 +66,7 @@ const questions: Question[] = [
   },
   {
     id: "b6-05",
+    difficulty: "nhan-biet",
     q: "Ưu điểm mở rộng kết nối xã hội của giao tiếp trực tuyến thể hiện như thế nào?",
     options: [
       "Dễ kết nối nhiều người cùng sở thích, quan điểm hoặc nhu cầu",
@@ -75,6 +80,7 @@ const questions: Question[] = [
   },
   {
     id: "b6-06",
+    difficulty: "thong-hieu",
     q: "Nhược điểm \"thiếu tín hiệu phi ngôn ngữ\" của giao tiếp trực tuyến là gì?",
     options: [
       "Thiếu nét mặt, ngôn ngữ cơ thể, biểu cảm giọng nói nên dễ hiểu lầm",
@@ -88,6 +94,7 @@ const questions: Question[] = [
   },
   {
     id: "b6-07",
+    difficulty: "thong-hieu",
     q: "Nhược điểm nào của giao tiếp trực tuyến liên quan tới bảo mật và quyền riêng tư?",
     options: [
       "Bị lộ mật khẩu truy cập, bị tấn công mạng, bị xâm phạm dữ liệu",
@@ -101,6 +108,7 @@ const questions: Question[] = [
   },
   {
     id: "b6-08",
+    difficulty: "thong-hieu",
     q: "Vì sao trong không gian mạng khó xây dựng mối quan hệ và lòng tin?",
     options: [
       "Vì người dùng dễ giấu mặt, giả mạo thông tin về bản thân mình",
@@ -114,6 +122,7 @@ const questions: Question[] = [
   },
   {
     id: "b6-09",
+    difficulty: "thong-hieu",
     q: "Nhược điểm \"dễ bị ảnh hưởng bởi sự cố kĩ thuật\" thể hiện qua điều gì?",
     options: [
       "Mất kết nối mạng, phần mềm không tương thích làm gián đoạn",
@@ -127,6 +136,7 @@ const questions: Question[] = [
   },
   {
     id: "b6-10",
+    difficulty: "nhan-biet",
     q: "Quy tắc ứng xử trên mạng xã hội ở nước ta được nêu trong văn bản nào?",
     options: [
       "Quyết định số 874/QĐ-BTTTT ngày 17/6/2021",
@@ -140,6 +150,7 @@ const questions: Question[] = [
   },
   {
     id: "b6-11",
+    difficulty: "nhan-biet",
     q: "Bốn yếu tố quan trọng của việc ứng xử nhân văn trong không gian mạng là gì?",
     options: [
       "Tôn trọng, lịch sự, thấu hiểu và sẵn sàng hỗ trợ người khác",
@@ -153,6 +164,7 @@ const questions: Question[] = [
   },
   {
     id: "b6-12",
+    difficulty: "thong-hieu",
     q: "Biểu hiện nào thể hiện sự tôn trọng khi giao tiếp trong không gian mạng?",
     options: [
       "Không phát tán thông tin riêng tư của người khác khi chưa được phép",
@@ -166,6 +178,7 @@ const questions: Question[] = [
   },
   {
     id: "b6-13",
+    difficulty: "thong-hieu",
     q: "Hành vi nào KHÔNG phù hợp với yêu cầu lịch sự khi giao tiếp trên mạng?",
     options: [
       "Dùng từ ngữ thô tục và xúc phạm để thể hiện sự bất bình của mình",
@@ -179,6 +192,7 @@ const questions: Question[] = [
   },
   {
     id: "b6-14",
+    difficulty: "nhan-biet",
     q: "Yếu tố \"thấu hiểu\" trong ứng xử nhân văn nghĩa là gì?",
     options: [
       "Đặt mình vào hoàn cảnh người khác để hiểu suy nghĩ, khó khăn của họ",
@@ -192,7 +206,8 @@ const questions: Question[] = [
   },
   {
     id: "b6-15",
-    q: "Khi dùng thư hoặc tin nhắn điện tử, điều nào cần tôn trọng?",
+    difficulty: "van-dung",
+    q: "Một người bạn gửi tin nhắn riêng kể chuyện gia đình. Thành viên khác trong nhóm đề nghị em chuyển tiếp để mọi người cùng xem. Em nên tuân theo cách xử lí nào?",
     options: [
       "Không chia sẻ nội dung riêng cho bên thứ ba khi chưa được phép",
       "Không gửi thư cho nhiều người cùng lúc để tránh làm phiền họ",
@@ -205,6 +220,7 @@ const questions: Question[] = [
   },
   {
     id: "b6-16",
+    difficulty: "thong-hieu",
     q: "Khi trò chuyện qua video, cách ứng xử nào là phù hợp?",
     options: [
       "Mặc quần áo lịch sự, không để lộ cảnh quan không phù hợp",
@@ -218,7 +234,8 @@ const questions: Question[] = [
   },
   {
     id: "b6-17",
-    q: "Trước khi đăng bài hoặc chia sẻ thông tin lên mạng xã hội cần làm gì?",
+    difficulty: "van-dung",
+    q: "Em thấy bài đăng cảnh báo nghỉ học được chia sẻ rất nhiều nhưng chưa có thông báo từ nhà trường. Trước khi đăng lại vào nhóm lớp, em cần làm gì?",
     options: [
       "Đọc kĩ nội dung và kiểm tra tính chính xác của thông tin đó",
       "Chia sẻ càng nhanh càng tốt để mọi người kịp biết tin mới",

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { getHocSinh, saveHocSinh, hopLe, chuanHoa, MAX_HO_TEN, MAX_LOP } from "@/lib/hocsinh";
 
 type TrangThai = "nhap" | "sansang" | "danggui" | "xong" | "loi";
@@ -13,19 +13,24 @@ export default function NopBai({
   soCauDung,
   tongSoCau,
   diemChu,
+  autoSubmit = false,
 }: {
   baiId: string;
   tenBai: string;
-  dang: "Trắc nghiệm" | "Đúng/Sai" | "Thi thử";
+  dang: "Trắc nghiệm" | "Đúng/Sai" | "Thi thử" | "Thường xuyên";
   diem: number;
   soCauDung: number;
   tongSoCau: number;
   diemChu?: string;
+  autoSubmit?: boolean;
 }) {
   const [trangThai, setTrangThai] = useState<TrangThai>("nhap");
   const [hoTen, setHoTen] = useState("");
   const [lop, setLop] = useState("");
   const [loi, setLoi] = useState("");
+
+  const dangGuiRef = useRef(false);
+  const daTuDongGuiRef = useRef(false);
 
   // Đã từng nộp trên máy này thì điền sẵn, khỏi gõ lại mỗi lần.
   useEffect(() => {
@@ -39,8 +44,14 @@ export default function NopBai({
 
   const dayDu = hopLe({ hoTen, lop });
 
+  useEffect(() => {
+    if (autoSubmit && dayDu && !daTuDongGuiRef.current) { daTuDongGuiRef.current = true; void nop(); }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [autoSubmit, dayDu]);
+
   async function nop() {
-    if (!dayDu) return;
+    if (!dayDu || dangGuiRef.current || trangThai === "xong") return;
+    dangGuiRef.current = true;
     // Chuẩn hoá NGAY vào ô nhập luôn, không chỉ chuẩn hoá lúc gửi. Ô nhập chỉ
     // trông như in hoa nhờ CSS, nếu không đồng bộ lại thì thẻ xác nhận sẽ hiện
     // "lớp 12a1" trong khi bảng tính đã ghi "12A1".
@@ -75,7 +86,7 @@ export default function NopBai({
     } catch {
       setLoi("Máy không kết nối được mạng, em kiểm tra rồi thử lại nhé");
       setTrangThai("loi");
-    }
+    } finally { dangGuiRef.current = false; }
   }
 
   if (trangThai === "xong") {
@@ -98,7 +109,7 @@ export default function NopBai({
         📨 Nộp kết quả cho thầy cô
       </p>
       <p className="mt-1 text-center text-sm text-ink-soft">
-        Chỉ những lượt em bấm nộp mới được gửi đi. Luyện nháp thì cứ thoải mái.
+        {autoSubmit ? "Kết quả được tự động gửi sau khi nộp bài. Nếu lỗi, em có thể thử lại." : "Chỉ những lượt em bấm nộp mới được gửi đi. Luyện nháp thì cứ thoải mái."}
       </p>
 
       <div className="mt-4 grid gap-3 sm:grid-cols-[1fr_auto]">

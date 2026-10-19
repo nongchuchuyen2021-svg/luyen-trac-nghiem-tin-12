@@ -8,6 +8,7 @@ import type { Question } from "@/lib/types";
 const questions: Question[] = [
   {
     id: "b5-01",
+    difficulty: "nhan-biet",
     q: "Tài nguyên của một máy tính trên mạng có thể là những gì?",
     options: [
       "Dữ liệu, phần mềm hay thiết bị của máy tính đó trên mạng",
@@ -21,6 +22,7 @@ const questions: Question[] = [
   },
   {
     id: "b5-02",
+    difficulty: "nhan-biet",
     q: "Chia sẻ tài nguyên trong mạng cục bộ nghĩa là gì?",
     options: [
       "Cho phép người ở máy này nhìn thấy và dùng tài nguyên máy khác",
@@ -34,6 +36,7 @@ const questions: Question[] = [
   },
   {
     id: "b5-03",
+    difficulty: "thong-hieu",
     q: "Để hai máy tính chia sẻ được tài nguyên qua mạng cục bộ cần những điều kiện nào?",
     options: [
       "Kết nối hai máy qua mạng và người chia sẻ phải cấp quyền truy cập",
@@ -47,6 +50,7 @@ const questions: Question[] = [
   },
   {
     id: "b5-04",
+    difficulty: "thong-hieu",
     q: "Vì sao trước khi chia sẻ cần đặt máy về chế độ mạng riêng (Private)?",
     options: [
       "Vì mạng riêng là mạng của nhóm người dùng có độ tin cậy cao hơn",
@@ -60,6 +64,7 @@ const questions: Question[] = [
   },
   {
     id: "b5-05",
+    difficulty: "nhan-biet",
     q: "Tường lửa (firewall) là gì?",
     options: [
       "Phần mềm kiểm soát truy cập máy tính từ bên ngoài để ngăn xâm nhập",
@@ -73,6 +78,7 @@ const questions: Question[] = [
   },
   {
     id: "b5-06",
+    difficulty: "thong-hieu",
     q: "Vì sao nên tạm dừng tường lửa trong thời gian chia sẻ tài nguyên?",
     options: [
       "Để việc chia sẻ tài nguyên được thuận lợi trong thời gian chia sẻ",
@@ -86,6 +92,7 @@ const questions: Question[] = [
   },
   {
     id: "b5-07",
+    difficulty: "nhan-biet",
     q: "Trong cửa sổ Advanced sharing settings, cần chuyển hai mục nào sang On để chia sẻ được?",
     options: [
       "Network discovery và File and printer sharing đều chuyển sang On",
@@ -99,6 +106,7 @@ const questions: Question[] = [
   },
   {
     id: "b5-08",
+    difficulty: "nhan-biet",
     q: "Thư mục Public trên Windows nằm ở đâu và mặc định được chia sẻ như thế nào?",
     options: [
       "Ở This PC → System (C:) → Users → Public, mặc định không chia sẻ",
@@ -112,6 +120,7 @@ const questions: Question[] = [
   },
   {
     id: "b5-09",
+    difficulty: "nhan-biet",
     q: "Khi thêm Everyone vào danh sách người được chia sẻ, quyền mặc định là gì?",
     options: [
       "Read — chỉ được xem dữ liệu chứ không được sửa (write)",
@@ -125,7 +134,8 @@ const questions: Question[] = [
   },
   {
     id: "b5-10",
-    q: "Muốn người được chia sẻ có thể sửa được dữ liệu trong thư mục thì làm thế nào?",
+    difficulty: "van-dung",
+    q: "Nhóm học sinh đã truy cập được thư mục chia sẻ nhưng chỉ đọc được tệp. Chủ thư mục cần cho nhóm sửa và lưu bài ngay trong đó. Cần thiết lập thế nào?",
     options: [
       "Chọn Read/Write trong danh sách Permission Level của người đó",
       "Chọn Remove trong danh sách Permission Level của người dùng đó",
@@ -138,6 +148,7 @@ const questions: Question[] = [
   },
   {
     id: "b5-11",
+    difficulty: "thong-hieu",
     q: "Nhìn vào đâu để biết một thư mục đang nằm trên máy tính khác trên mạng?",
     options: [
       "Biểu tượng có hình chữ nhật màu xanh tượng trưng cho dây cáp mạng",
@@ -151,6 +162,7 @@ const questions: Question[] = [
   },
   {
     id: "b5-12",
+    difficulty: "nhan-biet",
     q: "Muốn huỷ bỏ việc chia sẻ một thư mục thì làm thế nào?",
     options: [
       "Vào Advanced Sharing rồi bỏ dấu tích ở ô Share this folder",
@@ -164,6 +176,7 @@ const questions: Question[] = [
   },
   {
     id: "b5-13",
+    difficulty: "thong-hieu",
     q: "Việc chia sẻ máy in trong mạng thực chất là gì?",
     options: [
       "Biến máy tính có máy in thành máy chủ cung cấp dịch vụ in",
@@ -177,6 +190,7 @@ const questions: Question[] = [
   },
   {
     id: "b5-14",
+    difficulty: "thong-hieu",
     q: "Máy tính cung cấp dịch vụ in xử lí các yêu cầu in gửi tới như thế nào?",
     options: [
       "Xếp thành hàng đợi rồi điều khiển in lần lượt khi máy sẵn sàng",
@@ -190,7 +204,8 @@ const questions: Question[] = [
   },
   {
     id: "b5-15",
-    q: "Ở máy tính muốn dùng máy in mạng, nếu tìm mà không thấy máy in trong danh sách thì làm gì?",
+    difficulty: "van-dung",
+    q: "Máy in đã được chia sẻ trong LAN và máy chủ đang bật, nhưng máy của Lan không thấy máy in trong danh sách tự động. Lan nên dùng thao tác nào để tìm thêm máy in?",
     options: [
       "Chọn The printer that I want isn't listed rồi nháy Browse để tìm",
       "Chọn Set as default để đặt máy in đó thành máy in mặc định",
@@ -203,6 +218,7 @@ const questions: Question[] = [
   },
   {
     id: "b5-16",
+    difficulty: "thong-hieu",
     q: "Chia sẻ máy in trong mạng cục bộ mang lại lợi ích gì?",
     options: [
       "Mọi máy trong mạng đều in được mà không phải chép dữ liệu đi",

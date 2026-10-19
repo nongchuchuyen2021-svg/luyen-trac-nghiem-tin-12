@@ -128,3 +128,15 @@ thập gì thêm.
 **Muốn thêm tên miền riêng về sau:** thêm biến `MIEN_CHO_PHEP_THEM` trong
 Vercel, giá trị là tên miền (nhiều tên miền thì ngăn nhau bởi dấu phẩy),
 ví dụ `tinhoc.thptnari.edu.vn`.
+
+
+## Kiểm tra thường xuyên 2 — Bài 1–6
+
+- Mở `/kiem-tra/thuong-xuyen-2` từ trang chủ.
+- 15 câu / 16 phút: 6 nhận biết, 6 thông hiểu, 3 vận dụng từ 3 bài chọn ngẫu nhiên.
+- Điểm TX2 tự động gửi vào tab `TX2` của bảng tính Tin 12 hiện cấu hình, với cột `Điểm /10`. Tab và tiêu đề được tạo khi có lượt nộp thành công đầu tiên; chưa có lượt thật thì tab có thể chưa xuất hiện.
+- Service Account cần quyền chỉnh sửa bảng tính, gồm quyền tạo tab. Nếu tab TX2 đã tồn tại với tiêu đề khác, hệ thống báo lỗi để tránh ghi nhầm cột; không tự ghi đè tiêu đề cũ.
+- Luyện tập và thi thử vẫn dùng nơi lưu và thang phần trăm cũ.
+- Chuyển tab/thu nhỏ khi đang làm sẽ xóa đáp án và bốc đề khác, giữ nguyên mốc hết giờ.
+- Máy chủ kiểm tra điểm thang 10 khớp số câu đúng, nhưng vẫn nhận số câu đúng từ trình duyệt; đây chưa phải chấm thi có xác thực trên máy chủ.
+- Kiểm thử cục bộ: `npm run test:tx2`. Các kiểm thử Sheets dùng dữ liệu giả, không tạo tab hay ghi điểm thật.

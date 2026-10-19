@@ -1,4 +1,8 @@
+export type QuestionDifficulty = "nhan-biet" | "thong-hieu" | "van-dung";
+
 export type Question = {
+  difficulty?: QuestionDifficulty;
+  shuffleOptions?: boolean;
   id: string;
   q: string;
   // Đoạn code minh hoạ (hiển thị khối chữ mono riêng dưới câu hỏi), nếu có

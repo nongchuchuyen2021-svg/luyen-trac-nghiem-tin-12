@@ -8,6 +8,7 @@ import type { Question } from "@/lib/types";
 const questions: Question[] = [
   {
     id: "b2-01",
+    difficulty: "nhan-biet",
     q: "Hệ chuyên gia được hiểu như thế nào?",
     options: [
       "Chương trình dựa trên luật suy diễn và tri thức của chuyên gia một lĩnh vực",
@@ -21,6 +22,7 @@ const questions: Question[] = [
   },
   {
     id: "b2-02",
+    difficulty: "thong-hieu",
     q: "Trong y học và chăm sóc sức khoẻ, AI được sử dụng để làm gì?",
     options: [
       "Làm nổi bật cấu trúc bất thường trong cơ thể, hỗ trợ chẩn đoán kịp thời",
@@ -34,6 +36,7 @@ const questions: Question[] = [
   },
   {
     id: "b2-03",
+    difficulty: "nhan-biet",
     q: "Thành tựu nào trong giao thông vận tải gắn liền với sự phát triển của AI?",
     options: [
       "Ô tô tự lái, máy bay không người lái và quản lí giao thông thông minh",
@@ -47,7 +50,8 @@ const questions: Question[] = [
   },
   {
     id: "b2-04",
-    q: "Trong lĩnh vực tài chính, ngân hàng, AI mang lại lợi ích nào?",
+    difficulty: "van-dung",
+    q: "Ngân hàng cần tìm giao dịch bất thường trong hàng triệu giao dịch để cảnh báo sớm gian lận. Nên chọn cách ứng dụng AI nào?",
     options: [
       "Phân tích dữ liệu để hỗ trợ quyết định đầu tư, phát hiện và ngăn gian lận",
       "Đếm và phân loại các tờ tiền theo mệnh giá khi khách tới gửi tiết kiệm",
@@ -60,6 +64,7 @@ const questions: Question[] = [
   },
   {
     id: "b2-05",
+    difficulty: "thong-hieu",
     q: "Trong nông nghiệp, AI được sử dụng ở các trang trại thông minh để làm gì?",
     options: [
       "Theo dõi thời tiết, đất đai, dịch bệnh để tối ưu quy trình chăm sóc cây con",
@@ -73,7 +78,8 @@ const questions: Question[] = [
   },
   {
     id: "b2-06",
-    q: "AI được ứng dụng trong giáo dục theo hướng nào?",
+    difficulty: "van-dung",
+    q: "Một lớp học cần hệ thống chọn bài luyện tập tiếp theo theo lỗi sai và tiến bộ riêng của từng học sinh. Giải pháp AI nào phù hợp?",
     options: [
       "Phát triển nền tảng học tập cá nhân hoá và trợ lí học tập ảo cho người học",
       "Trình chiếu bài giảng đã soạn sẵn lên màn hình lớn của phòng học bộ môn",
@@ -86,6 +92,7 @@ const questions: Question[] = [
   },
   {
     id: "b2-07",
+    difficulty: "nhan-biet",
     q: "Trí tuệ nhân tạo tạo sinh (Generative AI) là loại AI như thế nào?",
     options: [
       "Loại AI tập trung tạo ra dữ liệu, hình ảnh, văn bản, âm nhạc một cách tự động",
@@ -99,6 +106,7 @@ const questions: Question[] = [
   },
   {
     id: "b2-08",
+    difficulty: "nhan-biet",
     q: "ChatGPT được nêu trong bài là sản phẩm của tổ chức nào và thuộc loại hệ thống gì?",
     options: [
       "Của OpenAI, là một hệ thống xử lí ngôn ngữ tự nhiên tiên tiến",
@@ -112,6 +120,7 @@ const questions: Question[] = [
   },
   {
     id: "b2-09",
+    difficulty: "thong-hieu",
     q: "Vì sao nói ChatGPT là một hệ thống AI có tri thức?",
     options: [
       "Vì nó được huấn luyện trên lượng lớn văn bản thuộc nhiều lĩnh vực khác nhau",
@@ -125,6 +134,7 @@ const questions: Question[] = [
   },
   {
     id: "b2-10",
+    difficulty: "thong-hieu",
     q: "Biểu hiện nào cho thấy ChatGPT có khả năng suy luận?",
     options: [
       "Đưa ra câu trả lời đa dạng tuỳ theo ngữ cảnh và yêu cầu của người dùng",
@@ -138,6 +148,7 @@ const questions: Question[] = [
   },
   {
     id: "b2-11",
+    difficulty: "thong-hieu",
     q: "Nguy cơ nào sau đây KHÔNG nằm trong các cảnh báo về sự phát triển của AI nêu trong bài?",
     options: [
       "Máy tính chạy chương trình AI sẽ nhanh hỏng do phải làm việc quá tải",
@@ -151,6 +162,7 @@ const questions: Question[] = [
   },
   {
     id: "b2-12",
+    difficulty: "thong-hieu",
     q: "Cảnh báo \"khả năng thiếu minh bạch\" của các ứng dụng AI hiện nay nghĩa là gì?",
     options: [
       "Phần lớn ứng dụng AI là \"hộp đen\", khó hiểu chúng ra quyết định thế nào",
@@ -164,6 +176,7 @@ const questions: Question[] = [
   },
   {
     id: "b2-13",
+    difficulty: "thong-hieu",
     q: "Vì sao cần ngăn cấm việc giao toàn quyền quyết định cho AI điều khiển vũ khí sát thương?",
     options: [
       "Vì quyết định sai của AI có thể gây nguy hại trực tiếp tới sinh mạng con người",
@@ -177,6 +190,7 @@ const questions: Question[] = [
   },
   {
     id: "b2-14",
+    difficulty: "thong-hieu",
     q: "Vì sao dữ liệu dùng để huấn luyện có thể khiến một hệ thống AI đưa ra kết quả thiếu công bằng?",
     options: [
       "Vì hệ thống chỉ học được từ dữ liệu, dữ liệu lệch thì kết quả cũng lệch theo",
@@ -190,6 +204,7 @@ const questions: Question[] = [
   },
   {
     id: "b2-15",
+    difficulty: "nhan-biet",
     q: "Các thành tựu hiện tại của AI nói chung thuộc phạm vi nào?",
     options: [
       "Đều thuộc phạm vi Trí tuệ nhân tạo hẹp hay Trí tuệ nhân tạo yếu",
@@ -203,6 +218,7 @@ const questions: Question[] = [
   },
   {
     id: "b2-16",
+    difficulty: "thong-hieu",
     q: "Đâu là yêu cầu đặt ra để bảo đảm AI phát triển an toàn, có trách nhiệm?",
     options: [
       "Giám sát chặt chẽ quá trình phát triển AI, không gây hậu quả xấu cho xã hội",

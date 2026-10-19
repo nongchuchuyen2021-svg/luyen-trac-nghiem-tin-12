@@ -8,6 +8,7 @@ import type { Question } from "@/lib/types";
 const questions: Question[] = [
   {
     id: "b4-01",
+    difficulty: "nhan-biet",
     q: "Giao thức mạng (network protocol) là gì?",
     options: [
       "Tập hợp các quy định về cách thức giao tiếp để truyền dữ liệu qua mạng",
@@ -21,6 +22,7 @@ const questions: Question[] = [
   },
   {
     id: "b4-02",
+    difficulty: "nhan-biet",
     q: "Giao thức nào quy định cách gửi thư điện tử đi?",
     options: [
       "SMTP — Simple Mail Transfer Protocol, dùng khi gửi thư đi",
@@ -34,6 +36,7 @@ const questions: Question[] = [
   },
   {
     id: "b4-03",
+    difficulty: "thong-hieu",
     q: "Trong giao thức Ethernet, quy định về mã kiểm tra có tác dụng gì?",
     options: [
       "Giúp máy nhận phát hiện lỗi truyền để yêu cầu gửi lại dữ liệu",
@@ -47,6 +50,7 @@ const questions: Question[] = [
   },
   {
     id: "b4-04",
+    difficulty: "thong-hieu",
     q: "Vì sao dữ liệu phải được truyền theo từng gói có độ dài xác định?",
     options: [
       "Vì truyền tin quá dài sẽ làm quá tải máy nhận và cản trở cuộc truyền khác",
@@ -60,6 +64,7 @@ const questions: Question[] = [
   },
   {
     id: "b4-05",
+    difficulty: "nhan-biet",
     q: "Địa chỉ MAC có đặc điểm gì?",
     options: [
       "Là địa chỉ 6 byte gắn với phần cứng, không thay đổi được",
@@ -73,6 +78,7 @@ const questions: Question[] = [
   },
   {
     id: "b4-06",
+    difficulty: "nhan-biet",
     q: "Địa chỉ IPv4 được biểu diễn như thế nào?",
     options: [
       "Là một số 4 byte, viết theo kiểu dot decimal ngăn bằng dấu chấm",
@@ -86,6 +92,7 @@ const questions: Question[] = [
   },
   {
     id: "b4-07",
+    difficulty: "van-dung",
     q: "Địa chỉ IP dưới đây viết ở dạng thập phân là địa chỉ nào?",
     code: "11000000 10101000 00001101 11010010",
     options: ["192.168.13.210", "192.168.13.208", "192.128.13.210", "168.192.13.210"],
@@ -95,6 +102,7 @@ const questions: Question[] = [
   },
   {
     id: "b4-08",
+    difficulty: "thong-hieu",
     q: "Khi truyền dữ liệu giữa hai máy trong cùng một mạng cục bộ thì căn cứ vào địa chỉ nào?",
     options: [
       "Địa chỉ MAC — máy chỉ nhận gói có địa chỉ trùng MAC của mình",
@@ -108,6 +116,7 @@ const questions: Question[] = [
   },
   {
     id: "b4-09",
+    difficulty: "nhan-biet",
     q: "Bảng định tuyến của một router chứa thông tin gì?",
     options: [
       "Nhóm địa chỉ IP nào thì gửi theo cổng nào của router đó",
@@ -121,6 +130,7 @@ const questions: Question[] = [
   },
   {
     id: "b4-10",
+    difficulty: "van-dung",
     q: "Theo bảng định tuyến dưới đây (dấu * hiểu là bất cứ giá trị nào), gói dữ liệu gửi tới địa chỉ 200.5.6.7 sẽ đi qua cổng nào?",
     code: "Địa chỉ        Cổng   Ghi chú\n126.13.*.*      1     Mỹ, cổng mặc định\n172.18.*.*      2     Hồng Kông\n113.23.12.*     3     Singapore\n230.17.*.*      4     Thái Lan",
     options: [
@@ -135,6 +145,7 @@ const questions: Question[] = [
   },
   {
     id: "b4-11",
+    difficulty: "thong-hieu",
     q: "Định tuyến động khác định tuyến tĩnh ở điểm nào?",
     options: [
       "Cho phép thay đổi cổng gửi đi tuỳ theo điều kiện cụ thể lúc đó",
@@ -148,6 +159,7 @@ const questions: Question[] = [
   },
   {
     id: "b4-12",
+    difficulty: "nhan-biet",
     q: "Giao thức IP có hai nội dung chính nào?",
     options: [
       "Cách đánh địa chỉ và định tuyến để dẫn dữ liệu tới LAN máy nhận",
@@ -161,6 +173,7 @@ const questions: Question[] = [
   },
   {
     id: "b4-13",
+    difficulty: "thong-hieu",
     q: "Vì sao bên cạnh giao thức IP còn cần thêm giao thức TCP?",
     options: [
       "Vì IP không đảm bảo dữ liệu tới đúng một ứng dụng trên máy nhận",
@@ -174,6 +187,7 @@ const questions: Question[] = [
   },
   {
     id: "b4-14",
+    difficulty: "nhan-biet",
     q: "Giao thức TCP dùng cách nào để dữ liệu không bị lẫn giữa các ứng dụng?",
     options: [
       "Gán nhãn cổng ứng dụng cho từng gói dữ liệu được chuyển đi",
@@ -187,6 +201,7 @@ const questions: Question[] = [
   },
   {
     id: "b4-15",
+    difficulty: "thong-hieu",
     q: "Vì sao giao thức TCP phải đánh số các gói dữ liệu theo từng ứng dụng?",
     options: [
       "Vì các gói đi theo đường khác nhau nên gói gửi sau có thể đến trước",
@@ -200,6 +215,7 @@ const questions: Question[] = [
   },
   {
     id: "b4-16",
+    difficulty: "nhan-biet",
     q: "Giao thức DNS (Domain Name System) có tác dụng gì?",
     options: [
       "Cho phép dùng tên bằng chữ thay cho địa chỉ IP vốn khó nhớ",

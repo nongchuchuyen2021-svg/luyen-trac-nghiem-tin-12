@@ -7,6 +7,7 @@ import type { Question } from "@/lib/types";
 const questions: Question[] = [
   {
     id: "b3-01",
+    difficulty: "nhan-biet",
     q: "Khi một máy tính gửi dữ liệu qua một cổng của hub thì điều gì xảy ra?",
     options: [
       "Tín hiệu được phát tán tới tất cả các cổng còn lại của thiết bị",
@@ -20,6 +21,7 @@ const questions: Question[] = [
   },
   {
     id: "b3-02",
+    difficulty: "thong-hieu",
     q: "Switch khác hub ở cách thức hoạt động như thế nào?",
     options: [
       "Switch xác định cổng gửi – nhận rồi lập kênh truyền tạm giữa hai cổng",
@@ -33,6 +35,7 @@ const questions: Question[] = [
   },
   {
     id: "b3-03",
+    difficulty: "nhan-biet",
     q: "Xung đột (collision) tín hiệu trong mạng cục bộ là hiện tượng gì?",
     options: [
       "Nhiều máy cùng gửi dữ liệu lên đường truyền chung làm hỏng tín hiệu",
@@ -46,6 +49,7 @@ const questions: Question[] = [
   },
   {
     id: "b3-04",
+    difficulty: "thong-hieu",
     q: "Vì sao với mạng gia đình có ít thiết bị đầu cuối thì có thể dùng hub?",
     options: [
       "Vì hub có chi phí rẻ hơn rất nhiều so với switch có cùng số cổng",
@@ -59,6 +63,7 @@ const questions: Question[] = [
   },
   {
     id: "b3-05",
+    difficulty: "van-dung",
     q: "Một LAN có từ vài chục đến hàng trăm máy tính thì nên thiết kế thế nào?",
     options: [
       "Dùng switch, có thể nhiều switch nhiều tầng, kết hợp hub ở tầng cuối",
@@ -72,6 +77,7 @@ const questions: Question[] = [
   },
   {
     id: "b3-06",
+    difficulty: "nhan-biet",
     q: "Wi-Fi thực chất là gì?",
     options: [
       "Một bộ tiêu chuẩn kĩ thuật truyền dữ liệu bằng sóng vô tuyến điện",
@@ -85,6 +91,7 @@ const questions: Question[] = [
   },
   {
     id: "b3-07",
+    difficulty: "nhan-biet",
     q: "Điểm truy cập không dây (Wireless Access Point – WAP) dùng để làm gì?",
     options: [
       "Kết nối thiết bị đầu cuối qua sóng Wi-Fi, mở rộng phạm vi của LAN",
@@ -98,6 +105,7 @@ const questions: Question[] = [
   },
   {
     id: "b3-08",
+    difficulty: "nhan-biet",
     q: "Router dùng để làm gì?",
     options: [
       "Dẫn đường cho dữ liệu khi kết nối trên mạng diện rộng như Internet",
@@ -111,6 +119,7 @@ const questions: Question[] = [
   },
   {
     id: "b3-09",
+    difficulty: "thong-hieu",
     q: "Cổng LAN và cổng WAN trên một router khác nhau như thế nào?",
     options: [
       "Cổng LAN nối trực tiếp vào LAN, cổng WAN nối với các router khác",
@@ -124,6 +133,7 @@ const questions: Question[] = [
   },
   {
     id: "b3-10",
+    difficulty: "nhan-biet",
     q: "Thuật ngữ định tuyến (routing) hàm ý điều gì?",
     options: [
       "Router chọn một cổng thích hợp để gửi dữ liệu tới được LAN máy nhận",
@@ -137,6 +147,7 @@ const questions: Question[] = [
   },
   {
     id: "b3-11",
+    difficulty: "thong-hieu",
     q: "Vì sao router của mạng gia đình thường không cần phải định tuyến?",
     options: [
       "Vì nó chỉ có một cổng WAN nối đến nhà cung cấp dịch vụ Internet",
@@ -150,6 +161,7 @@ const questions: Question[] = [
   },
   {
     id: "b3-12",
+    difficulty: "nhan-biet",
     q: "Modem có chức năng gì?",
     options: [
       "Chuyển đổi tín hiệu số thành tín hiệu tương tự và ngược lại",
@@ -163,6 +175,7 @@ const questions: Question[] = [
   },
   {
     id: "b3-13",
+    difficulty: "thong-hieu",
     q: "Modem có làm thay đổi dữ liệu được truyền đi hay không?",
     options: [
       "Không, modem chỉ thay đổi tín hiệu mang dữ liệu chứ không đổi dữ liệu",
@@ -176,6 +189,7 @@ const questions: Question[] = [
   },
   {
     id: "b3-14",
+    difficulty: "van-dung",
     q: "Máy tính xách tay có Wi-Fi nhưng không có khe SIM. Muốn nối Internet qua mạng điện thoại di động thì dùng thiết bị nào?",
     options: [
       "Modem GSM có khe cắm SIM, phát lại qua sóng Wi-Fi cho máy tính",
@@ -189,6 +203,7 @@ const questions: Question[] = [
   },
   {
     id: "b3-15",
+    difficulty: "nhan-biet",
     q: "Nối máy tính vào switch, hub hay cổng LAN của router thì dùng cổng và cáp nào?",
     options: [
       "Cổng RJ45 với cáp UTP có bốn đôi dây xoắn và giắc cắm RJ45",
@@ -202,6 +217,7 @@ const questions: Question[] = [
   },
   {
     id: "b3-16",
+    difficulty: "thong-hieu",
     q: "Cắm xong cáp mạng vào máy tính và switch thì máy đã dùng được mạng chưa?",
     options: [
       "Chưa, còn phải thiết lập kết nối logic như đặt địa chỉ cho máy",
