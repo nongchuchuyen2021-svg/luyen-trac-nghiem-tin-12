@@ -70,7 +70,23 @@ export default function HomeClient({ counts }: { counts: Record<string, LessonCo
           <div><p className="font-display text-lg font-bold text-ink">📚 Đề cương ôn tập — Bài 1–8</p><p className="mt-1 text-sm text-ink-soft">60 TNKQ · 12 đúng–sai · 8 tự luận · Lưu kết quả Google Sheets</p></div>
           <span className="shrink-0 rounded-full bg-sea-deep px-4 py-2 text-sm font-medium text-white">Ôn tập →</span>
         </Link>
-        <Link href="/kiem-tra/thuong-xuyen-2" className="mt-8 flex items-center justify-between gap-4 rounded-2xl border-2 border-sea/30 bg-gradient-to-r from-sea/10 to-coral/10 p-5 shadow-card transition hover:-translate-y-0.5 sm:p-6">
+        <Link href="/kiem-tra/giua-ki-1" className="mt-4 flex items-center justify-between gap-4 rounded-2xl border-2 border-amber-500/40 bg-gradient-to-r from-amber-500/10 via-orange-500/10 to-sea/10 p-5 shadow-card transition hover:-translate-y-0.5 sm:p-6">
+          <div>
+            <div className="flex items-center gap-2">
+              <p className="font-display text-lg font-bold text-ink">⏱️ Kiểm tra giữa kì 1 — Tin học 12</p>
+              <span className="rounded-full bg-amber-500/20 px-2 py-0.5 font-mono text-[11px] font-bold text-amber-800">
+                CHÍNH THỨC
+              </span>
+            </div>
+            <p className="mt-1 text-sm text-ink-soft">
+              16 TNKQ · 3 Đúng/Sai · 2 Tự luận · 45 phút · Chống chuyển tab (tự load đề mới) · Lưu Google Sheets
+            </p>
+          </div>
+          <span className="shrink-0 rounded-full bg-gradient-to-r from-amber-600 to-orange-600 px-4 py-2 text-sm font-bold text-white shadow">
+            Vào thi →
+          </span>
+        </Link>
+        <Link href="/kiem-tra/thuong-xuyen-2" className="mt-4 flex items-center justify-between gap-4 rounded-2xl border-2 border-sea/30 bg-gradient-to-r from-sea/10 to-coral/10 p-5 shadow-card transition hover:-translate-y-0.5 sm:p-6">
           <div><p className="font-display text-lg font-bold text-ink">📝 Kiểm tra thường xuyên 2 — Bài 1–6</p><p className="mt-1 text-sm text-ink-soft">15 câu · Tối đa 16 phút · Mở hằng ngày 7:10–10:30 · Lưu điểm Google Sheets</p></div>
           <span className="shrink-0 rounded-full bg-sea px-4 py-2 text-sm font-medium text-white">Làm bài →</span>
         </Link>

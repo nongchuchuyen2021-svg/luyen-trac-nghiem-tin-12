@@ -25,3 +25,6 @@ Key JSon/
 .agents/
 skills-lock.json
 /tmp/
+.manus*
+*.tmp
+

@@ -8,7 +8,8 @@
     "start": "next start -p 3002",
     "lint": "next lint",
     "test:arena": "node --test scripts/room.test.cjs",
-    "test:tx2": "node --test scripts/tx2.test.cjs"
+    "test:tx2": "node --test scripts/tx2.test.cjs",
+    "test:giua-ki-1": "node --test scripts/giua-ki-1.test.cjs"
   },
   "dependencies": {
     "next": "14.2.35",
