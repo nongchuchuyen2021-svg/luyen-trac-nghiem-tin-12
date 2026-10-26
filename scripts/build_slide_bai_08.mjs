@@ -1,12 +1,19 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import ts from 'typescript';
+import vm from 'node:vm';
 
 // Sources live beside this builder; the output remains a standalone offline HTML file.
 const project = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const source = path.join(project, 'scripts', 'slide-bai-08');
 const css = fs.readFileSync(path.join(project, 'scripts', 'slide-bai-06', 'deck.css'), 'utf8') + '\n' + fs.readFileSync(path.join(source, 'deck.css'), 'utf8');
-const js = ['content.js', 'engine.js', 'activities.js'].map(file => fs.readFileSync(path.join(source, file), 'utf8')).join('\n').replace(/<\/script/gi, '<\\/script');
+// Dùng chung kịch bản với lý thuyết, tránh hai bản nội dung khác nhau.
+const shared = { exports: {} };
+vm.runInNewContext(ts.transpileModule(fs.readFileSync(path.join(project, 'data/classroom.ts'), 'utf8'), { compilerOptions: { module: ts.ModuleKind.CommonJS } }).outputText, shared);
+const plan = JSON.stringify(shared.exports.CLASSROOM_ACTIVITIES['bai-08']).replace(/</g, '\\u003c');
+const content = fs.readFileSync(path.join(source, 'content.js'), 'utf8');
+const js = [content, `const classroomPlan=${plan}; sections.push({tag:'15 · KỊCH BẢN 45 PHÚT',title:'Đến lượt học sinh làm chủ',lead:'Năm nhiệm vụ: dự đoán, kiểm chứng, sửa mã, thiết kế và phản biện. Chọn nhiệm vụ để tổ chức lớp.',html:'<div id="classroom-plan"></div>'});`, ...['engine.js', 'activities.js', 'classroom.js'].map(file => fs.readFileSync(path.join(source, file), 'utf8'))].join('\n').replace(/<\/script/gi, '<\\/script');
 const html = `<!DOCTYPE html>
 <html lang="vi">
 <head>
@@ -17,9 +24,9 @@ const html = `<!DOCTYPE html>
 <style>${css}</style>
 </head>
 <body>
-<header class="topbar"><div class="brand">TIN HỌC 12 <b> / BÀI 08</b></div><div class="spacer"></div><button class="tool" id="contents" aria-haspopup="dialog">☰ Mục lục</button><button class="tool" id="motion" aria-pressed="true">✨ Hiệu ứng: Bật</button><button class="tool" id="sound" aria-pressed="false">🔇 Âm thanh: Tắt</button><button class="tool" id="fullscreen" title="Toàn màn hình (F)" aria-label="Toàn màn hình">⛶</button></header>
+<header class="topbar"><div class="brand">TIN HỌC 12 <b> / BÀI 08</b></div><div class="spacer"></div><button class="tool" id="classroom-open">👥 Hoạt động 45′</button><button class="tool" id="contents" aria-haspopup="dialog">☰ Mục lục</button><button class="tool" id="motion" aria-pressed="true">✨ Hiệu ứng: Bật</button><button class="tool" id="sound" aria-pressed="false">🔇 Âm thanh: Tắt</button><button class="tool" id="fullscreen" title="Toàn màn hình (F)" aria-label="Toàn màn hình">⛶</button></header>
 <main class="stage" id="stage"><div id="deck"></div><noscript><h1>Bài 8: Định dạng văn bản</h1><p>Hãy bật JavaScript để dùng các hoạt động tương tác của bài trình chiếu.</p></noscript></main>
-<footer class="bottom"><button class="nav" id="prev" aria-label="Trang trước">←</button><div class="progress" aria-hidden="true"><span id="progress"></span></div><span class="counter" id="counter">01 / 18</span><span class="footer-count" id="reveal-counter"></span><button class="action" id="all-ideas">Hiện hết</button><button class="action primary next-idea" id="next-idea">Hiện ý tiếp ↓</button><button class="nav" id="next" aria-label="Trang tiếp">→</button><span class="key-help">Space/→: hiện ý, rồi chuyển trang<br>↑: ẩn ý · F: toàn màn hình · M: âm thanh</span></footer>
+<footer class="bottom"><button class="nav" id="prev" aria-label="Trang trước">←</button><div class="progress" aria-hidden="true"><span id="progress"></span></div><span class="counter" id="counter">01 / 16</span><span class="footer-count" id="reveal-counter"></span><button class="action" id="all-ideas">Hiện hết</button><button class="action primary next-idea" id="next-idea">Hiện ý tiếp ↓</button><button class="nav" id="next" aria-label="Trang tiếp">→</button><span class="key-help">Space/→: hiện ý, rồi chuyển trang<br>↑: ẩn ý · F: toàn màn hình · M: âm thanh</span></footer>
 <dialog id="toc" aria-labelledby="toc-title"><div class="dialog-head"><h2 id="toc-title">Hành trình Bài 8</h2><button class="action" id="close-toc">Đóng ✕</button></div><div id="toc-grid" class="toc-grid"></div></dialog>
 <div id="toast" class="toast" role="status" hidden></div><div class="confetti" id="confetti" aria-hidden="true"></div>
 <script>${js}</script>

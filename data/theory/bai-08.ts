@@ -11,7 +11,7 @@ import type { LessonTheory } from "@/lib/types";
 const theory: LessonTheory = {
   minutes: 13,
   intro:
-    "Bài 7 em đã viết được trang web, nhưng chữ còn trơ trụi. Bài này dạy cách **làm cho văn bản đẹp và dễ đọc**: chia tiêu đề nhiều cấp, tách đoạn, in đậm in nghiêng, đổi màu và cỡ chữ. Chìa khoá của cả bài chỉ là một thứ — **thuộc tính `style`**.",
+    "Em là **biên tập viên bản tin lớp**: người đọc phải tìm ngay thời gian, địa điểm, việc cần chuẩn bị. Bài này giúp em: (1) viết đúng **thuộc tính** của thẻ; (2) dùng **tiêu đề, đoạn, khối** để chia cấu trúc; (3) chọn **kiểu chữ** theo ý nghĩa; (4) dùng **style** để đặt phông chữ, màu sắc, cỡ chữ. Cách học: **dự đoán → chạy thử → giải thích → sửa**.",
 
   sections: [
     {
@@ -170,7 +170,7 @@ const theory: LessonTheory = {
           tone: "sea",
           items: [
             { emoji: "🅱️", title: "<strong> ; <b>", text: "Chữ **đậm**" },
-            { emoji: "🇮", title: "<em> ; <i>", text: "Chữ *nghiêng*" },
+            { emoji: "✍️", title: "<em> ; <i>", text: "Chữ *nghiêng*" },
             { emoji: "➖", title: "<u>", text: "Gạch chân" },
             { emoji: "🖍️", title: "<mark>", text: "Đánh dấu (bôi vàng)" },
             { emoji: "🔡", title: "<small>", text: "Giảm cỡ chữ" },
@@ -179,8 +179,9 @@ const theory: LessonTheory = {
           ],
         },
         {
-          kind: "note",
-          text: "**HTML5 không hỗ trợ thẻ `<big>` và `<u>`** — để điều khiển, nên thay bằng giá trị **`font-size`** và **`text-decoration`** trong thuộc tính `style`.",
+          kind: "update",
+          title: "Lưu ý về `<u>` và `<big>`",
+          text: "SGK ghi rằng **HTML5 không hỗ trợ thẻ `<big>` và `<u>`**, nên khi cần đổi cỡ chữ hoặc gạch chân hãy dùng CSS: **`font-size`** và **`text-decoration:underline`**. Chuẩn HTML hiện hành thì khác một chút: **`<big>` đã lỗi thời**, còn **`<u>` vẫn tồn tại** để chú giải (ví dụ đánh dấu chữ sai chính tả). Bài kiểm tra bám SGK; khi làm web thật, chỉ gạch chân để **trang trí** thì dùng CSS và **đừng gạch chân chữ thường** vì dễ bị nhầm với liên kết.",
         },
         {
           kind: "example",
@@ -253,7 +254,7 @@ const theory: LessonTheory = {
           kind: "code",
           caption: "Bài thực hành trong SGK — biện luận số nghiệm phương trình bậc 2",
           preview: true,
-          code: `<h1>Biện luận số nghiệm của phương trình bậc 2</h1>
+      code: `<h1>Biện luận số nghiệm của phương trình bậc 2</h1>
 <h3><span style="color:rgb(205,0,0)">Bài toán:</span> Xác định số nghiệm của
 phương trình ax<sup>2</sup> + bx + c = 0 (a != 0)</h3>
 <h3 style="color:rgb(205,0,0)">Cách làm:</h3>
